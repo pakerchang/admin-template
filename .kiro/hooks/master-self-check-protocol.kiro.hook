@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "Master Self-Check Protocol",
+  "description": "Implement the Master Self-Check Protocol from development-workflow.md with context-aware rule loading",
+  "version": "1",
+  "when": {
+    "type": "beforeResponse",
+    "patterns": ["**/*"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "🔥 MASTER SELF-CHECK PROTOCOL ACTIVATED!\n\n**HOOK EXECUTION STATUS: ACTIVE**\n**TIMESTAMP:** $(date '+%Y-%m-%d %H:%M:%S')\n**TRIGGER:** Before response generation\n\n---\n\n**🧠 PROTOCOL EXECUTION SEQUENCE**\n\nBefore responding, execute the Master Self-Check Protocol:\n\n**LEVEL 0: CONTEXT BOOTSTRAP (15 seconds)**\n□ Task Classification: Classify user request (Analysis/Planning/Implementation/Debug/Review)\n□ Rules Domain Check: Identify applicable rules (development-workflow.md, commit-standards.md, naming-conventions.md, frontend-development.md)\n□ Complexity Assessment: Assess task complexity (Simple/Medium/Complex/Multi-domain)\n□ Information Completeness: Validate context sufficiency\n\n**LEVEL 1: RULES INTEGRATION (30 seconds)**\n□ Development Phases: If involves development phases → load development-workflow.md\n□ Git Operations: If involves git operations → load commit-standards.md\n□ File Operations: If involves file operations → load naming-conventions.md\n□ Code Changes: If involves code changes → load frontend-development.md\n□ Cross-domain Conflict Check: Resolve conflicts using hierarchy\n\n**LEVEL 2: RESPONSE QUALITY GATE (15 seconds)**\n□ Accuracy Verification: Verify facts and assumptions\n□ Completeness Validation: Ensure all requirements addressed\n□ Actionability Confirmation: Verify clear next steps\n□ Documentation Impact: Identify documentation updates needed\n\n**GATE RULE: ALL_BOXES_CHECKED**\n\n**📋 EXECUTION VALIDATION:**\n- Did I execute Level 0: Context Bootstrap? [Y/N]\n- Did I execute Level 1: Rules Integration? [Y/N]\n- Did I execute Level 2: Response Quality Gate? [Y/N]\n- Can I explicitly state which rules domains apply? [Y/N]\n\n**🔗 INTEGRATION:**\n- Trigger mandatory quality checks\n- Execute smart git context check\n- Update progress tracking and sync with requirements\n\n**🔍 HOOK EXECUTION VISIBILITY:**\nPlease start your response with:\n'🔥 MASTER-SELF-CHECK-PROTOCOL HOOK EXECUTED - [TIMESTAMP] - Running pre-response validation...'\n\nThen show each level execution:\n'⏳ Level 0: Context Bootstrap - [STATUS]'\n'⏳ Level 1: Rules Integration - [STATUS]'\n'⏳ Level 2: Response Quality Gate - [STATUS]'\n\nAnd end with:\n'✅ MASTER-SELF-CHECK-PROTOCOL HOOK COMPLETED - All validation levels passed'\n\nIf any check fails: RESTART_PROTOCOL"
+  }
+}

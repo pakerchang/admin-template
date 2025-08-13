@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "composite": true
+  },
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/test/**/*",
+    "src/test/setup-test-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ]
+}

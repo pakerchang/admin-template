@@ -1,0 +1,143 @@
+{
+  "settings": {
+    "tailwindcss": {
+      "callees": ["cn"],
+      "config": "./tailwind.config.ts",
+      "cssFiles": [
+        "**/*.css",
+        "!**/node_modules/**",
+        "!**/.*",
+        "!**/dist",
+        "!**/public"
+      ]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.app.json"
+      }
+    },
+    "react": {
+      "version": "detect"
+    },
+    "alias": {
+      "map": [["@/*", "./src/*"]],
+      "extends": [".js", ".jsx", ".ts", ".tsx"]
+    }
+  },
+  "overrides": [
+    {
+      "files": ["*.d.ts"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint"],
+      "extends": ["plugin:@typescript-eslint/recommended"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/ban-types": "off",
+        "@typescript-eslint/triple-slash-reference": "off"
+      }
+    },
+    {
+      "files": ["vite.config.ts"],
+      "parserOptions": {
+        "project": "./tsconfig.node.json"
+      }
+    }
+  ],
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "plugin:tailwindcss/recommended",
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@tanstack/eslint-plugin-router/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "./tsconfig.app.json"
+  },
+  "plugins": [
+    "react",
+    "prettier",
+    "tailwindcss",
+    "@typescript-eslint",
+    "import",
+    "@tanstack/eslint-plugin-router"
+  ],
+  "rules": {
+    "semi": ["error", "always"],
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto",
+        "trailingComma": "es5",
+        "semi": true,
+        "tabWidth": 2,
+        "singleQuote": false,
+        "overrides": [
+          {
+            "files": "*.d.ts",
+            "options": {
+              "parser": "typescript"
+            }
+          }
+        ]
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/no-empty-object-type": "warn",
+    "tailwindcss/no-custom-classname": ["off"],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index",
+          "type"
+        ],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
+    "import/no-unresolved": "error",
+    "import/no-duplicates": "error",
+    "import/no-cycle": "error",
+    "import/no-useless-path-segments": "error",
+    "import/no-absolute-path": "error",
+    "import/no-self-import": "error",
+    "import/no-named-as-default": "error",
+    "import/no-named-as-default-member": "off",
+    "import/no-deprecated": "warn",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports"
+      }
+    ],
+    "@tanstack/router/create-route-property-order": "error"
+  }
+}

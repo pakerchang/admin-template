@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "name": "Mandatory Quality Checks",
+  "description": "Enforce build, lint, and test checks after every code modification",
+  "version": "1",
+  "when": {
+    "type": "fileChanged",
+    "patterns": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.js",
+      "src/**/*.jsx",
+      "*.config.ts",
+      "*.config.js",
+      "package.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "🔴 MANDATORY QUALITY CHECKS REQUIRED!\n\n**HOOK EXECUTION STATUS: ACTIVE**\n**TIMESTAMP:** $(date '+%Y-%m-%d %H:%M:%S')\n**TRIGGER:** Code file modification detected\n\n---\n\n**⚡ QUALITY GATE ENFORCEMENT**\n\nCode files have been modified. Please execute the following mandatory quality checks:\n\n**REQUIRED CHECKS (BLOCKING):**\n1. **TypeScript Compilation**: Run `pnpm build`\n   - If failed: 🔴 MANDATORY: TypeScript compilation failed. Fix errors before proceeding.\n\n2. **ESLint Check**: Run `pnpm lint`\n   - If failed: 🔴 MANDATORY: ESLint check failed. Fix linting errors before proceeding.\n\n**OPTIONAL CHECKS:**\n3. **Test Execution**: Run `pnpm test --run` (if test files exist)\n   - If failed: ⚠️ WARNING: Tests failed. Consider fixing before proceeding.\n\n**📊 EXECUTION FLOW:**\n- Identify modified files\n- Determine applicable checks based on file types\n- Execute checks in sequence\n- Display real-time progress\n- Report check results\n- Block further actions if mandatory checks fail\n\n**🔗 INTEGRATION:**\n- Apply development workflow rules\n- Apply commit standards\n- Update project metadata with check status\n\n**🔍 HOOK EXECUTION VISIBILITY:**\nPlease start your response with:\n'🔴 MANDATORY-QUALITY-CHECKS HOOK EXECUTED - [TIMESTAMP] - Running mandatory quality checks...'\n\nThen show the execution of each check with status indicators:\n'⏳ Running TypeScript compilation...'\n'⏳ Running ESLint checks...'\n'⏳ Running tests...'\n\nAnd end with:\n'✅ MANDATORY-QUALITY-CHECKS HOOK COMPLETED - Quality gate status: [PASS/FAIL]'\n\nPlease execute these checks and report the results. Quality checks are mandatory for code integrity."
+  }
+}

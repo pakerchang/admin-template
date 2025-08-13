@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "name": "Context-Aware Rules Checker",
+  "description": "Automatically load and apply relevant rules based on development context",
+  "version": "1",
+  "when": {
+    "type": "fileChanged",
+    "patterns": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.js",
+      "src/**/*.jsx",
+      "docs/**/*.md",
+      "*.config.ts",
+      "*.config.js"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "🔥 CONTEXT-AWARE-RULES HOOK TRIGGERED!\n\n**HOOK EXECUTION STATUS: ACTIVE**\n**TIMESTAMP:** $(date '+%Y-%m-%d %H:%M:%S')\n**TRIGGER:** File modification detected\n\n---\n\n**📋 CONTEXT ANALYSIS PHASE**\n\nFiles have been modified. Please apply context-aware rules based on the changes:\n\n1. **File Operations**: If files were created/renamed, apply naming conventions and file organization rules from naming-conventions.md\n2. **Git Operations**: If this involves commits/merges, apply commit message standards from commit-standards.md\n3. **Development Phases**: If branch contains 'Phase' or docs contain '[x]', apply staged development workflow from development-workflow.md\n4. **Code Changes**: If source files were modified, apply frontend development standards from frontend-development.md\n\n**📝 EXECUTION CHECKLIST:**\n- [ ] Read applicable rule files based on context\n- [ ] Execute self-check protocols from loaded rules\n- [ ] Validate context against rule requirements\n- [ ] Verify rule compliance\n- [ ] Update documentation if required\n- [ ] Run quality checks (lint, test, build)\n\n**🔍 HOOK EXECUTION VISIBILITY:**\nPlease start your response with:\n'🔥 CONTEXT-AWARE-RULES HOOK EXECUTED - [TIMESTAMP] - Processing file changes and applying contextual rules...'\n\nThen proceed with the rule application and end with:\n'✅ CONTEXT-AWARE-RULES HOOK COMPLETED - All applicable rules have been processed'\n\n✅ Create a file called 'hook-execution-log.txt' with timestamp to prove hook execution"
+  }
+}

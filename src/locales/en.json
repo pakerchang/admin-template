@@ -1,0 +1,732 @@
+{
+  "common": {
+    "submit": "Submit",
+    "success": "Success",
+    "error": "Error",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "insert": "Insert",
+    "createArticle": "Create Article",
+    "edit": "Edit",
+    "view": "View",
+    "delete": "Delete",
+    "noData": "No Data"
+  },
+  "logout": {
+    "title": "Logout",
+    "description": "Are you sure you want to log out?",
+    "confirm": "Confirm Logout"
+  },
+  "messages": {
+    "copySuccess": "Copy successful",
+    "copyFailed": "Copy failed"
+  },
+  "validation": {
+    "required": {
+      "field": "{{field}} is required",
+      "allLanguages": "All languages for {{field}} are required",
+      "minImages": "Please upload at least one image"
+    },
+    "number": {
+      "min": "{{field}} cannot be less than {{min}}"
+    },
+    "image": {
+      "fileName": {
+        "required": "Image name is required",
+        "format": "Image name can only contain letters, numbers, underscores and hyphens",
+        "extension": "File extension must match the original file"
+      },
+      "content": {
+        "required": "Image content is required",
+        "format": "Invalid image format"
+      },
+      "prefix": {
+        "invalid": "Image file name must start with d_ or m_",
+        "desktop": "Desktop image file name must start with d_",
+        "mobile": "Mobile image file name must start with m_"
+      },
+      "type": {
+        "unsupported": "Unsupported file type. Please upload {{extensions}} format images",
+        "extensionMismatch": "Unsupported file extension. Please ensure the file is in {{extensions}} format"
+      },
+      "banner": {
+        "webpRequired": "Please use WebP format for banner images to ensure optimal display quality and loading speed",
+        "webpRecommend": "It is recommended to convert images to WebP format, which can reduce file size by about 30%"
+      },
+      "resolution": {
+        "desktop": {
+          "tooSmall": "Desktop image resolution is too small, minimum recommended 1280x720 pixels",
+          "tooLarge": "Desktop image resolution is too large, maximum supported 3840x2160 pixels",
+          "aspectRatio": "Recommended to use 16:9 aspect ratio for optimal display"
+        },
+        "mobile": {
+          "tooSmall": "Mobile image resolution is too small, minimum recommended {{minResolution}} pixels",
+          "tooLarge": "Mobile image resolution is too large, maximum supported {{maxResolution}} pixels",
+          "aspectRatio": "For mobile, recommended to use 16:9 aspect ratio"
+        }
+      },
+      "fileSize": {
+        "tooSmall": "File size is too small, may affect image quality, recommended at least {{minSize}}",
+        "tooLarge": "File size exceeds limit, maximum supported {{maxSize}}",
+        "recommendDesktop": "Recommended desktop WebP image size: 300KB-1.5MB",
+        "recommendMobile": "Recommended mobile WebP image size: 150KB-800KB"
+      }
+    },
+    "text": {
+      "min": "{{field}} cannot be less than {{min}} characters",
+      "max": "{{field}} cannot exceed {{max}} characters"
+    },
+    "article": {
+      "title": {
+        "required": "Please enter article title"
+      },
+      "content": {
+        "required": "Please enter article content"
+      }
+    },
+    "editor": {
+      "toolbar": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "heading1": "Heading 1",
+        "heading2": "Heading 2",
+        "heading3": "Heading 3",
+        "paragraph": "Paragraph",
+        "bulletList": "Bullet List",
+        "orderedList": "Ordered List",
+        "blockquote": "Blockquote",
+        "link": "Insert Link",
+        "image": "Insert Image",
+        "undo": "Undo",
+        "redo": "Redo"
+      },
+      "placeholder": "Start writing article content...",
+      "link": {
+        "url": "Link URL",
+        "text": "Link Text",
+        "urlPlaceholder": "Enter link URL",
+        "textPlaceholder": "Enter link text",
+        "edit": "Edit Link",
+        "remove": "Remove Link",
+        "invalid": "Please enter a valid URL",
+        "helpText": "If left empty, will use selected text or link URL"
+      },
+      "image": {
+        "upload": "Upload Image",
+        "url": "Image URL",
+        "alt": "Alt Text",
+        "urlPlaceholder": "Enter image URL",
+        "altPlaceholder": "Enter image description",
+        "uploadText": "Click to upload or drag image here",
+        "uploadHint": "PNG, JPG, GIF (max 10MB)",
+        "uploading": "Uploading image...",
+        "uploaded": "Uploaded Images",
+        "use": "Use"
+      }
+    },
+    "url": {
+      "invalid": "Please enter a valid URL",
+      "https": "URL must start with https://"
+    },
+    "password": {
+      "minLength": "Password must be at least 8 characters long",
+      "complexity": "Password must meet the following requirements: at least 8 characters and contain at least 3 of the following character types: uppercase letters, lowercase letters, numbers, special symbols (!@#$%^&*(), etc.)"
+    }
+  },
+  "lng": {
+    "zh": "Chinese",
+    "en": "English",
+    "th": "Thai"
+  },
+  "status": {
+    "new": "New Order",
+    "pending": "Awaiting Processing",
+    "paid": "Paid",
+    "shipped": "Shipped",
+    "refunded": "Refunded",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+
+  "order": {
+    "orderNumber": "Order Number",
+    "totalAmount": "Total Amount",
+    "status": "Status",
+    "agent": "Agent",
+    "quantity": "Quantity",
+    "productId": "Product ID",
+    "contactInfo": "Contact Information",
+    "phone": "Phone",
+    "address": "Address",
+    "remark": "Remark",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "orderDetails": "Order Details",
+    "item": "Item",
+    "productName": "Product Name",
+    "price": "Price",
+    "discountRemark": "Discount Remark",
+    "productList": "Product List",
+    "email": "Email",
+    "contactInfoTitle": "Contact Information"
+  },
+
+  "breadcrumb": {
+    "home": "Home",
+    "create": "Create",
+    "edit": "Edit"
+  },
+
+  "action": {
+    "add": "Add",
+    "remove": "Remove"
+  },
+
+  "dashboard": {
+    "title": "DAMA Admin",
+    "menu": {
+      "users": {
+        "title": "User Management",
+        "sub": {
+          "userList": "User List",
+          "userManagement": "User Management"
+        }
+      },
+      "products": {
+        "title": "Product Management"
+      },
+      "orders": {
+        "title": "Orders Management",
+        "sub": {
+          "orderList": "Order List",
+          "batchOrders": "Batch Orders"
+        }
+      },
+      "banners": {
+        "title": "Banners Management",
+        "sub": {
+          "bannerCreate": "Create Banner",
+          "bannerEdit": "Edit Banner"
+        }
+      },
+      "articles": {
+        "title": "Articles Management"
+      },
+      "customers": {
+        "title": "Customer Management"
+      },
+      "teamMembers": {
+        "title": "Team Management"
+      },
+      "suppliers": {
+        "title": "Supplier Management"
+      },
+      "tags": {
+        "title": "Tag Management"
+      }
+    }
+  },
+
+  "pages": {
+    "article": {
+      "basicInfo": "Basic Information",
+      "title": "Title",
+      "titlePlaceholder": "Please enter article title",
+      "description": "Description",
+      "descriptionPlaceholder": "Please enter article description (optional)",
+      "coverImage": "Cover Image",
+      "tags": "Tags",
+      "tagsPlaceholder": "Enter tag",
+      "tagInput": "Tag {{index}}",
+      "currentTags": "Current Tags",
+      "addTag": "Add",
+      "content": "Article Content",
+      "contentPlaceholder": "Start writing article content..."
+    },
+    "order": {
+      "title": "Order Management",
+      "search": {
+        "placeholder": "Search order ID (e.g. ORD20241221001)",
+        "searching": "Searching...",
+        "results": "Search \"{{searchTerm}}\" found {{count}} results",
+        "noResults": "No related orders found",
+        "noResultsHint": "Try other keywords or",
+        "clearSearch": "clear search"
+      },
+      "filter": {
+        "allStatus": "All Status",
+        "filterByStatus": "Filter by Status",
+        "statusPlaceholder": "Select order status"
+      },
+      "orderDetails": {
+        "notFound": "Order not found",
+        "orderStatus": {
+          "title": "Order Status",
+          "orderCreateAt": "Order Created At",
+          "lastUpdatedAt": "Last Updated At"
+        },
+        "shipping": {
+          "title": "Shipping Info",
+          "shippingFee": "Shipping Fee",
+          "shippingAddress": "Shipping Address",
+          "shippingTime": "Shipping Time",
+          "shippingRemark": "Shipping Remark"
+        },
+        "orderItem": {
+          "title": "Order Details",
+          "image": "Product Image",
+          "productId": "Product ID",
+          "price": "Unit Price",
+          "size": "Quantity",
+          "discountRemark": "Discount Remark",
+          "totalAmount": "Total Amount"
+        },
+        "customer": {
+          "title": "Customer Info",
+          "name": "Name",
+          "phone": "Phone",
+          "email": "Email"
+        }
+      }
+    },
+    "product": {
+      "filter": {
+        "allStatus": "All"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "productCreate": {
+        "addProduct": "Add Product",
+        "title": "Product Info",
+        "productName": "Product Name",
+        "productDescription": "Product Description",
+        "shortTitle": "Short Title",
+        "price": "Price",
+        "productSize": "Stock",
+        "productImages": "Product Images",
+        "productType": "Product Type",
+        "productTypePlaceholder": "Please select product type",
+        "productTag": "Product Tag",
+        "productTagInput": "Product Tag {{index}}",
+        "ingredients": "Ingredients",
+        "introduction": "Introduction",
+        "precautions": "Precautions",
+        "shelfLife": "Shelf Life",
+        "origin": "Origin",
+        "aromaLevel": "Aroma Level",
+        "flavor": "Flavor",
+        "appearance": "Appearance",
+        "bestOccasion": "Best Occasion",
+        "sceneMatching": "Scene Matching",
+        "foodPairing": "Food Pairing",
+        "submitting": "Submitting",
+        "active": "Active",
+        "inactive": "Inactive",
+        "productStatus": "Product Status",
+        "productStatusPlaceholder": "Please select product status",
+        "supplier": "Supplier",
+        "supplierPlaceholder": "Please select supplier",
+        "tags": "Product Tags",
+        "addTag": "Add Tag",
+        "selectTag": "Select Tag",
+        "selectedTags": "Selected Tags"
+      },
+      "productDraft": {
+        "title": "Copy Product - {{productName}}",
+        "description": "Create a copy based on existing product, modify and create as new product",
+        "copyToCreate": "Copy to Create"
+      },
+      "productEditConfirm": {
+        "title": "Confirm Edit Content",
+        "description": "Please review the changes below and confirm to submit",
+        "noChanges": "No changes detected",
+        "changesList": "Changes List",
+        "original": "Original Data",
+        "new": "Changed Data",
+        "emptyValue": "(Empty)",
+        "confirmSubmit": "Confirm Submit"
+      },
+      "productTypes": {
+        "ELECTRONICS": "Electronics",
+        "ACCESSORIES": "Accessories",
+        "CONSUMABLES": "Consumables",
+        "DEVICES": "Devices",
+        "MATERIALS": "Materials",
+        "FOOD": "Food",
+        "CLOTHING": "Clothing",
+        "OTHER": "Other",
+        "NO_TYPE": "Uncategorized"
+      }
+    }
+  },
+  "banner": {
+    "addBanner": "Add Banner",
+    "activeTitle": "Active Banner List",
+    "inactiveTitle": "Banner List",
+    "active": "Enabled",
+    "inactive": "Disabled",
+    "emptyState": {
+      "noActiveBanner": "No Enabled Banner",
+      "promoteBannerHint": "Promote from the banner list below"
+    },
+    "actions": {
+      "promoteToActive": "Enable",
+      "demoteToInactive": "Disable",
+      "processing": "Processing..."
+    },
+    "bannerCreate": {
+      "title": "Banner Info",
+      "redirectUrl": "Redirect URL",
+      "status": "Status",
+      "statusPlaceholder": "Please select status",
+      "images": "Image Upload",
+      "desktopImage": "Desktop Image",
+      "mobileImage": "Mobile Image",
+      "active": "Enabled",
+      "inactive": "Disabled",
+      "submitting": "Submitting"
+    }
+  },
+  "supplier": {
+    "title": "Supplier Management",
+    "description": "Manage all suppliers in the system",
+    "addSupplier": "Add Supplier",
+    "editSupplier": "Edit Supplier",
+    "deleteSupplier": "Delete Supplier",
+    "deleteConfirm": "Confirm Delete",
+    "deleteDescription": "Are you sure you want to delete supplier \"{{name}}\"? This action cannot be undone.",
+    "confirmDelete": "Confirm Delete",
+    "loading": "Loading supplier list...",
+    "supplierName": "Supplier Name",
+    "phone": "Contact Phone",
+    "email": "Email",
+    "address": "Address",
+    "remark": "Remark",
+    "search": {
+      "placeholder": "Search supplier ID or supplier name..."
+    },
+    "messages": {
+      "fetchListFailed": "Failed to fetch supplier list",
+      "createSuccess": "Supplier created successfully",
+      "createFailed": "Failed to create supplier",
+      "updateSuccess": "Supplier updated successfully",
+      "updateFailed": "Failed to update supplier",
+      "deleteSuccess": "Supplier deleted successfully",
+      "deleteFailed": "Failed to delete supplier",
+      "createFeaturePending": "Add supplier feature pending implementation",
+      "editFeaturePending": "Edit supplier feature pending implementation"
+    }
+  },
+  "tag": {
+    "title": "Tag Management",
+    "description": "Manage all tags in the system",
+    "addTag": "Add Tag",
+    "editTag": "Edit Tag",
+    "deleteTag": "Delete Tag",
+    "deleteConfirm": "Confirm Delete",
+    "deleteDescription": "Are you sure you want to delete tag \"{{name}}\"? This action cannot be undone.",
+    "confirmDelete": "Confirm Delete",
+    "loading": "Loading tag list...",
+    "tagName": "Tag Name",
+    "tagNamePlaceholder": "Please enter tag name",
+    "search": {
+      "placeholder": "Search tag ID or tag name..."
+    },
+    "messages": {
+      "fetchListFailed": "Failed to fetch tag list",
+      "createSuccess": "Tag created successfully",
+      "createFailed": "Failed to create tag",
+      "updateSuccess": "Tag updated successfully",
+      "updateFailed": "Failed to update tag",
+      "deleteSuccess": "Tag deleted successfully",
+      "deleteFailed": "Failed to delete tag"
+    }
+  },
+  "users": {
+    "userForm": {
+      "title": "Edit User Profile",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phoneNumber": "Contact Number",
+      "address": "Contact Address",
+      "remark": "Additional Notes"
+    }
+  },
+  "table": {
+    "columnVisibility": "Column Visibility",
+    "showHideColumns": "Show/Hide Columns",
+    "headers": {
+      "article": {
+        "articleId": "Article ID",
+        "title": "Article Title",
+        "description": "Article Description",
+        "tags": "Article Tags",
+        "author": "Author",
+        "actions": "Actions"
+      },
+      "user": {
+        "userId": "User ID",
+        "email": "Email",
+        "name": "Name",
+        "phoneNumber": "Phone Number",
+        "role": "Permission Group",
+        "actions": "Actions"
+      },
+      "product": {
+        "thumbnail": "Product Image",
+        "productName": "Product Name",
+        "productType": "Product Type",
+        "productStock": "Product Stock",
+        "productStatus": "Product Status",
+        "productCode": "Product ID",
+        "price": "Price",
+        "actions": "Actions"
+      },
+      "order": {
+        "agentId": "Agent ID",
+        "orderId": "Order ID",
+        "remark": "Remark",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "supplier": {
+        "supplierId": "Supplier ID",
+        "supplierName": "Supplier Name",
+        "contact": "Contact Info",
+        "address": "Address",
+        "remark": "Remark"
+      },
+      "tag": {
+        "tagId": "Tag ID",
+        "tagName": "Tag Name"
+      },
+      "publishedAt": "Published At",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "actions": "Actions"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {{currentPage}} of {{totalPages}}",
+      "itemsPerPage": "Items per page",
+      "itemsSelected": "items"
+    }
+  },
+
+  "dialog": {
+    "order": {
+      "title": "Update Order Status",
+      "description": "Please select the order status",
+      "status": {
+        "submit": "Submit"
+      }
+    },
+    "imgUpload": {
+      "title": "Upload Image",
+      "description": "Please select the image",
+      "fileName": "Image Name",
+      "submit": "Submit",
+      "cancel": "Cancel",
+      "allowedFormats": "Allowed formats: {{formats}}"
+    }
+  },
+
+  "toast": {
+    "img": {
+      "upload": {
+        "success": "Image uploaded successfully",
+        "error": "Failed to upload image"
+      },
+      "delete": {
+        "success": "Image deleted successfully",
+        "error": "Failed to delete image"
+      }
+    },
+    "product": {
+      "get": {
+        "error": "Product info retrieval failed"
+      },
+      "create": {
+        "success": "Product created successfully",
+        "error": "Product creation failed"
+      },
+      "update": {
+        "success": "Product updated successfully",
+        "error": "Product update failed"
+      },
+      "delete": {
+        "success": "Product deleted successfully",
+        "error": "Product deletion failed"
+      }
+    },
+    "order": {
+      "get": {
+        "error": "Order info retrieval failed"
+      },
+      "update": {
+        "success": "Order updated successfully",
+        "error": "Order update failed"
+      }
+    },
+    "banner": {
+      "get": {
+        "success": "Banner info retrieved successfully",
+        "error": "Banner info retrieval failed"
+      },
+      "create": {
+        "success": "Banner created successfully",
+        "error": "Banner creation failed"
+      },
+      "update": {
+        "success": "Banner updated successfully",
+        "error": "Banner update failed"
+      },
+      "delete": {
+        "success": "Banner deleted successfully",
+        "error": "Banner deletion failed"
+      },
+      "promoteToActive": {
+        "success": "Banner enabled successfully",
+        "error": "Banner enable failed",
+        "errorDescription": "You can only enable up to {{limit}} banners"
+      },
+      "demoteToInactive": {
+        "success": "Banner disabled successfully",
+        "error": "Banner disable failed",
+        "errorDescription": "Banner disable failed"
+      },
+      "reorder": {
+        "success": "Banner order updated successfully",
+        "error": "Banner reorder failed",
+        "errorDescription": "Please retry or refresh the page"
+      },
+      "operationConflict": {
+        "title": "Operation Conflict",
+        "promoteDescription": "Please wait for current operation to complete before promoting",
+        "demoteDescription": "Please wait for current operation to complete before demoting",
+        "generalDescription": "Please wait for current operation to complete"
+      },
+      "removeFromActive": {
+        "success": "Banner disabled successfully",
+        "error": "Banner disable failed"
+      }
+    },
+    "auth": {
+      "unauthorized": {
+        "title": "Unauthorized Request",
+        "description": "Please login again or check your permissions"
+      }
+    },
+    "user": {
+      "get": {
+        "error": "Failed to get user data"
+      },
+      "update": {
+        "success": "User data updated successfully",
+        "error": "Failed to update user data"
+      }
+    },
+    "article": {
+      "get": {
+        "error": "Failed to get article",
+        "listError": "Failed to get article list"
+      },
+      "create": {
+        "success": "Article created successfully",
+        "error": "Article creation failed"
+      },
+      "update": {
+        "success": "Article updated successfully",
+        "error": "Article update failed"
+      },
+      "delete": {
+        "success": "Article deleted successfully",
+        "error": "Article deletion failed"
+      }
+    }
+  },
+
+  "unauthorized": {
+    "accessDenied": {
+      "title": "Access Denied",
+      "description": "You don't have permission to access the backend management system"
+    },
+    "userListAccess": {
+      "title": "Access Denied",
+      "description": "You don't have permission to view the user list"
+    },
+    "loading": "Loading..."
+  },
+
+  "staff": {
+    "staffId": "Staff ID",
+    "account": "Account",
+    "email": "Email",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "role": "Role",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "editStaff": "Edit Staff",
+    "createStaff": "Add Staff",
+    "password": "Password",
+    "accountPlaceholder": "Enter account",
+    "passwordPlaceholder": "Enter password",
+    "firstNamePlaceholder": "Enter first name",
+    "lastNamePlaceholder": "Enter last name",
+    "selectRole": "Select role",
+    "searchPlaceholder": "Search staff ID, account, name or role...",
+    "name": "Name",
+    "actions": "Actions",
+    "deleteStaff": "Delete Staff",
+    "loadingStaffList": "Loading staff list...",
+    "staffManagement": "Staff Management",
+    "confirmDelete": "Confirm Delete",
+    "deleteConfirmMessage": "Are you sure you want to delete staff \"{{name}}\"? This action cannot be undone.",
+    "editNotice": "PS: Email cannot be modified when editing",
+    "roles": {
+      "superadmin": "Super Admin",
+      "admin": "Admin",
+      "cservice": "Customer Service"
+    }
+  },
+
+  "consumer": {
+    "consumerId": "Consumer ID",
+    "name": "Name",
+    "email": "Email",
+    "phoneNumber": "Phone Number",
+    "totalSpent": "Total Spent",
+    "orderCount": "Order Count",
+    "orders": "orders",
+    "lastOrderDate": "Last Order Date",
+    "noOrderRecord": "No order record",
+    "registrationDate": "Registration Date",
+    "loadingConsumerList": "Loading consumer list...",
+    "consumerList": "Consumer List",
+    "searchPlaceholder": "Search consumer ID, name, email or phone...",
+    "purchaseHistory": "Purchase History",
+    "viewPurchaseHistory": "View History",
+    "purchaseHistoryTitle": "{{name}}'s Purchase History",
+    "loadingPurchaseHistory": "Loading purchase history...",
+    "noPurchaseHistory": "No purchase history",
+    "noOrdersFound": "This user has not purchased any products yet",
+    "noMatchingOrders": "No matching orders",
+    "noOrdersWithStatus": "This user has no orders with \"{{status}}\" status",
+    "pageInfo": "Page {{current}} of {{total}} ({{count}} records total)",
+    "filterCondition": "Filter: {{status}}",
+    "previousPage": "Previous",
+    "nextPage": "Next",
+    "orderStatus": {
+      "all": "All",
+      "pending": "Pending",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  }
+}

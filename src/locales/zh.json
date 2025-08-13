@@ -1,0 +1,737 @@
+{
+  "common": {
+    "submit": "確認",
+    "success": "成功",
+    "error": "錯誤",
+    "cancel": "取消",
+    "create": "創建",
+    "update": "更新",
+    "insert": "插入",
+    "createArticle": "創建文章",
+    "edit": "編輯",
+    "view": "查看",
+    "delete": "刪除",
+    "noData": "暫無資料"
+  },
+  "logout": {
+    "title": "登出",
+    "description": "確定要登出系統嗎？",
+    "confirm": "確認登出"
+  },
+  "messages": {
+    "copySuccess": "複製成功",
+    "copyFailed": "複製失敗"
+  },
+  "validation": {
+    "required": {
+      "field": "{{field}}為必填欄位",
+      "allLanguages": "{{field}}的所有語言都是必填的",
+      "minImages": "至少上傳一張圖片"
+    },
+    "number": {
+      "min": "{{field}}不能小於 {{min}}"
+    },
+    "image": {
+      "fileName": {
+        "required": "圖片名稱為必填",
+        "format": "圖片名稱只能包含英文、數字、底線和連字符",
+        "extension": "副檔名必須與原始檔案相符"
+      },
+      "content": {
+        "required": "圖片內容為必填",
+        "format": "無效的圖片格式"
+      },
+      "prefix": {
+        "invalid": "圖片檔名必須以 d_ 或 m_ 開頭",
+        "desktop": "桌面版圖片檔名必須以 d_ 開頭",
+        "mobile": "手機版圖片檔名必須以 m_ 開頭"
+      },
+      "type": {
+        "unsupported": "不支援的檔案類型。請上傳 {{extensions}} 格式的圖片",
+        "extensionMismatch": "不支援的副檔名。請確保檔案為 {{extensions}} 格式"
+      },
+      "banner": {
+        "webpRequired": "Banner 圖片請使用 WebP 格式以確保最佳顯示品質和載入速度",
+        "webpRecommend": "建議將圖片轉換為 WebP 格式，可減少約 30% 的檔案大小"
+      },
+      "resolution": {
+        "desktop": {
+          "tooSmall": "桌面版圖片解析度過小，建議最小 1280x720 像素",
+          "tooLarge": "桌面版圖片解析度過大，最大支援 3840x2160 像素",
+          "aspectRatio": "建議使用 16:9 的寬高比以獲得最佳顯示效果"
+        },
+        "mobile": {
+          "tooSmall": "手機版圖片解析度過小，建議最小 {{minResolution}} 像素",
+          "tooLarge": "手機版圖片解析度過大，最大支援 {{maxResolution}} 像素",
+          "aspectRatio": "手機版建議使用 16:9 的寬高比"
+        }
+      },
+      "fileSize": {
+        "tooSmall": "檔案大小過小，可能影響圖片品質，建議至少 {{minSize}}",
+        "tooLarge": "檔案大小超過限制，最大支援 {{maxSize}}",
+        "recommendDesktop": "建議桌面版 WebP 圖片控制在 300KB-1.5MB",
+        "recommendMobile": "建議手機版 WebP 圖片控制在 150KB-800KB"
+      }
+    },
+    "text": {
+      "min": "{{field}}不能小於 {{min}} 個字元",
+      "max": "{{field}}不能超過 {{max}} 個字元"
+    },
+    "email": {
+      "invalid": "請輸入有效的電子郵件地址"
+    },
+    "password": {
+      "minLength": "密碼至少需要8個字符",
+      "complexity": "密碼必須符合以下條件：至少8個字符，且包含以下至少3種類型的字符：大寫字母、小寫字母、數字、特殊符號(!@#$%^&*()等)"
+    },
+    "article": {
+      "title": {
+        "required": "請輸入文章標題"
+      },
+      "content": {
+        "required": "請輸入文章內容"
+      }
+    },
+    "editor": {
+      "toolbar": {
+        "bold": "粗體",
+        "italic": "斜體",
+        "heading1": "標題 1",
+        "heading2": "標題 2",
+        "heading3": "標題 3",
+        "paragraph": "段落",
+        "bulletList": "無序列表",
+        "orderedList": "有序列表",
+        "blockquote": "引用",
+        "link": "插入鏈接",
+        "image": "插入圖片",
+        "undo": "復原",
+        "redo": "重做"
+      },
+      "placeholder": "開始撰寫文章內容...",
+      "link": {
+        "url": "鏈接地址",
+        "text": "鏈接文字",
+        "urlPlaceholder": "請輸入鏈接地址",
+        "textPlaceholder": "請輸入鏈接文字",
+        "edit": "編輯鏈接",
+        "remove": "移除鏈接",
+        "invalid": "請輸入有效的鏈接地址",
+        "helpText": "如果留空，將使用選中的文字或鏈接地址"
+      },
+      "image": {
+        "upload": "上傳圖片",
+        "url": "圖片地址",
+        "alt": "圖片描述",
+        "urlPlaceholder": "請輸入圖片地址",
+        "altPlaceholder": "請輸入圖片描述",
+        "uploadText": "點擊上傳或拖拽圖片到此處",
+        "uploadHint": "PNG, JPG, GIF (最大 10MB)",
+        "uploading": "正在上傳圖片...",
+        "uploaded": "已上傳的圖片",
+        "use": "使用"
+      }
+    },
+    "url": {
+      "invalid": "請輸入有效的網址",
+      "https": "網址必須以 https:// 開頭"
+    }
+  },
+  "lng": {
+    "zh": "中文",
+    "en": "英文",
+    "th": "泰文"
+  },
+
+  "status": {
+    "new": "新訂單",
+    "pending": "待處理",
+    "paid": "已付款",
+    "shipped": "運送中",
+    "refunded": "已退款",
+    "completed": "已完成",
+    "cancelled": "已取消"
+  },
+
+  "order": {
+    "orderNumber": "訂單編號",
+    "totalAmount": "總金額",
+    "status": "狀態",
+    "agent": "代理商",
+    "quantity": "數量",
+    "productId": "商品ID",
+    "contactInfo": "聯絡資訊",
+    "phone": "電話",
+    "address": "地址",
+    "remark": "備註",
+    "createdAt": "建立時間",
+    "updatedAt": "更新時間",
+    "orderDetails": "訂單明細",
+    "item": "品項",
+    "productName": "商品名稱",
+    "price": "價格",
+    "discountRemark": "折扣備註",
+    "productList": "商品列表",
+    "email": "Email",
+    "contactInfoTitle": "聯絡資訊"
+  },
+
+  "breadcrumb": {
+    "home": "首頁",
+    "create": "新增",
+    "edit": "編輯"
+  },
+
+  "action": {
+    "add": "添加",
+    "remove": "移除"
+  },
+
+  "dashboard": {
+    "title": "DAMA 後台",
+    "menu": {
+      "users": {
+        "title": "使用者管理",
+        "sub": {
+          "userList": "使用者列表",
+          "userManagement": "使用者管理"
+        }
+      },
+      "products": {
+        "title": "商品管理"
+      },
+      "orders": {
+        "title": "訂單管理",
+        "sub": {
+          "orderList": "訂單列表",
+          "batchOrders": "批量訂單"
+        }
+      },
+      "banners": {
+        "title": "Banner 管理",
+        "sub": {
+          "bannerCreate": "新增Banner",
+          "bannerEdit": "編輯Banner"
+        }
+      },
+      "articles": {
+        "title": "文章管理"
+      },
+      "customers": {
+        "title": "客戶管理"
+      },
+      "teamMembers": {
+        "title": "團隊成員管理"
+      },
+      "suppliers": {
+        "title": "代理商管理"
+      },
+      "tags": {
+        "title": "標籤管理"
+      }
+    }
+  },
+
+  "pages": {
+    "supplier": {
+      "title": "代理商管理",
+      "description": "管理系統中的所有代理商",
+      "addSupplier": "新增代理商",
+      "editSupplier": "編輯代理商",
+      "deleteSupplier": "刪除代理商",
+      "deleteConfirm": "確認刪除",
+      "deleteDescription": "您確定要刪除代理商「{{name}}」嗎？此操作無法復原。",
+      "confirmDelete": "確認刪除",
+      "loading": "載入代理商列表中...",
+      "supplierName": "代理商名稱",
+      "phone": "聯絡電話",
+      "email": "電子郵件",
+      "address": "地址",
+      "remark": "備註",
+      "search": {
+        "placeholder": "搜索代理商編號或代理商名稱..."
+      },
+      "messages": {
+        "fetchListFailed": "獲取代理商列表失敗",
+        "createSuccess": "代理商創建成功",
+        "createFailed": "創建代理商失敗",
+        "updateSuccess": "代理商資料更新成功",
+        "updateFailed": "更新代理商失敗",
+        "deleteSuccess": "代理商刪除成功",
+        "deleteFailed": "刪除代理商失敗",
+        "createFeaturePending": "新增代理商功能待實作",
+        "editFeaturePending": "編輯代理商功能待實作"
+      }
+    },
+    "tag": {
+      "title": "標籤管理",
+      "description": "管理系統中的所有標籤",
+      "addTag": "新增標籤",
+      "editTag": "編輯標籤",
+      "deleteTag": "刪除標籤",
+      "deleteConfirm": "確認刪除",
+      "deleteDescription": "您確定要刪除標籤「{{name}}」嗎？此操作無法復原。",
+      "confirmDelete": "確認刪除",
+      "loading": "載入標籤列表中...",
+      "tagName": "標籤名稱",
+      "tagNamePlaceholder": "請輸入標籤名稱",
+      "search": {
+        "placeholder": "搜索標籤編號或標籤名稱..."
+      },
+      "messages": {
+        "fetchListFailed": "獲取標籤列表失敗",
+        "createSuccess": "標籤創建成功",
+        "createFailed": "創建標籤失敗",
+        "updateSuccess": "標籤資料更新成功",
+        "updateFailed": "更新標籤失敗",
+        "deleteSuccess": "標籤刪除成功",
+        "deleteFailed": "刪除標籤失敗"
+      }
+    },
+    "article": {
+      "basicInfo": "基本資訊",
+      "title": "標題",
+      "titlePlaceholder": "請輸入文章標題",
+      "description": "摘要",
+      "descriptionPlaceholder": "請輸入文章摘要（可選）",
+      "coverImage": "封面圖片",
+      "tags": "標籤",
+      "tagsPlaceholder": "請輸入標籤",
+      "tagInput": "標籤 {{index}}",
+      "currentTags": "當前標籤",
+      "addTag": "添加",
+      "content": "文章內容",
+      "contentPlaceholder": "開始撰寫文章內容..."
+    },
+    "order": {
+      "title": "訂單管理",
+      "search": {
+        "placeholder": "搜尋訂單編號 (例如: ORD20241221001)",
+        "searching": "搜尋中...",
+        "results": "搜尋 \"{{searchTerm}}\" 找到 {{count}} 筆結果",
+        "noResults": "找不到相關訂單",
+        "noResultsHint": "請嘗試其他關鍵字或",
+        "clearSearch": "清除搜尋"
+      },
+      "filter": {
+        "allStatus": "全部狀態",
+        "filterByStatus": "按狀態篩選",
+        "statusPlaceholder": "選擇訂單狀態"
+      },
+      "orderDetails": {
+        "notFound": "找不到訂單",
+        "orderStatus": {
+          "title": "訂單狀態",
+          "orderCreateAt": "訂單建立時間",
+          "lastUpdatedAt": "最後更新時間"
+        },
+        "shipping": {
+          "title": "運送資訊",
+          "shippingFee": "運費",
+          "shippingAddress": "配送地址",
+          "shippingTime": "配送時間",
+          "shippingRemark": "配送備註"
+        },
+        "orderItem": {
+          "title": "訂單明細",
+          "image": "商品圖片",
+          "productId": "商品編號",
+          "price": "單價",
+          "size": "數量",
+          "discountRemark": "折扣備註",
+          "totalAmount": "小計"
+        },
+        "customer": {
+          "title": "客戶資訊",
+          "name": "姓名",
+          "phone": "電話",
+          "email": "電子郵件"
+        }
+      }
+    },
+    "product": {
+      "filter": {
+        "allStatus": "全部"
+      },
+      "status": {
+        "active": "上架中",
+        "inactive": "下架中"
+      },
+      "productCreate": {
+        "addProduct": "新增商品",
+        "title": "商品資訊",
+        "productName": "商品名稱",
+        "productType": "商品類型",
+        "productTypePlaceholder": "請選擇商品類型",
+        "productTag": "商品標籤",
+        "productTagInput": "商品標籤{{index}}",
+        "productDescription": "商品描述",
+        "shortTitle": "商品簡稱",
+        "price": "商品價格",
+        "productSize": "商品庫存",
+        "productImages": "商品圖片",
+        "ingredients": "商品成分",
+        "introduction": "商品介紹",
+        "precautions": "商品注意事項",
+        "shelfLife": "商品保存期限",
+        "origin": "商品產地",
+        "aromaLevel": "香氣等級",
+        "flavor": "口味",
+        "appearance": "外觀",
+        "bestOccasion": "最佳場合",
+        "sceneMatching": "場景搭配",
+        "foodPairing": "食物搭配",
+        "submitting": "提交中",
+        "active": "上架",
+        "inactive": "下架",
+        "productStatus": "商品狀態",
+        "productStatusPlaceholder": "請選擇商品上架狀態",
+        "supplier": "供應商",
+        "supplierPlaceholder": "請選擇供應商",
+        "tags": "商品標籤",
+        "addTag": "新增標籤",
+        "selectTag": "選擇標籤",
+        "selectedTags": "已選擇的標籤"
+      },
+      "productDraft": {
+        "title": "複製商品 - {{productName}}",
+        "description": "基於現有商品建立副本，可修改後建立為新商品",
+        "copyToCreate": "複製建立"
+      },
+      "productEditConfirm": {
+        "title": "確認編輯內容",
+        "description": "以下是您要修改的內容，請確認後提交",
+        "noChanges": "沒有檢測到變更",
+        "changesList": "變更清單",
+        "original": "原始資料",
+        "new": "變更資料",
+        "emptyValue": "(空白)",
+        "confirmSubmit": "確認提交"
+      },
+      "productTypes": {
+        "ELECTRONICS": "電子產品",
+        "ACCESSORIES": "配件",
+        "CONSUMABLES": "耗材",
+        "DEVICES": "設備",
+        "MATERIALS": "材料",
+        "FOOD": "食品",
+        "CLOTHING": "服飾",
+        "OTHER": "其他",
+        "NO_TYPE": "未分類"
+      }
+    },
+    "banner": {
+      "addBanner": "新增 Banner",
+      "activeTitle": "已啟用 Banner 列表",
+      "inactiveTitle": "Banner 列表",
+      "active": "啟用",
+      "inactive": "停用",
+      "emptyState": {
+        "noActiveBanner": "尚無啟用 Banner",
+        "promoteBannerHint": "從下方 Banner 列表提升至此處"
+      },
+      "actions": {
+        "promoteToActive": "設為啟用",
+        "demoteToInactive": "取消啟用",
+        "processing": "處理中..."
+      },
+      "bannerCreate": {
+        "title": "橫幅資訊",
+        "redirectUrl": "跳轉連結",
+        "status": "狀態",
+        "statusPlaceholder": "請選擇狀態",
+        "images": "圖片上傳",
+        "desktopImage": "桌面版圖片",
+        "mobileImage": "手機版圖片",
+        "active": "啟用",
+        "inactive": "停用",
+        "submitting": "提交中"
+      }
+    },
+    "users": {
+      "userForm": {
+        "title": "編輯使用者資訊",
+        "firstName": "使用者名字",
+        "lastName": "使用者姓氏",
+        "email": "電子郵件信箱",
+        "phoneNumber": "聯絡電話",
+        "address": "聯絡地址",
+        "remark": "備註說明"
+      }
+    }
+  },
+
+  "table": {
+    "columnVisibility": "欄位顯示",
+    "showHideColumns": "顯示/隱藏欄位",
+    "headers": {
+      "article": {
+        "articleId": "文章編號",
+        "title": "文章標題",
+        "description": "文章摘要",
+        "tags": "文章標籤",
+        "author": "作者",
+        "actions": "操作"
+      },
+      "user": {
+        "userId": "使用者編號",
+        "email": "電子郵件",
+        "name": "姓名",
+        "phoneNumber": "電話號碼",
+        "role": "權限群組",
+        "actions": "操作"
+      },
+      "product": {
+        "thumbnail": "商品圖片",
+        "productName": "商品名稱",
+        "productType": "商品類型",
+        "productStock": "商品庫存",
+        "productStatus": "商品狀態",
+        "productCode": "商品編號",
+        "price": "售價",
+        "actions": "操作"
+      },
+      "order": {
+        "agentId": "代理商編號",
+        "orderId": "訂單編號",
+        "remark": "備註",
+        "status": "狀態",
+        "actions": "操作"
+      },
+      "supplier": {
+        "supplierId": "代理商編號",
+        "supplierName": "代理商名稱",
+        "contact": "聯絡資訊",
+        "address": "地址",
+        "remark": "備註"
+      },
+      "tag": {
+        "tagId": "標籤編號",
+        "tagName": "標籤名稱"
+      },
+      "publishedAt": "發布時間",
+      "createdAt": "建立時間",
+      "updatedAt": "更新時間",
+      "actions": "操作"
+    },
+    "pagination": {
+      "previous": "上一頁",
+      "next": "下一頁",
+      "pageInfo": "第 {{currentPage}} 頁，共 {{totalPages}} 頁",
+      "itemsPerPage": "每頁顯示",
+      "itemsSelected": "筆"
+    }
+  },
+
+  "dialog": {
+    "order": {
+      "title": "更新訂單狀態",
+      "description": "請選擇訂單狀態",
+      "status": {
+        "submit": "確認"
+      }
+    },
+    "imgUpload": {
+      "title": "上傳圖片",
+      "description": "請選擇圖片",
+      "fileName": "圖片名稱",
+      "submit": "上傳",
+      "cancel": "取消",
+      "allowedFormats": "允許的格式：{{formats}}"
+    }
+  },
+
+  "toast": {
+    "auth": {
+      "unauthorized": {
+        "title": "未授權請求",
+        "description": "請重新登入或確認您的權限"
+      }
+    },
+    "img": {
+      "upload": {
+        "success": "圖片上傳成功",
+        "error": "圖片上傳失敗"
+      },
+      "delete": {
+        "success": "圖片刪除成功",
+        "error": "圖片刪除失敗"
+      }
+    },
+    "product": {
+      "get": {
+        "error": "商品資訊取得失敗"
+      },
+      "create": {
+        "success": "商品新增成功",
+        "error": "商品新增失敗"
+      },
+      "update": {
+        "success": "商品更新成功",
+        "error": "商品更新失敗"
+      },
+      "delete": {
+        "success": "商品刪除成功",
+        "error": "商品刪除失敗"
+      }
+    },
+    "order": {
+      "get": {
+        "error": "訂單資訊取得失敗"
+      },
+      "update": {
+        "success": "訂單更新成功",
+        "error": "訂單更新失敗"
+      }
+    },
+    "banner": {
+      "get": {
+        "success": "Banner資訊取得成功",
+        "error": "Banner資訊取得失敗"
+      },
+      "create": {
+        "success": "Banner新增成功",
+        "error": "Banner新增失敗"
+      },
+      "update": {
+        "success": "Banner更新成功",
+        "error": "Banner更新失敗"
+      },
+      "delete": {
+        "success": "Banner刪除成功",
+        "error": "Banner刪除失敗"
+      },
+      "promoteToActive": {
+        "success": "Banner啟用成功",
+        "error": "Banner啟用失敗",
+        "errorDescription": "最多只能啟用 {{limit}} 個 Banner"
+      },
+      "demoteToInactive": {
+        "success": "Banner停用成功",
+        "error": "Banner停用失敗",
+        "errorDescription": "Banner停用失敗"
+      },
+      "reorder": {
+        "success": "Banner排序更新成功",
+        "error": "Banner排序更新失敗",
+        "errorDescription": "請重試或刷新頁面"
+      },
+      "operationConflict": {
+        "title": "操作衝突",
+        "promoteDescription": "請等待目前操作完成後再進行提升操作",
+        "demoteDescription": "請等待目前操作完成後再進行降級操作",
+        "generalDescription": "請等待目前操作完成後再進行此操作"
+      },
+      "removeFromActive": {
+        "success": "Banner停用成功",
+        "error": "Banner停用失敗"
+      }
+    },
+    "user": {
+      "get": {
+        "error": "取得使用者資料失敗"
+      },
+      "update": {
+        "success": "更新使用者資料成功",
+        "error": "更新使用者資料失敗"
+      }
+    },
+    "article": {
+      "get": {
+        "error": "獲取文章失敗",
+        "listError": "獲取文章列表失敗"
+      },
+      "create": {
+        "success": "文章創建成功",
+        "error": "創建文章失敗"
+      },
+      "update": {
+        "success": "文章更新成功",
+        "error": "更新文章失敗"
+      },
+      "delete": {
+        "success": "文章刪除成功",
+        "error": "刪除文章失敗"
+      }
+    }
+  },
+
+  "unauthorized": {
+    "accessDenied": {
+      "title": "存取被拒絕",
+      "description": "您沒有權限存取後台管理系統"
+    },
+    "userListAccess": {
+      "title": "存取被拒絕",
+      "description": "您沒有權限檢視使用者列表"
+    },
+    "loading": "載入中..."
+  },
+
+  "consumer": {
+    "consumerId": "消費者ID",
+    "name": "姓名",
+    "email": "電子郵件",
+    "phoneNumber": "電話號碼",
+    "totalSpent": "總消費金額",
+    "orderCount": "訂單數量",
+    "orders": "筆",
+    "lastOrderDate": "最後訂單日期",
+    "noOrderRecord": "無訂單記錄",
+    "registrationDate": "註冊日期",
+    "loadingConsumerList": "載入消費者列表中...",
+    "consumerList": "消費者列表",
+    "searchPlaceholder": "搜索消費者ID、姓名、電子郵件或電話...",
+    "purchaseHistory": "查詢購買記錄",
+    "viewPurchaseHistory": "查詢記錄",
+    "purchaseHistoryTitle": "{{name}} 的購買記錄",
+    "loadingPurchaseHistory": "載入購買記錄中...",
+    "noPurchaseHistory": "暫無購買記錄",
+    "noOrdersFound": "該用戶尚未購買任何商品",
+    "noMatchingOrders": "無符合條件的訂單",
+    "noOrdersWithStatus": "該用戶沒有「{{status}}」狀態的訂單",
+    "pageInfo": "第 {{current}} 頁，共 {{total}} 頁（總計 {{count}} 筆記錄）",
+    "filterCondition": "篩選條件：{{status}}",
+    "previousPage": "上一頁",
+    "nextPage": "下一頁",
+    "orderStatus": {
+      "all": "全部",
+      "pending": "處理中",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    }
+  },
+
+  "staff": {
+    "staffId": "員工ID",
+    "account": "帳號",
+    "email": "電子郵件",
+    "firstName": "名字",
+    "lastName": "姓氏",
+    "role": "角色",
+    "createdAt": "創建時間",
+    "updatedAt": "更新時間",
+    "editStaff": "編輯員工",
+    "createStaff": "新增員工",
+    "password": "密碼",
+    "accountPlaceholder": "請輸入帳號",
+    "passwordPlaceholder": "請輸入密碼",
+    "firstNamePlaceholder": "請輸入名字",
+    "lastNamePlaceholder": "請輸入姓氏",
+    "selectRole": "請選擇角色",
+    "searchPlaceholder": "搜索員工ID、帳號、姓名或角色...",
+    "name": "姓名",
+    "actions": "操作",
+    "deleteStaff": "刪除員工",
+    "loadingStaffList": "載入員工列表中...",
+    "staffManagement": "員工管理",
+    "confirmDelete": "確認刪除",
+    "deleteConfirmMessage": "您確定要刪除員工「{{name}}」嗎？此操作無法復原。",
+    "editNotice": "PS : 編輯不可修改 Email",
+    "roles": {
+      "superadmin": "超級管理員",
+      "admin": "管理員",
+      "cservice": "客服"
+    }
+  }
+}

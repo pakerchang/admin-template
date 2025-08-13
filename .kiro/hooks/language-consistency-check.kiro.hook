@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Language Consistency Check",
+  "description": "Ensures that language.md is read before any chat session to maintain consistent language usage throughout the project",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "language.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Please read the language.md file to understand the language preferences and guidelines for this project. Ensure you follow the specified language conventions for communication, code comments, and documentation based on the user's language preference. This will help maintain consistency in language usage throughout all interactions."
+  }
+}
