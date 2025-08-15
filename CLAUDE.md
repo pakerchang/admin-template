@@ -9,7 +9,7 @@ globs:
   - "src/types/*.ts"
   - "vite.config.ts"
   - "tsconfig.json"
-  - "docs/rules/*.md"
+  - ".claude/rules/*.md"
 alwaysApply: true
 ---
 
@@ -19,7 +19,7 @@ CLAUDE.md Configuration Explanation:
 - description: Project overview for Claude Code context
 - globs: Files that Claude MUST automatically read as basic context before any task
   - All files listed in globs are treated as essential project knowledge
-  - docs/rules/*.md files contain mandatory rules that override any other guidance
+  - .claude/rules/*.md files contain mandatory rules that override any other guidance
   - These files provide architectural understanding and constraints
 - alwaysApply: true - This configuration is ALWAYS active and cannot be overridden
 
@@ -36,64 +36,31 @@ This CLAUDE.md file uses the following configuration:
 
 - **globs**: Lists essential files that Claude MUST read automatically as basic context
 - **alwaysApply: true**: This configuration is permanently active and cannot be overridden
-- **docs/rules/\*.md**: Contains mandatory rules that take precedence over other guidance
+- **.claude/rules/\*.md**: Contains mandatory rules that take precedence over other guidance
 
 All files in the `globs` array should be treated as essential project knowledge that informs every decision and action.
 
-## 🧠 MASTER SELF-CHECK PROTOCOL
-**🔴 MANDATORY: Execute before ANY response or action**
+## Rules Integration Protocol
 
-### **Level 0: Context Bootstrap** (15 seconds)
-- [ ] ✅ **Task Classification**: [Analysis/Planning/Implementation/Debug/Review]
-- [ ] ✅ **Rules Domain Check**: Which docs/rules/ files apply? [List specific files]
-- [ ] ✅ **Complexity Assessment**: [Simple/Medium/Complex/Multi-domain]
-- [ ] ✅ **Information Completeness**: Do I have sufficient context? [Y/N]
+### Task-Based Rule Application
+- **Development Tasks**: Apply `.claude/rules/development-process.md` and `.claude/rules/phase-workflow.md`
+- **Git Operations**: Apply `.claude/rules/commit-rules.md`
+- **File Creation**: Apply `.claude/rules/naming-conventions.md`
+- **Documentation**: Apply `.claude/rules/phase-workflow.md`
 
-### **Level 1: Rules Integration** (30 seconds)
-- [ ] ✅ **Development Process**: IF involves phases/stages → Execute development-process.md self-check
-- [ ] ✅ **Version Control**: IF involves git operations → Execute commit-rules.md self-check  
-- [ ] ✅ **File Operations**: IF creates/modifies files → Execute naming-conventions.md self-check
-- [ ] ✅ **Cross-Domain Conflicts**: Any conflicting rules identified? [Document and prioritize]
+### Rule Priority Hierarchy
+1. **development-process.md** - Process control and workflow
+2. **commit-rules.md** - Version control standards
+3. **naming-conventions.md** - Code organization standards
+4. **phase-workflow.md** - Cross-agent coordination
+5. **CLAUDE.md** - Project context and integration
 
-### **Level 2: Response Quality Gate** (15 seconds)
-- [ ] ✅ **Accuracy Verification**: Facts checked, assumptions explicit
-- [ ] ✅ **Completeness Validation**: All requirements addressed
-- [ ] ✅ **Actionability Confirmation**: Next steps clear and achievable
-- [ ] ✅ **Documentation Impact**: What needs updating?
+## Rule Files Usage
 
-**🔴 GATE RULE: ALL boxes must be checked before proceeding**
-
-### **Rules Domain Mapping & Integration Protocol**
-- **Development Tasks** → `docs/rules/development-process.md` (staged delivery, git context)
-- **Git Operations** → `docs/rules/commit-rules.md` (commit standards, branch management)
-- **File Creation** → `docs/rules/naming-conventions.md` (naming standards, structure)
-
-### **Cross-Domain Integration Check**
-When tasks involve multiple rule domains, execute ALL applicable self-checks:
-
-**Example Scenarios:**
-- **Creating new feature files + commits** → Execute naming-conventions.md + commit-rules.md self-checks
-- **Development phases with file changes** → Execute development-process.md + naming-conventions.md self-checks
-- **Multi-phase development with commits** → Execute ALL THREE self-checks
-
-### **Rules Conflict Resolution Hierarchy**
-When rules conflict across domains:
-1. 🔴 **development-process.md** = HIGHEST (Process control and workflow)
-2. 🟡 **commit-rules.md** = MEDIUM (Version control standards)  
-3. 🟢 **naming-conventions.md** = STANDARD (Code organization standards)
-4. 📋 **CLAUDE.md** = CONTEXT (Project guidance and integration)
-
-## 🚨 MANDATORY: Rule Files Priority
-
-**CRITICAL**: The Master Self-Check Protocol above determines which rule files to read based on task context. These rules take precedence over any conflicting information in this file.
-
-### Required Reading Order (Context-Driven):
-
-1. `docs/rules/development-process.md` - MANDATORY for all development tasks (defines staged delivery process)
-2. `docs/rules/commit-rules.md` - MANDATORY before any git commit operations
-3. `docs/rules/naming-conventions.md` - MANDATORY before creating/modifying files
-
-**Failure to execute the Master Self-Check Protocol may result in incorrect implementation and violation of project standards.**
+Rules in `.claude/rules/` take precedence over guidance in this file. Apply rules based on task context:
+- Development work: `development-process.md` + `phase-workflow.md`
+- Git commits: `commit-rules.md`
+- File creation: `naming-conventions.md`
 
 ## Language Preference
 
@@ -106,7 +73,7 @@ When rules conflict across domains:
 
 ### **Exception: Core Rule Files Only**
 
-- Files in `docs/rules/` directory use English for precise technical specification understanding
+- Files in `.claude/rules/` directory use English for precise technical specification understanding
 - These are low-level execution principle files that Claude must interpret accurately
 - This exception applies ONLY to core rule files, not to development documents or user communication
 
@@ -192,12 +159,7 @@ src/
 
 ## File Naming Conventions
 
-Follow these strict naming rules:
-
-- **React Components**: PascalCase (`BannerForm.tsx`, `ImageCard.tsx`)
-- **Test Files**: kebab-case (`banner-form.test.tsx`, `use-banner.test.ts`)
-- **Hooks**: camelCase starting with `use` (`useBanner.ts`, `useAuth.ts`)
-- **Utilities/Constants**: kebab-case (`format-date.ts`, `api-client.ts`)
+Follow naming conventions as detailed in `.claude/rules/naming-conventions.md`
 
 ## Development Guidelines
 
@@ -254,20 +216,3 @@ Follow these strict naming rules:
 - Use descriptive titles and comprehensive descriptions
 - Follow conventional commit message format
 
-## 🤖 CLAUDE EXECUTION VALIDATION
-**Self-verification before responding to user:**
-
-### **Master Protocol Execution Check**
-Before providing ANY response:
-1. Did I execute Level 0: Context Bootstrap? [Y/N]
-2. Did I execute Level 1: Rules Integration? [Y/N]  
-3. Did I execute Level 2: Response Quality Gate? [Y/N]
-4. Can I explicitly state which rules domains apply? [Y/N]
-
-**If ANY answer is "No" → STOP and execute Master Self-Check Protocol first**
-
-### **Response Quality Validation**
-- [ ] My response addresses the user's specific request
-- [ ] I have verified facts and made assumptions explicit
-- [ ] I have identified what documentation needs updating (if any)
-- [ ] I have provided clear, actionable next steps
