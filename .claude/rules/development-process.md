@@ -33,13 +33,20 @@ When performing git context check, you MUST:
 ## 🤖 Claude Self-Check Protocol
 
 ### **Before ANY Response Containing Development Plans**
-Ask yourself:
-1. Did I check git status? [Yes/No]
-2. Did I analyze commit history? [Yes/No] 
-3. Did I verify documentation progress? [Yes/No]
-4. Can I state the exact current development phase? [Yes/No]
+Claude MUST execute and explicitly confirm:
+1. ✅ **Git Status Verification**: "I have checked git status and current branch" [Yes/No]
+2. ✅ **Commit History Analysis**: "I have analyzed recent commit history for Phase progress" [Yes/No] 
+3. ✅ **Documentation Progress Check**: "I have verified task documentation progress markers" [Yes/No]
+4. ✅ **Current Phase Identification**: "I can state the exact current development phase" [Yes/No]
+5. ✅ **Context Synchronization**: "Git state matches documentation progress" [Yes/No]
 
-**If ANY answer is "No" → STOP and execute git context check first**
+**ENFORCEMENT**: If ANY answer is "No" → Claude MUST immediately STOP and execute git context check first.
+
+### **During Development Execution**
+At each significant step, Claude MUST verify:
+1. ✅ **Process Adherence**: "I am following staged delivery principles" [Yes/No]
+2. ✅ **Quality Standards**: "I am applying required quality checks" [Yes/No]
+3. ✅ **Documentation Sync**: "I am updating progress markers as I complete work" [Yes/No]
 
 ## 🚨 Core Principles
 
