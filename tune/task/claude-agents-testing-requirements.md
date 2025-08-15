@@ -37,7 +37,7 @@
 **Phase 1: 組件核心實現**
 - [x] **Phase 1.1**: 分析專案 UI 架構並設計 TypeScript 介面 - Completed on 2025-08-15
 - [x] **Phase 1.2**: 實現 SimpleButton 組件基礎結構與樣式系統 - Completed on 2025-08-15  
-- **Phase 1.3**: 實現尺寸變體 (sm/md/lg) 與樣式變體 (primary/secondary)
+- [x] **Phase 1.3**: 實現尺寸變體 (sm/md/lg) 與樣式變體 (primary/secondary) - Completed on 2025-08-15
 
 **Phase 2: 測試與品質保證**
 - **Phase 2.1**: 建立測試檔案並驗證功能
