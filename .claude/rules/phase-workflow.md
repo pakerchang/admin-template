@@ -35,6 +35,18 @@ This document defines the Phase-based development methodology for structured pro
 
 ### **3. Phase Review & Commit**
 - **Mandatory Review Stop**: Each phase must end with review checkpoint
+
+#### Self-Check Protocol (MANDATORY at each Phase completion)
+Claude MUST execute and explicitly confirm:
+1. ✅ **Phase Completion Verification**: "I have completed all Phase X.Y objectives" [Yes/No]
+2. ✅ **Documentation Update**: "I have updated task documentation with [x] progress markers and timestamp" [Yes/No]
+3. ✅ **Quality Validation**: "I have executed required quality checks (lint/test/build if applicable)" [Yes/No]
+4. ✅ **Git Commit Creation**: "I have created a Phase X.Y commit with proper message format" [Yes/No]
+5. ✅ **User Approval Wait**: "I am now waiting for explicit user approval before proceeding" [Yes/No]
+
+**ENFORCEMENT**: If ANY answer is "No", Claude MUST immediately stop and address the missing requirement.
+
+#### Implementation Steps
 - Execute quality checks using pnpm commands (lint, test, build)
 - Create phase commit with proper message format per commit-rules.md
 - Update task documentation to reflect completion with timestamp
