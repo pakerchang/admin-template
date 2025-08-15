@@ -32,7 +32,7 @@ export const useCreateProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: Omit<TProduct, "product_id">) => {
+    mutationFn: async (_data: Omit<TProduct, "product_id">) => {
       const token = await getToken();
       if (!token) {
         toast({
@@ -200,7 +200,7 @@ export const useGetProductList = (query: Partial<TProductQuery>) => {
         });
         return undefined;
       }
-      return response.body;
+      return response.body.data;
     },
     gcTime: 1000 * 60 * 5,
     staleTime: 1000 * 60 * 2,
