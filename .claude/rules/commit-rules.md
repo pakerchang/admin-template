@@ -138,14 +138,29 @@ chore(deps): #26 upgrade react router to v6.8
 refactor(auth): #26 simplify user permission checks
 ```
 
-## 🎯 Commit Decision Self-Check
-**Triggered by CLAUDE.md Master Protocol**
+## 🎯 Git Commit Self-Check Protocol
+**MANDATORY: Execute before creating ANY commit**
 
-### **Commit Context Analysis** (20 seconds)
-- [ ] **Issue Identification**: What issue number applies? [Verify from branch/context]
-- [ ] **Change Classification**: What type of change is this? [feat/fix/chore/refactor/docs/test]
-- [ ] **Scope Assessment**: Does this need a scope? [Component/domain affected]
-- [ ] **Phase Identification**: Is this staged development? [Include Phase X.Y if applicable]
+### **Pre-Commit Verification**
+Claude MUST execute and explicitly confirm:
+1. ✅ **Issue Number Verification**: "I have identified the correct issue number from branch/context" [Yes/No]
+2. ✅ **Change Type Classification**: "I have classified the change type correctly (feat/fix/chore/refactor/docs/test)" [Yes/No]
+3. ✅ **Scope Assessment**: "I have determined if scope is needed and identified it correctly" [Yes/No]
+4. ✅ **Phase Information**: "I have included Phase X.Y information if this is staged development" [Yes/No]
+5. ✅ **Message Format**: "My commit message follows the exact conventional format specification" [Yes/No]
+6. ✅ **Staged Changes**: "My staged changes match the commit description accurately" [Yes/No]
+
+**ENFORCEMENT**: If ANY answer is "No" → Claude MUST immediately STOP and correct the issue before committing.
+
+### **Commit Message Construction Verification**
+Before executing git commit, verify the message structure:
+```
+✅ Format: <type>[optional scope]: #<issue-number> [Phase X.Y -] <description>
+✅ Type: Valid conventional commit type
+✅ Issue: Correct issue number with #
+✅ Phase: Included if staged development
+✅ Description: Imperative mood, lowercase start, no period
+```
 
 ### **Commit Standards Validation** (30 seconds)
 - [ ] **Format Compliance**: Does format follow specification? [type: #issue Phase X.Y - description]
