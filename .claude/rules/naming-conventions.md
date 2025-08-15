@@ -177,14 +177,19 @@ src/utils/                      # General utility functions
 └── array-helpers.ts            # Array operations
 ```
 
-## 🎯 Naming Decision Self-Check
-**Triggered by CLAUDE.md Master Protocol**
+## 🎯 File Naming Self-Check Protocol
+**MANDATORY: Execute before creating ANY new file**
 
-### **File Context Analysis** (20 seconds)
-- [ ] **Purpose Identification**: What does this file do? [Component/Hook/Utility/Test/Config]
-- [ ] **Feature Attribution**: Which business functionality does it belong to? [Specific feature/Cross-feature/General]
-- [ ] **Organization Strategy**: Where should it be placed? [Feature-specific/Shared/General]
-- [ ] **Clustering Assessment**: Will this create naming conflicts? [Check similar files in target directory]
+### **Pre-Creation Verification**
+Claude MUST execute and explicitly confirm:
+1. ✅ **Purpose Classification**: "I have identified the file type and purpose correctly" [Yes/No]
+2. ✅ **Feature Attribution**: "I have determined the business functionality this belongs to" [Yes/No]
+3. ✅ **Location Strategy**: "I have chosen the appropriate directory following feature-based organization" [Yes/No]
+4. ✅ **Naming Convention**: "I have applied the correct naming convention for this file type" [Yes/No]
+5. ✅ **Conflict Prevention**: "I have checked for naming conflicts in the target directory" [Yes/No]
+6. ✅ **Pattern Consistency**: "This follows established project patterns and structure" [Yes/No]
+
+**ENFORCEMENT**: If ANY answer is "No" → Claude MUST immediately STOP and correct the issue before file creation.
 
 ### **Naming Standards Application** (30 seconds)
 - [ ] **Type Classification**: What naming convention applies? [PascalCase/kebab-case/camelCase]
