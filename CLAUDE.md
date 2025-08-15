@@ -42,6 +42,12 @@ All files in the `globs` array should be treated as essential project knowledge 
 
 ## Rules Integration Protocol
 
+### Self-Check Enforcement
+- **Mandatory Checkpoint**: Claude MUST execute self-check protocol at critical decision points
+- **Rule Compliance Verification**: Actively verify adherence to applicable rules before proceeding
+- **Agent Mode Strict Adherence**: When invoked via @agent-[type], operate strictly within that agent's scope
+- **Phase-Based Execution**: Follow phase-workflow.md mandatory review stops
+
 ### Task-Based Rule Application
 - **Development Tasks**: Apply `.claude/rules/development-process.md` and `.claude/rules/phase-workflow.md`
 - **Git Operations**: Apply `.claude/rules/commit-rules.md`
@@ -82,11 +88,11 @@ Rules in `.claude/rules/` take precedence over guidance in this file. Apply rule
 ### Core Commands
 
 - `pnpm install` - Install dependencies
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production (includes TypeScript compilation)
-- `pnpm lint` - Run ESLint with auto-fix
-- `pnpm test` - Run tests with Vitest
-- `pnpm test:coverage` - Run tests with coverage report
+- `pnpm run dev` - Start development server
+- `pnpm run build` - Build for production (includes TypeScript compilation)
+- `pnpm run lint` - Run ESLint with auto-fix
+- `pnpm run test` - Run tests with Vitest
+- `pnpm run test:coverage` - Run tests with coverage report
 
 ### Environment Setup
 
