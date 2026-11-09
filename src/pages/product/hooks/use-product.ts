@@ -272,14 +272,15 @@ export const useProductSchema = (mode: "create" | "edit" = "create") => {
         th: z.string().optional(),
       });
 
+    // Inputs register with valueAsNumber; <number> keeps the Zod 3 input type (Zod 4 defaults to unknown).
     const baseValidation = {
-      product_price: z.coerce.number().min(1, {
+      product_price: z.coerce.number<number>().min(1, {
         message: getMessage.getMinNumberMessage(
           "pages.product.productCreate.price",
           0
         ),
       }),
-      product_size: z.coerce.number().min(1, {
+      product_size: z.coerce.number<number>().min(1, {
         message: getMessage.getMinNumberMessage(
           "pages.product.productCreate.productSize",
           0
@@ -361,9 +362,17 @@ export const useProductSchema = (mode: "create" | "edit" = "create") => {
       }),
     };
 
+    // Zod 4's .extend() turns a union shape into a union of objects; merge per key as Zod 3 did.
+    type ModeValidation = {
+      [K in keyof typeof createModeValidation]:
+        (typeof createModeValidation)[K] | (typeof editModeValidation)[K];
+    };
+    const modeValidation: ModeValidation =
+      mode === "create" ? createModeValidation : editModeValidation;
+
     const productFormSchema = productSchema
       .omit({ product_id: true, created_at: true, updated_at: true })
-      .extend(mode === "create" ? createModeValidation : editModeValidation);
+      .extend(modeValidation);
 
     return productFormSchema;
   }, [mode, getMessage]);

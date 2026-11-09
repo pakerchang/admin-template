@@ -57,7 +57,7 @@ describe("Banner Form Validation", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe(
+        expect(result.error.issues[0].message).toBe(
           "pages.banner.bannerCreate.title為必填欄位"
         );
       }
@@ -96,7 +96,7 @@ describe("Banner Form Validation", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe(
+        expect(result.error.issues[0].message).toBe(
           "pages.banner.bannerCreate.redirectUrl為必填欄位"
         );
       }
@@ -114,7 +114,7 @@ describe("Banner Form Validation", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe("請輸入有效的網址");
+        expect(result.error.issues[0].message).toBe("請輸入有效的網址");
       }
     });
 
@@ -130,7 +130,7 @@ describe("Banner Form Validation", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe("網址必須以 https:// 開頭");
+        expect(result.error.issues[0].message).toBe("網址必須以 https:// 開頭");
       }
     });
 
@@ -167,7 +167,7 @@ describe("Banner Form Validation", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe(
+        expect(result.error.issues[0].message).toBe(
           "pages.banner.bannerCreate.desktopImage為必填欄位"
         );
       }
@@ -185,7 +185,7 @@ describe("Banner Form Validation", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toBe(
+        expect(result.error.issues[0].message).toBe(
           "pages.banner.bannerCreate.mobileImage為必填欄位"
         );
       }

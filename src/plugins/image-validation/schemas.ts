@@ -22,10 +22,14 @@ export const FilenameRuleSchema = z.object({
   message: z.string(),
 });
 
-export const I18nFunctionSchema = z
-  .function()
-  .args(z.string(), z.record(z.string(), z.unknown()).optional())
-  .returns(z.string());
+// Function fields are never parsed, only inferred; z.custom keeps the Zod 3 signatures.
+type I18nFunction = (
+  key: string,
+  options: Record<string, unknown> | undefined,
+  ...rest: unknown[]
+) => string;
+
+export const I18nFunctionSchema = z.custom<I18nFunction>();
 
 export const ValidationContextSchema = z.object({
   imageType: ImageTypeSchema.optional(),
@@ -42,14 +46,15 @@ export const ValidationContextSchema = z.object({
 export const ValidationRuleSchema = z.object({
   name: z.string(),
   priority: z.number().default(10),
-  validate: z
-    .function()
-    .args(
-      z.instanceof(File),
-      ImageMetadataSchema.optional(),
-      ValidationContextSchema.optional()
-    )
-    .returns(z.promise(ValidationResultSchema)),
+  validate:
+    z.custom<
+      (
+        file: File,
+        metadata: z.infer<typeof ImageMetadataSchema> | undefined,
+        context: z.infer<typeof ValidationContextSchema> | undefined,
+        ...rest: unknown[]
+      ) => Promise<z.infer<typeof ValidationResultSchema>>
+    >(),
 });
 
 export const ValidationOptionsSchema = z.object({

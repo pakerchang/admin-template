@@ -17,7 +17,7 @@ export enum EShipped {
   EXPRESS = "express",
 }
 
-export const orderStatusSchema = z.nativeEnum(EOrderStatus);
+export const orderStatusSchema = z.enum(EOrderStatus);
 
 export const contactInfoSchema = z.object({
   address: z.string(),
