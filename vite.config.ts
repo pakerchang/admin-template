@@ -56,9 +56,7 @@ export default defineConfig({
           ) {
             return "form-vendor";
           }
-          if (
-            ["dayjs", "ramda", "immer"].some((v) => id.includes(v))
-          ) {
+          if (["dayjs", "ramda", "immer"].some((v) => id.includes(v))) {
             return "utils-vendor";
           }
         },

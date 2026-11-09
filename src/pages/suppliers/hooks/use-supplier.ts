@@ -60,9 +60,8 @@ export const useGetSupplierAll = () => {
   return useQuery({
     queryKey: ["suppliers", "all"],
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TSupplier[]>>(
-        "/admin/supplier"
-      );
+      const response =
+        await apiFetch<TGetResponseContent<TSupplier[]>>("/admin/supplier");
 
       if (response.status !== 200) {
         toast({

@@ -81,17 +81,8 @@ export default tseslint.config(
     },
     rules: {
       semi: ["error", "always"],
-      "prettier/prettier": [
-        "error",
-        {
-          endOfLine: "auto",
-          trailingComma: "es5",
-          semi: true,
-          tabWidth: 2,
-          singleQuote: false,
-          overrides: [{ files: "*.d.ts", options: { parser: "typescript" } }],
-        },
-      ],
+      // options live in .prettierrc (eslint-plugin-prettier 5 usePrettierrc)
+      "prettier/prettier": "error",
       "@typescript-eslint/no-unused-vars": ["warn", { varsIgnorePattern: "^_" }],
       "@typescript-eslint/no-empty-object-type": "warn",
       "tailwindcss/no-custom-classname": ["off"],
