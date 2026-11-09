@@ -73,7 +73,7 @@ spec 只定義「搬遷既有程式碼」的落點，沒有針對過渡期「新
 
 6. **nav**（§4.1、§6.3）
    - `TNavItem.permission` 必填；`label` 是 i18n key，必須以 `${moduleId}.` 開頭；`to` 為絕對路徑；`order` 預設 100。
-   - permission 的 resource 必須在某 module 的 `permissions.resources` 宣告過（§4.3 驗證 1.4）。
+   - permission 必須是某個已安裝 module `permissions.resources` 裡**完整的** `resource:action`；resource 存在但 action 不在陣列（例 `orders:typo`）也會讓 `build()` throw（§4.3 驗證 1.4）。
 
 7. **i18n：裸字典**（§4.3 步驟 4、§5.4）
    - `locales/*.json` 頂層**不含** module id（`{ "list": { "title": "訂單" } }`）；kernel 會自動 scope 成 `<id>.list.title`。頂層 key 等於 `id` → `build()` throw（§4.3 驗證 1.3）。
