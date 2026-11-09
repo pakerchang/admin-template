@@ -40,9 +40,9 @@
 ### commit 照樣跳權限確認框（git-write 放行 hook 沒生效）
 
 - **症狀**：feature branch 上 `cc-git-write.sh commit` 仍跳確認框。
-- **真因**：hook 只放行單一簡單指令；commit message 用 heredoc / `$(…)`、或 `cd x && …` 串接，整串含 `$ < & ;` 即回退確認（刻意 fail-safe）。worktree 未 rebase 到含此 hook 的 master 時也不會載入。
-- **禁令**：commit message 用多個 `-m '…'`（括號、冒號可用）或 `-F <file>`；禁止為了放行而改 hook 放寬字元檢查。
-- **來源**：`.claude/hooks/git-write-project-allow.sh`（D3）；`docs/specs/project-git-write-allow.spec.md`。
+- **真因**：hook 是嚴格白名單，只放行固定形狀：`commit` ＋ `-m '<msg>'`（單引號，訊息內不得含 `'` `\` 換行）或 `-F <path>`；`push [-u] origin <當前 branch>`；`rebase origin/master|--continue|--abort|--skip`。其餘（未加引號或雙引號的訊息、heredoc / `$(…)`、`cd x && …` 串接、`push` 不帶參數、`HEAD`、`--force-with-lease`、session 環境有 `GIT_DIR` 等 `GIT_*`）一律回退確認（刻意 fail-safe）。worktree 未 rebase 到含此 hook 的 master 時也不會載入。
+- **禁令**：commit message 一律寫成 `-m '…'`（可多個；括號、冒號、`$` 都可以放在單引號內）或 `-F <file>`；push 寫明 `origin <branch>`；禁止為了放行而改 hook 放寬白名單。
+- **來源**：`.claude/hooks/git-write-project-allow.sh`（D3、D5–D7）；`docs/specs/project-git-write-allow.spec.md`。
 
 ## B. spec / PoC 預警，待對應 milestone 驗證
 

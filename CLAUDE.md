@@ -72,4 +72,4 @@ src/
 
 - 主幹 `master`；工作走 feature branch → PR 到 master
 - `docs/task/` 為歷史任務文件，新任務走全域 task-format
-- `.claude/settings.json` 接線 PermissionRequest hook `.claude/hooks/git-write-project-allow.sh`：本 repo（含 worktree）非受保護 branch 上的 `cc-git-write.sh commit|push|rebase` 自動放行；`pr-create`、其他 verb、push 到 master、含 `;&|$`/heredoc 的指令照常確認（spec：`docs/specs/project-git-write-allow.spec.md`）
+- `.claude/settings.json` 接線 PermissionRequest hook `.claude/hooks/git-write-project-allow.sh`：本 repo（含 worktree）非受保護 branch 上，只有嚴格白名單形狀自動放行：`commit -m '<msg>'`（單引號）/ `-F <path>`、`push [-u] origin <當前 branch>`、`rebase origin/master|--continue|--abort|--skip`；其他形狀、`pr-create`、其他 verb 照常確認（spec：`docs/specs/project-git-write-allow.spec.md`）
