@@ -19,7 +19,7 @@ React admin dashboard（純 UI showcase，無真後端）。回覆一律繁體�
 - API：原生 fetch 包裝 `apiFetch`（`src/services/api-client.ts`）→ 交給 `mockFetch`（`src/services/mock/handlers.ts`，以 `METHOD path` 查 handler），資料在 `src/services/mock/data.ts`，寫入只改記憶體、重新整理即重置；接真後端時把 `mockFetch` 換回 `fetch`
 - Domain 型別：Zod schema 在 `src/services/schemas/`，共用 primitive 在 `src/services/types/schema.ts`
 - 認證：`/login`（`AuthLayout`）打 mock `POST /api/auth/login`，session 存 localStorage（`getAuth` / `setAuth` / `clearAuth` 在 `api-client.ts`）；路由以 `beforeLoad` 守衛。Demo 帳號 `admin@example.com / admin123`（superadmin）
-- 權限：`useUserPermissions()`（`src/pages/users/hooks/use-user.ts`，role 讀自 `getAuth()`）的語意方法（如 `canManageUsers`），不直接比 role
+- 權限（M4 起）：登入回傳 `session.grants`（mock 由 `app/mock/permission-matrix.ts` + module `permissions.mockGrants` 展開），前端只認 grants、不讀 role。四強制點：route `staticData.permission`（無權限 → 內容區 `shell.Forbidden`，URL 不變）、nav `useVisibleNav()`、操作 `DataTable rowActions` / `EditActions {handler, permission}` / `FormSubmit`、mock API guard（`src/shared/api/mock/permission-guard.ts`，依 `src/app/operations.gen.ts`，M7 前手寫）。新增 API 必須同步在 `operations.gen.ts` 宣告 operationId + permission，否則 `build()` throw
 - UI：Tailwind + Radix，shadcn 元件在 `src/components/ui/`
 - i18n：react-i18next，`src/locales/` 的語系字典為 `en.json`、`zh.json`，另有 `i18n.ts`（i18next 初始化）、`types.ts`
 - 測試：Vitest + Testing Library，jsdom，setup 在 `src/test/setup.ts`
@@ -46,7 +46,7 @@ src/
 | M1 | kernel 契約 + 權限引擎（純新增、未接線） | 完成（#8） |
 | M2 | MSW 取代 `mockFetch`（行為不變） | 完成（本 PR） |
 | M3 | module 接線 + default shell（行為不變） | 完成（待 PR） |
-| M4 | 權限四強制點 + 內容區 403 | 未開始 |
+| M4 | 權限四強制點 + 內容區 403 | 完成（待併入） |
 | M5 | kernel / shared 搬遷 + boundaries lint | 未開始 |
 | M6 | module 內嵌搬遷（pages / schemas / seed / i18n） | 未開始 |
 | M7 | orval 契約層（單一 `openapi.yaml`） | 未開始 |
@@ -56,7 +56,7 @@ src/
 
 - 某 milestone 落地前，新程式碼**照上面的現況結構寫**；落地後，該 milestone 涵蓋的部分依 spec 放置（各 milestone 範圍見 §9）。milestone 完成時更新上表狀態。
 - 依賴方向（§3.1，M5 起 lint 強制）：`shared` 不 import `app` / `shells` / `modules`；跨 module 只 import `@/modules/<id>`（`index.ts`），且對方須列在 `requires`（§5.3）；module 內 `ui → model → api`，`ui` 不直接 import `api`。lint 設定以 §7.2 草案為起點，但設定 key 用 `rules` 還是 `policies`、element 比對順序，待 M5 AC-1 實測（spec L811），不要照草案定案。
-- 權限：禁止在元件內散寫權限條件渲染（`canX && <Button/>`、比對 role）。M4 前允許沿用 `useUserPermissions()` 的語意方法（如 `canManageUsers`），禁止新增直接比對 role 的寫法（owner 2026-11-09 裁決）；M4 起統一換成宣告式 `rowActions` / `FormSubmit` / `<Guarded>`（§6.4）。
+- 權限：禁止在元件內散寫權限條件渲染（`canX && <Button/>`、比對 role）。M4 起統一用宣告式 `rowActions` / `EditActions` / `FormSubmit`（§6.4）；`useUserPermissions()` 已刪除。
 - M8 驗收完成前凍結新增 module：不新增第 11 個 module（owner 2026-11-09 裁決；M3 AC-1、M6 AC-3、M7 AC-3 的「恰好 10 個」不改，見 `docs/TRAPS.md`）。
 - 每棒 done 基線：`pnpm build && pnpm exec vitest run` exit 0（§9）。
 
