@@ -101,19 +101,124 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
       expect(res.body.error).toBe("No mock handler for GET /admin/nope");
     });
 
-    it("superadmin: every non-GET operation passes the guard and reaches its handler (AC-6 API side)", async () => {
-      await signIn(DEMO_ACCOUNT.email);
-      const writes = operations.routes.filter((r) => r.method !== "GET");
-      expect(writes.length).toBeGreaterThan(0);
-      for (const { method, path } of writes) {
-        const res = await apiFetch<{ error?: string } | null>(path, {
-          method: method as "POST" | "PUT" | "DELETE",
-          body: {},
+    describe("superadmin: every non-GET operation succeeds (AC-6 API side, W2)", () => {
+      const created = { message: "created" };
+      const updated = { message: "updated" };
+      const deleted = { message: "deleted" };
+      const image = {
+        file_name: "w2.png",
+        file_value: "data:image/png;base64,AA==",
+      };
+      /** `METHOD path` → [有效 payload（存在的 id）, 預期 body]；全部預期 200 */
+      const CASES: Record<string, [Record<string, unknown>, object]> = {
+        "POST /api/auth/login": [
+          { email: DEMO_ACCOUNT.email, password: DEMO_ACCOUNT.password },
+          { user: { role: "superadmin" }, grants: ["*"] },
+        ],
+        "PUT /user/me/profile": [
+          { first_name: "Alicia" },
+          { code: 200, data: { user_id: "user-1", first_name: "Alicia" } },
+        ],
+        "POST /admin/user/role": [
+          { target_user_id: "user-8", role: "user" },
+          { code: 200, data: { role: "user" } },
+        ],
+        "POST /admin/products": [{ product_name: "W2 product" }, created],
+        "POST /admin/products/update": [
+          { product_id: "product-1", product_name: "W2 renamed" },
+          updated,
+        ],
+        "DELETE /admin/products": [{ product_id: "product-2" }, deleted],
+        "POST /admin/images": [
+          image,
+          { file_name: image.file_name, file_url: image.file_value },
+        ],
+        "DELETE /admin/images": [{ file_name: image.file_name }, deleted],
+        "POST /admin/order": [
+          { order_id: "order-1001", order_status: "completed" },
+          updated,
+        ],
+        "POST /admin/order/update": [
+          { order_id: "order-1002", order_status: "completed" },
+          updated,
+        ],
+        "POST /admin/banners": [{ title: "W2 banner" }, created],
+        "PUT /admin/banners": [{ banner_id: "banner-1", title: "W2" }, updated],
+        "DELETE /admin/banners": [{ banner_id: "banner-2" }, deleted],
+        "POST /admin/supplier": [{ supplier_name: "W2 supplier" }, created],
+        "PUT /admin/supplier": [
+          { supplier_id: "supplier-1", supplier_name: "W2" },
+          updated,
+        ],
+        "DELETE /admin/supplier": [{ supplier_id: "supplier-2" }, deleted],
+        "POST /admin/tag": [{ tag_name: "W2 tag" }, created],
+        "PUT /admin/tag": [{ tag_id: "tag-1", tag_name: "W2" }, updated],
+        "DELETE /admin/tag": [{ tag_id: "tag-2" }, deleted],
+        "POST /admin/staff": [
+          { first_name: "W2", email: "w2@example.com", password: "secret" },
+          created,
+        ],
+        "PUT /admin/staff": [
+          { staff_id: "staff-1", first_name: "W2" },
+          updated,
+        ],
+        "DELETE /admin/staff": [{ staff_id: "staff-2" }, deleted],
+        "POST /admin/articles": [{ title: "W2 article" }, created],
+        "PUT /admin/articles": [
+          { article_id: "article-1", title: "W2" },
+          updated,
+        ],
+        "DELETE /admin/articles": [{ article_id: "article-2" }, deleted],
+      };
+      const writes = operations.routes
+        .filter((r) => r.method !== "GET")
+        .map((r) => `${r.method} ${r.path}`);
+
+      beforeEach(() => signIn(DEMO_ACCOUNT.email));
+
+      it("the case table covers exactly the non-GET operations", () => {
+        expect(Object.keys(CASES).sort()).toEqual([...writes].sort());
+      });
+
+      it.each(writes)(
+        "%s → 200 with the handler's success body",
+        async (key) => {
+          const [method, path] = key.split(" ");
+          const [body, expected] = CASES[key];
+          const res = await apiFetch(path, {
+            method: method as "POST" | "PUT" | "DELETE",
+            body,
+          });
+          expect([key, res.status]).toEqual([key, 200]);
+          expect(res.body).toMatchObject(expected);
+        }
+      );
+
+      it("tags round trip: create is listed, update changes the field, delete removes it", async () => {
+        type TList = { data: { tag_id: string; tag_name: string }[] };
+        const list = (query: object) =>
+          apiFetch<TList>("/admin/tag", { query }).then((r) => r.body.data);
+
+        await apiFetch("/admin/tag", {
+          method: "POST",
+          body: { tag_name: "w2-created" },
         });
-        // 403 = guard 擋；guard 的 404 body 是 "No mock handler…"；其餘都是 handler 自己的回應
-        expect([method, path, res.status]).not.toEqual([method, path, 403]);
-        expect(res.body?.error ?? "").not.toMatch(/^No mock handler/);
-      }
+        expect(await list({ search: "w2-created" })).toHaveLength(1);
+
+        expect((await list({ tag_id: "tag-3" }))[0].tag_name).not.toBe("w2-up");
+        await apiFetch("/admin/tag", {
+          method: "PUT",
+          body: { tag_id: "tag-3", tag_name: "w2-up" },
+        });
+        expect((await list({ tag_id: "tag-3" }))[0].tag_name).toBe("w2-up");
+
+        expect(await list({ tag_id: "tag-4" })).toHaveLength(1);
+        await apiFetch("/admin/tag", {
+          method: "DELETE",
+          body: { tag_id: "tag-4" },
+        });
+        expect(await list({ tag_id: "tag-4" })).toEqual([]);
+      });
     });
 
     /** 直接把 Authorization header 設成指定值，不經 setAuth 的 Bearer 包裝 */
