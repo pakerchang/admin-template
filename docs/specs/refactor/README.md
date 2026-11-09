@@ -10,7 +10,7 @@
 
 | 檔名 | 主題 | 狀態 | 證據 |
 |---|---|---|---|
-| `fsd-module-architecture.m3-revision.spec.md` | Microkernel + Modular Monolith 目標架構（M0–M8），含 M3 W1 獲准修訂的最新版 | M0–M2 完成；M3 待併入；M4–M8 未開始 | 見下方 milestone 表 |
+| `fsd-module-architecture.m3-revision.spec.md` | Microkernel + Modular Monolith 目標架構（M0–M8），含 M3 W1 獲准修訂的最新版 | M0–M3 完成（M3 已併入 `refactor/integration`）；M4–M8 未開始 | 見下方 milestone 表 |
 
 > master 上的 `docs/specs/fsd-module-architecture.spec.md`（#6 合入）為修訂前版本，不在本目錄更動；本目錄版本取自 `feat/m3-module-wiring:docs/specs/fsd-module-architecture.spec.md`。
 
@@ -20,7 +20,7 @@
 | M1 Kernel 契約與權限引擎 | 完成 | PR #8 |
 | M2 MSW 取代 mockFetch | 完成 | PR #9 |
 | router pathless hotfix | 完成 | PR #10；spec 在 master `docs/specs/router-pathless-hotfix.spec.md` |
-| M3 Module 接線 + default shell | codex review PASS，待併入本地整合分支 `refactor/integration`（AC-1～4、6、7 已勾；AC-5 manual 待 owner） | `feat/m3-module-wiring` @ `03acca9`（Done Command exit 0、219 tests）；codex 259e4c3 FAIL → d685823 PASS-with-fixes → 03acca9 PASS（arch chain `reviews/arch-m3-fix2-codex-verdict.md`） |
+| M3 Module 接線 + default shell | 完成，已併入本地整合分支 `refactor/integration`（AC-1～4、6、7 已勾；AC-5 manual 待 owner） | integration tip `8458b19`（ff-only，基線 exit 0、23 files / 227 tests、LINT_OK）；`feat/m3-module-wiring` @ `8458b19` 已 push；codex 259e4c3 FAIL → d685823 PASS-with-fixes → 03acca9 PASS →（rebase）edfd74d PASS-with-fixes → 8458b19 PASS（arch chain `reviews/arch-m3-fix3-codex-verdict.md`）；中間 commit 509dc96..2aae3e6 不可單獨 build（bisect skip，main 已裁決接受） |
 | M4 權限四強制點 + 內容區 403 | 未開始 | — |
 | M5 Kernel / shared 搬遷 + 邊界 lint | 未開始 | — |
 | M6 Module 內嵌搬遷 | 未開始 | — |
