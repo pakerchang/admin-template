@@ -1,0 +1,17 @@
+openapi: 3.1.0
+info: { title: fixture, version: 0.0.0 }
+tags: [{ name: orders }, { name: auth }]
+security: [{ bearerAuth: [] }]
+paths:
+  /api/auth/login:
+    post:
+      { operationId: login, tags: [auth], x-permission: public, security: [] }
+  /admin/orders/{id}:
+    get: { operationId: getOrder, tags: [orders], x-permission: orders:read }
+    put:
+      {
+        operationId: updateOrder,
+        tags: [orders],
+        x-permission: orders:update,
+        security: [{ bearerAuth: [] }],
+      }

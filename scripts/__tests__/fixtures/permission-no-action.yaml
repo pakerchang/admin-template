@@ -1,0 +1,12 @@
+openapi: 3.1.0
+info: { title: fixture, version: 0.0.0 }
+tags: [{ name: orders }, { name: auth }]
+security: [{ bearerAuth: [] }]
+paths:
+  /admin/orders:
+    get:
+      {
+        operationId: listOrdersResourceOnly,
+        tags: [orders],
+        x-permission: orders,
+      }
