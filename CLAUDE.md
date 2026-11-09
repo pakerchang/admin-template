@@ -21,6 +21,7 @@ React admin dashboard（純 UI showcase，無真後端）。回覆一律繁體�
 - 認證：`/login`（`AuthLayout`）打 mock `POST /api/auth/login`，session 存 localStorage（`getAuth` / `setAuth` / `clearAuth` 在 `api-client.ts`）；路由以 `beforeLoad` 守衛。Demo 帳號 `admin@example.com / admin123`（superadmin）
 - 權限（M4 起）：登入回傳 `session.grants`（mock 由 `app/mock/permission-matrix.ts` + module `permissions.mockGrants` 展開），前端只認 grants、不讀 role。四強制點：route `staticData.permission`（無權限 → 內容區 `shell.Forbidden`，URL 不變）、nav `useVisibleNav()`、操作 `DataTable rowActions` / `EditActions {handler, permission}` / `FormSubmit`、mock API guard（`src/shared/api/mock/permission-guard.ts`，依 `src/app/operations.gen.ts`，M7 前手寫）。新增 API 必須同步在 `operations.gen.ts` 宣告 operationId + permission，否則 `build()` throw
 - M4 升級後，舊 session（localStorage 內沒有 `grants`）需要登出再重新登入一次；不做遷移
+- mock 已簽發 session 表（token → user_id）存 localStorage `mock-sessions`，重新整理後同一 token 仍有效；mock 的登出只清 client session，不撤銷已簽發 token（同一 mock runtime 內可重播；表已持久化，重新整理後亦同）；M7 換真 API 前不處理
 - UI：Tailwind + Radix，shadcn 元件在 `src/components/ui/`
 - i18n：react-i18next，`src/locales/` 的語系字典為 `en.json`、`zh.json`，另有 `i18n.ts`（i18next 初始化）、`types.ts`
 - 測試：Vitest + Testing Library，jsdom，setup 在 `src/test/setup.ts`

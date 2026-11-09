@@ -122,16 +122,47 @@ const staff = resource("staff", "staff_id");
 const articles = resource("articles", "article_id", { searchField: "title" });
 const users = resource("users", "user_id");
 
-// ponytail: 記憶體 session 表（token → user_id），重新整理頁面即失效、需重新登入；沒有 logout operation 所以不移除
-const sessions = new Map<string, unknown>();
+/**
+ * 已簽發 session 表（token → user_id）。存 localStorage（與 client session `auth` 同一 storage），
+ * 重新整理後 MSW 重啟仍認得同一 token；storage 不可用或內容不是 JSON 時退回本 runtime 的記憶體表。
+ * ponytail: 沒有 logout operation 所以不撤銷；能寫 localStorage 的同源 script 本來就讀得到 `auth` 的 token，格式驗證是這裡能做的上限
+ */
+const SESSIONS_KEY = "mock-sessions";
+const TOKEN_RE = /^[0-9a-f]{32}$/;
+let memorySessions = new Map<string, string>();
 
-/** login 簽發不可預測的 token（128 bit；getRandomValues 在非 secure context 也可用） */
-const issueToken = (userId: unknown) => {
+/** 讀回時逐條驗格式（32 位小寫 hex → string user_id），壞條目丟棄 */
+const readSessions = (): Map<string, string> => {
+  let raw: unknown;
+  try {
+    raw = JSON.parse(localStorage.getItem(SESSIONS_KEY) ?? "{}");
+  } catch {
+    return memorySessions;
+  }
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return new Map();
+  return new Map(
+    Object.entries(raw).filter(
+      (entry): entry is [string, string] =>
+        TOKEN_RE.test(entry[0]) && typeof entry[1] === "string"
+    )
+  );
+};
+
+/** login 簽發不可預測的 token（128 bit；getRandomValues 在非 secure context 也可用）；session 表唯一寫入點 */
+const issueToken = (userId: string) => {
   const bytes = crypto.getRandomValues(new Uint8Array(16));
   const token = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join(
     ""
   );
-  sessions.set(token, userId);
+  memorySessions = new Map(readSessions()).set(token, userId);
+  try {
+    localStorage.setItem(
+      SESSIONS_KEY,
+      JSON.stringify(Object.fromEntries(memorySessions))
+    );
+  } catch {
+    // storage 不可用：只留在記憶體
+  }
   return token;
 };
 
@@ -141,8 +172,9 @@ const issueToken = (userId: unknown) => {
  */
 export const mockUserOfAuthorization = (authorization?: string | null) => {
   const token = /^Bearer (\S+)$/.exec(authorization ?? "")?.[1];
-  if (!token || !sessions.has(token)) return undefined;
-  return db.users.find((user) => user.user_id === sessions.get(token));
+  const userId = token && readSessions().get(token);
+  if (!userId) return undefined;
+  return db.users.find((user) => user.user_id === userId);
 };
 
 /** profile 自助可改的欄位（= UserForm 欄位扣掉 user_id / email） */
@@ -162,7 +194,7 @@ export const handlers: Record<string, THandler> = {
     }
     return {
       body: {
-        token: issueToken(user.user_id),
+        token: issueToken(String(user.user_id)),
         user: {
           user_id: user.user_id,
           email: user.email,

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { makeApp } from "@/app/__tests__/fixture";
 import { mockHandlers } from "@/app/mock";
@@ -116,13 +116,73 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
       }
     });
 
-    describe("session token cannot be forged (C1)", () => {
-      /** 直接把 Authorization header 設成指定值，不經 setAuth 的 Bearer 包裝 */
-      const fetchWith = (authorization: string) =>
-        fetch(new URL("/admin/order", apiBaseUrl), {
-          headers: { Authorization: authorization },
-        });
+    /** 直接把 Authorization header 設成指定值，不經 setAuth 的 Bearer 包裝 */
+    const fetchWith = (authorization: string) =>
+      fetch(new URL("/admin/order", apiBaseUrl), {
+        headers: { Authorization: authorization },
+      });
 
+    describe("issued sessions survive a page reload (W1)", () => {
+      const KEY = "mock-sessions";
+      beforeEach(() => localStorage.removeItem(KEY));
+      afterEach(() => vi.unstubAllGlobals());
+
+      it("after the mock runtime restarts, the same token still reaches protected APIs", async () => {
+        const { token } = (await login(emailOf("support"))).body;
+        // 模擬重新整理：MSW 與 handlers 模組重新載入，記憶體 session 表清空，只剩 localStorage
+        vi.resetModules();
+        const fresh = await import("@/app/__tests__/fixture");
+        server.resetHandlers(...fresh.makeApp().build().registry.mockHandlers);
+        expect((await fetchWith(`Bearer ${token}`)).status).toBe(200);
+        expect((await fetchWith(`Bearer ${"0".repeat(32)}`)).status).toBe(403);
+      });
+
+      it("malformed or tampered storage entries are not accepted", async () => {
+        const planted = {
+          "not-hex-token": "user-1",
+          abcd: "user-1",
+          ["A".repeat(32)]: "user-1",
+          ["b".repeat(33)]: "user-1",
+          ["c".repeat(32)]: 1,
+          ["d".repeat(32)]: { user_id: "user-1" },
+        };
+        localStorage.setItem(KEY, JSON.stringify(planted));
+        for (const token of Object.keys(planted))
+          expect([token, (await fetchWith(`Bearer ${token}`)).status]).toEqual([
+            token,
+            403,
+          ]);
+
+        for (const raw of ["not json", "[]", "null", '"x"']) {
+          localStorage.setItem(KEY, raw);
+          expect((await fetchWith("Bearer not-hex-token")).status).toBe(403);
+        }
+        // 壞表不影響之後的 login：重新寫成合法表
+        const { token } = (await login(emailOf("support"))).body;
+        expect((await fetchWith(`Bearer ${token}`)).status).toBe(200);
+      });
+
+      it("without storage (node), issued tokens live in memory for this runtime", async () => {
+        vi.stubGlobal("localStorage", undefined);
+        vi.resetModules();
+        const fresh = await import("@/services/mock/handlers");
+        const res = fresh.handlers["POST /api/auth/login"]({
+          query: {},
+          body: { email: DEMO_ACCOUNT.email, password: DEMO_ACCOUNT.password },
+        });
+        const { token } = res.body as { token: string };
+        expect(fresh.mockUserOfAuthorization(`Bearer ${token}`)).toMatchObject({
+          role: "superadmin",
+        });
+        expect(fresh.mockUserOfAuthorization(`Bearer ${"0".repeat(32)}`)).toBe(
+          undefined
+        );
+        vi.unstubAllGlobals();
+        expect(localStorage.getItem(KEY)).toBeNull();
+      });
+    });
+
+    describe("session token cannot be forged (C1)", () => {
       it("a guessed legacy-format token without login → 403", async () => {
         for (const id of users.map((u) => u.user_id)) {
           expect((await fetchWith(`Bearer mock-token-${id}`)).status).toBe(403);
