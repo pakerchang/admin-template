@@ -24,6 +24,11 @@ export const assertMockApiBaseUrl = (
     throw new Error(
       `mock mode: VITE_API_BASE_URL "${apiBaseUrl}" must not share the app origin ${appOrigin}`
     );
+  // ftp: / ws: / wss: 的 href 也等於 origin + "/"，會通過下面的 bare-origin 檢查，之後 fetch 以 unknown scheme 失敗
+  if (url.protocol !== "http:" && url.protocol !== "https:")
+    throw new Error(
+      `mock mode: VITE_API_BASE_URL "${apiBaseUrl}" must use http or https`
+    );
   // guard 以正規化 origin 劃界（host 小寫、去預設 port）；帶 path / query / hash / 帳密的 base 會讓 client 的絕對路徑落出範圍
   if (url.href !== `${url.origin}/`)
     throw new Error(

@@ -23,6 +23,10 @@ describe("startMockWorker apiBaseUrl check (AC-7, R24)", () => {
       "http://mock-api.test/?x=1",
       /must be a bare origin/,
     ],
+    // 這些 scheme 的 href 也是 origin + "/"，bare-origin 檢查擋不住
+    ["ftp scheme", "ftp://mock-api.test", /must use http or https/],
+    ["ws scheme", "ws://mock-api.test", /must use http or https/],
+    ["wss scheme", "wss://mock-api.test", /must use http or https/],
   ])("throws when apiBaseUrl is %s", async (_, apiBaseUrl, message) => {
     const start = vi.fn();
     await expect(
