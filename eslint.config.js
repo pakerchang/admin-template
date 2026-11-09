@@ -22,8 +22,6 @@ const MODULE_ENTRY = {
 const SAME_MODULE = (type) => ({
   element: { type, captured: { module: "{{ from.element.captured.module }}" } },
 });
-// 尚未搬進 app/shared/shells/modules 的舊目錄（spec §9 M5「未搬的 legacy 路徑暫列 ignore」）；M6 逐條移除
-const LEGACY_PATHS = ["src/pages/**", "src/services/**", "src/components/**"];
 
 export default tseslint.config(
   {
@@ -183,7 +181,7 @@ export default tseslint.config(
         { type: "app", pattern: "src/app" },
         { type: "shared", pattern: "src/shared" },
       ],
-      "boundaries/ignore": ["src/test/**", "**/__tests__/**", ...LEGACY_PATHS],
+      "boundaries/ignore": ["src/test/**", "**/__tests__/**"],
     },
     rules: {
       "boundaries/no-unknown-files": "error",
@@ -230,9 +228,12 @@ export default tseslint.config(
               from: { element: { type: "module-model" } },
               allow: { to: SAME_MODULE("module-api") },
             },
+            // ponytail: M7 前沒有 api/ 產物，seed 的型別 / enum 取自本 module 的 model；M7 改指 api/model 後收回
             {
               from: { element: { type: "module-mocks" } },
-              allow: { to: SAME_MODULE("module-api") },
+              allow: {
+                to: [SAME_MODULE("module-api"), SAME_MODULE("module-model")],
+              },
             },
             // 所有 module 內部 → shared、他 module 的 index.ts（requires 由 build() 檢查）
             {
@@ -258,7 +259,27 @@ export default tseslint.config(
               message:
                 "跨 module 只能 import `@/modules/<id>`（index.ts）；同 module 內用相對路徑",
             },
+            {
+              group: ["**/use-user-permissions*"],
+              message: "改用宣告式 permission（spec §6.4）",
+            },
           ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/modules/**/*.{ts,tsx}", "src/shells/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "CallExpression[callee.name='createRoute']",
+          message: "module 只能用 ctx.layout / ctx.page 建 route（§4.1、§6.2）",
+        },
+        {
+          selector: "CallExpression[callee.name='useCan']",
+          message: "改用 DataTable rowActions / FormSubmit / <Guarded>（§6.4）",
         },
       ],
     },

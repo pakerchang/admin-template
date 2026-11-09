@@ -15,7 +15,7 @@ const byId = (userId: string) =>
 // users module 擁有帳號資料：guard 與 login 經 session store 查角色，讀到的是目前（可能被改過）的角色
 setMockRoleResolver((userId) => byId(userId)?.role as string | undefined);
 
-/** auth module 的 login 用（經 `@/modules/users` 公開）；回傳記憶體中的那筆帳號 */
+// auth module 的 login 用（經本 module 的 index.ts 公開），回傳記憶體中的那筆帳號
 export const findMockUserByEmail = (email: unknown) =>
   collection.all().find((user) => user.email === email);
 

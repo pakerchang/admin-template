@@ -1,10 +1,10 @@
 import { UserCog } from "lucide-react";
 
-import TeamMemberListPage from "@/pages/team-members/TeamMemberList";
 import { defineModule } from "@/shared/module";
 
 import { teamMembersMockHandlers } from "./mocks/handlers";
 import { teamMembersRoutes } from "./model/routes";
+import TeamMemberListPage from "./ui/TeamMemberList";
 
 export default defineModule({
   id: "team-members",

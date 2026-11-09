@@ -1,13 +1,13 @@
 import { Package } from "lucide-react";
 
-import ProductCreateFormPage from "@/pages/product/ProductCreateForm";
-import ProductDraftFormPage from "@/pages/product/ProductDraftForm";
-import ProductEditFormPage from "@/pages/product/ProductEditForm";
-import ProductListPage from "@/pages/product/ProductList";
 import { defineModule } from "@/shared/module";
 
 import { productMockHandlers } from "./mocks/handlers";
 import { productRoutes } from "./model/routes";
+import ProductCreateFormPage from "./ui/ProductCreateForm";
+import ProductDraftFormPage from "./ui/ProductDraftForm";
+import ProductEditFormPage from "./ui/ProductEditForm";
+import ProductListPage from "./ui/ProductList";
 
 export default defineModule({
   id: "product",

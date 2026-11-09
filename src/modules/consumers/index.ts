@@ -1,10 +1,10 @@
 import { Users } from "lucide-react";
 
-import CustomerListPage from "@/pages/consumers/CustomerList";
 import { defineModule } from "@/shared/module";
 
 import { consumersMockHandlers } from "./mocks/handlers";
 import { consumersRoutes } from "./model/routes";
+import CustomerListPage from "./ui/CustomerList";
 
 export default defineModule({
   id: "consumers",

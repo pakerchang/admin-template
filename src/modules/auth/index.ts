@@ -1,8 +1,8 @@
-import LoginPage from "@/components/layouts/LoginPage";
 import { defineModule } from "@/shared/module";
 
 import { authMockHandlers } from "./mocks/handlers";
 import { authRoutes } from "./model/routes";
+import LoginPage from "./ui/LoginPage";
 
 export default defineModule({
   id: "auth",

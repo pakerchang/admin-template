@@ -1,6 +1,6 @@
 import { iso, placeholderImage } from "@/shared/api/mock-db";
 
-import type { TArticle } from "@/services/schemas/article";
+import type { TArticle } from "../model/schema";
 
 /** R5：作者（staff_id / 名字）與標籤名稱是自帶快照，與 team-members / tags seed 的值一致 */
 const AUTHORS = ["Alice", "Bob", "Carol", "David", "Eve"];

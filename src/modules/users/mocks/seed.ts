@@ -1,6 +1,6 @@
 import { iso } from "@/shared/api/mock-db";
 
-import type { TUser } from "@/services/schemas/user";
+import type { TUser } from "../model/schema";
 
 /** 第一筆是 demo 帳號（auth module 的 DEMO_ACCOUNT.email） */
 export const users: TUser[] = [

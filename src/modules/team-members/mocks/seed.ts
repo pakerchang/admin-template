@@ -1,6 +1,6 @@
 import { iso } from "@/shared/api/mock-db";
 
-import type { TStaffUser } from "@/services/schemas/staff";
+import type { TStaffUser } from "../model/schema";
 
 /** R5：自帶 staff seed（人名 / email / 時間與 users seed 前 5 筆一致，不讀 users 的 collection） */
 export const staff: TStaffUser[] = [

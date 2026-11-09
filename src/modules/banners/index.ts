@@ -1,11 +1,11 @@
 import { Images } from "lucide-react";
 
-import BannerFormPage from "@/pages/banners/BannerForm";
-import BannerListPage from "@/pages/banners/BannerList";
 import { defineModule } from "@/shared/module";
 
 import { bannersMockHandlers } from "./mocks/handlers";
 import { bannersRoutes } from "./model/routes";
+import BannerFormPage from "./ui/BannerForm";
+import BannerListPage from "./ui/BannerList";
 
 export default defineModule({
   id: "banners",

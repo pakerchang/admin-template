@@ -10,7 +10,7 @@ import { apiBaseUrl, apiFetch } from "@/shared/api/fetcher";
 import { clearAuth, setAuth } from "@/shared/api/session";
 import { server } from "@/test/setup";
 
-import type { TUser } from "@/services/schemas/user";
+import type { TUser } from "@/modules/users/model/schema";
 import type { TAuthSession } from "@/shared/api/session";
 
 const login = (email: string) =>

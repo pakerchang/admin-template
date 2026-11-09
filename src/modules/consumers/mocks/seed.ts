@@ -1,9 +1,6 @@
 import { iso, placeholderImage } from "@/shared/api/mock-db";
 
-import type {
-  TCustomer,
-  TTransactionHistoryOrder,
-} from "@/services/schemas/customer";
+import type { TCustomer, TTransactionHistoryOrder } from "../model/schema";
 
 /**
  * R5：自帶 customer 與 transaction seed（值與 users / orders seed 一致，不讀它們的 collection）。

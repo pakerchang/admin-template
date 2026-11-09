@@ -1,6 +1,6 @@
 import { iso } from "@/shared/api/mock-db";
 
-import type { TSupplier } from "@/services/schemas/supplier";
+import type { TSupplier } from "../model/schema";
 
 export const suppliers: TSupplier[] = [
   "Mountain Tea Co.",

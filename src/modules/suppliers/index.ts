@@ -1,10 +1,10 @@
 import { Building2 } from "lucide-react";
 
-import SupplierListPage from "@/pages/suppliers/SupplierList";
 import { defineModule } from "@/shared/module";
 
 import { suppliersMockHandlers } from "./mocks/handlers";
 import { suppliersRoutes } from "./model/routes";
+import SupplierListPage from "./ui/SupplierList";
 
 export default defineModule({
   id: "suppliers",
@@ -30,3 +30,6 @@ export default defineModule({
     },
   },
 });
+
+// product 表單用（product requires suppliers，spec §5.2）
+export { useGetSupplierAll } from "./model/use-supplier";

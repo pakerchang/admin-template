@@ -1,10 +1,10 @@
-import UserFormPage from "@/pages/users/UserForm";
-import UserListPage from "@/pages/users/UserList";
 import { defineModule } from "@/shared/module";
 
 import en from "./locales/en.json";
 import { usersMockHandlers } from "./mocks/handlers";
 import { usersRoutes } from "./model/routes";
+import UserFormPage from "./ui/UserForm";
+import UserListPage from "./ui/UserList";
 
 // 現行 sidebar 沒有 users 項目，不宣告 nav（行為不變）
 export default defineModule({

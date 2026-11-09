@@ -1,10 +1,10 @@
 import { Tags } from "lucide-react";
 
-import TagListPage from "@/pages/tags/TagList";
 import { defineModule } from "@/shared/module";
 
 import { tagsMockHandlers } from "./mocks/handlers";
 import { tagsRoutes } from "./model/routes";
+import TagListPage from "./ui/TagList";
 
 export default defineModule({
   id: "tags",
@@ -30,3 +30,6 @@ export default defineModule({
     },
   },
 });
+
+// product 表單用（product requires tags，spec §5.2）
+export { useGetAllTags } from "./model/use-tag";

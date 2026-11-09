@@ -1,6 +1,6 @@
 import { iso, lang, placeholderImage } from "@/shared/api/mock-db";
 
-import type { TProduct } from "@/services/schemas/product";
+import type { TProduct } from "../model/schema";
 
 const productTypes: NonNullable<TProduct["product_type"]>[] = [
   "FOOD",

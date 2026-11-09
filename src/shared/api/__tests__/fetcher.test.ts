@@ -8,7 +8,7 @@ import { apiBaseUrl, apiFetch } from "@/shared/api/fetcher";
 import { clearAuth, getAuth, setAuth } from "@/shared/api/session";
 import { server } from "@/test/setup";
 
-import type { TProduct } from "@/services/schemas/product";
+import type { TProduct } from "@/modules/product/model/schema";
 import type { TAuthSession } from "@/shared/api/session";
 import type { TGetResponseContent } from "@/shared/api/types";
 

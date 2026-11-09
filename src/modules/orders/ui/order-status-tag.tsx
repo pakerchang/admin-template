@@ -1,5 +1,6 @@
-import { EOrderStatus } from "@/services/schemas/orders";
 import { Tag } from "@/shared/ui/tag";
+
+import { EOrderStatus } from "../model/schema";
 
 import type { TTagTone } from "@/shared/ui/tag";
 

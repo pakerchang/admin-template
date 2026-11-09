@@ -1,4 +1,4 @@
-import type { TTag } from "@/services/schemas/tag";
+import type { TTag } from "../model/schema";
 
 export const tags: TTag[] = [
   "Best Seller",

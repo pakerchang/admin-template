@@ -1,6 +1,6 @@
 import { iso, placeholderImage } from "@/shared/api/mock-db";
 
-import type { TBanner } from "@/services/schemas/banner";
+import type { TBanner } from "../model/schema";
 
 export const banners: TBanner[] = [
   "Summer Sale",

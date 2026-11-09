@@ -1,7 +1,8 @@
-import { EOrderStatus } from "@/services/schemas/orders";
 import { iso, placeholderImage } from "@/shared/api/mock-db";
 
-import type { TOrder, TOrderItem } from "@/services/schemas/orders";
+import { EOrderStatus } from "../model/schema";
+
+import type { TOrder, TOrderItem } from "../model/schema";
 
 /**
  * R5：訂單自帶商品快照與買家聯絡資料（值與 product / users seed 一致，不讀它們的 collection）。

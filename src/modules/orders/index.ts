@@ -1,11 +1,11 @@
 import { Receipt } from "lucide-react";
 
-import OrderDetailsPage from "@/pages/orders/order-details";
-import OrderListPage from "@/pages/orders/OrderList";
 import { defineModule } from "@/shared/module";
 
 import { ordersMockHandlers } from "./mocks/handlers";
 import { ordersRoutes } from "./model/routes";
+import OrderDetailsPage from "./ui/order-details";
+import OrderListPage from "./ui/OrderList";
 
 export default defineModule({
   id: "orders",

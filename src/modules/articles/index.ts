@@ -1,11 +1,11 @@
 import { FileText } from "lucide-react";
 
-import ArticleFormPage from "@/pages/articles/ArticleForm";
-import ArticleListPage from "@/pages/articles/ArticleList";
 import { defineModule } from "@/shared/module";
 
 import { articlesMockHandlers } from "./mocks/handlers";
 import { articlesRoutes } from "./model/routes";
+import ArticleFormPage from "./ui/ArticleForm";
+import ArticleListPage from "./ui/ArticleList";
 
 export default defineModule({
   id: "articles",
