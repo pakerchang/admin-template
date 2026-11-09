@@ -1,0 +1,24 @@
+{
+  "name": "orval-poc",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "bootstrap": "tsx scripts/bootstrap-openapi.ts",
+    "gen": "orval && tsx scripts/extract-permissions.ts",
+    "check": "tsc --noEmit && vitest run"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.107.1",
+    "msw": "3.0.4",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.6.0",
+    "orval": "8.47.0",
+    "tsx": "^4.23.15",
+    "typescript": "~5.8.3",
+    "vitest": "^3.2.7",
+    "yaml": "^2.9.1",
+    "zod-openapi": "4.2.4"
+  }
+}

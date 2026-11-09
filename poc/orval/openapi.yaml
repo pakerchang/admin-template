@@ -1,0 +1,312 @@
+openapi: 3.1.0
+info:
+  title: admin-template API
+  version: 0.0.0
+tags:
+  - name: banners
+  - name: users
+security:
+  - bearerAuth: []
+paths:
+  /admin/banners:
+    get:
+      operationId: listBanners
+      tags:
+        - banners
+      x-permission: banners.read
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: sort_by
+          schema:
+            type: string
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+      responses:
+        "200":
+          description: Banner list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  msg:
+                    type: string
+                  error:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Banner"
+                  total:
+                    type: number
+                required:
+                  - code
+                  - msg
+                  - error
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorBody"
+    post:
+      operationId: createBanner
+      tags:
+        - banners
+      x-permission: banners.manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                desktop_image_url:
+                  type: object
+                  properties:
+                    file_name:
+                      type: string
+                    file_url:
+                      type: string
+                  required:
+                    - file_name
+                    - file_url
+                mobile_image_url:
+                  type: object
+                  properties:
+                    file_name:
+                      type: string
+                    file_url:
+                      type: string
+                  required:
+                    - file_name
+                    - file_url
+                redirect_url:
+                  type: string
+                  format: uri
+                sort_order:
+                  type: number
+                banner_status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+              required:
+                - title
+                - desktop_image_url
+                - mobile_image_url
+                - redirect_url
+                - sort_order
+                - banner_status
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorBody"
+  /users:
+    get:
+      operationId: listUsers
+      tags:
+        - users
+      x-permission: users.read
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: sort_by
+          schema:
+            type: string
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+      responses:
+        "200":
+          description: User list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  msg:
+                    type: string
+                  error:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+                  total:
+                    type: number
+                required:
+                  - code
+                  - msg
+                  - error
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorBody"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Banner:
+      type: object
+      properties:
+        banner_id:
+          type: string
+        title:
+          type: string
+        desktop_image_url:
+          type: object
+          properties:
+            file_name:
+              type: string
+            file_url:
+              type: string
+          required:
+            - file_name
+            - file_url
+        mobile_image_url:
+          type: object
+          properties:
+            file_name:
+              type: string
+            file_url:
+              type: string
+          required:
+            - file_name
+            - file_url
+        redirect_url:
+          type: string
+          format: uri
+        sort_order:
+          type: number
+        banner_status:
+          type: string
+          enum:
+            - active
+            - inactive
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - banner_id
+        - title
+        - desktop_image_url
+        - mobile_image_url
+        - redirect_url
+        - sort_order
+        - banner_status
+    User:
+      type: object
+      properties:
+        user_id:
+          type: string
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+          minLength: 1
+        last_name:
+          type: string
+          minLength: 1
+        phone_number:
+          type: string
+          pattern: ^[0-9]{10}$
+          minLength: 1
+        address:
+          type: string
+          minLength: 1
+        remark:
+          type: string
+        role:
+          type: string
+          enum:
+            - guest
+            - user
+            - premium
+            - partner
+            - support
+            - admin
+            - superadmin
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - user_id
+        - email
+        - first_name
+        - last_name
+        - phone_number
+        - address
+        - remark
+        - role
+        - created_at
+        - updated_at
+    ErrorBody:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
