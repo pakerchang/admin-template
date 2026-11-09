@@ -50,7 +50,7 @@ const userManagementRoute = createRoute({
 });
 
 const protectedRoute = createRoute({
-  path: "/",
+  id: "/",
   component: ProtectedAppLayout,
   beforeLoad: () => {
     if (!getAuth()) throw redirect({ to: "/login" });
@@ -183,9 +183,21 @@ const articleEditRoute = createRoute({
   getParentRoute: () => articlesRoute,
 });
 
+const protectedIndexWrapper = createRoute({
+  id: "_index",
+  getParentRoute: () => protectedRoute,
+});
+
+const protectedIndexRoute = createRoute({
+  path: "/",
+  component: () => null,
+  getParentRoute: () => protectedIndexWrapper,
+});
+
 const routeTree = RootRoute.addChildren([
   loginRoute,
   protectedRoute.addChildren([
+    protectedIndexWrapper.addChildren([protectedIndexRoute]),
     usersRoute.addChildren([userListRoute, userManagementRoute]),
     productsRoute.addChildren([
       productListRoute,
