@@ -1,4 +1,4 @@
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger } from "@/shared/ui/sidebar";
 import Breadcrumb from "@/shells/default/breadcrumb";
 import useBreadcrumb from "@/shells/default/use-breadcrumb";
 

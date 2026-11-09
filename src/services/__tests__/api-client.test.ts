@@ -1,19 +1,14 @@
 import { http, HttpResponse } from "msw";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import {
-  apiBaseUrl,
-  apiFetch,
-  clearAuth,
-  getAuth,
-  setAuth,
-} from "@/services/api-client";
 import { DEMO_ACCOUNT, products } from "@/services/mock/data";
+import { apiBaseUrl, apiFetch } from "@/shared/api/fetcher";
+import { clearAuth, getAuth, setAuth } from "@/shared/api/session";
 import { server } from "@/test/setup";
 
-import type { TAuthSession } from "@/services/api-client";
 import type { TProduct } from "@/services/schemas/product";
-import type { TGetResponseContent } from "@/services/types/schema";
+import type { TAuthSession } from "@/shared/api/session";
+import type { TGetResponseContent } from "@/shared/api/types";
 
 /** M4 起 mock API 依 grants 判權（R22）：資料類測試以 superadmin 登入 */
 const signInAsSuperadmin = async () =>

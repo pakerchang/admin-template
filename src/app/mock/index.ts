@@ -1,8 +1,8 @@
 import { toHttpHandlers } from "@/app/mock/legacy-adapter";
 import { coreGrants, mergeGrants } from "@/app/mock/permission-matrix";
 import { operations } from "@/app/operations.gen";
-import { apiBaseUrl } from "@/services/api-client";
 import { handlers, mockUserOfAuthorization } from "@/services/mock/handlers";
+import { apiBaseUrl } from "@/shared/api/fetcher";
 import { createPermissionGuard } from "@/shared/api/mock/permission-guard";
 
 import type { THandler } from "@/services/mock/handlers";

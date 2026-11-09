@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { numericFormatter } from "react-number-format";
 
-import DataTable from "@/components/shared/DataTable";
-import Paper from "@/components/shared/Paper";
+import DataTable from "@/shared/ui/data-table/data-table";
+import Paper from "@/shared/ui/paper";
 
 import type { TOrder, TOrderItem } from "@/services/schemas/orders";
 import type { ColumnDef } from "@tanstack/react-table";

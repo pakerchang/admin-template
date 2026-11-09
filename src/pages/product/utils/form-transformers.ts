@@ -1,11 +1,11 @@
 import { produce } from "immer";
 
 import { productTypeEnums } from "@/services/schemas/product";
-import { activeStatusEnums } from "@/services/types/schema";
+import { activeStatusEnums } from "@/shared/api/schema";
 
 import type { TProductForm } from "@/pages/product/hooks/use-product";
 import type { TProduct, EProductType } from "@/services/schemas/product";
-import type { EActiveStatus } from "@/services/types/schema";
+import type { EActiveStatus } from "@/shared/api/schema";
 
 type LangField = { zh?: string; en?: string; th?: string } | undefined;
 

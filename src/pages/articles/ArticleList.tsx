@@ -4,16 +4,16 @@ import { Plus, ArrowUpDown } from "lucide-react";
 import { useState, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import DataTable from "@/components/shared/DataTable";
-import EditActions from "@/components/shared/EditActions";
 import { Navbar } from "@/components/shared/Navbar";
-import { TABLE_VISIBILITY_STORAGE_KEYS } from "@/components/shared/table";
+import { paginationSchema } from "@/shared/api/schema";
+import { Button } from "@/shared/ui/button";
+import { TABLE_VISIBILITY_STORAGE_KEYS } from "@/shared/ui/data-table";
+import DataTable from "@/shared/ui/data-table/data-table";
 import {
   useApiSorting,
   convertToApiSorting,
-} from "@/components/shared/table/hooks/useApiSorting";
-import { Button } from "@/components/ui/button";
-import { paginationSchema } from "@/services/types/schema";
+} from "@/shared/ui/data-table/hooks/useApiSorting";
+import EditActions from "@/shared/ui/edit-actions";
 
 import { useDeleteArticle, useGetArticleList } from "./hooks/use-article";
 

@@ -5,16 +5,16 @@ import { useTranslation } from "react-i18next";
 import { numericFormatter } from "react-number-format";
 
 import Card from "@/components/shared/Card";
-import DataTable from "@/components/shared/DataTable";
-import EditActions from "@/components/shared/EditActions";
 import { Navbar } from "@/components/shared/Navbar";
+import { paginationSchema, activeStatusEnums } from "@/shared/api/schema";
+import { Button } from "@/shared/ui/button";
 import {
   TABLE_VISIBILITY_STORAGE_KEYS,
   useApiSorting,
   convertToApiSorting,
-} from "@/components/shared/table";
-import { Button } from "@/components/ui/button";
-import { paginationSchema, activeStatusEnums } from "@/services/types";
+} from "@/shared/ui/data-table";
+import DataTable from "@/shared/ui/data-table/data-table";
+import EditActions from "@/shared/ui/edit-actions";
 
 import StatusColumnFilter from "./components/StatusColumnFilter";
 import {
@@ -23,9 +23,8 @@ import {
   useGetAllProducts,
 } from "./hooks/use-product";
 
-import type { TransKey } from "@/constants/locales";
-import type { TransTypes } from "@/locales/types";
 import type { TProduct } from "@/services/schemas/product";
+import type { TransKey, TransTypes } from "@/shared/i18n/types";
 import type {
   ColumnDef,
   PaginationState,

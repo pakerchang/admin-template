@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useToast } from "@/hooks/use-toast";
-import { apiFetch } from "@/services/api-client";
-import { paginationSchema } from "@/services/types/schema";
+import { apiFetch } from "@/shared/api/fetcher";
+import { paginationSchema } from "@/shared/api/schema";
+import { useToast } from "@/shared/lib/use-toast";
 
 import type {
   TCustomerQuery,
@@ -12,7 +12,7 @@ import type {
   TCustomer,
   TTransactionHistoryResponse,
 } from "@/services/schemas/customer";
-import type { TGetResponseContent } from "@/services/types/schema";
+import type { TGetResponseContent } from "@/shared/api/types";
 
 export const useGetCustomerList = (query: Partial<TCustomerQuery>) => {
   const { t } = useTranslation();

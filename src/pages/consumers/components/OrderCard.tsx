@@ -2,8 +2,8 @@ import dayjs from "dayjs";
 import { ShoppingBag, Package, Calendar } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { cn } from "@/lib/utils";
 import { getOrderStatusText } from "@/pages/orders/utils/order-status";
+import { cn } from "@/shared/lib/utils";
 
 import type { TTransactionHistoryOrder } from "@/services/schemas/customer";
 

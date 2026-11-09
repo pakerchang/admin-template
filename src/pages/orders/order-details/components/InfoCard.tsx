@@ -2,9 +2,9 @@ import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { numericFormatter } from "react-number-format";
 
-import Paper from "@/components/shared/Paper";
-import { Tag } from "@/components/shared/Tags";
+import { OrderStatusTag as Tag } from "@/modules/orders/ui/order-status-tag";
 import { getOrderStatusText } from "@/pages/orders/utils/order-status";
+import Paper from "@/shared/ui/paper";
 
 import type { TOrder } from "@/services/schemas/orders";
 

@@ -5,20 +5,19 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { useToast } from "@/hooks/use-toast";
-import { useValidationMessage } from "@/lib/gen-validate-message";
-import { apiFetch } from "@/services/api-client";
 import { articleFormSchema } from "@/services/schemas/article";
-import { paginationSchema } from "@/services/types/schema";
+import { apiFetch } from "@/shared/api/fetcher";
+import { paginationSchema } from "@/shared/api/schema";
+import { useValidationMessage } from "@/shared/lib/gen-validate-message";
+import { useToast } from "@/shared/lib/use-toast";
 
 import type { TArticle, TArticleForm } from "@/services/schemas/article";
 import type { TUser } from "@/services/schemas/user";
+import type { TPagination, TSortOrder } from "@/shared/api/schema";
 import type {
-  TPagination,
-  TSortOrder,
   TGetResponseContent,
   TPostResponseContent,
-} from "@/services/types/schema";
+} from "@/shared/api/types";
 
 type TArticleListParams = TPagination & {
   sort_by?: string;

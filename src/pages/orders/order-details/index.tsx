@@ -2,8 +2,8 @@ import { useParams } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Navbar } from "@/components/shared/Navbar";
-import { Spinner } from "@/components/ui/spinner";
 import { useGetOrderDetail } from "@/pages/orders/hooks/use-order";
+import { Spinner } from "@/shared/ui/spinner";
 
 import InfoCard from "./components/InfoCard";
 import OrderItem from "./components/OrderItem";

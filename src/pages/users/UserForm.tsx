@@ -4,11 +4,11 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { Navbar } from "@/components/shared/Navbar";
-import Paper from "@/components/shared/Paper";
-import { TextInput } from "@/components/shared/TextInputs";
-import { Spinner } from "@/components/ui/spinner";
 import { userSchema } from "@/services/schemas/user";
 import { FormSubmit } from "@/shared/ui/form-submit";
+import Paper from "@/shared/ui/paper";
+import { Spinner } from "@/shared/ui/spinner";
+import { TextInput } from "@/shared/ui/text-inputs";
 
 import type { TUser } from "@/services/schemas/user";
 

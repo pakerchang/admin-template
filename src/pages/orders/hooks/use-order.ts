@@ -3,17 +3,17 @@ import { isEmpty } from "ramda";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useToast } from "@/hooks/use-toast";
-import { apiFetch } from "@/services/api-client";
-import { paginationSchema } from "@/services/types/schema";
+import { apiFetch } from "@/shared/api/fetcher";
+import { paginationSchema } from "@/shared/api/schema";
+import { useToast } from "@/shared/lib/use-toast";
 
-import type { ApiSortingParams } from "@/components/shared/table";
 import type { TOrder, EOrderStatus } from "@/services/schemas/orders";
+import type { TPagination } from "@/shared/api/schema";
 import type {
-  TPagination,
   TGetResponseContent,
   TPostResponseContent,
-} from "@/services/types/schema";
+} from "@/shared/api/types";
+import type { ApiSortingParams } from "@/shared/ui/data-table";
 
 export const useGetOrderList = (
   pagination: Partial<TPagination> &

@@ -1,14 +1,14 @@
 import { useTranslation } from "react-i18next";
 
-import { Tag } from "@/components/shared/Tags";
+import { OrderStatusTag as Tag } from "@/modules/orders/ui/order-status-tag";
+import { EOrderStatus } from "@/services/schemas/orders";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { EOrderStatus } from "@/services/schemas/orders";
+} from "@/shared/ui/select";
 
 import { getOrderStatusText } from "../utils/order-status";
 

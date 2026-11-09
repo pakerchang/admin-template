@@ -5,11 +5,11 @@ import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Navbar } from "@/components/shared/Navbar";
-import Paper from "@/components/shared/Paper";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
-import { paginationSchema } from "@/services/types";
+import { paginationSchema } from "@/shared/api/schema";
+import { toast } from "@/shared/lib/use-toast";
+import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/ui/button";
+import Paper from "@/shared/ui/paper";
 
 import { ImageCard } from "./components/ImageCard";
 import { useGetBannerList } from "./hooks/use-banner";

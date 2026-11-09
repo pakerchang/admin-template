@@ -4,23 +4,23 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { useToast } from "@/hooks/use-toast";
-import { useValidationMessage } from "@/lib/gen-validate-message";
-import { apiFetch } from "@/services/api-client";
 import { productSchema, productTypeEnums } from "@/services/schemas/product";
+import { apiFetch } from "@/shared/api/fetcher";
 import {
   activeStatusEnums,
   imageResponseSchema,
   langSchema,
   paginationSchema,
-} from "@/services/types/schema";
+} from "@/shared/api/schema";
+import { useValidationMessage } from "@/shared/lib/gen-validate-message";
+import { useToast } from "@/shared/lib/use-toast";
 
-import type { TransKey } from "@/constants/locales";
 import type { TProductQuery, TProduct } from "@/services/schemas/product";
 import type {
   TGetResponseContent,
   TPostResponseContent,
-} from "@/services/types/schema";
+} from "@/shared/api/types";
+import type { TransKey } from "@/shared/i18n/types";
 
 export const useCreateProduct = () => {
   const { toast } = useToast();

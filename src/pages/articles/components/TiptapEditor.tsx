@@ -24,8 +24,8 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/ui/button";
 
 import ImageDialog from "./dialogs/ImageDialog";
 import LinkDialog from "./dialogs/LinkDialog";

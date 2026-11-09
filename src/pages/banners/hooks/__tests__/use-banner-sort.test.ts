@@ -25,7 +25,7 @@ vi.mock("react-i18next", () => ({
 
 // Mock toast hook
 const mockToast = vi.fn();
-vi.mock("@/hooks/use-toast", () => ({
+vi.mock("@/shared/lib/use-toast", () => ({
   useToast: () => ({
     toast: mockToast,
   }),

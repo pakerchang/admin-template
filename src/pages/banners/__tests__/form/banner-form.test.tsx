@@ -61,7 +61,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 // Mock sidebar
-vi.mock("@/components/ui/sidebar", () => ({
+vi.mock("@/shared/ui/sidebar", () => ({
   useSidebar: () => ({
     state: "expanded",
     open: true,
@@ -96,7 +96,7 @@ vi.mock("../../hooks/use-banner", async () => {
   };
 });
 
-vi.mock("@/hooks/use-img-upload", () => ({
+vi.mock("@/shared/api/upload", () => ({
   useImgUpload: () => ({
     upload: vi.fn(),
     removeImage: vi.fn(),

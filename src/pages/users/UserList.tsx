@@ -4,17 +4,17 @@ import { ArrowUpDown, Pencil, UserCog } from "lucide-react";
 import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import DataTable from "@/components/shared/DataTable";
 import { Navbar } from "@/components/shared/Navbar";
-import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
-import { paginationSchema } from "@/services/types/schema";
+import { paginationSchema } from "@/shared/api/schema";
+import { Button } from "@/shared/ui/button";
+import DataTable from "@/shared/ui/data-table/data-table";
+import { Dialog } from "@/shared/ui/dialog";
 
 import EditUserRoleDialogContent from "./components/EditUserRoleDialogContent";
 import { useGetUserList, useUpdateUserRole } from "./hooks/use-user";
 
-import type { TRowAction } from "@/components/shared/table/row-actions";
 import type { TUser, TUserRole } from "@/services/schemas/user";
+import type { TRowAction } from "@/shared/ui/data-table/row-actions";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 
 const UserList = () => {

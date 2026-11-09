@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { paginationSchema, sortOrderEnum } from "@/services/types/schema";
+import { paginationSchema, sortOrderEnum } from "@/shared/api/schema";
 
 export const tagSchema = z.object({
   tag_id: z.string(),

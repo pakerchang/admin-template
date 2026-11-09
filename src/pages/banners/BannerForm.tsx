@@ -7,20 +7,20 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useUnmount } from "react-use";
 
-import ImageUploadDialog from "@/components/shared/dialog/ImageUploadDialog";
 import { Navbar } from "@/components/shared/Navbar";
-import Paper from "@/components/shared/Paper";
-import { TextInput } from "@/components/shared/TextInputs";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Spinner } from "@/components/ui/spinner";
-import { useImgUpload } from "@/hooks/use-img-upload";
-import { useToast } from "@/hooks/use-toast";
 import {
   createDesktopBannerValidationManager,
   createMobileBannerValidationManager,
-} from "@/plugins/image-validation";
-import { activeStatusEnums } from "@/services/types/schema";
+} from "@/modules/banners/model/image-validation";
+import { activeStatusEnums } from "@/shared/api/schema";
+import { useImgUpload } from "@/shared/api/upload";
+import { useToast } from "@/shared/lib/use-toast";
+import { Button } from "@/shared/ui/button";
+import ImageUploadDialog from "@/shared/ui/image-upload/image-upload-dialog";
+import { Label } from "@/shared/ui/label";
+import Paper from "@/shared/ui/paper";
+import { Spinner } from "@/shared/ui/spinner";
+import { TextInput } from "@/shared/ui/text-inputs";
 
 import {
   useCreateBanner,

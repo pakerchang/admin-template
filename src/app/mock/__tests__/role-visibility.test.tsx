@@ -3,13 +3,13 @@ import { describe, expect, it } from "vitest";
 
 import { makeApp } from "@/app/__tests__/fixture";
 import { coreGrants, mergeGrants } from "@/app/mock/permission-matrix";
-import { apiFetch } from "@/services/api-client";
 import { DEMO_ACCOUNT, users } from "@/services/mock/data";
+import { apiFetch } from "@/shared/api/fetcher";
 import { NavContext, useVisibleNav } from "@/shared/module";
 import { can, GrantsContext } from "@/shared/permission";
 import { server } from "@/test/setup";
 
-import type { TAuthSession } from "@/services/api-client";
+import type { TAuthSession } from "@/shared/api/session";
 import type { TNavItem } from "@/shared/module";
 import type { TGrantMatrix } from "@/shared/permission";
 import type { ReactNode } from "react";

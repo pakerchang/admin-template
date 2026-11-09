@@ -6,7 +6,8 @@ import { createCore } from "@/app/core";
 import { createApp, createAppRouter } from "@/app/kernel/create-app";
 import { installModules } from "@/app/modules";
 import { operations } from "@/app/operations.gen";
-import { apiBaseUrl, clearAuth, setAuth } from "@/services/api-client";
+import { apiBaseUrl } from "@/shared/api/fetcher";
+import { clearAuth, setAuth } from "@/shared/api/session";
 import { defaultShell } from "@/shells/default";
 
 import type { TGrant } from "@/shared/permission";

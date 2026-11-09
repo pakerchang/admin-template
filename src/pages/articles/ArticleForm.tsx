@@ -6,15 +6,15 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import ImageUploadDialog from "@/components/shared/dialog/ImageUploadDialog";
 import { Navbar } from "@/components/shared/Navbar";
-import Paper from "@/components/shared/Paper";
-import { TextInput } from "@/components/shared/TextInputs";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { useImgUpload } from "@/hooks/use-img-upload";
-import { useValidationMessage } from "@/lib/gen-validate-message";
-import { createGeneralImageValidationManager } from "@/plugins/image-validation";
+import { useImgUpload } from "@/shared/api/upload";
+import { useValidationMessage } from "@/shared/lib/gen-validate-message";
+import { createGeneralImageValidationManager } from "@/shared/lib/image-validation";
+import { Button } from "@/shared/ui/button";
+import ImageUploadDialog from "@/shared/ui/image-upload/image-upload-dialog";
+import Paper from "@/shared/ui/paper";
+import { Spinner } from "@/shared/ui/spinner";
+import { TextInput } from "@/shared/ui/text-inputs";
 
 import TiptapEditor from "./components/TiptapEditor";
 import {

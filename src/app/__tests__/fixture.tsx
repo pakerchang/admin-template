@@ -4,7 +4,7 @@ import { createCore } from "@/app/core";
 import { createApp, createAppRouter } from "@/app/kernel/create-app";
 import { installModules } from "@/app/modules";
 import { operations } from "@/app/operations.gen";
-import { apiBaseUrl } from "@/services/api-client";
+import { apiBaseUrl } from "@/shared/api/fetcher";
 
 import type { TCore } from "@/app/kernel/build";
 import type { TShell } from "@/shared/module";

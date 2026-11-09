@@ -6,7 +6,7 @@ import {
   langSchema,
   paginationSchema,
   sortSchema,
-} from "@/services/types/schema";
+} from "@/shared/api/schema";
 
 export const productTypeEnums = z.enum([
   "ELECTRONICS",

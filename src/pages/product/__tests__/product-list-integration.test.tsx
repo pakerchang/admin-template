@@ -46,7 +46,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 // Mock toast
-vi.mock("@/hooks/use-toast", () => ({
+vi.mock("@/shared/lib/use-toast", () => ({
   useToast: () => ({
     toast: vi.fn(),
   }),
@@ -113,7 +113,7 @@ vi.mock("@/components/shared/Navbar", () => ({
   ),
 }));
 
-vi.mock("@/components/shared/EditActions", () => ({
+vi.mock("@/shared/ui/edit-actions", () => ({
   __esModule: true,
   default: ({
     onEdit,
@@ -144,7 +144,7 @@ vi.mock("@/components/shared/Card", () => ({
 }));
 
 // Mock DataTable - 簡化版本，專注於驗證資料渲染
-vi.mock("@/components/shared/DataTable", () => ({
+vi.mock("@/shared/ui/data-table/data-table", () => ({
   __esModule: true,
   default: ({ data }: { data: TProduct[] }) => {
     return (

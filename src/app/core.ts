@@ -1,6 +1,6 @@
 import { createMockHandlers } from "@/app/mock";
 import { createAppRootRoute } from "@/app/router/root";
-import { getAuth } from "@/services/api-client";
+import { getAuth } from "@/shared/api/session";
 import { can } from "@/shared/permission";
 
 import type { TCore } from "@/app/kernel/build";
@@ -18,7 +18,7 @@ export const sessionGrants = (): readonly TGrant[] => {
 /** kernel 自有零件（§4.2 TCore）；測試可覆寫 getGrants / isAuthenticated */
 export const createCore = (overrides: Partial<TCore> = {}): TCore => ({
   root: createAppRootRoute(),
-  // ponytail: core 字典仍由 locales/i18n.ts 的 backend 載入；M6 搬 core key 後再填
+  // ponytail: core 字典仍由 shared/i18n/i18n.ts 的 backend 載入；M6 搬 core key 後再填
   i18n: { en: {}, zh: {} },
   mock: createMockHandlers,
   getGrants: sessionGrants,

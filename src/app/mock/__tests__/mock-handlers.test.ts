@@ -3,17 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { makeApp } from "@/app/__tests__/fixture";
 import { mockHandlers } from "@/app/mock";
 import { operations } from "@/app/operations.gen";
-import {
-  apiBaseUrl,
-  apiFetch,
-  clearAuth,
-  setAuth,
-} from "@/services/api-client";
 import { DEMO_ACCOUNT, users } from "@/services/mock/data";
+import { apiBaseUrl, apiFetch } from "@/shared/api/fetcher";
+import { clearAuth, setAuth } from "@/shared/api/session";
 import { server } from "@/test/setup";
 
-import type { TAuthSession } from "@/services/api-client";
 import type { TUser } from "@/services/schemas/user";
+import type { TAuthSession } from "@/shared/api/session";
 
 const login = (email: string) =>
   apiFetch<TAuthSession>("/api/auth/login", {

@@ -2,6 +2,7 @@ import { Label } from "@radix-ui/react-label";
 import { isNil, isEmpty, either } from "ramda";
 import { useTranslation } from "react-i18next";
 
+import { cn } from "@/shared/lib/utils";
 import {
   Card as CardContainer,
   CardContent,
@@ -9,8 +10,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+} from "@/shared/ui/card";
 
 const isNilOrEmpty = either(isNil, isEmpty);
 

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/shared/lib/use-toast";
 
 import { useUpdateBanner } from "./use-banner";
 

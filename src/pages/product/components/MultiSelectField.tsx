@@ -1,14 +1,14 @@
 import { X } from "lucide-react";
 
-import { Label } from "@/components/ui/label";
+import { useMultiSelect } from "@/shared/lib/use-multi-select";
+import { Label } from "@/shared/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useMultiSelect } from "@/hooks/use-multi-select";
+} from "@/shared/ui/select";
 
 import type { FieldPath, FieldValues, UseFormReturn } from "react-hook-form";
 

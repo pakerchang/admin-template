@@ -2,12 +2,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { apiFetch, setAuth } from "@/services/api-client";
+import { apiFetch } from "@/shared/api/fetcher";
+import { setAuth } from "@/shared/api/session";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
 
-import type { TAuthSession } from "@/services/api-client";
+import type { TAuthSession } from "@/shared/api/session";
 import type { SubmitEvent } from "react";
 
 /** 登入表單（auth module 預設頁）；全螢幕外框由 shell 的 AuthLayout 提供 */

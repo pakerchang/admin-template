@@ -56,7 +56,7 @@ export const createApp = ({
               m.startBrowserWorker(handlers)
             ),
         });
-      // ponytail: module 尚未帶 i18n（M6），registry.i18n 不寫入 i18next；字典仍由 locales/i18n.ts 載入
+      // ponytail: module 尚未帶 i18n（M6），registry.i18n 不寫入 i18next；字典仍由 shared/i18n/i18n.ts 載入
       createRoot(document.querySelector(selector)!).render(
         <StrictMode>
           <RouterProvider router={createAppRouter(routeTree)} />

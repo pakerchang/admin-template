@@ -3,14 +3,16 @@ import { ArrowUpDown, Edit, Plus, Search, Trash2, Users } from "lucide-react";
 import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
-import DataTable from "@/components/shared/DataTable";
 import { Navbar } from "@/components/shared/Navbar";
+import { paginationSchema } from "@/shared/api/schema";
+import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/ui/button";
 import {
   TABLE_VISIBILITY_STORAGE_KEYS,
   useApiSorting,
   convertToApiSorting,
-} from "@/components/shared/table";
-import { Button } from "@/components/ui/button";
+} from "@/shared/ui/data-table";
+import DataTable from "@/shared/ui/data-table/data-table";
 import {
   Dialog,
   DialogContent,
@@ -18,17 +20,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
+} from "@/shared/ui/dialog";
+import { Input } from "@/shared/ui/input";
+import { Spinner } from "@/shared/ui/spinner";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { paginationSchema } from "@/services/types/schema";
+} from "@/shared/ui/tooltip";
 
 import StaffFormDialog from "./components/StaffFormDialog";
 import { useGetStaffList, useDeleteStaff } from "./hooks/use-staff";

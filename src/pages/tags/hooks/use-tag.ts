@@ -3,10 +3,10 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { useToast } from "@/hooks/use-toast";
-import { apiFetch } from "@/services/api-client";
 import { tagSchema } from "@/services/schemas/tag";
-import { paginationSchema } from "@/services/types/schema";
+import { apiFetch } from "@/shared/api/fetcher";
+import { paginationSchema } from "@/shared/api/schema";
+import { useToast } from "@/shared/lib/use-toast";
 
 import type {
   TCreateTag,
@@ -18,7 +18,7 @@ import type {
 import type {
   TGetResponseContent,
   TPostResponseContent,
-} from "@/services/types/schema";
+} from "@/shared/api/types";
 
 export const useCreateTagSchema = () => {
   const { t } = useTranslation();

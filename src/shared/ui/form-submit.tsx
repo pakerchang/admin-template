@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { useCan } from "@/shared/permission";
+import { Button } from "@/shared/ui/button";
 
 import type { TPermission } from "@/shared/permission";
 import type { ComponentProps } from "react";

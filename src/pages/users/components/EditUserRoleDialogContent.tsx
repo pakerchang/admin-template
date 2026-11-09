@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+} from "@/shared/ui/dialog";
+import { Label } from "@/shared/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
 
 import type { TUserRole } from "@/services/schemas/user";
 

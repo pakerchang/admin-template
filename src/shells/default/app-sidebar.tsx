@@ -3,6 +3,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, Globe, LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { clearAuth } from "@/shared/api/session";
+import { useVisibleNav } from "@/shared/module";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,20 +15,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+} from "@/shared/ui/alert-dialog";
+import { Button } from "@/shared/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from "@/shared/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
+} from "@/shared/ui/dropdown-menu";
+import { Separator } from "@/shared/ui/separator";
 import {
   Sidebar,
   SidebarContent,
@@ -36,11 +38,9 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from "@/components/ui/sidebar";
-import { clearAuth } from "@/services/api-client";
-import { useVisibleNav } from "@/shared/module";
+} from "@/shared/ui/sidebar";
 
-import type { TransKey } from "@/constants/locales";
+import type { TransKey } from "@/shared/i18n/types";
 
 export const AppSidebar = () => {
   const navigate = useNavigate();

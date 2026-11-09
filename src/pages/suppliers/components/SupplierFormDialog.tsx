@@ -3,16 +3,16 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { TextInput } from "@/components/shared/TextInputs";
-import { Button } from "@/components/ui/button";
+import { useToast } from "@/shared/lib/use-toast";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Spinner } from "@/components/ui/spinner";
-import { useToast } from "@/hooks/use-toast";
+} from "@/shared/ui/dialog";
+import { Spinner } from "@/shared/ui/spinner";
+import { TextInput } from "@/shared/ui/text-inputs";
 
 import {
   useCreateSupplier,

@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-import {
-  activeStatusEnums,
-  imageResponseSchema,
-} from "@/services/types/schema";
+import { activeStatusEnums, imageResponseSchema } from "@/shared/api/schema";
 
 export const bannerSchema = z.object({
   banner_id: z.string(),

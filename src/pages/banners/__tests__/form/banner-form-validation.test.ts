@@ -30,7 +30,7 @@ vi.mock("react-i18next", () => ({
 }));
 
 // Mock validation message hook
-vi.mock("@/lib/gen-validate-message", () => ({
+vi.mock("@/shared/lib/gen-validate-message", () => ({
   useValidationMessage: () => ({
     getRequiredMessage: (field: string) => `${field}為必填欄位`,
   }),

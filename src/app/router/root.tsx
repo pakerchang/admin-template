@@ -3,7 +3,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/shared/ui/toaster";
 
 const env = import.meta.env.MODE;
 

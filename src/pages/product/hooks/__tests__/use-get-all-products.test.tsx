@@ -13,14 +13,14 @@ vi.mock("react-i18next", () => ({
 }));
 
 const mockToast = vi.fn();
-vi.mock("@/hooks/use-toast", () => ({
+vi.mock("@/shared/lib/use-toast", () => ({
   useToast: () => ({
     toast: mockToast,
   }),
 }));
 
 const mockApiFetch = vi.fn();
-vi.mock("@/services/api-client", () => ({
+vi.mock("@/shared/api/fetcher", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
 }));
 

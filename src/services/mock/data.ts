@@ -9,7 +9,7 @@ import type { TStaffUser } from "@/services/schemas/staff";
 import type { TSupplier } from "@/services/schemas/supplier";
 import type { TTag } from "@/services/schemas/tag";
 import type { TUser } from "@/services/schemas/user";
-import type { TLang } from "@/services/types/schema";
+import type { TLang } from "@/shared/api/schema";
 
 // ponytail: 以 inline SVG 當圖片，離線可用、不會有外部請求錯誤
 export const placeholderImage = (label: string, color = "#6366f1") =>

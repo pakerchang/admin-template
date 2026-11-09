@@ -2,15 +2,15 @@ import { ShoppingBag } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Spinner } from "@/components/ui/spinner";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+} from "@/shared/ui/dialog";
+import { Spinner } from "@/shared/ui/spinner";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shared/ui/tabs";
 
 import { useGetTransactionHistory } from "../hooks/use-consumer";
 

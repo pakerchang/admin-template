@@ -5,7 +5,7 @@ import {
   paginationSchema,
   imageResponseSchema,
   sortOrderEnum,
-} from "@/services/types/schema";
+} from "@/shared/api/schema";
 
 export const customerSchema = z.object({
   user_id: z.string(),

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { imageResponseSchema } from "@/services/types/schema";
+import { imageResponseSchema } from "@/shared/api/schema";
 
 export const articleSchema = z.object({
   article_id: z.string(),

@@ -23,13 +23,7 @@ const SAME_MODULE = (type) => ({
   element: { type, captured: { module: "{{ from.element.captured.module }}" } },
 });
 // 尚未搬進 app/shared/shells/modules 的舊目錄（spec §9 M5「未搬的 legacy 路徑暫列 ignore」）；M6 逐條移除
-const LEGACY_PATHS = [
-  "src/pages/**",
-  "src/services/**",
-  "src/components/**",
-  // 本 commit 之後搬進 shared/app 即移除
-  "src/{lib,hooks,utils,constants,plugins,types,locales}/**",
-];
+const LEGACY_PATHS = ["src/pages/**", "src/services/**", "src/components/**"];
 
 export default tseslint.config(
   {

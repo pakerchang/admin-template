@@ -1,13 +1,13 @@
 import { useTranslation } from "react-i18next";
 
+import { activeStatusEnums, type EActiveStatus } from "@/shared/api/schema";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { activeStatusEnums, type EActiveStatus } from "@/services/types/schema";
+} from "@/shared/ui/select";
 
 import type { TProduct } from "@/services/schemas/product";
 import type { Column } from "@tanstack/react-table";

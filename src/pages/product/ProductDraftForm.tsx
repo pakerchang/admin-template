@@ -5,21 +5,7 @@ import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import ImageUploadDialog from "@/components/shared/dialog/ImageUploadDialog";
 import { Navbar } from "@/components/shared/Navbar";
-import Paper from "@/components/shared/Paper";
-import { LangFormInput, TextInput } from "@/components/shared/TextInputs";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
-import { useImgUpload } from "@/hooks/use-img-upload";
 import { MultiSelectField } from "@/pages/product/components/MultiSelectField";
 import {
   useCreateProduct,
@@ -32,14 +18,28 @@ import {
 } from "@/pages/product/utils/form-transformers";
 import { useGetSupplierAll } from "@/pages/suppliers/hooks/use-supplier";
 import { useGetAllTags } from "@/pages/tags/hooks/use-tag";
-import { createGeneralImageValidationManager } from "@/plugins/image-validation";
 import { productTypeEnums } from "@/services/schemas/product";
-import { activeStatusEnums } from "@/services/types/schema";
+import { activeStatusEnums } from "@/shared/api/schema";
+import { useImgUpload } from "@/shared/api/upload";
+import { createGeneralImageValidationManager } from "@/shared/lib/image-validation";
+import { Button } from "@/shared/ui/button";
+import ImageUploadDialog from "@/shared/ui/image-upload/image-upload-dialog";
+import { Label } from "@/shared/ui/label";
+import Paper from "@/shared/ui/paper";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select";
+import { Spinner } from "@/shared/ui/spinner";
+import { LangFormInput, TextInput } from "@/shared/ui/text-inputs";
 
-import type { TransKey } from "@/constants/locales";
 import type { TProductForm } from "@/pages/product/hooks/use-product";
 import type { EProductType } from "@/services/schemas/product";
-import type { EActiveStatus } from "@/services/types/schema";
+import type { EActiveStatus } from "@/shared/api/schema";
+import type { TransKey } from "@/shared/i18n/types";
 
 const DEFAULT_LANG_VALUES = { zh: "", en: "", th: "" };
 const DEFAULT_VALUES: TProductForm = {

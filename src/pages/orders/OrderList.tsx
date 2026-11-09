@@ -5,22 +5,22 @@ import { useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDebounce } from "react-use";
 
-import DataTable from "@/components/shared/DataTable";
-import EditActions from "@/components/shared/EditActions";
 import { Navbar } from "@/components/shared/Navbar";
+import { OrderStatusTag as Tag } from "@/modules/orders/ui/order-status-tag";
+import { EOrderStatus } from "@/services/schemas/orders";
+import { paginationSchema } from "@/shared/api/schema";
+import { useToast } from "@/shared/lib/use-toast";
+import { Button } from "@/shared/ui/button";
 import {
   TABLE_VISIBILITY_STORAGE_KEYS,
   useApiSorting,
   convertToApiSorting,
-} from "@/components/shared/table";
-import { Tag } from "@/components/shared/Tags";
-import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import { useToast } from "@/hooks/use-toast";
-import { EOrderStatus } from "@/services/schemas/orders";
-import { paginationSchema } from "@/services/types/schema";
+} from "@/shared/ui/data-table";
+import DataTable from "@/shared/ui/data-table/data-table";
+import { Dialog } from "@/shared/ui/dialog";
+import EditActions from "@/shared/ui/edit-actions";
+import { Input } from "@/shared/ui/input";
+import { Spinner } from "@/shared/ui/spinner";
 
 import EditDialogContent from "./components/EditDialogContent";
 import StatusColumnFilter from "./components/StatusColumnFilter";

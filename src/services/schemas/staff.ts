@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { paginationSchema, sortSchema } from "@/services/types/schema";
+import { paginationSchema, sortSchema } from "@/shared/api/schema";
 
 export const staffUserSchema = z.object({
   staff_id: z.string(),

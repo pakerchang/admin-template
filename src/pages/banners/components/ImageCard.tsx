@@ -2,8 +2,8 @@ import { Edit2, Trash2, TrendingUp, TrendingDown } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/ui/button";
 
 interface IImageCardProps {
   className?: string;
