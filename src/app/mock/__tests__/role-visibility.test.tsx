@@ -3,9 +3,13 @@ import { describe, expect, it } from "vitest";
 
 import { makeApp } from "@/app/__tests__/fixture";
 import { coreGrants, mergeGrants } from "@/app/mock/permission-matrix";
+import { apiFetch } from "@/services/api-client";
+import { DEMO_ACCOUNT, users } from "@/services/mock/data";
 import { NavContext, useVisibleNav } from "@/shared/module";
 import { can, GrantsContext } from "@/shared/permission";
+import { server } from "@/test/setup";
 
+import type { TAuthSession } from "@/services/api-client";
 import type { TNavItem } from "@/shared/module";
 import type { TGrantMatrix } from "@/shared/permission";
 import type { ReactNode } from "react";
@@ -33,12 +37,14 @@ const ids = (items: TNavItem[]) =>
   items.flatMap((i) => [i.id, ...(i.children ?? []).map((c) => c.id)]);
 
 /**
- * 重構前（master 6029bf0）各角色可見 sidebar，期望值寫死：
- * - sidebar 8 項、AppSidebar 不過濾（constants/sidebar.tsx:20-65、AppSidebar.tsx:79），子頁 route 無檢查（router/routes.tsx:55-57）
+ * 期望值 = 依 main 裁決調整後的矩陣（m4-fix2 報告「矩陣最終內容」，待 owner 覆核），不是 6029bf0 畫面的逐字重現：
+ * - 6029bf0 sidebar 8 項、AppSidebar 不過濾（constants/sidebar.tsx:20-65、AppSidebar.tsx:79），子頁 route 無檢查（router/routes.tsx:55-57）
  *   → 沒有檢查的頁 = 所有後台角色可見
- * - products / orders 照舊條件 canManageProducts（admin/superadmin/partner）、canManageOrders（admin/superadmin/support）
- *   （pages/users/hooks/use-user.ts:166-171；spec §6.1 對照 product:* / orders:*）
- * - support / partner 可進後台是 main 裁決（app:access）；6029bf0 ProtectedAppLayout.tsx:9-13 原本擋掉，見 m4-fix2 報告 DECISION D1
+ * - D1：support / partner 在 6029bf0 其實進不了後台（ProtectedAppLayout.tsx:9-13 的 canAccessAdminPanel 限 admin/superadmin）；
+ *   可進後台（app:access）是 main 裁決
+ * - D2：products / orders 依 canManageProducts（admin/superadmin/partner）、canManageOrders（admin/superadmin/support）
+ *   （pages/users/hooks/use-user.ts:166-171；spec §6.1 對照 product:* / orders:*）；這兩個條件在 6029bf0 只有定義、沒有消費點，
+ *   視為「有檢查」是 main 裁決
  */
 const ALL = [
   "consumers",
@@ -53,7 +59,7 @@ const ALL = [
 ];
 const without = (...drop: string[]) => ALL.filter((id) => !drop.includes(id));
 
-describe("各角色可見 nav 與重構前一致（m4-fix2）", () => {
+describe("各角色可見 nav 符合依 main 裁決調整後的矩陣（m4-fix2）", () => {
   it.each([
     ["superadmin", ALL],
     ["admin", ALL],
@@ -79,5 +85,58 @@ describe("各角色可見 nav 與重構前一致（m4-fix2）", () => {
         role === "superadmin",
       ]);
     }
+  });
+});
+
+/** login 後展開的完整 grants（m4-fix2 報告「矩陣最終內容」，寫死） */
+const EXPECTED_GRANTS: Record<string, string[]> = {
+  superadmin: ["*"],
+  admin: [
+    "app:access",
+    "users:read",
+    "team-members:*",
+    "orders:*",
+    "product:*",
+    "suppliers:*",
+    "consumers:*",
+    "banners:*",
+    "articles:*",
+    "tags:*",
+  ],
+  support: [
+    "app:access",
+    "team-members:read",
+    "orders:*",
+    "suppliers:read",
+    "consumers:read",
+    "banners:read",
+    "articles:read",
+    "tags:read",
+  ],
+  partner: [
+    "app:access",
+    "team-members:read",
+    "product:*",
+    "suppliers:read",
+    "consumers:read",
+    "banners:read",
+    "articles:read",
+    "tags:read",
+  ],
+};
+
+describe("各角色 login 後的完整 grants 集合（W3）", () => {
+  it.each(Object.entries(EXPECTED_GRANTS))("%s", async (role, expected) => {
+    server.resetHandlers(...registry.mockHandlers);
+    const res = await apiFetch<TAuthSession>("/api/auth/login", {
+      method: "POST",
+      body: {
+        email: users.find((u) => u.role === role)!.email,
+        password: DEMO_ACCOUNT.password,
+      },
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.user.role).toBe(role);
+    expect([...(res.body.grants ?? [])].sort()).toEqual([...expected].sort());
   });
 });
