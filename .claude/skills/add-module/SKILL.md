@@ -23,7 +23,7 @@ description: 依 docs/specs/fsd-module-architecture.spec.md 新增或改寫一�
 
 spec 只定義「搬遷既有程式碼」的落點，沒有針對過渡期「新增 module」另寫規則。下表只列 spec 有明文的落點；**標「未定義」的一律先問 owner，不要自己推一個位置**。
 
-- **M3 落地前**：不要建 `src/modules/`。照現況結構寫：頁面放 `src/pages/<feature>/`、route 加在 `src/router/routes.tsx`（`createRoute`）、選單加在 `src/constants/sidebar.tsx`、mock 加在 `src/services/mock/{handlers,data}.ts`、schema 放 `src/services/schemas/`、i18n key 加在 `src/locales/{en,zh}.json`。
+- **M3 落地前**（已過，M3 已落地，`src/modules/` 為現行結構，見下一條）：歷史規則為不建 `src/modules/`，照當時結構寫：頁面放 `src/pages/<feature>/`、route 加在 `src/router/routes.tsx`（`createRoute`）、選單加在 `src/constants/sidebar.tsx`、mock 加在 `src/services/mock/{handlers,data}.ts`、schema 放 `src/services/schemas/`、i18n key 加在 `src/locales/{en,zh}.json`。
 - **M3 落地後、M6 落地前（M3–M5）**：
   - 已定義：`src/modules/<id>/index.ts`（defineModule + route composition，指向頁面）、`src/modules/<id>/model/routes.ts`（route 定義，不 import ui）、`src/app/modules.ts` 加 `.use()`、nav 寫在 `defineModule({ nav })`——spec §9 L932、M3 Touches L1121、§5.1 L523/L534。M4 落地後另有：operation 加進手寫 `src/app/operations.gen.ts`（spec L933、M4 Touches L1158、§5.1 L542）。M5 落地後共用程式碼的落點改為 `src/shared/`（spec L934、M5 Touches L1183）。
   - 未定義 → **先問 owner**：新 module 的頁面 UI、schema / model hooks、mock handler 與 seed、i18n key。spec 在這段期間只說既有 module 的 `index.ts`「指向現有 pages」（L932），既有 mock 走 `app/mock/legacy-adapter.ts`（§5.1 L542，M2–M6），沒說新 module 的這些檔案放 `src/pages/` 等舊位置還是直接放 `modules/<id>/`。

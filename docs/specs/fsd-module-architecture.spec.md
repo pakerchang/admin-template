@@ -561,8 +561,8 @@ export const ordersMockHandlers: HttpHandler[] = [
 | `pages/suppliers/**` | `suppliers` | `use-supplier-options` 等（公開給 product） | `suppliers.list` | — |
 | `pages/tags/**` | `tags` | `use-tag-options` 等（公開給 product） | `tags.list` | — |
 | `pages/consumers/**` | `consumers` | customer hooks、transaction 查詢 | `consumers.list`、`TransactionCard` | — （R5：transaction seed 自帶；`OrderCard.tsx:6` 對 orders util 的依賴改為本 module 自有格式化） |
-| `pages/banners/**`（含 `docs/*.md`） | `banners` | banner hooks、sort、image-validation preset | `banners.list`、`banners.form` | — |
-| `pages/articles/**`（含 tiptap） | `articles` | article hooks、form schema | `articles.list`、`articles.form`、Tiptap editor | — |
+| `pages/banners/**`（含 `docs/*.md`） | `banners` | banner hooks、sort、image-validation preset | `banners.list`、`banners.create`、`banners.edit` | — |
+| `pages/articles/**`（含 tiptap） | `articles` | article hooks、form schema | `articles.list`、`articles.create`、`articles.edit`、Tiptap editor | — |
 
 ### 5.3 跨 module 依賴規則
 
@@ -1113,7 +1113,7 @@ expected: exit 0
   - 驗證：`pnpm exec vitest run src/app`
 - [ ] AC-3 `[cmd]`: `/` 依 grants 導向第一個可見 nav；無可見 nav 時內容區渲染 `shell.Forbidden`
   - 驗證：`pnpm exec vitest run src/app/router`
-- [ ] AC-4 `[cmd]`: 以 fixture `.override("users.list", Stub)` 建 app，`/users/user-list` 渲染 Stub 而非預設頁（`users.list` 為該 route 的 routeId，R19；格式依 R23）
+- [ ] AC-4 `[cmd]`: 以 fixture `.override("users.list", Stub)` 建 app，`/users` 渲染 Stub 而非預設頁（`users.list` 為該 route 的 routeId，R19；格式依 R23）
   - 驗證：`pnpm exec vitest run src/app`
 - 註：M3 尚無正式 operation 表。依 R22，guard 在 `apiBaseUrl` 內對不到 route 一律 404，傳空表會讓所有 API 變 404，因此 M3 由 `app/mock/legacy-adapter.ts` 從現行 `handlers` 表導出 `legacyOperations()`：每個 `METHOD path` 一條 route、permission 一律 `"public"`（**R28 已裁**：M3 過渡期全 public，明確 public，非 fall-through），`build()` 1.5 通過；guard 行為 = 表內放行、表外 404，與現行 `mockFetch` 的 404 fallback（`handlers.ts:209-214`）一致。mock 模式的 `VITE_API_BASE_URL` 同時改為專用絕對 origin（R24，§6.5），API 路徑不變。M4 換成手寫 `app/operations.gen.ts`，自 M4 起 fail-closed（R28）。
 - [ ] AC-6 `[cmd]`: M3 的 guard 掛載行為不變：`apiBaseUrl` 外的 request 放行、表內 operation 放行、表外 path 回 404
@@ -1122,7 +1122,7 @@ expected: exit 0
   - 驗證：`pnpm exec vitest run src/app/mock`
 - [ ] AC-5 `[manual]`: `pnpm dev` 登入後 sidebar 項目、順序、各頁 CRUD 與重構前相同；語系切換正常
 
-**Touches**：`src/main.tsx`、`index.html`、`src/router/**`、`src/constants/sidebar.tsx`、`src/components/layouts/**`、`src/components/shared/{AppSidebar,Navbar,Breadcrumb}.tsx`、`src/hooks/use-breadcrumb.ts`、`src/locales/i18n.ts`、`src/app/**`、`src/shells/default/**`（新）、`src/modules/*/index.ts`（新，含 route composition）、`src/modules/*/model/routes.ts`（新，不 import ui/pages）、`.env.example`（mock 模式 `VITE_API_BASE_URL`）
+**Touches**：`src/main.tsx`、`index.html`、`src/router/**`、`src/constants/sidebar.tsx`、`src/components/layouts/**`、`src/components/shared/{AppSidebar,Navbar,Breadcrumb}.tsx`、`src/hooks/use-breadcrumb.ts`、`src/locales/i18n.ts`、`src/app/**`、`src/shells/default/**`（新）、`src/modules/*/index.ts`（新，含 route composition）、`src/modules/*/model/routes.ts`（新，不 import ui/pages）、`.env.example`（mock 模式 `VITE_API_BASE_URL`）；例外（main 02:33 代 owner 核准）：`vite.config.ts`（test env 的 `VITE_API_BASE_URL`）、`CLAUDE.md`（M3 狀態與路由描述）
 **Must-Not-Touch**：`src/pages/**` 內部實作（只被 import）；`src/components/ui/**`；行為紅線：URL、i18n key、mock API 路徑不變
 
 **Done Command**
