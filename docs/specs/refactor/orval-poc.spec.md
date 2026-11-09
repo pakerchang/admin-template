@@ -8,10 +8,10 @@
 
 ### Acceptance Criteria
 
-- [ ] AC1：orval 產出 `*.msw.ts`，在 msw/node `setupServer` 下用 vitest 打一次 request 有回應；`overrideResponse` 函式形式能接記憶體狀態。msw 用 `npm view` 查到的最新 major；不相容時記錄錯誤並用 msw 2.x 對照
-- [ ] AC2：orval 設 `mode: 'tags-split'`、`client: 'react-query'`、`httpClient: 'fetch'`、`mock: true`，zod 另開一個 output target；`find` 輸出的目錄樹貼進報告；`getXQueryOptions` 傳給 `queryClient.ensureQueryData` 能通過 `tsc --noEmit`
-- [ ] AC3：一次性 script 從 repo `src/services/schemas/`（banners list + create、users list）產出 `poc/orval/openapi.yaml`，內含 tags、operationId、信封（`code/msg/error/data/total`）、403、bearerAuth
-- [ ] AC4：定義 `operationId → permission` 中間格式；分別示範 module 宣告來源與 YAML `x-permission` 來源；`http.all('*')` guard 只讀中間格式，setupServer 實測 403 與 200（fall through）兩種情境
+- [x] AC1：orval 產出 `*.msw.ts`，在 msw/node `setupServer` 下用 vitest 打一次 request 有回應；`overrideResponse` 函式形式能接記憶體狀態。msw 用 `npm view` 查到的最新 major；不相容時記錄錯誤並用 msw 2.x 對照
+- [x] AC2：orval 設 `mode: 'tags-split'`、`client: 'react-query'`、`httpClient: 'fetch'`、`mock: true`，zod 另開一個 output target；`find` 輸出的目錄樹貼進報告；`getXQueryOptions` 傳給 `queryClient.ensureQueryData` 能通過 `tsc --noEmit`
+- [x] AC3：一次性 script 從 repo `src/services/schemas/`（banners list + create、users list）產出 `poc/orval/openapi.yaml`，內含 tags、operationId、信封（`code/msg/error/data/total`）、403、bearerAuth
+- [x] AC4：定義 `operationId → permission` 中間格式；分別示範 module 宣告來源與 YAML `x-permission` 來源；`http.all('*')` guard 只讀中間格式，setupServer 實測 403 與 200（fall through）兩種情境
 - [ ] AC5：報告寫到 scratchpad 的 `poc-orval-report.md`，含各項結論、實際指令與 exit code、實測版本、建議、未驗項；commit 到 `poc/api-orval`（不加 AI 署名、不 push）
 
 ### Touches

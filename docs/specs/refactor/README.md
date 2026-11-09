@@ -40,14 +40,16 @@ deps spec 中未提及 P4 / P5。
 
 ## API 契約層 PoC（api chain）
 
-PoC spec 保留到 M7 落地時引用。
+PoC spec 保留到 M7 落地時引用。PoC 程式碼在 branch `poc/api-orval`（未 push，worktree `admin-template-api-orval-poc`）；報告在 api chain scratchpad `chains/api/poc-*-report.md`。
 
-| 檔名 | 主題 | 狀態 |
-|---|---|---|
-| `orval-poc.spec.md` | orval + MSW sandbox PoC（a1） | PoC，保留至 M7 |
-| `orval-module-split-poc.spec.md` | orval module 分散輸出 PoC（a2） | PoC，保留至 M7 |
-| `guard-fail-closed-poc.spec.md` | guard fail-closed PoC（a3） | PoC，保留至 M7 |
-| `perm-colon-poc.spec.md` | 權限字串改冒號 PoC（a4） | PoC，保留至 M7 |
+證據說明：done command `ALL_GREEN` exit=0 為**子 session 自報，未經 codex 審**。AC 只勾 done command 實際涵蓋的項；報告內容、commit 與分析類 AC 不在 done command 範圍內，維持未勾。
+
+| 檔名 | 主題 | 狀態 | 證據 |
+|---|---|---|---|
+| `orval-poc.spec.md` | orval + MSW sandbox PoC（a1） | PoC 完成，保留至 M7 | `8f20660`；`poc-orval-report.md`；vitest 7/7；AC 4/5 |
+| `orval-module-split-poc.spec.md` | orval module 分散輸出 PoC（a2） | PoC 完成（採 B：單一 yaml 依 tag 分 output），保留至 M7 | `8d0ddfc`；`poc-module-split-report.md`；vitest 11/11；AC 2/7 |
+| `guard-fail-closed-poc.spec.md` | guard fail-closed PoC（a3） | PoC 完成，保留至 M7 | `f006837`；`poc-guard-fail-closed-report.md`；vitest 18/18；AC 5/6 |
+| `perm-colon-poc.spec.md` | 權限字串改冒號 PoC（a4） | PoC 完成，保留至 M7 | `1097347`；`poc-perm-colon-report.md`；vitest 18/18；AC 2/6 |
 
 ## 工具 / 流程
 

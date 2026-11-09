@@ -10,11 +10,11 @@
 
 ### Acceptance Criteria
 
-- [ ] AC1：`public` 表示法定案並實作，module 宣告與 YAML `x-permission: public` 兩種來源都支援；報告說明理由
-- [ ] AC2：guard 比對到 route 但沒宣告 → 403（body 指出 operationId）；`public` → fall through；比對不到任何 route 的 request 處理方式明確實作並說明
-- [ ] AC3：extract 遇到缺 `x-permission` 的 operation → throw、exit≠0，訊息列出 operationId（fixture yaml 實測）；提供 routes × permissions 完整性檢查函式，可在 kernel 啟動或測試呼叫
-- [ ] AC4：`split-b/openapi.yaml` 有一個標 public 的 `POST /auth/login`，產物跑過 orval
-- [ ] AC5：vitest（setupServer）：未宣告 operation → 403；public 不帶 token → 200；原本 403/200 情境照樣通過；extract fixture exit≠0
+- [x] AC1：`public` 表示法定案並實作，module 宣告與 YAML `x-permission: public` 兩種來源都支援；報告說明理由
+- [x] AC2：guard 比對到 route 但沒宣告 → 403（body 指出 operationId）；`public` → fall through；比對不到任何 route 的 request 處理方式明確實作並說明
+- [x] AC3：extract 遇到缺 `x-permission` 的 operation → throw、exit≠0，訊息列出 operationId（fixture yaml 實測）；提供 routes × permissions 完整性檢查函式，可在 kernel 啟動或測試呼叫
+- [x] AC4：`split-b/openapi.yaml` 有一個標 public 的 `POST /auth/login`，產物跑過 orval
+- [x] AC5：vitest（setupServer）：未宣告 operation → 403；public 不帶 token → 200；原本 403/200 情境照樣通過；extract fixture exit≠0
 - [ ] AC6：報告含 done command exit code、vitest 數量、表示法與未比對 request 的理由、整合 guard/extract 介面簽名、未驗證項、worktree / branch / 最後 commit sha；commit 到 `poc/api-orval`（不加 AI 署名、不 push）
 
 ### Touches

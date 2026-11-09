@@ -11,9 +11,9 @@
 ### Acceptance Criteria
 
 - [ ] AC1：`poc/` 底下 yaml `x-permission`、module `permissions`、角色權限表、測試斷言、錯誤訊息斷言、fixture 中的權限字串全改為冒號；`public` 不變
-- [ ] AC2：產物（`generated/`、`split-*/modules/*` 產出、`operations.gen.ts`）由 gen 重新產生
+- [x] AC2：產物（`generated/`、`split-*/modules/*` 產出、`operations.gen.ts`）由 gen 重新產生
 - [ ] AC3：改完後 grep 確認無點號形式權限字串殘留，指令與結果貼進報告
-- [ ] AC4：done command（不接 pipe）`ALL_GREEN`、exit=0，記下 vitest 數量
+- [x] AC4：done command（不接 pipe）`ALL_GREEN`、exit=0，記下 vitest 數量
 - [ ] AC5：說明 YAML 值含冒號是否需引號、MSW 路由比對是否受影響
 - [ ] AC6：報告含改動檔清單、殘留 grep、exit code、vitest 數量、坑、最後 commit sha；commit 到 `poc/api-orval`（不加 AI 署名、不 push）
 

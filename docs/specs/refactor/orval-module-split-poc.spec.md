@@ -10,11 +10,11 @@
 
 ### Acceptance Criteria
 
-- [ ] AC1：A、B 各有一份 orval config，`pnpm exec orval` exit code 記錄；`find` 目錄樹確認 api 產物落 `modules/<id>/api/`、msw/faker 落 `modules/<id>/mocks/`（不能拆則給最小可行替代並說明）
+- [x] AC1：A、B 各有一份 orval config，`pnpm exec orval` exit code 記錄；`find` 目錄樹確認 api 產物落 `modules/<id>/api/`、msw/faker 落 `modules/<id>/mocks/`（不能拆則給最小可行替代並說明）
 - [ ] AC2：記錄共用 schema（信封、`ErrorBody`）與 model 型別落點、是否跨 module 重複產出、放 shared 的判準
 - [ ] AC3：檢查產物是否出現跨 module import（grep 結果貼報告）
 - [ ] AC4：各切法下 operations.gen（routes + permissions）的 extract 方式與輸出位置；kernel 只經 module `index.ts` 或 gen 聚合檔取得
-- [ ] AC5：a1 guard 測試改用 module 目錄產物跑 setupServer（至少 403 + 200 各一），A、B 各一次，vitest exit code 記錄
+- [x] AC5：a1 guard 測試改用 module 目錄產物跑 setupServer（至少 403 + 200 各一），A、B 各一次，vitest exit code 記錄
 - [ ] AC6：新增一個 module 的步驟數 / 碰到的檔案數；換掉整個 domain 時要刪改什麼
 - [ ] AC7：報告含 A/B 對照表、建議 + 理由、整合 milestone 的 orval config 骨架與 gen script 形狀、坑、未驗證項、worktree / branch / 最後 commit sha；commit 到 `poc/api-orval`（不加 AI 署名、不 push）
 
