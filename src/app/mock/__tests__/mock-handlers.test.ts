@@ -53,7 +53,16 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
       expect((await login(DEMO_ACCOUNT.email)).body.grants).toEqual(["*"]);
       const support = (await login(emailOf("support"))).body;
       expect(support.user.role).toBe("support");
-      expect(support.grants).toEqual(["app:access", "orders:*"]);
+      expect(support.grants).toEqual([
+        "app:access",
+        "team-members:read",
+        "orders:*",
+        "suppliers:read",
+        "consumers:read",
+        "banners:read",
+        "articles:read",
+        "tags:read",
+      ]);
     });
 
     it("no token on a non-public operation → 403, not 401", async () => {

@@ -21,6 +21,10 @@ export default defineModule({
   ],
   permissions: {
     resources: { tags: ["read", "create", "update", "delete"] },
-    mockGrants: { admin: ["tags:*"], partner: ["tags:read"] },
+    mockGrants: {
+      admin: ["tags:*"],
+      support: ["tags:read"],
+      partner: ["tags:read"],
+    },
   },
 });

@@ -21,6 +21,10 @@ export default defineModule({
   ],
   permissions: {
     resources: { suppliers: ["read", "create", "update", "delete"] },
-    mockGrants: { admin: ["suppliers:*"], partner: ["suppliers:read"] },
+    mockGrants: {
+      admin: ["suppliers:*"],
+      support: ["suppliers:read"],
+      partner: ["suppliers:read"],
+    },
   },
 });

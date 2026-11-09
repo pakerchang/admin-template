@@ -23,6 +23,10 @@ export default defineModule({
   ],
   permissions: {
     resources: { banners: ["read", "create", "update", "delete"] },
-    mockGrants: { admin: ["banners:*"] },
+    mockGrants: {
+      admin: ["banners:*"],
+      support: ["banners:read"],
+      partner: ["banners:read"],
+    },
   },
 });

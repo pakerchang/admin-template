@@ -21,6 +21,10 @@ export default defineModule({
   ],
   permissions: {
     resources: { consumers: ["read"] },
-    mockGrants: { admin: ["consumers:*"] },
+    mockGrants: {
+      admin: ["consumers:*"],
+      support: ["consumers:read"],
+      partner: ["consumers:read"],
+    },
   },
 });
