@@ -7,6 +7,9 @@ import {
   type ValidationResult,
 } from "../index";
 
+// 檔案大小需 >= 1KB 才會通過 filesize 規則
+const VALID_SIZE_CONTENT = "x".repeat(2 * 1024);
+
 // Banner 驗證預設配置（測試用期望值）
 const BANNER_VALIDATION_CONFIG = {
   // 支援的檔案類型（Banner 專用：僅 WebP）
@@ -102,8 +105,8 @@ describe("Banner Preset", () => {
     expect(ruleNames).toContain("banner-file-type");
     expect(ruleNames).toContain("filename-format");
     expect(ruleNames).toContain("desktop-filename-prefix");
-    expect(ruleNames).toContain("desktop-resolution");
-    expect(ruleNames).toContain("file-size");
+    expect(ruleNames).toContain("banner-desktop-resolution");
+    expect(ruleNames).toContain("banner-desktop-filesize");
   });
 
   it("should create mobile banner validation manager with WebP-only rules", () => {
@@ -132,8 +135,8 @@ describe("Banner Preset", () => {
     expect(ruleNames).toContain("banner-file-type");
     expect(ruleNames).toContain("filename-format");
     expect(ruleNames).toContain("mobile-filename-prefix");
-    expect(ruleNames).toContain("mobile-resolution");
-    expect(ruleNames).toContain("file-size");
+    expect(ruleNames).toContain("banner-mobile-resolution");
+    expect(ruleNames).toContain("banner-mobile-filesize");
   });
 
   it("should have correct banner validation config", () => {
@@ -148,7 +151,7 @@ describe("Banner Preset", () => {
     const manager = createDesktopBannerValidationManager();
 
     // 建立模擬的 WebP 檔案
-    const mockWebPFile = new File([""], "d_banner.webp", {
+    const mockWebPFile = new File([VALID_SIZE_CONTENT], "d_banner.webp", {
       type: "image/webp",
     });
 
@@ -163,7 +166,7 @@ describe("Banner Preset", () => {
     const manager = createMobileBannerValidationManager();
 
     // 建立模擬的 WebP 檔案
-    const mockWebPFile = new File([""], "m_banner.webp", {
+    const mockWebPFile = new File([VALID_SIZE_CONTENT], "m_banner.webp", {
       type: "image/webp",
     });
 
@@ -178,7 +181,7 @@ describe("Banner Preset", () => {
     const manager = createDesktopBannerValidationManager();
 
     // 建立模擬的非 WebP 檔案
-    const mockJpegFile = new File([""], "d_banner.jpg", {
+    const mockJpegFile = new File([VALID_SIZE_CONTENT], "d_banner.jpg", {
       type: "image/jpeg",
     });
 
@@ -200,7 +203,7 @@ describe("Banner Preset", () => {
     const manager = createMobileBannerValidationManager();
 
     // 建立模擬的非 WebP 檔案
-    const mockJpegFile = new File([""], "m_banner.jpg", {
+    const mockJpegFile = new File([VALID_SIZE_CONTENT], "m_banner.jpg", {
       type: "image/jpeg",
     });
 

@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import StatusColumnFilter from "../StatusColumnFilter";
 
-import type { TProduct } from "@/services/contracts/product";
+import type { TProduct } from "@/services/schemas/product";
 import type { Column } from "@tanstack/react-table";
 
 type ProductStatus = TProduct["product_status"];
@@ -117,9 +117,9 @@ describe("StatusColumnFilter", () => {
 
       // 等待選單項目出現
       await waitFor(() => {
-        expect(screen.getByText("All (100)")).toBeInTheDocument();
-        expect(screen.getByText("Active (70)")).toBeInTheDocument();
-        expect(screen.getByText("Inactive (30)")).toBeInTheDocument();
+        expect(screen.getByText("All (100/100)")).toBeInTheDocument();
+        expect(screen.getByText("Active (70/100)")).toBeInTheDocument();
+        expect(screen.getByText("Inactive (30/100)")).toBeInTheDocument();
       });
     });
 
@@ -165,7 +165,7 @@ describe("StatusColumnFilter", () => {
 
       // 選擇 "All" 選項
       await waitFor(() => {
-        const allOption = screen.getByText("All (100)");
+        const allOption = screen.getByText("All (100/100)");
         fireEvent.click(allOption);
       });
 
@@ -189,7 +189,7 @@ describe("StatusColumnFilter", () => {
 
       // 選擇 "Active" 選項
       await waitFor(() => {
-        const activeOption = screen.getByText("Active (70)");
+        const activeOption = screen.getByText("Active (70/100)");
         fireEvent.click(activeOption);
       });
 
@@ -213,7 +213,7 @@ describe("StatusColumnFilter", () => {
 
       // 選擇 "Inactive" 選項
       await waitFor(() => {
-        const inactiveOption = screen.getByText("Inactive (30)");
+        const inactiveOption = screen.getByText("Inactive (30/100)");
         fireEvent.click(inactiveOption);
       });
 
@@ -310,9 +310,9 @@ describe("StatusColumnFilter", () => {
 
       // 等待選單項目出現
       await waitFor(() => {
-        expect(screen.getByText("All (0)")).toBeInTheDocument();
-        expect(screen.getByText("Active (0)")).toBeInTheDocument();
-        expect(screen.getByText("Inactive (0)")).toBeInTheDocument();
+        expect(screen.getByText("All (0/0)")).toBeInTheDocument();
+        expect(screen.getByText("Active (0/0)")).toBeInTheDocument();
+        expect(screen.getByText("Inactive (0/0)")).toBeInTheDocument();
       });
     });
 

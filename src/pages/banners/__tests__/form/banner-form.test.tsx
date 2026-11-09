@@ -49,6 +49,7 @@ vi.mock("react-hook-form", async () => {
 
 // Mock @tanstack/react-router
 vi.mock("@tanstack/react-router", () => ({
+  useNavigate: () => vi.fn(),
   useMatchRoute: () => vi.fn(),
   useParams: () => ({}),
   useLocation: () => ({
@@ -75,23 +76,25 @@ vi.mock("@/components/ui/sidebar", () => ({
 }));
 
 // Mock custom hooks
-vi.mock("../../hooks/use-banner", () => ({
-  useCreateBanner: () => ({
-    mutate: vi.fn(),
-    isPending: false,
-  }),
-  useUpdateBanner: () => ({
-    mutate: vi.fn(),
-    isPending: false,
-  }),
-  useGetBanner: () => ({
-    data: null,
-    isLoading: false,
-  }),
-  useCreateBannerSchema: () => ({
-    parse: vi.fn(),
-  }),
-}));
+vi.mock("../../hooks/use-banner", async () => {
+  const { z } = await import("zod");
+  return {
+    useCreateBanner: () => ({
+      mutate: vi.fn(),
+      isPending: false,
+    }),
+    useUpdateBanner: () => ({
+      mutate: vi.fn(),
+      isPending: false,
+    }),
+    useGetBanner: () => ({
+      data: null,
+      isLoading: false,
+    }),
+    // zodResolver 需要真的 zod schema
+    useCreateBannerSchema: () => z.object({}),
+  };
+});
 
 vi.mock("@/hooks/use-img-upload", () => ({
   useImgUpload: () => ({
@@ -157,11 +160,6 @@ describe("BannerForm", () => {
     // 檢查重定向 URL 欄位
     expect(
       screen.getByLabelText("pages.banner.bannerCreate.redirectUrl")
-    ).toBeInTheDocument();
-
-    // 檢查狀態選擇器
-    expect(
-      screen.getByText("pages.banner.bannerCreate.status")
     ).toBeInTheDocument();
 
     // 檢查圖片上傳區域

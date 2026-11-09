@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 import { useBannerSort } from "../use-banner-sort";
 
-import type { TBanner } from "@/services/contracts/banner";
+import type { TBanner } from "@/services/schemas/banner";
 
 /**
  * Banner 排序功能測試
@@ -82,7 +82,7 @@ describe("useBannerSort", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.useFakeTimers();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
     mockMutateAsync.mockResolvedValue({ success: true });
   });
 
@@ -115,8 +115,10 @@ describe("useBannerSort", () => {
     });
 
     it("應該處理空的 activeBanners 陣列", () => {
+      // 需穩定參考：inline [] 每次 render 都是新陣列，會讓 hook 的 effect 無限重跑
+      const emptyBanners: TBanner[] = [];
       const { result } = renderHook(() =>
-        useBannerSort([], mockInactiveBanners)
+        useBannerSort(emptyBanners, mockInactiveBanners)
       );
 
       expect(result.current.sortedActiveBanners).toHaveLength(0);
@@ -342,8 +344,10 @@ describe("useBannerSort", () => {
         useBannerSort(mockActiveBanners, mockInactiveBanners)
       );
 
-      const promiseResolve = vi.fn();
-      mockMutateAsync.mockImplementation(() => new Promise(promiseResolve));
+      let promiseResolve: (value: unknown) => void = () => {};
+      mockMutateAsync.mockImplementation(
+        () => new Promise((resolve) => (promiseResolve = resolve))
+      );
 
       act(() => {
         result.current.promoteToActive(mockInactiveBanners[0]);
