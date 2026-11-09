@@ -24,7 +24,7 @@
 | M4 權限四強制點 + 內容區 403 | 完成，已併入本地整合分支 `refactor/integration`（AC-1～5、AC-7 有自動測試證據；AC-6 `[manual]` 瀏覽器驗收**待驗**，由 main 統一派；角色 grants 矩陣為 **main 代 owner 裁決，待 owner 覆核**） | integration tip `ec5a55f`（ff-only，基線 exit 0、32 files / 316 tests、LINT_OK）；branch `feat/m4-permission-enforcement` @ `ec5a55f` 未 push（origin 停在 rebase 前 `66e94c0`）；codex acd05c0 FAIL（C1 mock token 可偽造、C2 profile 提權）→ fix1/fix2 → 2988875 PASS-with-fixes（arch chain `reviews/arch-m4-fix-codex-verdict.md`）→ fix3 修 W1（重新整理後 session 失效）後依 owner 指示不再複審直接併入；AC-1 路徑 `/users/user-list` → `/users`（main 核准） |
 | M5 Kernel / shared 搬遷 + 邊界 lint | 未開始 | — |
 | M6 Module 內嵌搬遷 | 未開始 | — |
-| M7 orval 契約層 | 未開始（依 api PoC 結論） | M4 決定：M7 前 mock 404 沿用 legacy body `No mock handler for …`；M7 起改 `not found: no operation for …`（spec §6.5，供 api M7a/M7b 參考） |
+| M7 orval 契約層 | **main 裁決拆兩段**。**M7a 完成**，已併入本地整合分支 `refactor/integration`：repo 根 `openapi.yaml`（36 operations）、`scripts/extract-operations.ts` + AC-2 fixture 測試、extract 結果與現行 `operations.gen.ts` 的一致性比對、根目錄 `orval.config.ts`（只寫檔未跑 gen）；AC-2 已勾。**M7b 未開始**（等 M6 併入）：gen 進 modules、mutator（AC-4）、刪 adapter（AC-5）、AC-1 / AC-3 / AC-6 / AC-7 | M7a：integration tip `571d1af`（ff-only；基線 exit 0、33 files / 328 tests、LINT_OK、`vitest run scripts` 12 tests）；branch `feat/m7a-openapi-contract` @ `571d1af`（base `ec5a55f`）；codex 首輪 PASS（api chain `reviews/api-m7a-codex-verdict.md`）；lead 第一手重跑 Done Command exit 0、`M7A_DONE_OK`。M4 決定：M7 前 mock 404 沿用 legacy body `No mock handler for …`；M7 起改為 `not found: no operation for …`（spec §6.5） |
 | M8 D1 / D4 驗收自動化與收尾 | 未開始 | — |
 
 ### 架構主線已知問題 / follow-up
@@ -43,6 +43,9 @@
 | M3 | 中間 commit 509dc96..2aae3e6 不可單獨 build（bisect skip，已接受） | main 裁決 |
 | M5 | `src/test/jsdom-node-abort.env.ts` 在 Vitest 5 下多餘，M5 移除並重跑 AbortSignal / msw 測試 | deps P3 |
 | M6 | `en.json` 比 zh 少 71 個 key（例 `pages.tag.addTag`） | arch chain 觀察 |
+| M7a | pnpm-lock 中既有 `unplugin@3.7.0` 的 optional `esbuild` 隨新增 orval 從 0.25.12 解析為 0.28.2（`package.json` 既有版本未變；無故障證據） | api chain `reviews/api-m7a-codex-verdict.md` info 1 |
+| M7a | extract 輸出與現行手寫 `src/app/operations.gen.ts`（`crud()` helper）不逐字相同，M7a 只做資料比對、未覆蓋；產物直接放進 src 後的 eslint 由 M7b `gen:api` 實際驗證 | api chain m7a-impl 交付報告 |
+| M7a | `scripts/**` 與 `orval.config.ts` 不在 `pnpm build` 的 tsc 範圍，也不在 `pnpm lint` 範圍（只用暫時 tsconfig 檢查過一次） | api chain m7a-impl 交付報告 |
 
 ## 依賴升級（deps chain）
 
