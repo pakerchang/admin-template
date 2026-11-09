@@ -107,16 +107,20 @@ const catalog = (modules: readonly TModule[]): TPermissionCatalog => {
   return out;
 };
 
-/** §4.3 1.4：nav permission 的 resource 必須在某 module 的 permissions.resources 宣告過 */
-const assertNavResources = (
+/** 完整 `resource:action` 是否在已安裝 module 的權限目錄內（R21） */
+const inCatalog = (catalogue: TPermissionCatalog, p: string) =>
+  !!catalogue[resourceOf(p)]?.includes(p.slice(p.indexOf(":") + 1));
+
+/** §4.3 1.4：nav permission 必須是已安裝 module 權限目錄中完整的 `resource:action`（owner 2026-11-09 nav 粒度裁決） */
+const assertNavPermissions = (
   modules: readonly TModule[],
   catalogue: TPermissionCatalog
 ) => {
   for (const m of modules)
     for (const item of (m.nav ?? []).flatMap((n) => [n, ...(n.children ?? [])]))
-      if (!(resourceOf(item.permission) in catalogue))
+      if (!inCatalog(catalogue, item.permission))
         throw new Error(
-          `module "${m.id}": nav "${item.id}" permission "${item.permission}" uses a resource not declared by any installed module`
+          `module "${m.id}": nav "${item.id}" permission "${item.permission}" is not in any installed module's permission catalog`
         );
 };
 
@@ -142,8 +146,7 @@ const assertOperations = (
       throw new Error(
         `operation "${operationId}" requires "${p}": wildcard is not allowed in operation permissions`
       );
-    const action = p.slice(p.indexOf(":") + 1);
-    if (!catalogue[resourceOf(p)]?.includes(action))
+    if (!inCatalog(catalogue, p))
       throw new Error(
         `operation "${operationId}" requires "${p}" which is not in any installed module's permission catalog`
       );
@@ -181,7 +184,7 @@ export function build({
   assertRequires(modules);
   assertI18nBare(modules);
   const catalogue = catalog(modules);
-  assertNavResources(modules, catalogue);
+  assertNavPermissions(modules, catalogue);
   assertOperations(operations, catalogue);
 
   // Array#sort 是穩定排序（ES2019）

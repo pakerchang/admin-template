@@ -160,6 +160,17 @@ describe("build() validation", () => {
     });
     expect(() => build(ctx([m]))).toThrow(/"orders".*"y:read"/);
   });
+  it("throws when nav references a declared resource with an undeclared action (full resource:action match)", () => {
+    const navWith = (permission: `${string}:${string}`) =>
+      mod("orders", {
+        nav: [{ id: "o", label: "orders.nav", to: "/orders", permission }],
+        permissions: { resources: { orders: ["read", "update", "export"] } },
+      });
+    expect(() => build(ctx([navWith("orders:typo")]))).toThrow(
+      /"orders".*"orders:typo"/
+    );
+    expect(() => build(ctx([navWith("orders:read")]))).not.toThrow();
+  });
 });
 
 describe("operation table (fail-closed)", () => {
