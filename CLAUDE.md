@@ -8,6 +8,7 @@ React admin dashboard（純 UI showcase，無真後端）。回覆一律繁體�
 - `pnpm lint` —— **帶 `--fix`，會改檔**；只檢查用 `pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"`
 - `pnpm test` —— **watch 模式**，非互動環境會掛住；一次性執行用 `pnpm exec vitest run`
 - `pnpm test:coverage`、`pnpm prettier`（`--write src/**`）
+- `pnpm verify:core-only`（D4 驗收，M8）：在暫存 worktree 副本（只含已 commit 內容）刪掉 `kind: "domain"` 的 module → `gen:api` → build → core-safe 測試，成功印 `core-only build: OK`。斷言完整安裝的測試列在腳本 `FULL_INSTALL_TESTS`；新增這類測試要補進清單
 - pre-commit：husky → lint-staged（`eslint --fix` + `prettier --write`）
 - 環境變數：`.env.example` → `.env`
 
@@ -51,7 +52,7 @@ src/
 | M5 | kernel / shared 搬遷 + boundaries lint | 完成（待併入） |
 | M6 | module 內嵌搬遷（pages / schemas / seed / i18n） | 完成（待併入） |
 | M7 | orval 契約層（單一 `openapi.yaml`） | 完成（待併入；AC-7 瀏覽器驗收待驗） |
-| M8 | D1 / D4 驗收自動化與收尾 | 未開始 |
+| M8 | D1 / D4 驗收自動化與收尾 | 完成（待併入；AC-4 瀏覽器驗收待驗） |
 
 過渡期規則：
 

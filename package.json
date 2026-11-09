@@ -18,7 +18,8 @@
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "gen:api": "orval && prettier --write \"src/modules/*/{api/**/*.ts,mocks/*.msw.ts}\" --log-level warn && pnpm gen:api:extract",
-    "gen:api:extract": "tsx scripts/extract-operations.ts"
+    "gen:api:extract": "tsx scripts/extract-operations.ts",
+    "verify:core-only": "bash scripts/verify-core-only.sh"
   },
   "dependencies": {
     "@faker-js/faker": "10.6.0",
