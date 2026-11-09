@@ -1,0 +1,34 @@
+import { Package } from "lucide-react";
+
+import ProductCreateFormPage from "@/pages/product/ProductCreateForm";
+import ProductDraftFormPage from "@/pages/product/ProductDraftForm";
+import ProductEditFormPage from "@/pages/product/ProductEditForm";
+import ProductListPage from "@/pages/product/ProductList";
+import { defineModule } from "@/shared/module";
+
+import { productRoutes } from "./model/routes";
+
+export default defineModule({
+  id: "product",
+  kind: "domain",
+  // 表單用 suppliers / tags 的 hooks（spec §5.2）
+  requires: ["suppliers", "tags"],
+  routes: (ctx) =>
+    productRoutes(ctx, {
+      list: ProductListPage,
+      create: ProductCreateFormPage,
+      edit: ProductEditFormPage,
+      draft: ProductDraftFormPage,
+    }),
+  nav: [
+    {
+      id: "product",
+      label: "dashboard.menu.products.title",
+      to: "/products",
+      icon: Package,
+      permission: "product:read",
+      order: 50,
+    },
+  ],
+  permissions: { resources: { product: ["read"] } },
+});

@@ -14,7 +14,7 @@ React admin dashboard（純 UI showcase，無真後端）。回覆一律繁體�
 ## 架構
 
 - React 19 + TypeScript + Vite，path alias `@` → `src/`
-- 路由：TanStack Router **code-based**（`src/router/routes.tsx` 用 `createRoute`，非檔案式路由）
+- 路由：TanStack Router **code-based**（非檔案式路由）；M3 起各 module 在 `src/modules/<id>/model/routes.ts` 以 `ctx.page` / `ctx.layout` 定義，`src/app/kernel/build.ts` 組裝，`.use()` 清單在 `src/app/modules.ts`
 - Server state：TanStack Query；表單：React Hook Form + Zod
 - API：原生 fetch 包裝 `apiFetch`（`src/services/api-client.ts`）→ 交給 `mockFetch`（`src/services/mock/handlers.ts`，以 `METHOD path` 查 handler），資料在 `src/services/mock/data.ts`，寫入只改記憶體、重新整理即重置；接真後端時把 `mockFetch` 換回 `fetch`
 - Domain 型別：Zod schema 在 `src/services/schemas/`，共用 primitive 在 `src/services/types/schema.ts`
@@ -45,7 +45,7 @@ src/
 | M0 | deps 前置：Node 22 + ESLint 9 flat config（deps chain 負責，§9） | 完成（#4 `engines.node >=22`、#5 `eslint.config.js`） |
 | M1 | kernel 契約 + 權限引擎（純新增、未接線） | 完成（#8） |
 | M2 | MSW 取代 `mockFetch`（行為不變） | 完成（本 PR） |
-| M3 | module 接線 + default shell（行為不變） | 未開始 |
+| M3 | module 接線 + default shell（行為不變） | 完成（待 PR） |
 | M4 | 權限四強制點 + 內容區 403 | 未開始 |
 | M5 | kernel / shared 搬遷 + boundaries lint | 未開始 |
 | M6 | module 內嵌搬遷（pages / schemas / seed / i18n） | 未開始 |

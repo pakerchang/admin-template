@@ -1,9 +1,9 @@
 import { Outlet } from "@tanstack/react-router";
 
-import { AppSidebar } from "@/components/shared/AppSidebar";
 import { UnauthorizedPage } from "@/components/shared/UnauthorizedPage";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useUserPermissions } from "@/pages/users/hooks/use-user";
+import { AppSidebar } from "@/shells/default/app-sidebar";
 
 export const ProtectedAppLayout = () => {
   const { canAccessAdminPanel } = useUserPermissions();

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- route opts 經 runtime 驗證，型別由 shared/module 的 helper 型別把關 */
-import { createRoute } from "@tanstack/react-router";
+import { createRoute, redirect } from "@tanstack/react-router";
 
+import { createIndexRedirect } from "@/app/router/index-redirect";
 import { guardedRoute } from "@/shared/permission";
 
 import type {
@@ -30,6 +31,8 @@ export type TCore = {
   guard: (opts: TOperationTable & { apiBaseUrl: string }) => HttpHandler;
   mockHandlers: HttpHandler[];
   getGrants: () => readonly TGrant[];
+  /** 登入守衛：未登入進 protected → /login；已登入進 auth → "/"。省略 = 不守衛（測試 fixture） */
+  isAuthenticated?: () => boolean;
 };
 
 export type TBuildInput = {
@@ -268,17 +271,27 @@ export function build({
   const guarded = (opts: any) => guardedRoute(opts, core.getGrants);
   const plain = (opts: any) => createRoute(opts) as AnyRoute;
 
-  // ponytail: auth / protected 只建最小 pathless layout；登入守衛、"/" redirect（R9）、ForbiddenBoundary 屬 app/router（M3 / M4）
+  // ponytail: ForbiddenBoundary（內容區 403）屬 M4
+  const isAuthenticated = core.isAuthenticated;
   const authRoute = createRoute({
     getParentRoute: () => core.root,
     id: "_auth",
     component: shell.AuthLayout as any,
+    beforeLoad: () => {
+      if (isAuthenticated?.()) throw redirect({ to: "/" });
+    },
   });
+  // pathless 但 id 取 "/"：子 route id 維持 "/orders/$id" 形狀（頁面以 useParams({ from }) 依賴它）。
+  // 不用 path "/"：@tanstack/react-router 1.170 下 path "/" 的 route 比對不到任何子路徑。
   const protectedRoute = createRoute({
     getParentRoute: () => core.root,
-    id: "_protected",
+    id: "/",
     component: shell.ProtectedLayout as any,
-  });
+    beforeLoad: () => {
+      if (isAuthenticated && !isAuthenticated())
+        throw redirect({ to: "/login" });
+    },
+  } as any);
 
   const routeTree = core.root.addChildren([
     authRoute.addChildren(
@@ -291,16 +304,17 @@ export function build({
           } as TPublicRouteContext) ?? []
       )
     ),
-    protectedRoute.addChildren(
-      modules.flatMap(
+    protectedRoute.addChildren([
+      createIndexRedirect(protectedRoute, nav, core.getGrants, shell.Forbidden),
+      ...modules.flatMap(
         (m) =>
           m.routes?.({
             parent: protectedRoute,
             layout: layoutFor(m.id, guarded),
             page: pageFor(m.id, guarded),
           } as TRouteContext) ?? []
-      )
-    ),
+      ),
+    ]),
   ]);
 
   // §4.3 1.6：所有 module routes 建完後才檢查

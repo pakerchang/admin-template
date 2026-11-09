@@ -23,6 +23,6 @@ const RootComponent = () => {
     </QueryClientProvider>
   );
 };
-export const Route = createRootRoute({
-  component: RootComponent,
-});
+/** 每次 build() 需要一個新的 root（route 實例只能掛在一棵樹上） */
+export const createAppRootRoute = () =>
+  createRootRoute({ component: RootComponent });

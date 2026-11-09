@@ -9,7 +9,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-import type { BreadcrumbItem as BreadcrumbItemType } from "@/hooks/use-breadcrumb";
+import type { BreadcrumbItem as BreadcrumbItemType } from "@/shells/default/use-breadcrumb";
 
 interface BreadcrumbProps {
   items: BreadcrumbItemType[];

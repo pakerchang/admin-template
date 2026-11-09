@@ -37,13 +37,16 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { sidebarMenu } from "@/constants/sidebar";
 import { clearAuth } from "@/services/api-client";
+import { useNav } from "@/shells/default/use-nav";
+
+import type { TransKey } from "@/constants/locales";
 
 export const AppSidebar = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { t, i18n } = useTranslation();
+  const nav = useNav();
 
   const handleLogout = () => {
     clearAuth();
@@ -51,8 +54,8 @@ export const AppSidebar = () => {
     navigate({ to: "/login" });
   };
 
-  const handleNavigate = (path: string) => {
-    navigate({ to: `/${path}` });
+  const handleNavigate = (to: string) => {
+    navigate({ to });
   };
 
   const languages = [
@@ -76,18 +79,20 @@ export const AppSidebar = () => {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {sidebarMenu.map((item) => {
+            {nav.map((item) => {
               return (
-                <SidebarMenuItem key={item.label}>
-                  {item.sub ? (
+                <SidebarMenuItem key={item.id}>
+                  {item.children ? (
                     <Collapsible>
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton>
                           <div className="flex w-full items-center justify-between">
                             <div className="flex items-center gap-2">
-                              {item.icon}
+                              {item.icon && (
+                                <item.icon className="text-white" />
+                              )}
                               <span className="text-white">
-                                {t(item.label).toString()}
+                                {t(item.label as TransKey).toString()}
                               </span>
                             </div>
                             <ChevronDown className="size-4 shrink-0 text-white transition-transform duration-200 group-data-[state=open]:rotate-180" />
@@ -95,28 +100,26 @@ export const AppSidebar = () => {
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
-                        {item.sub.map((subItem) => (
+                        {item.children.map((subItem) => (
                           <SidebarMenuButton
-                            key={subItem.label}
-                            onClick={() => handleNavigate(subItem.path)}
+                            key={subItem.id}
+                            onClick={() => handleNavigate(subItem.to)}
                             className="w-full pl-8"
                           >
                             <span className="text-white">-</span>
                             <span className="text-white">
-                              {t(subItem.label).toString()}
+                              {t(subItem.label as TransKey).toString()}
                             </span>
                           </SidebarMenuButton>
                         ))}
                       </CollapsibleContent>
                     </Collapsible>
                   ) : (
-                    <SidebarMenuButton
-                      onClick={() => handleNavigate(item.path)}
-                    >
+                    <SidebarMenuButton onClick={() => handleNavigate(item.to)}>
                       <div className="flex items-center gap-2">
-                        {item.icon}
+                        {item.icon && <item.icon className="text-white" />}
                         <span className="text-white">
-                          {t(item.label).toString()}
+                          {t(item.label as TransKey).toString()}
                         </span>
                       </div>
                     </SidebarMenuButton>
