@@ -74,7 +74,7 @@ r4（`07dcae4`，Codex PASS）由 owner 確認為定案版；下列 7 項全部�
 | ID | 裁決 | 落點 |
 |----|------|------|
 | R23 = OQ-16 | route id 命名格式 = **A `${moduleId}.${name}`**（例 `orders.list`），typed key（`TRouteIdRegistry` declaration merging）；`build()` 檢查前綴必須是建立它的 module `id` | §4.1、§4.3 1.7、§4.4、§5.2、M1 AC-3、M3 AC-4、M8 AC-2 |
-| R24 | mock 模式的 `apiBaseUrl` 必須是**專用的絕對 origin**；未設定、或設成同源根目錄（origin = `location.origin` 且 path 為 `/`）→ 啟動時報錯。**不動既有 API 路徑**：維持現有前綴 `/api`、`/user`、`/users`、`/admin`（master 實測清單見 §6.5） | §6.5、§11.2、M3 AC-7 |
+| R24 | mock 模式的 `apiBaseUrl` 必須是**專用的絕對 origin**；未設定、不是絕對 URL、或與 app 同源（`new URL(apiBaseUrl).origin === location.origin`，**不論路徑**）→ 啟動時報錯。理由：client 以絕對路徑經 `new URL(path, baseUrl)` 組 URL，同源非根路徑（例 `location.origin + "/api"`）會讓 `/users`、`/user`、`/admin` 的 request 解析到 `location.origin` 根下、落在 guard 範圍外被放行（fail-closed 漏洞）。**不動既有 API 路徑**：維持現有前綴 `/api`、`/user`、`/users`、`/admin`（master 實測清單見 §6.5） | §6.5、§11.2、M3 AC-7 |
 | R25 | 未帶 token 打非 public API → **403**（照 a3，不回 401） | §6.5、§11.2、M4 AC-2 |
 | R26 | guard 介面用 `getGrants: (request) => TGrant[]` + `can()`（支援 D5 wildcard），不採 a3 的 `getGranted: Set` | §6.5、§11.2 |
 | R27 | R21 檢查**分兩期**：gen 期（extract，只讀 YAML）查 `x-permission` 格式與 `security: []`；權限目錄比對放在 build（`build()` 1.5.3）/ vitest（M7 AC-3）。另擋「**非 public 卻寫了 `security: []`**」（gen 期失敗） | §4.5 extract、§6.5、§11.2、M7 AC-2 |
@@ -742,7 +742,7 @@ export const createPermissionGuard = (opts: TOperationTable & {
 ```
 
 - **與 a3 介面的差異（R26 已裁）**：a3 的 `getGranted` 回 `ReadonlySet<string>` 並做集合成員判斷；本 spec 改為 `getGrants` 回 `TGrant[]` 並交給 `can()`，因為 D5 / §6.1 的矩陣含 wildcard（`*`、`orders:*`），集合成員判斷無法處理。判定順序與五種結果不變。
-- **`apiBaseUrl` 的值**：與 fetcher 組 URL 用的同一個 base（`shared/config/env` 的 `apiBaseUrl`）。現況 `api-client.ts:44` 為 `VITE_API_BASE_URL || window.location.origin`，同源時 base = 頁面 origin，所有 vite 資源都會落在「API 範圍內」而被回 404；且現行 mock 路徑分屬 4 個頂層前綴，無法用單一 path 前綴劃界。**已裁（R24）**：mock 模式下 `VITE_API_BASE_URL` 必須設為專用的絕對 origin（例 `http://mock-api.local`，與 a3 PoC 的 `http://api.test` 同型）；`startMockWorker` 在 `apiBaseUrl` **未設定**（空字串 / undefined，不得 fallback 到 `window.location.origin`）、不是絕對 URL、或 origin 等於 `location.origin` 且 path 為 `/`（同源根目錄）時 throw（fail fast）。**不動既有 API 路徑**，維持現有前綴（master `6029bf0` 實測，`src/services/mock/handlers.ts`）：
+- **`apiBaseUrl` 的值**：與 fetcher 組 URL 用的同一個 base（`shared/config/env` 的 `apiBaseUrl`）。現況 `api-client.ts:44` 為 `VITE_API_BASE_URL || window.location.origin`，同源時 base = 頁面 origin，所有 vite 資源都會落在「API 範圍內」而被回 404；且現行 mock 路徑分屬 4 個頂層前綴，無法用單一 path 前綴劃界。**已裁（R24）**：mock 模式下 `VITE_API_BASE_URL` 必須設為專用的絕對 origin（例 `http://mock-api.local`，與 a3 PoC 的 `http://api.test` 同型）；`startMockWorker` 在 `apiBaseUrl` **未設定**（空字串 / undefined，不得 fallback 到 `window.location.origin`）、不是絕對 URL、或 `new URL(apiBaseUrl).origin === location.origin`（**任何同源**，不論路徑；例 `location.origin + "/api"` 也算）時 throw（fail fast）。同源非根路徑也要擋，因為 client 的 path 是絕對路徑（`/users` 等），`new URL("/users", location.origin + "/api")` 會得到 `location.origin + "/users"`，落在 guard 的 `apiBaseUrl` 範圍外而被放行。**不動既有 API 路徑**，維持現有前綴（master `6029bf0` 實測，`src/services/mock/handlers.ts`）：
   - `/api`：`POST /api/auth/login`（`:124`）
   - `/users`：`GET /users`（`:142`）
   - `/user`：`GET|PUT /user/me/profile`（`:143-144`）
@@ -1114,7 +1114,7 @@ expected: exit 0
 - 註：M3 尚無正式 operation 表。依 R22，guard 在 `apiBaseUrl` 內對不到 route 一律 404，傳空表會讓所有 API 變 404，因此 M3 由 `app/mock/legacy-adapter.ts` 從現行 `handlers` 表導出 `legacyOperations()`：每個 `METHOD path` 一條 route、permission 一律 `"public"`（**R28 已裁**：M3 過渡期全 public，明確 public，非 fall-through），`build()` 1.5 通過；guard 行為 = 表內放行、表外 404，與現行 `mockFetch` 的 404 fallback（`handlers.ts:209-214`）一致。mock 模式的 `VITE_API_BASE_URL` 同時改為專用絕對 origin（R24，§6.5），API 路徑不變。M4 換成手寫 `app/operations.gen.ts`，自 M4 起 fail-closed（R28）。
 - [ ] AC-6 `[cmd]`: M3 的 guard 掛載行為不變：`apiBaseUrl` 外的 request 放行、表內 operation 放行、表外 path 回 404
   - 驗證：`pnpm exec vitest run src/app/mock`
-- [ ] AC-7 `[cmd]`（R24 負例）: mock 模式下 `apiBaseUrl` 未設定、為相對路徑、或等於同源根目錄（`location.origin` + `/`）時 `startMockWorker` throw；設為專用絕對 origin 時正常啟動，且 legacy 表的 route 涵蓋 `/api`、`/user`、`/users`、`/admin` 四個前綴（路徑未改）
+- [ ] AC-7 `[cmd]`（R24 負例）: mock 模式下 `apiBaseUrl` 未設定、為相對路徑、或與 app 同源（`new URL(apiBaseUrl).origin === location.origin`，含同源根目錄 `location.origin + "/"` 與同源非根路徑 `location.origin + "/api"` 兩個負例）時 `startMockWorker` throw；設為專用絕對 origin 時正常啟動，且 legacy 表的 route 涵蓋 `/api`、`/user`、`/users`、`/admin` 四個前綴（路徑未改）
   - 驗證：`pnpm exec vitest run src/app/mock`
 - [ ] AC-5 `[manual]`: `pnpm dev` 登入後 sidebar 項目、順序、各頁 CRUD 與重構前相同；語系切換正常
 
@@ -1297,7 +1297,7 @@ expected: exit 0；輸出含 `core-only build: OK`
 | — | MSW guard 判定規則 | **已裁（裁決 6，R22）**：照 a3——必填 `apiBaseUrl`、範圍外放行、無 route 404、未宣告 403、public 放行、無權限 403（§6.5） |
 | OQ-15 | kernel 自有 operation（通用圖片上傳 `/admin/images`）在單一 YAML 中如何標記？ | **已裁（裁決 7，R29）**：保留 tag `core`（列入 `tags` 清單）；extract 照常寫入 `operations.gen.ts`（guard fail-closed 一樣適用），`orval.config.ts` 跳過 `core`；client 手寫 `shared/api/upload.ts`、mock 手寫 `app/mock/core-handlers.ts`（§4.5） |
 | OQ-16 | route id 命名格式（OQ-13 只裁「用 route id、不加 pages 欄位」） | **已裁（裁決 7，R23）**：A `${moduleId}.${name}`（`orders.list`），typed key（`TRouteIdRegistry` augment）；`build()` 驗證 1.7 檢查前綴 = 所屬 module id（§4.1、§4.3、§4.4、M1 AC-3）。未採 B（TanStack 路徑型 `route.id`）：覆寫 key 綁 URL 結構、洩漏 kernel layout id、R4 寬化後 key 退化為 `string` |
-| — | mock 模式 `apiBaseUrl` 與既有 API 路徑 | **已裁（裁決 7，R24）**：專用絕對 origin；未設定 / 同源根目錄 → 啟動報錯；不動既有路徑，維持 `/api`、`/user`、`/users`、`/admin` 前綴（§6.5、M3 AC-7） |
+| — | mock 模式 `apiBaseUrl` 與既有 API 路徑 | **已裁（裁決 7，R24）**：專用絕對 origin（與 app 不同 origin）；未設定 / 非絕對 URL / 任何同源（含同源非根路徑）→ 啟動報錯；不動既有路徑，維持 `/api`、`/user`、`/users`、`/admin` 前綴（§6.5、M3 AC-7） |
 | — | 未帶 token 打非 public API | **已裁（裁決 7，R25）**：403（照 a3）（§6.5、M4 AC-2） |
 | — | guard 的授權介面 | **已裁（裁決 7，R26）**：`getGrants` + `can()`，支援 D5 wildcard（§6.5） |
 | — | R21 檢查分期與反向檢查 | **已裁（裁決 7，R27）**：gen 期查格式與 `security: []`（含擋非 public 寫 `security: []`）；目錄比對在 build / vitest（§4.5、M7 AC-2 / AC-3） |
@@ -1322,7 +1322,7 @@ expected: exit 0；輸出含 `core-only build: OK`
 | K5 | 一個 operation 掛多個 tag 時可能在多個 module 重複產出；YAML 內 operationId 重複時 orval 是否報錯未測 | PoC a2 未驗證 1、2 | extract 斷言恰好一個 tag、operationId 唯一（§4.5）；M7 AC-2 |
 | K6 | browser `setupWorker` + vite dev、react hook 在元件中實際執行、path 參數 `{id}` → `:id` 比對，PoC 皆未驗 | PoC a1 未驗證 2、4、6 | M2 AC-5（browser worker）、M4 AC-2（path 參數）、M7 AC-7（hooks 實跑） |
 | K7 | orval config 用 jiti 載入，從 config 所在目錄解析依賴 | PoC a2 坑 6 | `orval.config.ts` 放 repo 根（有 `node_modules`） |
-| K8 | guard 只在 node `getResponse` 驗過「非 API 放行」；browser `setupWorker` 下 vite 資源 / HMR 是否真的不受影響未驗；`apiBaseUrl` 為相對路徑 / 同源時未驗 | a3 未驗證 1、2 | mock 模式強制專用絕對 origin（R24，§6.5；M3 AC-7 驗未設定 / 同源根目錄報錯）；M2 AC-5 / M3 AC-5 手動驗 dev server 正常 |
+| K8 | guard 只在 node `getResponse` 驗過「非 API 放行」；browser `setupWorker` 下 vite 資源 / HMR 是否真的不受影響未驗；`apiBaseUrl` 為相對路徑 / 同源時未驗 | a3 未驗證 1、2 | mock 模式強制專用絕對 origin（R24，§6.5；M3 AC-7 驗未設定 / 同源根目錄 / 同源非根路徑報錯）；M2 AC-5 / M3 AC-5 手動驗 dev server 正常 |
 | K9 | 同 path 只有部分 method 存在（例 `PUT /users` 不在契約）時 guard 回 404，語意上應為 405 | a3 未驗證 4（刻意簡化） | 照 a3 回 404，不實作 405 |
 
 ### 11.2 張力與矛盾
@@ -1330,7 +1330,7 @@ expected: exit 0；輸出含 `core-only build: OK`
 - **R11「權限表由 module 宣告」× R15 / R21（已裁，無殘留衝突）**：裁決 6（R21）明定 operation → permission 只來自 YAML `x-permission`，module `permissions` 只宣告權限目錄、角色預設 grant、ABAC 條件；R11 的「權限表由 module 宣告」在 R21 後解讀為「權限**目錄**由 module 宣告」。`build()` 1.5.3 以完整 `resource:action` 比對目錄（§4.3、§6.5）。
 - **R21「gen / build 期檢查」的分工（R27 已裁）**：extract（gen 期）只讀 YAML，看不到 module 宣告，因此 gen 期負責格式與 `security: []`（public ⇒ 必有 `security: []`；非 public ⇒ 不得有 `security: []`）；「`resource:action` 在某 module 權限目錄內」由 kernel `build()`（dev 啟動即 throw）與 M7 AC-3 的 vitest（每棒 done 基線）負責。gen 期不做目錄比對（extract 不 import module 程式碼）。
 - **R22 guard × 現況 401（R25 已裁）**：現行 mock 對未帶 token 不做任何檢查（`handlers.ts:127` 的 401 只用於登入帳密錯誤）；r3 spec 曾規劃「未帶 token 回 401」。依 R22（a3）與 R25 改為「無權限 → 403」，未帶 token 打非 public operation 一律 403。fetcher 的「401 清 session」仍保留給真後端與登入失敗。
-- **R22 `apiBaseUrl` × 現況同源 baseUrl（R24 已裁）**：`api-client.ts:44` 預設 `window.location.origin`，且 mock 路徑分屬 `/api`、`/user`、`/users`、`/admin` 四個頂層前綴（`handlers.ts:124,142-144,148-198`）；照 a3 規則同源時所有 vite 資源都會被回 404。R24：mock 模式改用專用絕對 origin（未設定 / 同源根目錄 → 啟動報錯，§6.5、M3 AC-7），不改 mock 路徑（M2 / M3 / M7 紅線）；「把 mock 路徑統一收到單一前綴」的替代方案不採。
+- **R22 `apiBaseUrl` × 現況同源 baseUrl（R24 已裁）**：`api-client.ts:44` 預設 `window.location.origin`，且 mock 路徑分屬 `/api`、`/user`、`/users`、`/admin` 四個頂層前綴（`handlers.ts:124,142-144,148-198`）；照 a3 規則同源時所有 vite 資源都會被回 404。R24：mock 模式改用專用絕對 origin（未設定 / 任何同源含非根路徑 → 啟動報錯，§6.5、M3 AC-7），不改 mock 路徑（M2 / M3 / M7 紅線）；「把 mock 路徑統一收到單一前綴」的替代方案不採。
 - **M3 legacy operation 表全 `"public"`（R28 已裁）**：M3 為維持「行為不變」用 legacy 表 + 全 public 掛 guard（§9 M3 註），屬過渡；M4 起 fail-closed，實質權限在 M4 生效。
 - **R3 / D4「刪 `.use()` 一行 + 刪 `modules/<id>/`」× R14「刪 yaml 對應 tag paths」**：裁決 5 已明定刪 module 需多刪 YAML 段落並重新 gen；D4 驗收形狀依 R14 擴為 §8.2 的 5 步，漏做由 `build()` 驗證 1.5.3 fail fast。
 - **D2 欄位清單 × R2 override / R8 requires / R19 route id**：D2 列的欄位是 `{ id, routes, nav, i18n, mockHandlers, permissions }`。`requires` 由 R8 明確加入；override 落在 `createApp().override()` 與 `TShell.pages`（shell 欄位，不是 module 欄位）；route id 是 `ctx.page` 的必填選項（`routes` / `publicRoutes` 欄位內），依 R19 不新增 module `pages` 欄位，因此不擴 D2。
