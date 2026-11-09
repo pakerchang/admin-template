@@ -1089,6 +1089,8 @@ expected: exit 0；`src/shared/permission`、`src/app/kernel` 測試檔出現在
   - 驗證：`git ls-files --error-unmatch public/mockServiceWorker.js`
 - [ ] AC-5 `[manual]`: `VITE_API_MOCK=true pnpm dev` 登入後各頁 CRUD 與重構前一致；Network 面板顯示請求由 service worker 回應（PoC 只驗過 node `setupServer`，browser `setupWorker` + vite dev 由本 AC 首次驗證，§11.1）
 
+**預設值**：mock 預設開——只有 `VITE_API_MOCK === "false"` 才關閉（未設、`"true"` 或其他值都開；owner 2026-11-10 裁決），判斷集中在 `src/app/mock/enabled.ts` 的 `isMockEnabled`。
+
 **Touches**：`package.json`、`pnpm-lock.yaml`、`public/mockServiceWorker.js`（新）、`.env.example`、`src/services/api-client.ts`、`src/services/mock/handlers.ts`、`src/services/__tests__/api-client.test.ts`、`src/test/setup.ts`、`src/main.tsx`、`src/app/mock/**`（新）
 **Must-Not-Touch**：`src/pages/**`、`src/components/**`；行為紅線：mock API 路徑、回應 body、延遲行為不變
 

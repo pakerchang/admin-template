@@ -1,14 +1,21 @@
+import { http, HttpResponse } from "msw";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { apiFetch, clearAuth, getAuth, setAuth } from "@/services/api-client";
+import {
+  apiBaseUrl,
+  apiFetch,
+  clearAuth,
+  getAuth,
+  setAuth,
+} from "@/services/api-client";
 import { DEMO_ACCOUNT, products } from "@/services/mock/data";
-import { mockFetch } from "@/services/mock/handlers";
+import { server } from "@/test/setup";
 
 import type { TAuthSession } from "@/services/api-client";
 import type { TProduct } from "@/services/schemas/product";
 import type { TGetResponseContent } from "@/services/types/schema";
 
-describe("apiFetch + mock handlers", () => {
+describe("apiFetch + MSW setupServer", () => {
   beforeEach(() => {
     clearAuth();
   });
@@ -42,17 +49,14 @@ describe("apiFetch + mock handlers", () => {
       token: "t-123",
       user: { user_id: "u", email: "e", name: "n", role: "admin" },
     });
-    // 直接打 mockFetch 驗 header 由 apiFetch 組出：用不存在的路由取回 404 也無妨
     let seen: string | null = null;
-    const original = globalThis.Request;
-    globalThis.Request = class extends original {
-      constructor(...args: ConstructorParameters<typeof Request>) {
-        super(...args);
-        seen = this.headers.get("Authorization");
-      }
-    } as typeof Request;
+    server.use(
+      http.get(`${apiBaseUrl}/admin/tag`, ({ request }) => {
+        seen = request.headers.get("Authorization");
+        return HttpResponse.json({});
+      })
+    );
     await apiFetch("/admin/tag");
-    globalThis.Request = original;
 
     expect(seen).toBe("Bearer t-123");
   });
@@ -105,8 +109,16 @@ describe("apiFetch + mock handlers", () => {
     expect(afterDelete.body.data).toHaveLength(0);
   });
 
-  it("未知路由回 404", async () => {
-    const res = await mockFetch(new Request("http://x/nope"));
+  it("未知路由回 404（fallback）", async () => {
+    const res = await apiFetch<{ error: string }>("/admin/nope");
     expect(res.status).toBe(404);
+    expect(res.body.error).toBe("No mock handler for GET /admin/nope");
+
+    const outsidePrefixes = await apiFetch<{ error: string }>("/nope");
+    expect(outsidePrefixes.status).toBe(404);
+    expect(outsidePrefixes.body.error).toBe("No mock handler for GET /nope");
+
+    const unknownMethod = await apiFetch("/users", { method: "DELETE" });
+    expect(unknownMethod.status).toBe(404);
   });
 });

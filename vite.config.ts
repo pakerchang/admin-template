@@ -13,7 +13,7 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: "jsdom",
+    environment: "./src/test/jsdom-node-abort.env.ts",
     setupFiles: ["./src/test/setup.ts"],
   },
   build: {

@@ -3,7 +3,7 @@ import * as seed from "@/services/mock/data";
 type TRecord = Record<string, unknown>;
 type THandlerContext = { query: Record<string, string>; body: TRecord };
 type THandlerResult = { status?: number; body?: unknown };
-type THandler = (ctx: THandlerContext) => THandlerResult;
+export type THandler = (ctx: THandlerContext) => THandlerResult;
 
 // ponytail: 純記憶體 mock，重新整理頁面即回到種子資料；需要持久化再改存 localStorage
 const db = structuredClone({
@@ -18,7 +18,7 @@ const db = structuredClone({
   articles: seed.articles,
 }) as unknown as Record<string, TRecord[]>;
 
-const DELAY_MS = import.meta.env.MODE === "test" ? 0 : 300;
+export const DELAY_MS = import.meta.env.MODE === "test" ? 0 : 300;
 const RESERVED_QUERY = ["page", "limit", "sort_by", "order", "search"];
 
 const ok = (data?: unknown, total?: number) => ({
@@ -196,26 +196,4 @@ export const handlers: Record<string, THandler> = {
   "POST /admin/articles": articles.POST,
   "PUT /admin/articles": articles.PUT,
   "DELETE /admin/articles": articles.DELETE,
-};
-
-/** 與原生 fetch 相同簽名：吃 Request、回 Response，api-client 換回 fetch 即接真後端 */
-export const mockFetch = async (request: Request): Promise<Response> => {
-  const url = new URL(request.url);
-  const handler = handlers[`${request.method} ${url.pathname}`];
-  const text = await request.text();
-
-  await new Promise((resolve) => setTimeout(resolve, DELAY_MS));
-
-  if (!handler) {
-    return Response.json(
-      { error: `No mock handler for ${request.method} ${url.pathname}` },
-      { status: 404 }
-    );
-  }
-
-  const { status = 200, body } = handler({
-    query: Object.fromEntries(url.searchParams),
-    body: text ? JSON.parse(text) : {},
-  });
-  return Response.json(body ?? null, { status });
 };

@@ -1,5 +1,3 @@
-import { mockFetch } from "@/services/mock/handlers";
-
 import type { TUserRole } from "@/services/schemas/user";
 
 const AUTH_STORAGE_KEY = "auth";
@@ -41,17 +39,18 @@ export type TApiResponse<T> = {
   body: T;
 };
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL || window.location.origin;
+export const apiBaseUrl =
+  import.meta.env.VITE_API_BASE_URL || window.location.origin;
 
 /**
  * 全專案唯一的資料存取入口（feature hooks 只透過它取資料）。
- * ponytail: 純 UI 展示，Request 交給 mockFetch；接真後端時把 mockFetch 換回原生 fetch 即可。
+ * mock 由 MSW 在 network 層攔截（預設開，`VITE_API_MOCK=false` 才關）；接真後端時 client 不改。
  */
 export const apiFetch = async <T>(
   path: string,
   { method = "GET", query, body }: TApiFetchInit = {}
 ): Promise<TApiResponse<T>> => {
-  const url = new URL(path, baseUrl);
+  const url = new URL(path, apiBaseUrl);
   Object.entries(query ?? {}).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") {
       url.searchParams.set(key, String(value));
@@ -68,7 +67,7 @@ export const apiFetch = async <T>(
     ...(body !== undefined && { body: JSON.stringify(body) }),
   });
 
-  const response = await mockFetch(request);
+  const response = await fetch(request);
   const text = await response.text();
 
   return {
