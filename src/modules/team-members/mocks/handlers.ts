@@ -1,19 +1,26 @@
-import { apiBaseUrl } from "@/shared/api/fetcher";
-import { toHttpHandlers } from "@/shared/api/mock/legacy-adapter";
+import { http } from "msw";
+
 import { createCollection } from "@/shared/api/mock-db";
 
 import { staff } from "./seed";
+import {
+  getCreateStaffMockHandler,
+  getDeleteStaffMockHandler,
+  getListStaffsMockHandler,
+  getUpdateStaffMockHandler,
+} from "./team-members.msw";
+
+import type { HttpHandler } from "msw";
 
 const collection = createCollection(staff, "staff_id");
 
-export const teamMembersMockHandlers = toHttpHandlers(
-  {
-    "GET /admin/staff": collection.GET,
-    // 密碼不存進 mock 狀態
-    "POST /admin/staff": ({ body, query }) =>
-      collection.POST({ body: { ...body, password: undefined }, query }),
-    "PUT /admin/staff": collection.PUT,
-    "DELETE /admin/staff": collection.DELETE,
-  },
-  { baseUrl: apiBaseUrl }
-);
+export const teamMembersMockHandlers: HttpHandler[] = [
+  http.put("*/admin/staff", collection.notFound), // K1：更新不存在的 id → 404（orval handler 只回 200）
+  getListStaffsMockHandler(collection.list),
+  // 密碼不存進 mock 狀態
+  getCreateStaffMockHandler((info) =>
+    collection.create(info, { password: undefined })
+  ),
+  getUpdateStaffMockHandler(collection.update),
+  getDeleteStaffMockHandler(collection.remove),
+];

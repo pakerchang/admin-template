@@ -1,3 +1,5 @@
+import { delay, http } from "msw";
+
 import { coreMockHandlers } from "@/app/mock/core-handlers";
 import { coreGrants, mergeGrants } from "@/app/mock/permission-matrix";
 import { operations } from "@/app/operations.gen";
@@ -9,6 +11,8 @@ import {
 } from "@/shared/api/mock/session-store";
 
 import type { TGrantMatrix, TOperationTable } from "@/shared/permission";
+
+const DELAY_MS = import.meta.env.MODE === "test" ? 0 : 300;
 
 /**
  * kernel 的 MSW handler（TCore.mock）：[guard, ...core handler]，guard 一定在第一位（§4.3 步驟 5）；module 的 handler 由 build() 接在後面。
@@ -32,6 +36,8 @@ export const createMockHandlers = ({
         return (role && matrix[role]) || [];
       },
     }),
+    // 模擬網路延遲：guard 放行後、任何 handler 之前（module handler 是 orval 產物，不各自 delay）
+    http.all(new URL("*", opts.apiBaseUrl).href, () => delay(DELAY_MS)),
     ...coreMockHandlers(opts.apiBaseUrl),
   ];
 };

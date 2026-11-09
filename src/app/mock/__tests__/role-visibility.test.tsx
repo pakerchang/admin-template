@@ -5,9 +5,9 @@ import { makeApp } from "@/app/__tests__/fixture";
 import { coreGrants, mergeGrants } from "@/app/mock/permission-matrix";
 import { DEMO_ACCOUNT } from "@/modules/auth/mocks/seed";
 import { users } from "@/modules/users/mocks/seed";
-import { apiFetch } from "@/shared/api/fetcher";
 import { NavContext, useVisibleNav } from "@/shared/module";
 import { can, GrantsContext } from "@/shared/permission";
+import { apiFetch } from "@/test/api-fetch";
 import { server } from "@/test/setup";
 
 import type { TAuthSession } from "@/shared/api/session";

@@ -16,10 +16,10 @@ React admin dashboard（純 UI showcase，無真後端）。回覆一律繁體�
 - React 19 + TypeScript + Vite，path alias `@` → `src/`
 - 路由：TanStack Router **code-based**（非檔案式路由）；M3 起各 module 在 `src/modules/<id>/model/routes.ts` 以 `ctx.page` / `ctx.layout` 定義，`src/app/kernel/build.ts` 組裝，`.use()` 清單在 `src/app/modules.ts`
 - Server state：TanStack Query；表單：React Hook Form + Zod
-- API：原生 fetch 包裝 `apiFetch`（`src/shared/api/fetcher.ts`），mock 由 MSW 在 network 層攔截（M6 起各 module 自帶 `modules/<id>/mocks/{seed,handlers}.ts`，經 `src/shared/api/mock/legacy-adapter.ts` 轉成 MSW handler、由 `defineModule({ mockHandlers })` 掛上；kernel 只有 guard 與 `/admin/images` core handler；collection helper 在 `src/shared/api/mock-db.ts`，session 表在 `src/shared/api/mock/session-store.ts`），寫入只改記憶體、重新整理即重置；module 不讀其他 module 的 seed（R5，各自一份資料）
+- API（M7 起）：契約真相是 repo 根 `openapi.yaml`；`pnpm gen:api`（orval + prettier + extract）產生 `src/modules/<id>/api/**`（client / react-query hooks / `api/model` 型別）、`src/modules/<id>/mocks/<id>.msw.ts` 與 `src/app/operations.gen.ts`，產物進 git、**不手改**（改 YAML 後重跑 gen）。orval mutator = `fetcher`（`src/shared/api/fetcher.ts`）：接 `apiBaseUrl`、帶 Bearer、回 HTTP body、非 2xx throw `ApiError`；hooks 以 `.catch(nullOnApiError)` 接錯誤路徑。`model/use-*.ts` 呼叫產物的 client 函式（ui 不直接 import `api/`）。mock 由 MSW 在 network 層攔截：各 module `mocks/handlers.ts`（手寫）以 orval `get<Op>MockHandler(override)` 接本 module 的記憶體 collection（`src/shared/api/mock-db.ts`），非 200（更新不存在 id → 404、登入失敗 401…）以手寫 `http.*` 排在 orval handler 前；kernel 有 guard、延遲 handler 與 `/admin/images` core handler（R29，client 手寫於 `shared/api/upload.ts`）；session 表在 `src/shared/api/mock/session-store.ts`；寫入只改記憶體、重新整理即重置；module 不讀其他 module 的 seed（R5）。測試用 `src/test/api-fetch.ts`（`{ status, body }` 形狀）
 - Domain 型別：Zod schema 在各 `src/modules/<id>/model/schema.ts`，共用 primitive 在 `src/shared/api/schema.ts`、回應信封型別在 `src/shared/api/types.ts`
 - 認證：`/login`（`AuthLayout`）打 mock `POST /api/auth/login`，session 存 localStorage（`getAuth` / `setAuth` / `clearAuth` 在 `src/shared/api/session.ts`）；路由以 `beforeLoad` 守衛。Demo 帳號 `admin@example.com / admin123`（superadmin）
-- 權限（M4 起）：登入回傳 `session.grants`（mock 由 `app/mock/permission-matrix.ts` + module `permissions.mockGrants` 展開），前端只認 grants、不讀 role。四強制點：route `staticData.permission`（無權限 → 內容區 `shell.Forbidden`，URL 不變）、nav `useVisibleNav()`、操作 `DataTable rowActions` / `EditActions {handler, permission}` / `FormSubmit`、mock API guard（`src/shared/api/mock/permission-guard.ts`，依 `src/app/operations.gen.ts`，M7 前手寫）。新增 API 必須同步在 `operations.gen.ts` 宣告 operationId + permission，否則 `build()` throw
+- 權限（M4 起）：登入回傳 `session.grants`（mock 由 `app/mock/permission-matrix.ts` + module `permissions.mockGrants` 展開），前端只認 grants、不讀 role。四強制點：route `staticData.permission`（無權限 → 內容區 `shell.Forbidden`，URL 不變）、nav `useVisibleNav()`、操作 `DataTable rowActions` / `EditActions {handler, permission}` / `FormSubmit`、mock API guard（`src/shared/api/mock/permission-guard.ts`，依 `src/app/operations.gen.ts`，M7 起由 YAML 產生）。新增 API = 在 `openapi.yaml` 寫 operation（`x-permission` 必須是某 module 權限目錄中的 `resource:action`，否則 `build()` throw）後跑 `pnpm gen:api`
 - M4 升級後，舊 session（localStorage 內沒有 `grants`）需要登出再重新登入一次；不做遷移
 - mock 已簽發 session 表（token → user_id）存 localStorage `mock-sessions`，重新整理後同一 token 仍有效；mock 的登出只清 client session，不撤銷已簽發 token（同一 mock runtime 內可重播；表已持久化，重新整理後亦同）；M7 換真 API 前不處理
 - UI：Tailwind + Radix，shadcn 元件與共用元件（DataTable、EditActions…）在 `src/shared/ui/`
@@ -31,11 +31,11 @@ src/
 ├── app/       # kernel：kernel/、router/、mock/（guard + core handler）、modules.ts、operations.gen.ts
 ├── shared/    # domain-free：ui/、lib/、api/（fetcher、session、mock-db、mock/）、i18n/、module/、permission/
 ├── shells/default/
-├── modules/<id>/{index.ts,model/,ui/,mocks/,locales/}   # 10 個；api/ 留給 M7 orval
+├── modules/<id>/{index.ts,api/,model/,ui/,mocks/,locales/}   # 10 個；api/ 與 mocks/<id>.msw.ts 是 orval 產物
 └── test/
 ```
 
-> 上面是 M6 落地後的結構（`src/pages`、`src/services`、`src/components` 已移除）；`modules/<id>/api/` 由 M7 產生。
+> 上面是 M7 落地後的結構（`src/pages`、`src/services`、`src/components` 已移除）。
 
 ## 架構遷移（進行中）
 
@@ -50,7 +50,7 @@ src/
 | M4 | 權限四強制點 + 內容區 403 | 完成（待併入） |
 | M5 | kernel / shared 搬遷 + boundaries lint | 完成（待併入） |
 | M6 | module 內嵌搬遷（pages / schemas / seed / i18n） | 完成（待併入） |
-| M7 | orval 契約層（單一 `openapi.yaml`） | 未開始 |
+| M7 | orval 契約層（單一 `openapi.yaml`） | 完成（待併入；AC-7 瀏覽器驗收待驗） |
 | M8 | D1 / D4 驗收自動化與收尾 | 未開始 |
 
 過渡期規則：

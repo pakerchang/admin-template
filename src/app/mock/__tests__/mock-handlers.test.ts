@@ -6,8 +6,9 @@ import { mockHandlers } from "@/app/mock";
 import { operations } from "@/app/operations.gen";
 import { DEMO_ACCOUNT } from "@/modules/auth/mocks/seed";
 import { users } from "@/modules/users/mocks/seed";
-import { apiBaseUrl, apiFetch } from "@/shared/api/fetcher";
+import { apiBaseUrl } from "@/shared/api/fetcher";
 import { clearAuth, setAuth } from "@/shared/api/session";
+import { apiFetch } from "@/test/api-fetch";
 import { server } from "@/test/setup";
 
 import type { TUser } from "@/modules/users/model/schema";
@@ -96,7 +97,9 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
       await signIn(DEMO_ACCOUNT.email);
       const res = await apiFetch<{ error: string }>("/admin/nope");
       expect(res.status).toBe(404);
-      expect(res.body.error).toBe("No mock handler for GET /admin/nope");
+      expect(res.body.error).toBe(
+        "not found: no operation for GET /admin/nope"
+      );
     });
 
     describe("superadmin: every non-GET operation succeeds (AC-6 API side, W2)", () => {

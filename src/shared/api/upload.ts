@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDeepCompareEffect } from "react-use";
 
-import { apiFetch } from "@/shared/api/fetcher";
+import { fetcher, nullOnApiError } from "@/shared/api/fetcher";
 import { useToast } from "@/shared/lib/use-toast";
 
 import type { TImageResponseSchema } from "@/shared/api/schema";
@@ -32,19 +32,17 @@ export const useImgUpload = (initialImages: TImageResponseSchema[] = []) => {
       fileName: string;
       base64: string;
     }) => {
-      const response = await apiFetch<TImageResponseSchema>("/admin/images", {
+      // R29：core operation，client 手寫、經同一個 mutator
+      const response = await fetcher<ImageUploadResponse>("/admin/images", {
         method: "POST",
-        body: {
-          file_name: fileName,
-          file_value: base64,
-        },
-      });
+        body: JSON.stringify({ file_name: fileName, file_value: base64 }),
+      }).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         throw new Error(t("toast.img.upload.error"));
       }
 
-      return response.body as unknown as ImageUploadResponse;
+      return response;
     },
     onSuccess: (src, variables) => {
       const { fileName } = variables;
@@ -76,12 +74,12 @@ export const useImgUpload = (initialImages: TImageResponseSchema[] = []) => {
 
   const removeMutation = useMutation({
     mutationFn: async (payload: { file_names: string[] }) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/images", {
+      const response = await fetcher<TPostResponseContent>("/admin/images", {
         method: "DELETE",
-        body: payload,
-      });
+        body: JSON.stringify(payload),
+      }).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.img.delete.error"),

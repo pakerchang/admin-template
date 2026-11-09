@@ -268,6 +268,11 @@ export default tseslint.config(
       ],
     },
   },
+  // orval 產物（gen:api 已跑 prettier）：只關 import 排序，其餘規則（含 boundaries）照常檢查
+  {
+    files: ["src/modules/*/api/**/*.ts", "src/modules/*/mocks/*.msw.ts"],
+    rules: { "import/order": "off" },
+  },
   {
     files: ["src/modules/**/*.{ts,tsx}", "src/shells/**/*.{ts,tsx}"],
     rules: {

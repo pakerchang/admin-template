@@ -19,17 +19,19 @@ const appWith = (ops: TOperationTable) =>
     })
   );
 
-describe("hand-written app/operations.gen.ts (AC-3, R13 / R21 fail-closed)", () => {
-  it("covers every METHOD path of the mock handler table, nothing more", () => {
-    // M6 起 handler 表拆在 kernel core handler 與各 module 的 mocks/handlers.ts；guard（http.all "*"）除外
-    const [, ...handlers] = appWith(operations).build().registry.mockHandlers;
+describe("generated app/operations.gen.ts (AC-3, R13 / R21 fail-closed)", () => {
+  it("covers every METHOD path of the mock handlers, nothing more", () => {
+    // guard / delay（http.all，method 為 RegExp）除外；core handler 為絕對 URL、orval 產物為 `*/path`；手寫非 200 handler 與 orval handler 同 path（去重）
+    const paths = appWith(operations)
+      .build()
+      .registry.mockHandlers.filter((h) => typeof h.info.method === "string")
+      .map((h) => {
+        const path = String(h.info.path);
+        return `${h.info.method} ${path.startsWith("*") ? path.slice(1) : new URL(path).pathname}`;
+      });
     expect(
       operations.routes.map((r) => `${r.method} ${r.path}`).sort()
-    ).toEqual(
-      handlers
-        .map((h) => `${h.info.method} ${new URL(String(h.info.path)).pathname}`)
-        .sort()
-    );
+    ).toEqual([...new Set(paths)].sort());
   });
 
   it("build() accepts the real table with the 10 installed modules", () => {

@@ -3,15 +3,18 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { apiFetch } from "@/shared/api/fetcher";
+import { nullOnApiError } from "@/shared/api/fetcher";
 import { paginationSchema } from "@/shared/api/schema";
 import { useToast } from "@/shared/lib/use-toast";
 
+import {
+  createStaff,
+  deleteStaff,
+  listStaffs,
+  updateStaff,
+} from "../api/team-members";
+
 import type { TStaffQuery, TCreateStaffUser, TStaffUser } from "./schema";
-import type {
-  TGetResponseContent,
-  TPostResponseContent,
-} from "@/shared/api/types";
 
 const validatePasswordComplexity = (password: string) => {
   if (password.length < 8) return false;
@@ -125,14 +128,11 @@ export const useGetStaffList = (query: Partial<TStaffQuery>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TStaffUser[]>>(
-        "/admin/staff",
-        {
-          query: queryParams ?? {},
-        }
+      const response = await listStaffs(queryParams ?? {}).catch(
+        nullOnApiError
       );
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: "獲取員工列表失敗",
@@ -141,7 +141,7 @@ export const useGetStaffList = (query: Partial<TStaffQuery>) => {
         return undefined;
       }
 
-      return response.body;
+      return response;
     },
     gcTime: 1000 * 60 * 5,
     staleTime: 1000 * 60 * 2,
@@ -159,16 +159,13 @@ export const useCreateStaff = () => {
 
   return useMutation({
     mutationFn: async (staffData: TCreateStaffUser) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/staff", {
-        method: "POST",
-        body: staffData,
-      });
+      const response = await createStaff(staffData).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         throw new Error("創建員工失敗");
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staff"] });
@@ -195,16 +192,13 @@ export const useUpdateStaff = () => {
 
   return useMutation({
     mutationFn: async (staffData: TStaffUser) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/staff", {
-        method: "PUT",
-        body: staffData,
-      });
+      const response = await updateStaff(staffData).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         throw new Error("更新員工失敗");
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staff"] });
@@ -231,16 +225,15 @@ export const useDeleteStaff = () => {
 
   return useMutation({
     mutationFn: async (staffId: string) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/staff", {
-        method: "DELETE",
-        body: { staff_id: staffId },
-      });
+      const response = await deleteStaff({ staff_id: staffId }).catch(
+        nullOnApiError
+      );
 
-      if (response.status !== 200) {
+      if (!response) {
         throw new Error("刪除員工失敗");
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staff"] });

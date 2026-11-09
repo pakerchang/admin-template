@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+import { ApiError } from "@/shared/api/fetcher";
+
 import { products } from "../../mocks/seed";
 import { useGetAllProducts } from "../use-product";
 
@@ -18,9 +20,10 @@ vi.mock("@/shared/lib/use-toast", () => ({
   }),
 }));
 
-const mockApiFetch = vi.fn();
-vi.mock("@/shared/api/fetcher", () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+const mockFetcher = vi.fn();
+vi.mock("@/shared/api/fetcher", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  fetcher: (...args: unknown[]) => mockFetcher(...args),
 }));
 
 const createWrapper = () => {
@@ -40,9 +43,9 @@ describe("useGetAllProducts", () => {
     vi.clearAllMocks();
   });
 
-  it("透過 apiFetch 取得所有產品", async () => {
+  it("經 orval client（mutator）取得所有產品", async () => {
     const body = { code: 200, msg: "success", error: "", data: products };
-    mockApiFetch.mockResolvedValue({ status: 200, body });
+    mockFetcher.mockResolvedValue(body);
 
     const { result } = renderHook(() => useGetAllProducts(), {
       wrapper: createWrapper(),
@@ -50,12 +53,15 @@ describe("useGetAllProducts", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(mockApiFetch).toHaveBeenCalledWith("/admin/products");
+    expect(mockFetcher).toHaveBeenCalledWith(
+      "/admin/products",
+      expect.objectContaining({ method: "GET" })
+    );
     expect(result.current.data).toEqual(body);
   });
 
   it("API 非 200 時 toast 錯誤並進入 error 狀態", async () => {
-    mockApiFetch.mockResolvedValue({ status: 500, body: null });
+    mockFetcher.mockRejectedValue(new ApiError(500, null));
 
     const { result } = renderHook(() => useGetAllProducts(), {
       wrapper: createWrapper(),
@@ -72,7 +78,7 @@ describe("useGetAllProducts", () => {
   });
 
   it("網路錯誤時進入 error 狀態", async () => {
-    mockApiFetch.mockRejectedValue(new Error("Network error"));
+    mockFetcher.mockRejectedValue(new Error("Network error"));
 
     const { result } = renderHook(() => useGetAllProducts(), {
       wrapper: createWrapper(),

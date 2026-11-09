@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@faker-js/faker':
+        specifier: 10.6.0
+        version: 10.6.0
       '@hookform/resolvers':
         specifier: ^5.9.2
         version: 5.9.2(@sinclair/typebox@0.27.12)(ajv@8.20.0)(react-hook-form@7.91.0(@types/react@19.3.0)(react@19.3.1))(zod@4.6.7)
@@ -215,7 +218,7 @@ importers:
         version: 15.5.2
       orval:
         specifier: 8.47.0
-        version: 8.47.0(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(msw@3.0.4(@types/node@22.20.5)(typescript@5.9.3)(vite@6.4.6(@types/node@22.20.5)(jiti@1.21.7)(tsx@4.20.3)(yaml@2.9.1)))(prettier@3.9.10)(zod@4.6.7)
+        version: 8.47.0(@faker-js/faker@10.6.0)(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(msw@3.0.4(@types/node@22.20.5)(typescript@5.9.3)(vite@6.4.6(@types/node@22.20.5)(jiti@1.21.7)(tsx@4.20.3)(yaml@2.9.1)))(prettier@3.9.10)(zod@4.6.7)
       postcss:
         specifier: ^8.5.32
         version: 8.5.32
@@ -730,6 +733,10 @@ packages:
     peerDependenciesMeta:
       '@noble/hashes':
         optional: true
+
+  '@faker-js/faker@10.6.0':
+    resolution: {integrity: sha512-3RQHgEtvL1Frl/d1cSreo7qhJ3Gk1OdNUai/CtZ8G+wYeRQnJih3s9xJ9/kgYekPQRdwgh0HXRPqMlzWGwivIQ==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
@@ -5187,6 +5194,8 @@ snapshots:
 
   '@exodus/bytes@1.16.0': {}
 
+  '@faker-js/faker@10.6.0': {}
+
   '@floating-ui/core@1.8.0':
     dependencies:
       '@floating-ui/utils': 0.2.12
@@ -5328,21 +5337,21 @@ snapshots:
 
   '@open-draft/until@3.0.1': {}
 
-  '@orval/angular@8.47.0':
+  '@orval/angular@8.47.0(@faker-js/faker@10.6.0)':
     dependencies:
-      '@orval/core': 8.47.0
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
     transitivePeerDependencies:
       - '@faker-js/faker'
       - '@modelcontextprotocol/server'
 
-  '@orval/axios@8.47.0':
+  '@orval/axios@8.47.0(@faker-js/faker@10.6.0)':
     dependencies:
-      '@orval/core': 8.47.0
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
     transitivePeerDependencies:
       - '@faker-js/faker'
       - '@modelcontextprotocol/server'
 
-  '@orval/core@8.47.0':
+  '@orval/core@8.47.0(@faker-js/faker@10.6.0)':
     dependencies:
       '@scalar/openapi-types': 0.9.8
       acorn: 8.19.0
@@ -5352,92 +5361,95 @@ snapshots:
       jiti: 2.7.0
       jsesc: 3.1.0
       tinyglobby: 0.2.17
+    optionalDependencies:
+      '@faker-js/faker': 10.6.0
 
-  '@orval/effect@8.47.0':
+  '@orval/effect@8.47.0(@faker-js/faker@10.6.0)':
     dependencies:
-      '@orval/core': 8.47.0
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
     transitivePeerDependencies:
       - '@faker-js/faker'
       - '@modelcontextprotocol/server'
 
-  '@orval/fetch@8.47.0':
+  '@orval/fetch@8.47.0(@faker-js/faker@10.6.0)':
     dependencies:
-      '@orval/core': 8.47.0
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
     transitivePeerDependencies:
       - '@faker-js/faker'
       - '@modelcontextprotocol/server'
 
-  '@orval/hono@8.47.0(zod@4.6.7)':
+  '@orval/hono@8.47.0(@faker-js/faker@10.6.0)(zod@4.6.7)':
     dependencies:
-      '@orval/core': 8.47.0
-      '@orval/zod': 8.47.0(zod@4.6.7)
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/zod': 8.47.0(@faker-js/faker@10.6.0)(zod@4.6.7)
       typescript: 6.0.3
     transitivePeerDependencies:
       - '@faker-js/faker'
       - '@modelcontextprotocol/server'
       - zod
 
-  '@orval/mcp@8.47.0(zod@4.6.7)':
+  '@orval/mcp@8.47.0(@faker-js/faker@10.6.0)(zod@4.6.7)':
     dependencies:
-      '@orval/core': 8.47.0
-      '@orval/fetch': 8.47.0
-      '@orval/zod': 8.47.0(zod@4.6.7)
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/fetch': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/zod': 8.47.0(@faker-js/faker@10.6.0)(zod@4.6.7)
     transitivePeerDependencies:
       - '@faker-js/faker'
       - zod
 
-  '@orval/mock@8.47.0(msw@3.0.4(@types/node@22.20.5)(typescript@5.9.3)(vite@6.4.6(@types/node@22.20.5)(jiti@1.21.7)(tsx@4.20.3)(yaml@2.9.1)))':
+  '@orval/mock@8.47.0(@faker-js/faker@10.6.0)(msw@3.0.4(@types/node@22.20.5)(typescript@5.9.3)(vite@6.4.6(@types/node@22.20.5)(jiti@1.21.7)(tsx@4.20.3)(yaml@2.9.1)))':
     dependencies:
-      '@orval/core': 8.47.0
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
     optionalDependencies:
+      '@faker-js/faker': 10.6.0
       msw: 3.0.4(@types/node@22.20.5)(typescript@5.9.3)(vite@6.4.6(@types/node@22.20.5)(jiti@1.21.7)(tsx@4.20.3)(yaml@2.9.1))
     transitivePeerDependencies:
       - '@modelcontextprotocol/server'
 
-  '@orval/pinia-colada@8.47.0':
+  '@orval/pinia-colada@8.47.0(@faker-js/faker@10.6.0)':
     dependencies:
-      '@orval/axios': 8.47.0
-      '@orval/core': 8.47.0
-      '@orval/fetch': 8.47.0
+      '@orval/axios': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/fetch': 8.47.0(@faker-js/faker@10.6.0)
     transitivePeerDependencies:
       - '@faker-js/faker'
       - '@modelcontextprotocol/server'
 
-  '@orval/query@8.47.0(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))':
+  '@orval/query@8.47.0(@faker-js/faker@10.6.0)(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))':
     dependencies:
-      '@orval/core': 8.47.0
-      '@orval/fetch': 8.47.0
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/fetch': 8.47.0(@faker-js/faker@10.6.0)
     optionalDependencies:
       '@tanstack/react-query': 5.107.1(@types/react@19.3.0)(react@19.3.1)
     transitivePeerDependencies:
       - '@faker-js/faker'
       - '@modelcontextprotocol/server'
 
-  '@orval/solid-start@8.47.0':
+  '@orval/solid-start@8.47.0(@faker-js/faker@10.6.0)':
     dependencies:
-      '@orval/core': 8.47.0
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
     transitivePeerDependencies:
       - '@faker-js/faker'
       - '@modelcontextprotocol/server'
 
-  '@orval/swr@8.47.0':
+  '@orval/swr@8.47.0(@faker-js/faker@10.6.0)':
     dependencies:
-      '@orval/core': 8.47.0
-      '@orval/fetch': 8.47.0
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/fetch': 8.47.0(@faker-js/faker@10.6.0)
     transitivePeerDependencies:
       - '@faker-js/faker'
       - '@modelcontextprotocol/server'
 
-  '@orval/valibot@8.47.0':
+  '@orval/valibot@8.47.0(@faker-js/faker@10.6.0)':
     dependencies:
-      '@orval/core': 8.47.0
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
     transitivePeerDependencies:
       - '@faker-js/faker'
       - '@modelcontextprotocol/server'
 
-  '@orval/zod@8.47.0(zod@4.6.7)':
+  '@orval/zod@8.47.0(@faker-js/faker@10.6.0)(zod@4.6.7)':
     dependencies:
-      '@orval/core': 8.47.0
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
       globals: 17.14.0
       jsesc: 3.1.0
       typescript: 6.0.3
@@ -8360,23 +8372,23 @@ snapshots:
 
   orderedmap@2.1.1: {}
 
-  orval@8.47.0(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(msw@3.0.4(@types/node@22.20.5)(typescript@5.9.3)(vite@6.4.6(@types/node@22.20.5)(jiti@1.21.7)(tsx@4.20.3)(yaml@2.9.1)))(prettier@3.9.10)(zod@4.6.7):
+  orval@8.47.0(@faker-js/faker@10.6.0)(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))(msw@3.0.4(@types/node@22.20.5)(typescript@5.9.3)(vite@6.4.6(@types/node@22.20.5)(jiti@1.21.7)(tsx@4.20.3)(yaml@2.9.1)))(prettier@3.9.10)(zod@4.6.7):
     dependencies:
       '@commander-js/extra-typings': 15.1.0(commander@15.1.0)
-      '@orval/angular': 8.47.0
-      '@orval/axios': 8.47.0
-      '@orval/core': 8.47.0
-      '@orval/effect': 8.47.0
-      '@orval/fetch': 8.47.0
-      '@orval/hono': 8.47.0(zod@4.6.7)
-      '@orval/mcp': 8.47.0(zod@4.6.7)
-      '@orval/mock': 8.47.0(msw@3.0.4(@types/node@22.20.5)(typescript@5.9.3)(vite@6.4.6(@types/node@22.20.5)(jiti@1.21.7)(tsx@4.20.3)(yaml@2.9.1)))
-      '@orval/pinia-colada': 8.47.0
-      '@orval/query': 8.47.0(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))
-      '@orval/solid-start': 8.47.0
-      '@orval/swr': 8.47.0
-      '@orval/valibot': 8.47.0
-      '@orval/zod': 8.47.0(zod@4.6.7)
+      '@orval/angular': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/axios': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/core': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/effect': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/fetch': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/hono': 8.47.0(@faker-js/faker@10.6.0)(zod@4.6.7)
+      '@orval/mcp': 8.47.0(@faker-js/faker@10.6.0)(zod@4.6.7)
+      '@orval/mock': 8.47.0(@faker-js/faker@10.6.0)(msw@3.0.4(@types/node@22.20.5)(typescript@5.9.3)(vite@6.4.6(@types/node@22.20.5)(jiti@1.21.7)(tsx@4.20.3)(yaml@2.9.1)))
+      '@orval/pinia-colada': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/query': 8.47.0(@faker-js/faker@10.6.0)(@tanstack/react-query@5.107.1(@types/react@19.3.0)(react@19.3.1))
+      '@orval/solid-start': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/swr': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/valibot': 8.47.0(@faker-js/faker@10.6.0)
+      '@orval/zod': 8.47.0(@faker-js/faker@10.6.0)(zod@4.6.7)
       '@scalar/json-magic': 0.16.1
       '@scalar/openapi-parser': 0.29.20
       '@scalar/openapi-types': 0.9.8

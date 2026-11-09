@@ -1,12 +1,27 @@
-import { apiBaseUrl } from "@/shared/api/fetcher";
-import { toHttpHandlers } from "@/shared/api/mock/legacy-adapter";
+import { http } from "msw";
+
 import {
   mockUserIdOf,
   setMockRoleResolver,
 } from "@/shared/api/mock/session-store";
-import { createCollection, now, ok } from "@/shared/api/mock-db";
+import {
+  bodyOf,
+  createCollection,
+  errorResponse,
+  now,
+  ok,
+} from "@/shared/api/mock-db";
 
 import { users } from "./seed";
+import {
+  getGetMyProfileMockHandler,
+  getListUsersMockHandler,
+  getUpdateMyProfileMockHandler,
+  getUpdateUserRoleMockHandler,
+} from "./users.msw";
+
+import type { User } from "../api/model";
+import type { HttpHandler } from "msw";
 
 const collection = createCollection(users, "user_id");
 const byId = (userId: string) =>
@@ -34,32 +49,35 @@ const PROFILE_FIELDS = [
   "remark",
 ] as const;
 
-export const usersMockHandlers = toHttpHandlers(
-  {
-    "GET /users": collection.GET,
-    // 綁 request token 的本人；guard 已擋未登入，這裡的 403 是防線第二層
-    "GET /user/me/profile": ({ authorization }) => {
-      const user = me(authorization);
-      return user
-        ? { body: user }
-        : { status: 403, body: { error: "forbidden" } };
-    },
-    // 只套用白名單欄位；role / user_id / email 等身分與權限欄位忽略（呼叫端會送整個 TUser）
-    "PUT /user/me/profile": ({ authorization, body }) => {
-      const user = me(authorization);
-      if (!user) return { status: 403, body: { error: "forbidden" } };
-      for (const key of PROFILE_FIELDS) if (key in body) user[key] = body[key];
-      user.updated_at = now();
-      return ok(user);
-    },
-    "POST /admin/user/role": ({ body }) => {
-      const target = collection
-        .all()
-        .find((u) => u.user_id === body.target_user_id);
-      if (!target) return { status: 404, body: { error: "Not found" } };
-      target.role = body.role;
-      return ok({ role: body.role });
-    },
-  },
-  { baseUrl: apiBaseUrl }
-);
+/** 本人不存在（無效 token）→ 403；guard 已擋未登入，這裡是防線第二層（K1：非 200 由手寫 handler 回） */
+const forbiddenUnlessMe = ({ request }: { request: Request }) =>
+  me(request.headers.get("Authorization"))
+    ? undefined
+    : errorResponse(403, "forbidden");
+
+export const usersMockHandlers: HttpHandler[] = [
+  http.get("*/user/me/profile", forbiddenUnlessMe),
+  http.put("*/user/me/profile", forbiddenUnlessMe),
+  http.post("*/admin/user/role", async ({ request }) =>
+    byId(String((await bodyOf(request)).target_user_id))
+      ? undefined
+      : errorResponse(404, "Not found")
+  ),
+  getListUsersMockHandler(collection.list),
+  getGetMyProfileMockHandler(
+    ({ request }) => me(request.headers.get("Authorization")) as unknown as User
+  ),
+  // 只套用白名單欄位；role / user_id / email 等身分與權限欄位忽略（呼叫端會送整個 TUser）
+  getUpdateMyProfileMockHandler(async ({ request }) => {
+    const user = me(request.headers.get("Authorization"))!;
+    const body = await bodyOf(request);
+    for (const key of PROFILE_FIELDS) if (key in body) user[key] = body[key];
+    user.updated_at = now();
+    return ok(user);
+  }),
+  getUpdateUserRoleMockHandler(async ({ request }) => {
+    const body = await bodyOf(request);
+    byId(String(body.target_user_id))!.role = body.role;
+    return ok({ role: body.role });
+  }),
+];

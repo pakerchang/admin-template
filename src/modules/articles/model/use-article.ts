@@ -5,19 +5,22 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { apiFetch } from "@/shared/api/fetcher";
+import { ApiError, fetcher, nullOnApiError } from "@/shared/api/fetcher";
 import { paginationSchema } from "@/shared/api/schema";
 import { useValidationMessage } from "@/shared/lib/gen-validate-message";
 import { useToast } from "@/shared/lib/use-toast";
+
+import {
+  createArticle,
+  deleteArticle,
+  listArticles,
+  updateArticle,
+} from "../api/articles";
 
 import { articleFormSchema } from "./schema";
 
 import type { TArticle, TArticleForm } from "./schema";
 import type { TPagination, TSortOrder } from "@/shared/api/schema";
-import type {
-  TGetResponseContent,
-  TPostResponseContent,
-} from "@/shared/api/types";
 
 /** `/user/me/profile` 回應中本 module 用到的欄位（不 import users module 的型別，spec §5.2 articles 無 requires） */
 type TProfile = { user_id: string; first_name: string; last_name: string };
@@ -50,14 +53,11 @@ export const useGetArticleList = (params: Partial<TArticleListParams>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TArticle[]>>(
-        "/admin/articles",
-        {
-          query: pageQuery ?? {},
-        }
+      const response = await listArticles(pageQuery ?? {}).catch(
+        nullOnApiError
       );
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.article.get.listError"),
@@ -67,8 +67,8 @@ export const useGetArticleList = (params: Partial<TArticleListParams>) => {
       }
 
       return {
-        data: response.body.data || [],
-        total: response.body.total,
+        data: response.data || [],
+        total: response.total,
       };
     },
     gcTime: 1000 * 60 * 5,
@@ -87,14 +87,11 @@ export const useGetArticle = (id: string) => {
   return useQuery({
     queryKey: ["getArticle", id],
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TArticle[]>>(
-        "/admin/articles",
-        {
-          query: { article_id: id },
-        }
+      const response = await listArticles({ article_id: id }).catch(
+        nullOnApiError
       );
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.article.get.error"),
@@ -103,7 +100,7 @@ export const useGetArticle = (id: string) => {
         return undefined;
       }
 
-      return response.body.data?.[0];
+      return response.data?.[0];
     },
     enabled: !!id,
   });
@@ -118,9 +115,11 @@ export const useCreateArticle = () => {
   return useMutation({
     mutationFn: async (data: TArticleFormData) => {
       // 先調用 getUserProfile API 獲取最新用戶資料
-      const userResponse = await apiFetch<TProfile>("/user/me/profile");
+      // `/user/me/profile` 屬 users tag；本 module 無 requires，直接經 mutator 取用、不 import users 產物（§5.2）
+      const currentUser =
+        await fetcher<TProfile>("/user/me/profile").catch(nullOnApiError);
 
-      if (userResponse.status !== 200) {
+      if (!currentUser) {
         toast({
           title: t("common.error"),
           description: "獲取用戶資訊失敗，請重新登入",
@@ -130,7 +129,6 @@ export const useCreateArticle = () => {
       }
 
       // API 回應結構：用戶資料直接在 body 中，不在 data 中
-      const currentUser = userResponse.body;
 
       if (!currentUser?.user_id) {
         toast({
@@ -141,25 +139,21 @@ export const useCreateArticle = () => {
         throw new Error("No user data available");
       }
 
-      const response = await apiFetch<TPostResponseContent>("/admin/articles", {
-        method: "POST",
-        body: {
-          ...data,
-          user_id: currentUser.user_id, // 使用工作人員表的 staff_id
-          nick_name: `${currentUser.first_name}${currentUser.last_name}`, // 組合 first_name + last_name
-        } as TArticleForm,
-      });
-
-      if (response.status !== 200) {
+      const response = await createArticle({
+        ...data,
+        user_id: currentUser.user_id, // 使用工作人員表的 staff_id
+        nick_name: `${currentUser.first_name}${currentUser.last_name}`, // 組合 first_name + last_name
+      } as TArticleForm).catch((error: unknown) => {
+        if (!(error instanceof ApiError)) throw error;
         toast({
           title: t("common.error"),
           description: t("toast.article.create.error"),
           variant: "destructive",
         });
-        throw new Error(`Create article failed: ${response.status}`);
-      }
+        throw new Error(`Create article failed: ${error.status}`);
+      });
 
-      return response.body;
+      return response;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["articleList"] });
@@ -193,9 +187,11 @@ export const useUpdateArticle = () => {
   return useMutation({
     mutationFn: async (data: TArticleFormData & { article_id: string }) => {
       // 先調用 getUserProfile API 獲取最新用戶資料
-      const userResponse = await apiFetch<TProfile>("/user/me/profile");
+      // `/user/me/profile` 屬 users tag；本 module 無 requires，直接經 mutator 取用、不 import users 產物（§5.2）
+      const currentUser =
+        await fetcher<TProfile>("/user/me/profile").catch(nullOnApiError);
 
-      if (userResponse.status !== 200) {
+      if (!currentUser) {
         toast({
           title: t("common.error"),
           description: "獲取用戶資訊失敗，請重新登入",
@@ -205,7 +201,6 @@ export const useUpdateArticle = () => {
       }
 
       // API 回應結構：用戶資料直接在 body 中，不在 data 中
-      const currentUser = userResponse.body;
 
       if (!currentUser?.user_id) {
         toast({
@@ -216,25 +211,21 @@ export const useUpdateArticle = () => {
         throw new Error("No user data available");
       }
 
-      const response = await apiFetch<TPostResponseContent>("/admin/articles", {
-        method: "PUT",
-        body: {
-          ...data,
-          user_id: currentUser.user_id, // 使用工作人員表的 staff_id
-          nick_name: `${currentUser.first_name}${currentUser.last_name}`, // 組合 first_name + last_name
-        } as TArticle,
-      });
-
-      if (response.status !== 200) {
+      const response = await updateArticle({
+        ...data,
+        user_id: currentUser.user_id, // 使用工作人員表的 staff_id
+        nick_name: `${currentUser.first_name}${currentUser.last_name}`, // 組合 first_name + last_name
+      } as TArticle).catch((error: unknown) => {
+        if (!(error instanceof ApiError)) throw error;
         toast({
           title: t("common.error"),
           description: t("toast.article.update.error"),
           variant: "destructive",
         });
-        throw new Error(`Update article failed: ${response.status}`);
-      }
+        throw new Error(`Update article failed: ${error.status}`);
+      });
 
-      return response.body;
+      return response;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["articleList"] });
@@ -266,12 +257,11 @@ export const useDeleteArticle = () => {
 
   return useMutation({
     mutationFn: async (id: TArticle["article_id"]) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/articles", {
-        method: "DELETE",
-        body: { article_id: id },
-      });
+      const response = await deleteArticle({ article_id: id }).catch(
+        nullOnApiError
+      );
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.article.delete.error"),
@@ -280,7 +270,7 @@ export const useDeleteArticle = () => {
         return undefined;
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["articleList"] });

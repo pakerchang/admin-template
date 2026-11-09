@@ -5,19 +5,22 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { apiFetch } from "@/shared/api/fetcher";
+import { nullOnApiError } from "@/shared/api/fetcher";
 import { paginationSchema } from "@/shared/api/schema";
 import { useValidationMessage } from "@/shared/lib/gen-validate-message";
 import { useToast } from "@/shared/lib/use-toast";
+
+import {
+  createBanner,
+  deleteBanner,
+  listBanners,
+  updateBanner,
+} from "../api/banners";
 
 import { bannerSchema } from "./schema";
 
 import type { TBanner } from "./schema";
 import type { TPagination } from "@/shared/api/schema";
-import type {
-  TGetResponseContent,
-  TPostResponseContent,
-} from "@/shared/api/types";
 
 export const useGetBannerList = (pagination: Partial<TPagination>) => {
   const { t } = useTranslation();
@@ -42,14 +45,9 @@ export const useGetBannerList = (pagination: Partial<TPagination>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TBanner[]>>(
-        "/admin/banners",
-        {
-          query: pageQuery ?? {},
-        }
-      );
+      const response = await listBanners(pageQuery ?? {}).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.banner.get.error"),
@@ -58,17 +56,17 @@ export const useGetBannerList = (pagination: Partial<TPagination>) => {
         return undefined;
       }
 
-      const activeBanners = response.body.data?.filter(
+      const activeBanners = response.data?.filter(
         (d) => d.banner_status === "active"
       );
-      const inactiveBanners = response.body.data?.filter(
+      const inactiveBanners = response.data?.filter(
         (d) => d.banner_status === "inactive"
       );
 
       return {
         activeBanners,
         inactiveBanners,
-        total: response.body.total,
+        total: response.total,
       };
     },
     gcTime: 1000 * 60 * 5,
@@ -87,14 +85,11 @@ export const useGetBanner = (id: string) => {
   return useQuery({
     queryKey: ["getBanner", id],
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TBanner[]>>(
-        "/admin/banners",
-        {
-          query: { banner_id: id },
-        }
+      const response = await listBanners({ banner_id: id }).catch(
+        nullOnApiError
       );
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.banner.get.error"),
@@ -103,7 +98,7 @@ export const useGetBanner = (id: string) => {
         return undefined;
       }
 
-      return response.body.data;
+      return response.data;
     },
     enabled: !!id,
   });
@@ -119,12 +114,9 @@ export const useCreateBanner = () => {
     mutationFn: async (
       data: Omit<TBanner, "banner_id" | "created_at" | "updated_at">
     ) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/banners", {
-        method: "POST",
-        body: data,
-      });
+      const response = await createBanner(data).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.banner.create.error"),
@@ -133,7 +125,7 @@ export const useCreateBanner = () => {
         return undefined;
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["bannerList"] });
@@ -164,12 +156,9 @@ export const useUpdateBanner = () => {
 
   return useMutation({
     mutationFn: async (data: TBanner) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/banners", {
-        method: "PUT",
-        body: data,
-      });
+      const response = await updateBanner(data).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.banner.update.error"),
@@ -178,7 +167,7 @@ export const useUpdateBanner = () => {
         return undefined;
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["bannerList"] });
@@ -200,12 +189,11 @@ export const useDeleteBanner = () => {
 
   return useMutation({
     mutationFn: async (id: TBanner["banner_id"]) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/banners", {
-        method: "DELETE",
-        body: { banner_id: id },
-      });
+      const response = await deleteBanner({ banner_id: id }).catch(
+        nullOnApiError
+      );
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.banner.delete.error"),
@@ -214,7 +202,7 @@ export const useDeleteBanner = () => {
         return undefined;
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bannerList"] });

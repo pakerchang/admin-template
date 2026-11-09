@@ -47,9 +47,9 @@ export const createPermissionGuard = ({
     const path = url.pathname;
     const route = matchOperation(routes, request.method, path);
     if (!route)
-      // 沿用舊 mock client 的 404 body（mock API 回應 body 不變）
+      // M7 起改為 spec §6.5 的 404 body（M4 裁決：M7 前沿用 legacy body）
       return HttpResponse.json(
-        { error: `No mock handler for ${request.method} ${path}` },
+        { error: `not found: no operation for ${request.method} ${path}` },
         { status: 404 }
       );
     const required = permissions[route.operationId];

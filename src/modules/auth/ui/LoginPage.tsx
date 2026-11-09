@@ -1,14 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { apiFetch } from "@/shared/api/fetcher";
 import { setAuth } from "@/shared/api/session";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 
-import type { TAuthSession } from "@/shared/api/session";
+import { useLogin } from "../model/use-login";
+
 import type { SubmitEvent } from "react";
 
 /** 登入表單（auth module 預設頁）；全螢幕外框由 shell 的 AuthLayout 提供 */
@@ -16,21 +15,9 @@ const LoginPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const login = useMutation({
-    mutationFn: async (credentials: { email: string; password: string }) => {
-      const response = await apiFetch<TAuthSession>("/api/auth/login", {
-        method: "POST",
-        body: credentials,
-      });
-      if (response.status !== 200) {
-        throw new Error(t("login.error"));
-      }
-      return response.body;
-    },
-    onSuccess: (session) => {
-      setAuth(session);
-      navigate({ to: "/" });
-    },
+  const login = useLogin((session) => {
+    setAuth(session);
+    navigate({ to: "/" });
   });
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {

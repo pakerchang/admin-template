@@ -3,13 +3,19 @@ import { isEmpty } from "ramda";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { apiFetch } from "@/shared/api/fetcher";
+import { nullOnApiError } from "@/shared/api/fetcher";
 import { paginationSchema } from "@/shared/api/schema";
 import { useToast } from "@/shared/lib/use-toast";
 
+import {
+  getMyProfile,
+  listUsers,
+  updateMyProfile,
+  updateUserRole,
+} from "../api/users";
+
 import type { TUser, TUserRole } from "./schema";
 import type { TPagination } from "@/shared/api/schema";
-import type { TGetResponseContent } from "@/shared/api/types";
 
 export const useGetUserList = (pagination: Partial<TPagination>) => {
   const { t } = useTranslation();
@@ -28,11 +34,9 @@ export const useGetUserList = (pagination: Partial<TPagination>) => {
   return useQuery({
     queryKey: ["users", pagination.page, pagination.limit],
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TUser[]>>("/users", {
-        query: pageQuery ?? {},
-      });
+      const response = await listUsers(pageQuery ?? {}).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.user.get.error"),
@@ -41,7 +45,7 @@ export const useGetUserList = (pagination: Partial<TPagination>) => {
         return undefined;
       }
 
-      return response.body;
+      return response;
     },
     gcTime: 1000 * 60 * 5,
     staleTime: 1000 * 60 * 2,
@@ -59,9 +63,9 @@ export const useGetUserProfile = () => {
   return useQuery({
     queryKey: ["user", "profile"],
     queryFn: async () => {
-      const response = await apiFetch<TUser>("/user/me/profile");
+      const response = await getMyProfile().catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.user.get.error"),
@@ -70,7 +74,7 @@ export const useGetUserProfile = () => {
         return undefined;
       }
 
-      return response.body;
+      return response;
     },
   });
 };
@@ -81,12 +85,9 @@ export const useUpdateUserProfile = () => {
 
   return useMutation({
     mutationFn: async (data: TUser) => {
-      const response = await apiFetch<TGetResponseContent<TUser>>(
-        "/user/me/profile",
-        { method: "PUT", body: data }
-      );
+      const response = await updateMyProfile(data).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.user.update.error"),
@@ -95,7 +96,7 @@ export const useUpdateUserProfile = () => {
         return undefined;
       }
 
-      return response.body.data;
+      return response.data;
     },
   });
 };
@@ -110,12 +111,9 @@ export const useUpdateUserRole = () => {
       target_user_id: TUser["user_id"];
       role: TUserRole;
     }) => {
-      const response = await apiFetch<TGetResponseContent<{ role: TUserRole }>>(
-        "/admin/user/role",
-        { method: "POST", body: data }
-      );
+      const response = await updateUserRole(data).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.user.update.error"),
@@ -124,7 +122,7 @@ export const useUpdateUserRole = () => {
         return undefined;
       }
 
-      return response.body.data;
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });

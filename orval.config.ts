@@ -2,8 +2,6 @@
  * orval：openapi.yaml 每個 tag 一個 target → src/modules/<id>/{api,mocks}（spec §4.5 orval config 列、R14、R15、K7）。
  * 保留 tag `core`（R29）跳過：client / mock 手寫於 shared/api/upload.ts、app/mock/core-handlers.ts。
  * 新增 module 只改 openapi.yaml 的 tags，不改本檔。
- *
- * M7a：只落檔、未執行 gen（會寫 src/modules，屬 M7b）；mutator 檔 src/shared/api/fetcher.ts 由 M7b 建立。
  */
 import { readFileSync } from "node:fs";
 
@@ -30,10 +28,14 @@ const target = (id: string) => ({
     mock: {
       path: `src/modules/${id}/mocks`,
       generators: [{ type: "msw" as const }],
+      // ponytail: handler 一律由 module 傳 override，faker 只為產物能編譯；en locale 縮小 bundle
+      locale: "en" as const,
     },
     clean: true,
     override: {
       mutator: { path: "src/shared/api/fetcher.ts", name: "fetcher" },
+      // mutator 回 body（非 `{ data, status, headers }`），非 2xx 由 mutator throw（K3、M7 AC-4）
+      fetch: { includeHttpResponseReturnType: false },
     },
   },
 });

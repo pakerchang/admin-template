@@ -153,7 +153,7 @@ describe("createPermissionGuard origin normalization (M3 C1 regression)", () => 
     );
     expect(res?.status).toBe(404);
     expect(await res?.json()).toEqual({
-      error: "No mock handler for GET /nope",
+      error: "not found: no operation for GET /nope",
     });
     expect(
       await getResponse([g], new Request("http://mock-api.test:8080/nope"))

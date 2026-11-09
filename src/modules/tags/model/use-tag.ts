@@ -3,23 +3,15 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { apiFetch } from "@/shared/api/fetcher";
+import { nullOnApiError } from "@/shared/api/fetcher";
 import { paginationSchema } from "@/shared/api/schema";
 import { useToast } from "@/shared/lib/use-toast";
 
+import { createTag, deleteTag, listTags, updateTag } from "../api/tags";
+
 import { tagSchema } from "./schema";
 
-import type {
-  TCreateTag,
-  TTagQuery,
-  TUpdateTag,
-  TDeleteTag,
-  TTag,
-} from "./schema";
-import type {
-  TGetResponseContent,
-  TPostResponseContent,
-} from "@/shared/api/types";
+import type { TCreateTag, TTagQuery, TUpdateTag, TDeleteTag } from "./schema";
 
 export const useCreateTagSchema = () => {
   const { t } = useTranslation();
@@ -46,10 +38,9 @@ export const useGetAllTags = () => {
   return useQuery({
     queryKey: ["tags", "all"],
     queryFn: async () => {
-      const response =
-        await apiFetch<TGetResponseContent<TTag[]>>("/admin/tag");
+      const response = await listTags().catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("pages.tag.messages.fetchListFailed"),
@@ -58,7 +49,7 @@ export const useGetAllTags = () => {
         throw new Error(t("pages.tag.messages.fetchListFailed"));
       }
 
-      return response.body;
+      return response;
     },
     gcTime: 1000 * 60 * 5, // 5分鐘緩存
     staleTime: 1000 * 60 * 2, // 2分鐘內不重新請求
@@ -101,17 +92,14 @@ export const useGetTagList = (query: Partial<TTagQuery>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TTag[]>>(
-        "/admin/tag",
-        {
-          query: queryParams ?? {
-            page: paginationSchema.parse({}).page,
-            limit: paginationSchema.parse({}).limit,
-          },
+      const response = await listTags(
+        queryParams ?? {
+          page: paginationSchema.parse({}).page,
+          limit: paginationSchema.parse({}).limit,
         }
-      );
+      ).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("pages.tag.messages.fetchListFailed"),
@@ -120,7 +108,7 @@ export const useGetTagList = (query: Partial<TTagQuery>) => {
         throw new Error(t("pages.tag.messages.fetchListFailed"));
       }
 
-      return response.body;
+      return response;
     },
     gcTime: 1000 * 60 * 5, // 5分鐘緩存
     staleTime: 1000 * 60 * 2, // 2分鐘內不重新請求
@@ -138,16 +126,13 @@ export const useCreateTag = () => {
 
   return useMutation({
     mutationFn: async (tagData: TCreateTag) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/tag", {
-        method: "POST",
-        body: tagData,
-      });
+      const response = await createTag(tagData).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         throw new Error(t("pages.tag.messages.createFailed"));
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
@@ -174,16 +159,13 @@ export const useUpdateTag = () => {
 
   return useMutation({
     mutationFn: async (tagData: TUpdateTag) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/tag", {
-        method: "PUT",
-        body: tagData,
-      });
+      const response = await updateTag(tagData).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         throw new Error(t("pages.tag.messages.updateFailed"));
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
@@ -210,16 +192,13 @@ export const useDeleteTag = () => {
 
   return useMutation({
     mutationFn: async (tagData: TDeleteTag) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/tag", {
-        method: "DELETE",
-        body: tagData,
-      });
+      const response = await deleteTag(tagData).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         throw new Error(t("pages.tag.messages.deleteFailed"));
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });

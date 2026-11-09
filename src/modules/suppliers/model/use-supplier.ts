@@ -3,10 +3,17 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { apiFetch } from "@/shared/api/fetcher";
+import { nullOnApiError } from "@/shared/api/fetcher";
 import { paginationSchema } from "@/shared/api/schema";
 import { useValidationMessage } from "@/shared/lib/gen-validate-message";
 import { useToast } from "@/shared/lib/use-toast";
+
+import {
+  createSupplier,
+  deleteSupplier,
+  listSuppliers,
+  updateSupplier,
+} from "../api/suppliers";
 
 import { supplierSchema } from "./schema";
 
@@ -14,12 +21,7 @@ import type {
   TCreateSupplier,
   TUpdateSupplier,
   TSupplierQuery,
-  TSupplier,
 } from "./schema";
-import type {
-  TGetResponseContent,
-  TPostResponseContent,
-} from "@/shared/api/types";
 
 export const useCreateSupplierSchema = () => {
   const getMessage = useValidationMessage();
@@ -61,10 +63,9 @@ export const useGetSupplierAll = () => {
   return useQuery({
     queryKey: ["suppliers", "all"],
     queryFn: async () => {
-      const response =
-        await apiFetch<TGetResponseContent<TSupplier[]>>("/admin/supplier");
+      const response = await listSuppliers().catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("pages.supplier.messages.fetchListFailed"),
@@ -73,7 +74,7 @@ export const useGetSupplierAll = () => {
         throw new Error(t("pages.supplier.messages.fetchListFailed"));
       }
 
-      return response.body;
+      return response;
     },
     gcTime: 1000 * 60 * 5, // 5分鐘緩存
     staleTime: 1000 * 60 * 2, // 2分鐘內不重新請求
@@ -112,17 +113,14 @@ export const useGetSupplierList = (query: Partial<TSupplierQuery>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TSupplier[]>>(
-        "/admin/supplier",
-        {
-          query: queryParams ?? {
-            page: paginationSchema.parse({}).page,
-            limit: paginationSchema.parse({}).limit,
-          },
+      const response = await listSuppliers(
+        queryParams ?? {
+          page: paginationSchema.parse({}).page,
+          limit: paginationSchema.parse({}).limit,
         }
-      );
+      ).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("pages.supplier.messages.fetchListFailed"),
@@ -131,7 +129,7 @@ export const useGetSupplierList = (query: Partial<TSupplierQuery>) => {
         throw new Error(t("pages.supplier.messages.fetchListFailed"));
       }
 
-      return response.body;
+      return response;
     },
     gcTime: 1000 * 60 * 5, // 5分鐘緩存
     staleTime: 1000 * 60 * 2, // 2分鐘內不重新請求
@@ -149,16 +147,13 @@ export const useCreateSupplier = () => {
 
   return useMutation({
     mutationFn: async (supplierData: TCreateSupplier) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/supplier", {
-        method: "POST",
-        body: supplierData,
-      });
+      const response = await createSupplier(supplierData).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         throw new Error(t("pages.supplier.messages.createFailed"));
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
@@ -185,16 +180,13 @@ export const useUpdateSupplier = () => {
 
   return useMutation({
     mutationFn: async (supplierData: TUpdateSupplier) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/supplier", {
-        method: "PUT",
-        body: supplierData,
-      });
+      const response = await updateSupplier(supplierData).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         throw new Error(t("pages.supplier.messages.updateFailed"));
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
@@ -221,16 +213,15 @@ export const useDeleteSupplier = () => {
 
   return useMutation({
     mutationFn: async (supplierId: string) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/supplier", {
-        method: "DELETE",
-        body: { supplier_id: supplierId },
-      });
+      const response = await deleteSupplier({ supplier_id: supplierId }).catch(
+        nullOnApiError
+      );
 
-      if (response.status !== 200) {
+      if (!response) {
         throw new Error(t("pages.supplier.messages.deleteFailed"));
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });

@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { apiFetch } from "@/shared/api/fetcher";
+import { nullOnApiError } from "@/shared/api/fetcher";
 import { paginationSchema } from "@/shared/api/schema";
 import { useToast } from "@/shared/lib/use-toast";
+
+import { listCustomers, listTransactionHistory } from "../api/consumers";
 
 import type {
   TCustomerQuery,
@@ -50,14 +52,11 @@ export const useGetCustomerList = (query: Partial<TCustomerQuery>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TCustomer[]>>(
-        "/admin/customers",
-        {
-          query: queryParams ?? {},
-        }
-      );
+      const response = (await listCustomers(queryParams ?? {}).catch(
+        nullOnApiError
+      )) as TGetResponseContent<TCustomer[]> | null; // domain 型別（R18）
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: "獲取客戶列表失敗",
@@ -66,7 +65,7 @@ export const useGetCustomerList = (query: Partial<TCustomerQuery>) => {
         return undefined;
       }
 
-      return response.body;
+      return response;
     },
     gcTime: 1000 * 60 * 5,
     staleTime: 1000 * 60 * 2,
@@ -99,14 +98,11 @@ export const useGetTransactionHistory = (
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await apiFetch<TTransactionHistoryResponse>(
-        "/admin/transaction_history",
-        {
-          query: queryParams ?? { user_id: "", page: 1, limit: 5 },
-        }
-      );
+      const response = (await listTransactionHistory(
+        queryParams ?? { user_id: "", page: 1, limit: 5 }
+      ).catch(nullOnApiError)) as TTransactionHistoryResponse | null;
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: "獲取交易記錄失敗",
@@ -115,7 +111,7 @@ export const useGetTransactionHistory = (
         return undefined;
       }
 
-      return response.body;
+      return response;
     },
     enabled: !!query.user_id,
     gcTime: 0,

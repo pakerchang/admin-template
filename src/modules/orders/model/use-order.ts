@@ -3,16 +3,15 @@ import { isEmpty } from "ramda";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { apiFetch } from "@/shared/api/fetcher";
+import { nullOnApiError } from "@/shared/api/fetcher";
 import { paginationSchema } from "@/shared/api/schema";
 import { useToast } from "@/shared/lib/use-toast";
 
+import { listOrders, updateOrder } from "../api/orders";
+
 import type { TOrder, EOrderStatus } from "./schema";
 import type { TPagination } from "@/shared/api/schema";
-import type {
-  TGetResponseContent,
-  TPostResponseContent,
-} from "@/shared/api/types";
+import type { TGetResponseContent } from "@/shared/api/types";
 import type { ApiSortingParams } from "@/shared/ui/data-table";
 
 export const useGetOrderList = (
@@ -57,14 +56,11 @@ export const useGetOrderList = (
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TOrder[]>>(
-        "/admin/order",
-        {
-          query: pageQuery ?? {},
-        }
-      );
+      const response = (await listOrders(pageQuery ?? {}).catch(
+        nullOnApiError
+      )) as TGetResponseContent<TOrder[]> | null; // domain 型別（R18）
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.order.get.error"),
@@ -73,7 +69,7 @@ export const useGetOrderList = (
         return null;
       }
 
-      return response.body;
+      return response;
     },
     gcTime: 1000 * 60 * 5,
     staleTime: 1000 * 60 * 2,
@@ -91,14 +87,11 @@ export const useGetOrder = (order_id: string) => {
   return useQuery({
     queryKey: ["order", order_id],
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TOrder[]>>(
-        "/admin/order",
-        {
-          query: { order_id },
-        }
-      );
+      const response = (await listOrders({ order_id }).catch(
+        nullOnApiError
+      )) as TGetResponseContent<TOrder[]> | null;
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.order.get.error"),
@@ -107,7 +100,7 @@ export const useGetOrder = (order_id: string) => {
         return null;
       }
 
-      return response.body;
+      return response;
     },
     enabled: !!order_id,
   });
@@ -121,14 +114,11 @@ export const useGetOrderDetail = (order_id: string) => {
   return useQuery({
     queryKey: ["orderDetail", order_id],
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TOrder[]>>(
-        "/admin/order",
-        {
-          query: { order_id },
-        }
-      );
+      const response = (await listOrders({ order_id }).catch(
+        nullOnApiError
+      )) as TGetResponseContent<TOrder[]> | null;
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.order.get.error"),
@@ -136,9 +126,9 @@ export const useGetOrderDetail = (order_id: string) => {
         });
         return null;
       }
-      const data = Array.isArray(response.body.data)
-        ? response.body.data[0]
-        : response.body.data;
+      const data = Array.isArray(response.data)
+        ? response.data[0]
+        : response.data;
       return data;
     },
     initialData: () => {
@@ -178,18 +168,12 @@ export const useUpdateOrderStatus = () => {
       order_id: TOrder["order_id"];
       order_status: EOrderStatus;
     }) => {
-      const response = await apiFetch<TPostResponseContent>(
-        "/admin/order/update",
-        {
-          method: "POST",
-          body: {
-            order_id,
-            order_status,
-          },
-        }
-      );
+      const response = await updateOrder({
+        order_id,
+        order_status,
+      }).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.order.update.error"),

@@ -1,19 +1,25 @@
-import { apiBaseUrl } from "@/shared/api/fetcher";
-import { toHttpHandlers } from "@/shared/api/mock/legacy-adapter";
+import { http } from "msw";
+
 import { createCollection } from "@/shared/api/mock-db";
 
+import {
+  getCreateArticleMockHandler,
+  getDeleteArticleMockHandler,
+  getListArticlesMockHandler,
+  getUpdateArticleMockHandler,
+} from "./articles.msw";
 import { articles } from "./seed";
+
+import type { HttpHandler } from "msw";
 
 const collection = createCollection(articles, "article_id", {
   searchField: "title",
 });
 
-export const articlesMockHandlers = toHttpHandlers(
-  {
-    "GET /admin/articles": collection.GET,
-    "POST /admin/articles": collection.POST,
-    "PUT /admin/articles": collection.PUT,
-    "DELETE /admin/articles": collection.DELETE,
-  },
-  { baseUrl: apiBaseUrl }
-);
+export const articlesMockHandlers: HttpHandler[] = [
+  http.put("*/admin/articles", collection.notFound), // K1：更新不存在的 id → 404（orval handler 只回 200）
+  getListArticlesMockHandler(collection.list),
+  getCreateArticleMockHandler(collection.create),
+  getUpdateArticleMockHandler(collection.update),
+  getDeleteArticleMockHandler(collection.remove),
+];

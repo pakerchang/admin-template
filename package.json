@@ -17,9 +17,11 @@
     "prepare": "husky",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
+    "gen:api": "orval && prettier --write \"src/modules/*/{api/**/*.ts,mocks/*.msw.ts}\" --log-level warn && pnpm gen:api:extract",
     "gen:api:extract": "tsx scripts/extract-operations.ts"
   },
   "dependencies": {
+    "@faker-js/faker": "10.6.0",
     "@hookform/resolvers": "^5.9.2",
     "@radix-ui/react-alert-dialog": "^1.2.1",
     "@radix-ui/react-collapsible": "^1.2.1",

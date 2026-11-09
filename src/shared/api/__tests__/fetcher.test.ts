@@ -4,8 +4,10 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { makeApp } from "@/app/__tests__/fixture";
 import { DEMO_ACCOUNT } from "@/modules/auth/mocks/seed";
 import { products } from "@/modules/product/mocks/seed";
-import { apiBaseUrl, apiFetch } from "@/shared/api/fetcher";
+import { getListTagsQueryKey, listTags } from "@/modules/tags/api/tags";
+import { ApiError, apiBaseUrl, nullOnApiError } from "@/shared/api/fetcher";
 import { clearAuth, getAuth, setAuth } from "@/shared/api/session";
+import { apiFetch } from "@/test/api-fetch";
 import { server } from "@/test/setup";
 
 import type { TProduct } from "@/modules/product/model/schema";
@@ -23,7 +25,7 @@ const signInAsSuperadmin = async () =>
     ).body
   );
 
-describe("apiFetch + MSW setupServer", () => {
+describe("fetcher + MSW setupServer", () => {
   beforeEach(() => {
     // M6 起 module 的 mock handler 由各 module 提供（setup 的預設 server 只有 kernel 的 guard + core handler）
     server.resetHandlers(...makeApp().build().registry.mockHandlers);
@@ -125,13 +127,66 @@ describe("apiFetch + MSW setupServer", () => {
   it("未知路由回 404（fallback）", async () => {
     const res = await apiFetch<{ error: string }>("/admin/nope");
     expect(res.status).toBe(404);
-    expect(res.body.error).toBe("No mock handler for GET /admin/nope");
+    expect(res.body.error).toBe("not found: no operation for GET /admin/nope");
 
     const outsidePrefixes = await apiFetch<{ error: string }>("/nope");
     expect(outsidePrefixes.status).toBe(404);
-    expect(outsidePrefixes.body.error).toBe("No mock handler for GET /nope");
+    expect(outsidePrefixes.body.error).toBe(
+      "not found: no operation for GET /nope"
+    );
 
     const unknownMethod = await apiFetch("/users", { method: "DELETE" });
     expect(unknownMethod.status).toBe(404);
+  });
+});
+
+describe("fetcher as orval mutator (M7 AC-4)", () => {
+  beforeEach(async () => {
+    server.resetHandlers(...makeApp().build().registry.mockHandlers);
+    clearAuth();
+  });
+
+  it("orval client resolves to the response body, not { data, status, headers }", async () => {
+    await signInAsSuperadmin();
+    const body = await listTags({ page: 1, limit: 2 });
+    expect(Object.keys(body).sort()).toEqual(
+      ["code", "data", "error", "msg", "total"].sort()
+    );
+    expect(body.data).toHaveLength(2);
+  });
+
+  it("non-2xx throws ApiError carrying status and error body", async () => {
+    const error = await listTags().catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({
+      status: 403,
+      body: { error: "forbidden: listTags requires tags:read" },
+      message: "forbidden: listTags requires tags:read",
+    });
+    expect(await listTags().catch(nullOnApiError)).toBeNull();
+  });
+
+  it("network errors are not swallowed by nullOnApiError", async () => {
+    server.use(http.get(`${apiBaseUrl}/admin/tag`, () => HttpResponse.error()));
+    await expect(listTags().catch(nullOnApiError)).rejects.toThrow();
+  });
+
+  it("queryKey is the relative path; only the request URL gets apiBaseUrl", async () => {
+    expect(getListTagsQueryKey({ page: 1 })).toEqual([
+      "/admin/tag",
+      { page: 1 },
+    ]);
+    expect(JSON.stringify(getListTagsQueryKey())).not.toContain(apiBaseUrl);
+
+    await signInAsSuperadmin();
+    let url = "";
+    server.use(
+      http.get(`${apiBaseUrl}/admin/tag`, ({ request }) => {
+        url = request.url;
+        return HttpResponse.json({ code: 200, msg: "", error: "", data: [] });
+      })
+    );
+    await listTags({ page: 2 });
+    expect(url).toBe(`${apiBaseUrl}/admin/tag?page=2`);
   });
 });

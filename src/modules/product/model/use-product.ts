@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { apiFetch } from "@/shared/api/fetcher";
+import { nullOnApiError } from "@/shared/api/fetcher";
 import {
   activeStatusEnums,
   imageResponseSchema,
@@ -14,13 +14,16 @@ import {
 import { useValidationMessage } from "@/shared/lib/gen-validate-message";
 import { useToast } from "@/shared/lib/use-toast";
 
+import {
+  createProduct,
+  deleteProduct,
+  listProducts,
+  updateProduct,
+} from "../api/product";
+
 import { productSchema, productTypeEnums } from "./schema";
 
 import type { TProductQuery, TProduct } from "./schema";
-import type {
-  TGetResponseContent,
-  TPostResponseContent,
-} from "@/shared/api/types";
 import type { TransKey } from "@/shared/i18n/types";
 
 export const useCreateProduct = () => {
@@ -31,12 +34,9 @@ export const useCreateProduct = () => {
 
   return useMutation({
     mutationFn: async (data: Omit<TProduct, "product_id">) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/products", {
-        method: "POST",
-        body: data,
-      });
+      const response = await createProduct(data).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.product.create.error"),
@@ -45,7 +45,7 @@ export const useCreateProduct = () => {
         return undefined;
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["productList"] });
@@ -74,12 +74,9 @@ export const useUpdateProduct = () => {
 
   return useMutation({
     mutationFn: async (product: TProduct) => {
-      const response = await apiFetch<TPostResponseContent>(
-        "/admin/products/update",
-        { method: "POST", body: product }
-      );
+      const response = await updateProduct(product).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         return toast({
           title: t("common.error"),
           description: t("toast.product.update.error"),
@@ -87,7 +84,7 @@ export const useUpdateProduct = () => {
         });
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["productList"] });
@@ -150,14 +147,11 @@ export const useGetProductList = (query: Partial<TProductQuery>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TProduct[]>>(
-        "/admin/products",
-        {
-          query: pageQuery ?? {},
-        }
+      const response = await listProducts(pageQuery ?? {}).catch(
+        nullOnApiError
       );
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.product.get.error"),
@@ -165,7 +159,7 @@ export const useGetProductList = (query: Partial<TProductQuery>) => {
         });
         return undefined;
       }
-      return response.body;
+      return response;
     },
     gcTime: 1000 * 60 * 5,
     staleTime: 1000 * 60 * 2,
@@ -183,16 +177,11 @@ export const useGetProduct = (product_id: string) => {
   return useQuery({
     queryKey: ["product", product_id],
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TProduct[]>>(
-        "/admin/products",
-        {
-          query: {
-            product_id,
-          },
-        }
-      );
+      const response = await listProducts({
+        product_id,
+      }).catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.product.get.error"),
@@ -201,7 +190,7 @@ export const useGetProduct = (product_id: string) => {
         return undefined;
       }
 
-      return response.body.data;
+      return response.data;
     },
     enabled: !!product_id,
   });
@@ -214,12 +203,11 @@ export const useDeleteProduct = () => {
 
   return useMutation({
     mutationFn: async (product_id: TProduct["product_id"]) => {
-      const response = await apiFetch<TPostResponseContent>("/admin/products", {
-        method: "DELETE",
-        body: { product_id },
-      });
+      const response = await deleteProduct({ product_id }).catch(
+        nullOnApiError
+      );
 
-      if (response.status !== 200) {
+      if (!response) {
         return toast({
           title: t("common.error"),
           description: t("toast.product.delete.error"),
@@ -227,7 +215,7 @@ export const useDeleteProduct = () => {
         });
       }
 
-      return response.body;
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["productList"] });
@@ -433,10 +421,9 @@ export const useGetAllProducts = () => {
   return useQuery({
     queryKey: ["allProducts"],
     queryFn: async () => {
-      const response =
-        await apiFetch<TGetResponseContent<TProduct[]>>("/admin/products");
+      const response = await listProducts().catch(nullOnApiError);
 
-      if (response.status !== 200) {
+      if (!response) {
         toast({
           title: t("common.error"),
           description: t("toast.product.get.error"),
@@ -445,7 +432,7 @@ export const useGetAllProducts = () => {
         throw new Error("API Error");
       }
 
-      return response.body;
+      return response;
     },
     gcTime: 1000 * 60 * 10,
     staleTime: 1000 * 60 * 5,
