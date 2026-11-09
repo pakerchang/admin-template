@@ -10,7 +10,7 @@
 
 | 檔名 | 主題 | 狀態 | 證據 |
 |---|---|---|---|
-| `fsd-module-architecture.m3-revision.spec.md` | Microkernel + Modular Monolith 目標架構（M0–M8），含 M3 W1 獲准修訂的最新版 | M0–M4 完成（M4 已併入 `refactor/integration`）；M5–M8 未開始 | 見下方 milestone 表 |
+| `fsd-module-architecture.m3-revision.spec.md` | Microkernel + Modular Monolith 目標架構（M0–M8），含 M3 W1 獲准修訂的最新版 | M0–M5 完成（M5 已併入 `refactor/integration`）；M7a 完成；M6、M7b、M8 未開始 | 見下方 milestone 表 |
 
 > master 上的 `docs/specs/fsd-module-architecture.spec.md`（#6 合入）為修訂前版本，不在本目錄更動；本目錄版本取自 `feat/m3-module-wiring:docs/specs/fsd-module-architecture.spec.md`。
 
@@ -22,7 +22,7 @@
 | router pathless hotfix | 完成 | PR #10；spec 在 master `docs/specs/router-pathless-hotfix.spec.md` |
 | M3 Module 接線 + default shell | 完成，已併入本地整合分支 `refactor/integration`（AC-1～7 已勾；AC-5 由 main 派 s28 瀏覽器行為層驗證，owner 尚未親驗） | integration tip `8458b19`（ff-only，基線 exit 0、23 files / 227 tests、LINT_OK）；`feat/m3-module-wiring` @ `8458b19` 已 push；codex 259e4c3 FAIL → d685823 PASS-with-fixes → 03acca9 PASS →（rebase）edfd74d PASS-with-fixes → 8458b19 PASS（arch chain `reviews/arch-m3-fix3-codex-verdict.md`）；中間 commit 509dc96..2aae3e6 不可單獨 build（bisect skip，main 已裁決接受） |
 | M4 權限四強制點 + 內容區 403 | 完成，已併入本地整合分支 `refactor/integration`（AC-1～5、AC-7 有自動測試證據；AC-6 `[manual]` 瀏覽器驗收**待驗**，由 main 統一派；角色 grants 矩陣為 **main 代 owner 裁決，待 owner 覆核**） | integration tip `ec5a55f`（ff-only，基線 exit 0、32 files / 316 tests、LINT_OK）；branch `feat/m4-permission-enforcement` @ `ec5a55f` 未 push（origin 停在 rebase 前 `66e94c0`）；codex acd05c0 FAIL（C1 mock token 可偽造、C2 profile 提權）→ fix1/fix2 → 2988875 PASS-with-fixes（arch chain `reviews/arch-m4-fix-codex-verdict.md`）→ fix3 修 W1（重新整理後 session 失效）後依 owner 指示不再複審直接併入；AC-1 路徑 `/users/user-list` → `/users`（main 核准） |
-| M5 Kernel / shared 搬遷 + 邊界 lint | 未開始 | — |
+| M5 Kernel / shared 搬遷 + 邊界 lint | 完成，已併入本地整合分支 `refactor/integration`（AC-1～4 有證據；`jsdom-node-abort.env.ts` 已刪；UI 外觀僅 CSS 產物比對，瀏覽器目視**待驗**） | integration tip `96f1565`（ff-only from `571d1af`；基線含 eslint exit 0、33 files / 328 tests、LINT_OK）；branch `feat/m5-shared-boundaries`：原實作 `43dfba8`（base `ec5a55f`，已 push）codex 一輪 PASS（arch chain `reviews/arch-m5-codex-verdict.md`）→ rebase 到 571d1af 只有 lock context 不同（`96f1565` push 於 `feat/m5-shared-boundaries-r1`）；boundaries 實測：`policies` 為正式 key（`rules` deprecated）、elements first-match、policies last-match |
 | M6 Module 內嵌搬遷 | 未開始 | — |
 | M7 orval 契約層 | **main 裁決拆兩段**。**M7a 完成**，已併入本地整合分支 `refactor/integration`：repo 根 `openapi.yaml`（36 operations）、`scripts/extract-operations.ts` + AC-2 fixture 測試、extract 結果與現行 `operations.gen.ts` 的一致性比對、根目錄 `orval.config.ts`（只寫檔未跑 gen）；AC-2 已勾。**M7b 未開始**（等 M6 併入）：gen 進 modules、mutator（AC-4）、刪 adapter（AC-5）、AC-1 / AC-3 / AC-6 / AC-7 | M7a：integration tip `571d1af`（ff-only；基線 exit 0、33 files / 328 tests、LINT_OK、`vitest run scripts` 12 tests）；branch `feat/m7a-openapi-contract` @ `571d1af`（base `ec5a55f`）；codex 首輪 PASS（api chain `reviews/api-m7a-codex-verdict.md`）；lead 第一手重跑 Done Command exit 0、`M7A_DONE_OK`。M4 決定：M7 前 mock 404 沿用 legacy body `No mock handler for …`；M7 起改為 `not found: no operation for …`（spec §6.5） |
 | M8 D1 / D4 驗收自動化與收尾 | 未開始 | — |
@@ -41,7 +41,11 @@
 | M4 | 本目錄的 arch spec 為 M3 修訂版；M4 的 spec 文字更新（§4.2/§4.3/§6.1/§6.5/§9）在 integration 的 `docs/specs/fsd-module-architecture.spec.md`，M8 統一同步 | `2988875` |
 | M4 | `CLAUDE.md`、spec 兩份 md 原本即未通過 prettier --check | arch chain `reviews/m4-fix2-report.md` |
 | M3 | 中間 commit 509dc96..2aae3e6 不可單獨 build（bisect skip，已接受） | main 裁決 |
-| M5 | `src/test/jsdom-node-abort.env.ts` 在 Vitest 5 下多餘，M5 移除並重跑 AbortSignal / msw 測試 | deps P3 |
+| M5 | boundaries 常駐 ignore `**/__tests__/**` 會讓正式碼透過 import 測試檔繞過邊界檢查（現無此用法） | arch chain `reviews/arch-m5-codex-verdict.md` W1 |
+| M5 | spec §7.2 草案的 `no-restricted-syntax`（`createRoute`／`useCan`）與 `use-user-permissions` 限制未上線；M6 搬 pages 時補 | arch chain `reviews/arch-m5-codex-verdict.md` W2、自行決定 #9 |
+| M6 | boundaries `LEGACY_PATHS`（`src/pages/**`、`src/services/**`、`src/components/**`）與 pages 對 module 的 deep import（`order-status-tag`、`banners/model/image-validation`）須隨搬遷一併清除，不能只刪 ignore | arch chain `reviews/m5-impl-report.md`、verdict I1 |
+| M6 | `components/shared/Card.tsx` 歸 product、`components/layouts/LoginPage.tsx` 歸 auth、`components/shared/Navbar.tsx` re-export shim 待刪；`shared/i18n/types.ts` 的 `TranslationResources` 與 §5.4 同名不同義 | arch chain `reviews/m5-impl-report.md` 自行決定 1、2、7 |
+| M5 | spec 文字差異（§7.2 `rules`→`policies`、§5.1 檔名 kebab-case、Card 未搬、upload hook 落點）待 M8 同步 | arch chain `reviews/m5-impl-report.md`「spec 差異」 |
 | M6 | `en.json` 比 zh 少 71 個 key（例 `pages.tag.addTag`） | arch chain 觀察 |
 | M7a | pnpm-lock 中既有 `unplugin@3.7.0` 的 optional `esbuild` 隨新增 orval 從 0.25.12 解析為 0.28.2（`package.json` 既有版本未變；無故障證據） | api chain `reviews/api-m7a-codex-verdict.md` info 1 |
 | M7a | extract 輸出與現行手寫 `src/app/operations.gen.ts`（`crud()` helper）不逐字相同，M7a 只做資料比對、未覆蓋；產物直接放進 src 後的 eslint 由 M7b `gen:api` 實際驗證 | api chain m7a-impl 交付報告 |
