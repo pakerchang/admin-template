@@ -4,7 +4,7 @@ paths:
   /admin/banners:
     get:
       operationId: listBanners
-      x-permission: banners.read
+      x-permission: banners:read
       responses: { "200": { description: ok } }
     post:
       operationId: createBanner

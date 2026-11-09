@@ -12,7 +12,7 @@ paths:
       operationId: listUsers
       tags:
         - users
-      x-permission: users.read
+      x-permission: users:read
       parameters:
         - in: query
           name: page

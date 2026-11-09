@@ -13,7 +13,7 @@ import * as bannersB from "../split-b/modules/banners";
 import * as usersB from "../split-b/modules/users";
 import { createPermissionGuard } from "../src/permissions";
 
-const ROLE_PERMS: Record<string, string[]> = { viewer: ["banners.read"], admin: ["banners.read", "banners.manage", "users.read"] };
+const ROLE_PERMS: Record<string, string[]> = { viewer: ["banners:read"], admin: ["banners:read", "banners:manage", "users:read"] };
 const as = (role: string): RequestInit => ({ headers: { Authorization: `Bearer ${role}` } });
 const img = { file_name: "a.png", file_url: "https://x/a.png" };
 const body = { title: "hi", desktop_image_url: img, mobile_image_url: img, redirect_url: "https://e.com", sort_order: 1, banner_status: "active" } as const;

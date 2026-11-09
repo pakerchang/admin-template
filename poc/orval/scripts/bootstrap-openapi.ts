@@ -50,7 +50,7 @@ const doc = createDocument({
       get: {
         operationId: "listBanners",
         tags: ["banners"],
-        "x-permission": "banners.read",
+        "x-permission": "banners:read",
         requestParams: { query: listQuery },
         responses: {
           "200": json(envelope(z.array(bannerSchema)), "Banner list"),
@@ -60,7 +60,7 @@ const doc = createDocument({
       post: {
         operationId: "createBanner",
         tags: ["banners"],
-        "x-permission": "banners.manage",
+        "x-permission": "banners:manage",
         requestBody: { content: { "application/json": { schema: createBannerBody } } },
         responses: {
           "200": json(messageBody, "Created"),
@@ -72,7 +72,7 @@ const doc = createDocument({
       get: {
         operationId: "listUsers",
         tags: ["users"],
-        "x-permission": "users.read",
+        "x-permission": "users:read",
         requestParams: { query: listQuery },
         responses: {
           "200": json(envelope(z.array(userSchema)), "User list"),

@@ -31,17 +31,17 @@ const bannersModule: AppModule = {
       return { message: "created" };
     }),
   ],
-  permissions: { listBanners: "banners.read", createBanner: "banners.manage" },
+  permissions: { listBanners: "banners:read", createBanner: "banners:manage" },
 };
 const usersModule: AppModule = {
   id: "users",
   mockHandlers: [getListUsersMockHandler()], // 不給 override → faker
-  permissions: { listUsers: "users.read" },
+  permissions: { listUsers: "users:read" },
 };
 
 const ROLE_PERMS: Record<string, string[]> = {
-  viewer: ["banners.read"],
-  admin: ["banners.read", "banners.manage", "users.read"],
+  viewer: ["banners:read"],
+  admin: ["banners:read", "banners:manage", "users:read"],
 };
 const as = (role: string): RequestInit => ({ headers: { Authorization: `Bearer ${role}` } });
 
@@ -96,7 +96,7 @@ describe("AC4 operationId → permission 中間格式 + guard", () => {
     const before = bannerDb.length;
     const res = await createBanner(body, as("viewer"));
     expect(res.status).toBe(403);
-    expect(res.data).toEqual({ error: "forbidden: createBanner requires banners.manage" });
+    expect(res.data).toEqual({ error: "forbidden: createBanner requires banners:manage" });
     expect(bannerDb.length).toBe(before);
 
     expect((await listUsers(undefined, as("viewer"))).status).toBe(403);

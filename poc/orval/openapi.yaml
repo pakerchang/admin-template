@@ -14,7 +14,7 @@ paths:
       operationId: listBanners
       tags:
         - banners
-      x-permission: banners.read
+      x-permission: banners:read
       parameters:
         - in: query
           name: page
@@ -73,7 +73,7 @@ paths:
       operationId: createBanner
       tags:
         - banners
-      x-permission: banners.manage
+      x-permission: banners:manage
       requestBody:
         content:
           application/json:
@@ -142,7 +142,7 @@ paths:
       operationId: listUsers
       tags:
         - users
-      x-permission: users.read
+      x-permission: users:read
       parameters:
         - in: query
           name: page

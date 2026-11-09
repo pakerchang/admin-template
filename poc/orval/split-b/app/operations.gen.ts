@@ -23,8 +23,8 @@ export const operationRoutes: OperationRoute[] = [
   }
 ];
 export const operationPermissions: OperationPermissions = {
-  "listBanners": "banners.read",
-  "createBanner": "banners.manage",
-  "listUsers": "users.read",
+  "listBanners": "banners:read",
+  "createBanner": "banners:manage",
+  "listUsers": "users:read",
   "login": "public"
 };

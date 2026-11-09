@@ -11,7 +11,7 @@ import { listBanners } from "../split-b/modules/banners";
 import { listUsers } from "../split-b/modules/users";
 import { assertPermissionsComplete, createPermissionGuard, fromModules } from "../src/permissions";
 
-const ROLE_PERMS: Record<string, string[]> = { viewer: ["banners.read"], admin: ["banners.read", "banners.manage", "users.read"] };
+const ROLE_PERMS: Record<string, string[]> = { viewer: ["banners:read"], admin: ["banners:read", "banners:manage", "users:read"] };
 const API = "http://api.test";
 const guardWith = (permissions: Record<string, string>) =>
   createPermissionGuard({
