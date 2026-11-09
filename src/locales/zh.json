@@ -13,6 +13,14 @@
     "delete": "刪除",
     "noData": "暫無資料"
   },
+  "login": {
+    "title": "登入",
+    "email": "電子郵件",
+    "password": "密碼",
+    "submit": "登入",
+    "error": "電子郵件或密碼錯誤",
+    "hint": "展示帳號：admin@example.com / admin123"
+  },
   "logout": {
     "title": "登出",
     "description": "確定要登出系統嗎？",

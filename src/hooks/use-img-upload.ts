@@ -1,14 +1,15 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDeepCompareEffect } from "react-use";
 
 import { useToast } from "@/hooks/use-toast";
-import apiClient from "@/services/client";
-import { productContract } from "@/services/contracts/product";
+import { apiFetch } from "@/services/api-client";
 
-import type { TImageResponseSchema } from "@/services/types/schema";
+import type {
+  TImageResponseSchema,
+  TPostResponseContent,
+} from "@/services/types/schema";
 
 type ImageUploadResponse = {
   file_url: string;
@@ -17,7 +18,6 @@ type ImageUploadResponse = {
 export const useImgUpload = (initialImages: TImageResponseSchema[] = []) => {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { getToken } = useAuth();
 
   const [uploadedImages, setUploadedImages] =
     useState<TImageResponseSchema[]>(initialImages);
@@ -34,13 +34,8 @@ export const useImgUpload = (initialImages: TImageResponseSchema[] = []) => {
       fileName: string;
       base64: string;
     }) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error(t("toast.auth.unauthorized.description"));
-      }
-
-      const client = apiClient(productContract, token);
-      const response = await client.uploadProductImage({
+      const response = await apiFetch<TImageResponseSchema>("/admin/images", {
+        method: "POST",
         body: {
           file_name: fileName,
           file_value: base64,
@@ -83,18 +78,8 @@ export const useImgUpload = (initialImages: TImageResponseSchema[] = []) => {
 
   const removeMutation = useMutation({
     mutationFn: async (payload: { file_names: string[] }) => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return null;
-      }
-
-      const client = apiClient(productContract, token);
-      const response = await client.deleteProductImage({
+      const response = await apiFetch<TPostResponseContent>("/admin/images", {
+        method: "DELETE",
         body: payload,
       });
 

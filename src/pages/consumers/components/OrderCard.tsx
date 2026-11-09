@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { getOrderStatusText } from "@/pages/orders/utils/order-status";
 
-import type { TTransactionHistoryOrder } from "@/services/contracts/customer";
+import type { TTransactionHistoryOrder } from "@/services/schemas/customer";
 
 interface OrderCardProps {
   order: TTransactionHistoryOrder;

@@ -18,12 +18,16 @@ import TeamMemberListPage from "@/pages/team-members/TeamMemberList";
 import UserFormPage from "@/pages/users/UserForm";
 import UserListPage from "@/pages/users/UserList";
 import { Route as RootRoute } from "@/router/__root";
+import { getAuth } from "@/services/api-client";
 
 import type { RouteComponent } from "@tanstack/react-router";
 
 const loginRoute = createRoute({
   path: "/login",
   component: () => <AuthLayout />,
+  beforeLoad: () => {
+    if (getAuth()) throw redirect({ to: "/" });
+  },
   getParentRoute: () => RootRoute,
 });
 
@@ -48,6 +52,9 @@ const userManagementRoute = createRoute({
 const protectedRoute = createRoute({
   path: "/",
   component: ProtectedAppLayout,
+  beforeLoad: () => {
+    if (!getAuth()) throw redirect({ to: "/login" });
+  },
   getParentRoute: () => RootRoute,
 });
 

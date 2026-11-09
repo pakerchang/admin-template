@@ -5,7 +5,7 @@ import { numericFormatter } from "react-number-format";
 import DataTable from "@/components/shared/DataTable";
 import Paper from "@/components/shared/Paper";
 
-import type { TOrder, TOrderItem } from "@/services/contracts/orders";
+import type { TOrder, TOrderItem } from "@/services/schemas/orders";
 import type { ColumnDef } from "@tanstack/react-table";
 
 interface IOrderItemProps {

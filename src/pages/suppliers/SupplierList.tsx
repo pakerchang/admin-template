@@ -39,7 +39,7 @@ import { paginationSchema } from "@/services/types/schema";
 import SupplierFormDialog from "./components/SupplierFormDialog";
 import { useGetSupplierList, useDeleteSupplier } from "./hooks/use-supplier";
 
-import type { TSupplier } from "@/services/contracts/supplier";
+import type { TSupplier } from "@/services/schemas/supplier";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 
 const SupplierList = () => {

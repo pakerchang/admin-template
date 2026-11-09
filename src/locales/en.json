@@ -13,6 +13,14 @@
     "delete": "Delete",
     "noData": "No Data"
   },
+  "login": {
+    "title": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "error": "Invalid email or password",
+    "hint": "Demo account: admin@example.com / admin123"
+  },
   "logout": {
     "title": "Logout",
     "description": "Are you sure you want to log out?",

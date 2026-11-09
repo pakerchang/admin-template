@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { activeStatusEnums, type EActiveStatus } from "@/services/types/schema";
 
-import type { TProduct } from "@/services/contracts/product";
+import type { TProduct } from "@/services/schemas/product";
 import type { Column } from "@tanstack/react-table";
 
 type StatusCounts = {

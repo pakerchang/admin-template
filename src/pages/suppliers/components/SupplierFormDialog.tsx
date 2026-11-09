@@ -21,7 +21,7 @@ import {
 } from "../hooks/use-supplier";
 
 import type { TSupplierForm } from "../hooks/use-supplier";
-import type { TSupplier } from "@/services/contracts/supplier";
+import type { TSupplier } from "@/services/schemas/supplier";
 
 interface SupplierFormDialogProps {
   open: boolean;

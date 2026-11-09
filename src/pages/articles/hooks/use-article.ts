@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { isEmpty } from "ramda";
@@ -8,16 +7,18 @@ import { z } from "zod";
 
 import { useToast } from "@/hooks/use-toast";
 import { useValidationMessage } from "@/lib/gen-validate-message";
-import apiClient from "@/services/client";
-import {
-  articleContract,
-  articleFormSchema,
-} from "@/services/contracts/article";
-import { userContract } from "@/services/contracts/user";
+import { apiFetch } from "@/services/api-client";
+import { articleFormSchema } from "@/services/schemas/article";
 import { paginationSchema } from "@/services/types/schema";
 
-import type { TArticle, TArticleForm } from "@/services/contracts/article";
-import type { TPagination, TSortOrder } from "@/services/types/schema";
+import type { TArticle, TArticleForm } from "@/services/schemas/article";
+import type { TUser } from "@/services/schemas/user";
+import type {
+  TPagination,
+  TSortOrder,
+  TGetResponseContent,
+  TPostResponseContent,
+} from "@/services/types/schema";
 
 type TArticleListParams = TPagination & {
   sort_by?: string;
@@ -25,7 +26,6 @@ type TArticleListParams = TPagination & {
 };
 
 export const useGetArticleList = (params: Partial<TArticleListParams>) => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
@@ -48,20 +48,12 @@ export const useGetArticleList = (params: Partial<TArticleListParams>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(articleContract, token);
-      const response = await client.getArticles({
-        query: pageQuery ?? {},
-      });
+      const response = await apiFetch<TGetResponseContent<TArticle[]>>(
+        "/admin/articles",
+        {
+          query: pageQuery ?? {},
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -87,28 +79,18 @@ export const useGetArticleList = (params: Partial<TArticleListParams>) => {
 };
 
 export const useGetArticle = (id: string) => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
   return useQuery({
     queryKey: ["getArticle", id],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(articleContract, token);
-
-      const response = await client.getArticle({
-        query: { article_id: id },
-      });
+      const response = await apiFetch<TGetResponseContent<TArticle[]>>(
+        "/admin/articles",
+        {
+          query: { article_id: id },
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -126,7 +108,6 @@ export const useGetArticle = (id: string) => {
 };
 
 export const useCreateArticle = () => {
-  const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -134,19 +115,8 @@ export const useCreateArticle = () => {
 
   return useMutation({
     mutationFn: async (data: TArticleFormData) => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        throw new Error("No authentication token");
-      }
-
       // 先調用 getUserProfile API 獲取最新用戶資料
-      const userClient = apiClient(userContract, token);
-      const userResponse = await userClient.getUserProfile();
+      const userResponse = await apiFetch<TUser>("/user/me/profile");
 
       if (userResponse.status !== 200) {
         toast({
@@ -169,8 +139,8 @@ export const useCreateArticle = () => {
         throw new Error("No user data available");
       }
 
-      const client = apiClient(articleContract, token);
-      const response = await client.createArticle({
+      const response = await apiFetch<TPostResponseContent>("/admin/articles", {
+        method: "POST",
         body: {
           ...data,
           user_id: currentUser.user_id, // 使用工作人員表的 staff_id
@@ -213,7 +183,6 @@ export const useCreateArticle = () => {
 };
 
 export const useUpdateArticle = () => {
-  const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -221,19 +190,8 @@ export const useUpdateArticle = () => {
 
   return useMutation({
     mutationFn: async (data: TArticleFormData & { article_id: string }) => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        throw new Error("No authentication token");
-      }
-
       // 先調用 getUserProfile API 獲取最新用戶資料
-      const userClient = apiClient(userContract, token);
-      const userResponse = await userClient.getUserProfile();
+      const userResponse = await apiFetch<TUser>("/user/me/profile");
 
       if (userResponse.status !== 200) {
         toast({
@@ -256,8 +214,8 @@ export const useUpdateArticle = () => {
         throw new Error("No user data available");
       }
 
-      const client = apiClient(articleContract, token);
-      const response = await client.updateArticle({
+      const response = await apiFetch<TPostResponseContent>("/admin/articles", {
+        method: "PUT",
         body: {
           ...data,
           user_id: currentUser.user_id, // 使用工作人員表的 staff_id
@@ -300,25 +258,14 @@ export const useUpdateArticle = () => {
 };
 
 export const useDeleteArticle = () => {
-  const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const { toast } = useToast();
 
   return useMutation({
     mutationFn: async (id: TArticle["article_id"]) => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(articleContract, token);
-      const response = await client.deleteArticle({
+      const response = await apiFetch<TPostResponseContent>("/admin/articles", {
+        method: "DELETE",
         body: { article_id: id },
       });
 

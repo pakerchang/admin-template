@@ -20,7 +20,7 @@ import {
 } from "../hooks/use-tag";
 
 import type { TTagForm } from "../hooks/use-tag";
-import type { TTag } from "@/services/contracts/tag";
+import type { TTag } from "@/services/schemas/tag";
 
 interface TagFormDialogProps {
   open: boolean;

@@ -33,7 +33,7 @@ import { paginationSchema } from "@/services/types/schema";
 import StaffFormDialog from "./components/StaffFormDialog";
 import { useGetStaffList, useDeleteStaff } from "./hooks/use-staff";
 
-import type { TStaffUser } from "@/services/contracts/staff";
+import type { TStaffUser } from "@/services/schemas/staff";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 
 const TeamMemberList = () => {

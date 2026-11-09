@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import * as R from "ramda";
 
-import type { TOrder, TOrderItem } from "@/services/contracts/orders";
+import type { TOrder, TOrderItem } from "@/services/schemas/orders";
 import type { TFunction } from "i18next";
 
 /**

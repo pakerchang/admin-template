@@ -6,7 +6,7 @@ import Paper from "@/components/shared/Paper";
 import { Tag } from "@/components/shared/Tags";
 import { getOrderStatusText } from "@/pages/orders/utils/order-status";
 
-import type { TOrder } from "@/services/contracts/orders";
+import type { TOrder } from "@/services/schemas/orders";
 
 type IInfoCardProps = Pick<
   TOrder,

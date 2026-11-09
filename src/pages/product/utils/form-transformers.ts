@@ -1,10 +1,10 @@
 import { produce } from "immer";
 
-import { productTypeEnums } from "@/services/contracts/product";
+import { productTypeEnums } from "@/services/schemas/product";
 import { activeStatusEnums } from "@/services/types/schema";
 
 import type { TProductForm } from "@/pages/product/hooks/use-product";
-import type { TProduct, EProductType } from "@/services/contracts/product";
+import type { TProduct, EProductType } from "@/services/schemas/product";
 import type { EActiveStatus } from "@/services/types/schema";
 
 type LangField = { zh?: string; en?: string; th?: string } | undefined;

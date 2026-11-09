@@ -12,7 +12,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-import type { TUserRole } from "@/services/contracts/user";
+import type { TUserRole } from "@/services/schemas/user";
 
 interface EditUserRoleDialogContentProps {
   defaultRole: TUserRole;
