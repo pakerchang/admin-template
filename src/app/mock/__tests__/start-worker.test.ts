@@ -12,6 +12,17 @@ describe("startMockWorker apiBaseUrl check (AC-7, R24)", () => {
     ["relative", "/api", /is not an absolute URL/],
     ["same-origin root", `${APP}/`, /must not share the app origin/],
     ["same-origin sub-path", `${APP}/api`, /must not share the app origin/],
+    // C1：非純 origin 會讓 client 的絕對路徑（/nope）落出 guard 範圍
+    [
+      "cross-origin sub-path",
+      "http://mock-api.test/api",
+      /must be a bare origin/,
+    ],
+    [
+      "cross-origin with query",
+      "http://mock-api.test/?x=1",
+      /must be a bare origin/,
+    ],
   ])("throws when apiBaseUrl is %s", async (_, apiBaseUrl, message) => {
     const start = vi.fn();
     await expect(
@@ -29,4 +40,17 @@ describe("startMockWorker apiBaseUrl check (AC-7, R24)", () => {
     });
     expect(start).toHaveBeenCalledWith(mockHandlers);
   });
+
+  it.each(["http://MOCK-API.test:80", "http://mock-api.test/"])(
+    "accepts %s (normalizes to a bare origin)",
+    async (apiBaseUrl) => {
+      const start = vi.fn().mockResolvedValue(undefined);
+      await startMockWorker(mockHandlers, {
+        apiBaseUrl,
+        appOrigin: APP,
+        start,
+      });
+      expect(start).toHaveBeenCalledOnce();
+    }
+  );
 });

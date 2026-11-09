@@ -70,6 +70,23 @@ describe("createPermissionGuard decisions (R22)", () => {
     expect(await getResponse([guard(["users:*"])], put)).toBeUndefined();
   });
 
+  it("scopes by normalized origin: MOCK-API.test:80 still 404s mock-api.test/nope (C1)", async () => {
+    const g = createPermissionGuard({
+      apiBaseUrl: "http://MOCK-API.test:80",
+      routes: [],
+      permissions: {},
+      getGrants: () => [],
+    });
+    const res = await getResponse(
+      [g],
+      new Request("http://mock-api.test/nope")
+    );
+    expect(res?.status).toBe(404);
+    expect(
+      await getResponse([g], new Request("http://mock-api.test:8080/nope"))
+    ).toBeUndefined();
+  });
+
   it("403 for a route without a permission declaration", async () => {
     const res = await getResponse(
       [guard(["*"])],

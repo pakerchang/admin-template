@@ -39,11 +39,12 @@ export const createPermissionGuard = ({
   apiBaseUrl: string;
   getGrants: (request: Request) => readonly TGrant[];
 }): HttpHandler => {
-  const base = apiBaseUrl.endsWith("/") ? apiBaseUrl : `${apiBaseUrl}/`;
+  // 與 client / handler 的 new URL(path, base) 同一套正規化（host 小寫、去預設 port）；base 須為純 origin（start-worker 驗）
+  const origin = new URL(apiBaseUrl).origin;
   return http.all("*", async ({ request }) => {
-    if (!request.url.startsWith(base)) return;
-    // base 可帶路徑；path 一律以 "/" 開頭比對
-    const path = `/${new URL(request.url).href.slice(base.length).split(/[?#]/)[0]}`;
+    const url = new URL(request.url);
+    if (url.origin !== origin) return;
+    const path = url.pathname;
     const route = matchOperation(routes, request.method, path);
     if (!route) {
       await delay(DELAY_MS);
