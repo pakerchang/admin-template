@@ -1,13 +1,12 @@
-import { generateMock } from "@anatine/zod-mock";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { productSchema } from "@/services/contracts/product";
+import { products } from "@/services/mock/data";
 
 import ProductList from "../ProductList";
 
-import type { TProduct } from "@/services/contracts/product";
+import type { TProduct } from "@/services/schemas/product";
 
 /**
  * ProductList 簡化整合測試
@@ -46,13 +45,6 @@ vi.mock("@tanstack/react-router", () => ({
   useNavigate: () => mockNavigate,
 }));
 
-// Mock Clerk
-vi.mock("@clerk/clerk-react", () => ({
-  useAuth: () => ({
-    getToken: vi.fn().mockResolvedValue("mock-token"),
-  }),
-}));
-
 // Mock toast
 vi.mock("@/hooks/use-toast", () => ({
   useToast: () => ({
@@ -60,12 +52,9 @@ vi.mock("@/hooks/use-toast", () => ({
   }),
 }));
 
-// 使用 zod-mock 生成測試資料
+// 以 mock 資料為基底
 const createMockProductData = (): TProduct[] => {
-  // 生成基本 mock 資料
-  const baseProducts = Array.from({ length: 3 }, () =>
-    generateMock(productSchema)
-  );
+  const baseProducts = products.slice(0, 3);
 
   // 手動調整關鍵欄位以確保測試邏輯正確
   const customizedProducts: TProduct[] = [

@@ -25,7 +25,7 @@
 - **前端框架**: React 19 + TypeScript
 - **路由系統**: TanStack Router 
 - **狀態管理**: TanStack Query + React Hook Form 
-- **驗證系統**: Clerk 身份驗證
+- **驗證系統**: 自製登入頁 + mock 登入 API（純 UI 展示，無真實後端）
 - **UI 框架**: Tailwind CSS + Radix UI + shadcn/ui
 - **測試框架**: Vitest + Testing Library
 - **建置工具**: Vite
@@ -47,9 +47,10 @@ pnpm install
 cp .env.example .env
 ```
 
-在 `.env` 檔案中設定必要的環境變數：
-- `VITE_CLERK_PUBLISHABLE_KEY`: Clerk 公開金鑰
-- `VITE_API_BASE_URL`: API 基礎 URL
+`.env` 為選用（不建立也能直接 `pnpm dev`）：
+- `VITE_API_BASE_URL`: API 基礎 URL（目前資料由本地 mock 回應，僅接真後端時需要）
+
+展示帳號：`admin@example.com` / `admin123`
 
 ### 開發伺服器
 ```bash
@@ -87,8 +88,9 @@ src/
 │   ├── team-members/    # 團隊成員管理
 │   └── users/           # 使用者管理
 ├── services/            # API 層
-│   ├── client.ts        # API 客戶端
-│   └── contracts/       # API 合約定義
+│   ├── api-client.ts    # 原生 fetch 封裝（apiFetch），唯一資料存取入口
+│   ├── mock/            # mock 資料與 method+path handler 表
+│   └── schemas/         # zod schema / domain 型別
 ├── hooks/               # 自定義 React hooks
 ├── utils/               # 工具函數
 ├── locales/             # 國際化翻譯檔案
@@ -128,19 +130,14 @@ src/
 ## 🛠️ 開發指南
 
 ### API 整合
-本系統使用 `@ts-rest/core` 進行型別安全的 API 整合：
+所有資料存取經 `src/services/api-client.ts` 的 `apiFetch`（原生 fetch 寫法），目前由 `src/services/mock/handlers.ts` 依「method + path」回應本地 mock 資料；接真後端時把 `mockFetch` 換成 `fetch` 即可：
 
 ```typescript
-// 定義 API 合約
-export const productContract = c.router({
-  getProducts: {
-    method: 'GET',
-    path: '/products',
-    responses: {
-      200: productListSchema,
-    },
-  },
-})
+// feature hook 內
+const response = await apiFetch<TGetResponseContent<TProduct[]>>(
+  "/admin/products",
+  { query: { page: 1, limit: 10 } }
+)
 
 // 在元件中使用
 const { data: products } = useGetProductList({

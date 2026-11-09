@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 
 import { useUpdateBanner } from "./use-banner";
 
-import type { TBanner } from "@/services/contracts/banner";
+import type { TBanner } from "@/services/schemas/banner";
 
 type OperationType = "reorder" | "promote" | "demote";
 

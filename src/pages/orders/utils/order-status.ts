@@ -1,4 +1,4 @@
-import { EOrderStatus } from "@/services/contracts/orders";
+import { EOrderStatus } from "@/services/schemas/orders";
 
 import type { TFunction } from "i18next";
 

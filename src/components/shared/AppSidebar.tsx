@@ -1,4 +1,4 @@
-import { SignOutButton } from "@clerk/clerk-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, Globe, LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -38,10 +38,18 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { sidebarMenu } from "@/constants/sidebar";
+import { clearAuth } from "@/services/api-client";
 
 export const AppSidebar = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { t, i18n } = useTranslation();
+
+  const handleLogout = () => {
+    clearAuth();
+    queryClient.clear();
+    navigate({ to: "/login" });
+  };
 
   const handleNavigate = (path: string) => {
     navigate({ to: `/${path}` });
@@ -169,9 +177,9 @@ export const AppSidebar = () => {
             <AlertDialogFooter>
               <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
               <AlertDialogAction asChild>
-                <SignOutButton>
-                  <Button variant="destructive">{t("logout.confirm")}</Button>
-                </SignOutButton>
+                <Button variant="destructive" onClick={handleLogout}>
+                  {t("logout.confirm")}
+                </Button>
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

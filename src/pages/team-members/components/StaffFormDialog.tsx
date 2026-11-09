@@ -29,7 +29,7 @@ import {
 } from "../hooks/use-staff";
 
 import type { TStaffCreateForm, TStaffUpdateForm } from "../hooks/use-staff";
-import type { TStaffUser, TCreateStaffUser } from "@/services/contracts/staff";
+import type { TStaffUser, TCreateStaffUser } from "@/services/schemas/staff";
 
 interface TeamMembersFormDialogProps {
   open: boolean;

@@ -15,7 +15,7 @@ import { ImageCard } from "./components/ImageCard";
 import { useGetBannerList } from "./hooks/use-banner";
 import { useBannerSort } from "./hooks/use-banner-sort";
 
-import type { TBanner } from "@/services/contracts/banner";
+import type { TBanner } from "@/services/schemas/banner";
 
 const DEFAULT_ACTIVE_BANNER_LIMIT = 3;
 

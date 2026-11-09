@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { cn } from "@/lib/utils";
-import { EOrderStatus } from "@/services/contracts/orders";
+import { EOrderStatus } from "@/services/schemas/orders";
 
 import type { PropsWithChildren } from "react";
 

@@ -36,14 +36,14 @@ import {
 import { useGetSupplierAll } from "@/pages/suppliers/hooks/use-supplier";
 import { useGetAllTags } from "@/pages/tags/hooks/use-tag";
 import { createGeneralImageValidationManager } from "@/plugins/image-validation";
-import { productTypeEnums } from "@/services/contracts/product";
+import { productTypeEnums } from "@/services/schemas/product";
 import { activeStatusEnums } from "@/services/types/schema";
 import { arraysEqual } from "@/utils/array-helpers";
 
 import type { TransKey } from "@/constants/locales";
 import type { FieldChange } from "@/pages/product/components/ProductEditConfirmDialog";
 import type { TProductForm } from "@/pages/product/hooks/use-product";
-import type { EProductType } from "@/services/contracts/product";
+import type { EProductType } from "@/services/schemas/product";
 import type { EActiveStatus } from "@/services/types/schema";
 
 const DEFAULT_LANG_VALUES = { zh: "", en: "", th: "" };

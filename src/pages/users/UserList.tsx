@@ -9,13 +9,16 @@ import EditActions from "@/components/shared/EditActions";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { generateUserData } from "@/services/contracts/mock-data";
 import { paginationSchema } from "@/services/types/schema";
 
 import EditUserRoleDialogContent from "./components/EditUserRoleDialogContent";
-import { useUserPermissions, useUpdateUserRole } from "./hooks/use-user";
+import {
+  useGetUserList,
+  useUserPermissions,
+  useUpdateUserRole,
+} from "./hooks/use-user";
 
-import type { TUser, TUserRole } from "@/services/contracts/user";
+import type { TUser, TUserRole } from "@/services/schemas/user";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 
 const UserList = () => {
@@ -34,7 +37,10 @@ const UserList = () => {
   const targetUserId = useRef<TUser["user_id"]>("");
   const targetUserRole = useRef<TUser["role"]>("user");
 
-  const mockUser = generateUserData();
+  const { data: userList, isLoading } = useGetUserList({
+    page: pagination.pageIndex + 1,
+    limit: pagination.pageSize,
+  });
 
   const onOpenEditRoleDialog = (id: TUser["user_id"], role: TUser["role"]) => {
     setOpenEditRoleDialog(true);
@@ -179,11 +185,12 @@ const UserList = () => {
       <div className="p-4">
         <DataTable
           columns={columns}
-          data={mockUser}
+          data={userList?.data ?? []}
+          isLoading={isLoading}
           pagination={{
             state: pagination,
             onPaginationChange: setPagination,
-            total: paginationSchema.parse({}).limit,
+            total: userList?.total ?? 0,
           }}
         />
       </div>

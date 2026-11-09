@@ -8,11 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EOrderStatus } from "@/services/contracts/orders";
+import { EOrderStatus } from "@/services/schemas/orders";
 
 import { getOrderStatusText } from "../utils/order-status";
 
-import type { TOrder } from "@/services/contracts/orders";
+import type { TOrder } from "@/services/schemas/orders";
 import type { Column } from "@tanstack/react-table";
 
 interface StatusColumnFilterProps {

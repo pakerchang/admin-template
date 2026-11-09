@@ -24,7 +24,7 @@ import { paginationSchema } from "@/services/types/schema";
 import TransactionHistoryDialog from "./components/TransactionHistoryDialog";
 import { useGetCustomerList } from "./hooks/use-consumer";
 
-import type { TCustomer } from "@/services/contracts/customer";
+import type { TCustomer } from "@/services/schemas/customer";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 
 const CustomerList = () => {

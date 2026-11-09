@@ -1,20 +1,20 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useToast } from "@/hooks/use-toast";
-import apiClient from "@/services/client";
-import { customerContract } from "@/services/contracts/customer";
+import { apiFetch } from "@/services/api-client";
 import { paginationSchema } from "@/services/types/schema";
 
 import type {
   TCustomerQuery,
   TTransactionHistoryQuery,
-} from "@/services/contracts/customer";
+  TCustomer,
+  TTransactionHistoryResponse,
+} from "@/services/schemas/customer";
+import type { TGetResponseContent } from "@/services/types/schema";
 
 export const useGetCustomerList = (query: Partial<TCustomerQuery>) => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
@@ -50,20 +50,12 @@ export const useGetCustomerList = (query: Partial<TCustomerQuery>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(customerContract, token);
-      const response = await client.getCustomers({
-        query: queryParams ?? {},
-      });
+      const response = await apiFetch<TGetResponseContent<TCustomer[]>>(
+        "/admin/customers",
+        {
+          query: queryParams ?? {},
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -88,7 +80,6 @@ export const useGetCustomerList = (query: Partial<TCustomerQuery>) => {
 export const useGetTransactionHistory = (
   query: Partial<TTransactionHistoryQuery>
 ) => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
@@ -108,20 +99,12 @@ export const useGetTransactionHistory = (
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(customerContract, token);
-      const response = await client.getTransactionHistory({
-        query: queryParams ?? { user_id: "", page: 1, limit: 5 },
-      });
+      const response = await apiFetch<TTransactionHistoryResponse>(
+        "/admin/transaction_history",
+        {
+          query: queryParams ?? { user_id: "", page: 1, limit: 5 },
+        }
+      );
 
       if (response.status !== 200) {
         toast({

@@ -1,12 +1,11 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { useToast } from "@/hooks/use-toast";
-import apiClient from "@/services/client";
-import { tagContract, tagSchema } from "@/services/contracts/tag";
+import { apiFetch } from "@/services/api-client";
+import { tagSchema } from "@/services/schemas/tag";
 import { paginationSchema } from "@/services/types/schema";
 
 import type {
@@ -14,7 +13,12 @@ import type {
   TTagQuery,
   TUpdateTag,
   TDeleteTag,
-} from "@/services/contracts/tag";
+  TTag,
+} from "@/services/schemas/tag";
+import type {
+  TGetResponseContent,
+  TPostResponseContent,
+} from "@/services/types/schema";
 
 export const useCreateTagSchema = () => {
   const { t } = useTranslation();
@@ -35,20 +39,15 @@ export const useCreateTagSchema = () => {
 export type TTagForm = z.infer<ReturnType<typeof useCreateTagSchema>>;
 
 export const useGetAllTags = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
   return useQuery({
     queryKey: ["tags", "all"],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error(t("toast.auth.unauthorized.title"));
-      }
-
-      const client = apiClient(tagContract, token);
-      const response = await client.getAllTags();
+      const response = await apiFetch<TGetResponseContent<TTag[]>>(
+        "/admin/tag"
+      );
 
       if (response.status !== 200) {
         toast({
@@ -71,7 +70,6 @@ export const useGetAllTags = () => {
 };
 
 export const useGetTagList = (query: Partial<TTagQuery>) => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
@@ -103,24 +101,15 @@ export const useGetTagList = (query: Partial<TTagQuery>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        const errorMsg = t("toast.auth.unauthorized.title");
-        toast({
-          title: errorMsg,
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        throw new Error(errorMsg);
-      }
-
-      const client = apiClient(tagContract, token);
-      const response = await client.getTags({
-        query: queryParams ?? {
-          page: paginationSchema.parse({}).page,
-          limit: paginationSchema.parse({}).limit,
-        },
-      });
+      const response = await apiFetch<TGetResponseContent<TTag[]>>(
+        "/admin/tag",
+        {
+          query: queryParams ?? {
+            page: paginationSchema.parse({}).page,
+            limit: paginationSchema.parse({}).limit,
+          },
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -143,20 +132,14 @@ export const useGetTagList = (query: Partial<TTagQuery>) => {
 };
 
 export const useCreateTag = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (tagData: TCreateTag) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error(t("toast.auth.unauthorized.title"));
-      }
-
-      const client = apiClient(tagContract, token);
-      const response = await client.createTag({
+      const response = await apiFetch<TPostResponseContent>("/admin/tag", {
+        method: "POST",
         body: tagData,
       });
 
@@ -185,20 +168,14 @@ export const useCreateTag = () => {
 };
 
 export const useUpdateTag = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (tagData: TUpdateTag) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error(t("toast.auth.unauthorized.title"));
-      }
-
-      const client = apiClient(tagContract, token);
-      const response = await client.updateTag({
+      const response = await apiFetch<TPostResponseContent>("/admin/tag", {
+        method: "PUT",
         body: tagData,
       });
 
@@ -227,20 +204,14 @@ export const useUpdateTag = () => {
 };
 
 export const useDeleteTag = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (tagData: TDeleteTag) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error(t("toast.auth.unauthorized.title"));
-      }
-
-      const client = apiClient(tagContract, token);
-      const response = await client.deleteTag({
+      const response = await apiFetch<TPostResponseContent>("/admin/tag", {
+        method: "DELETE",
         body: tagData,
       });
 

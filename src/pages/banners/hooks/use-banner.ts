@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { isEmpty } from "ramda";
@@ -8,15 +7,18 @@ import { z } from "zod";
 
 import { useToast } from "@/hooks/use-toast";
 import { useValidationMessage } from "@/lib/gen-validate-message";
-import apiClient from "@/services/client";
-import { bannerContract, bannerSchema } from "@/services/contracts/banner";
+import { apiFetch } from "@/services/api-client";
+import { bannerSchema } from "@/services/schemas/banner";
 import { paginationSchema } from "@/services/types/schema";
 
-import type { TBanner } from "@/services/contracts/banner";
-import type { TPagination } from "@/services/types/schema";
+import type { TBanner } from "@/services/schemas/banner";
+import type {
+  TPagination,
+  TGetResponseContent,
+  TPostResponseContent,
+} from "@/services/types/schema";
 
 export const useGetBannerList = (pagination: Partial<TPagination>) => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
@@ -39,20 +41,12 @@ export const useGetBannerList = (pagination: Partial<TPagination>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(bannerContract, token);
-      const response = await client.getBanners({
-        query: pageQuery ?? {},
-      });
+      const response = await apiFetch<TGetResponseContent<TBanner[]>>(
+        "/admin/banners",
+        {
+          query: pageQuery ?? {},
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -86,27 +80,18 @@ export const useGetBannerList = (pagination: Partial<TPagination>) => {
 };
 
 export const useGetBanner = (id: string) => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
   return useQuery({
     queryKey: ["getBanner", id],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(bannerContract, token);
-      const response = await client.getBanner({
-        query: { banner_id: id },
-      });
+      const response = await apiFetch<TGetResponseContent<TBanner[]>>(
+        "/admin/banners",
+        {
+          query: { banner_id: id },
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -124,7 +109,6 @@ export const useGetBanner = (id: string) => {
 };
 
 export const useCreateBanner = () => {
-  const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -134,18 +118,8 @@ export const useCreateBanner = () => {
     mutationFn: async (
       data: Omit<TBanner, "banner_id" | "created_at" | "updated_at">
     ) => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(bannerContract, token);
-      const response = await client.createBanner({
+      const response = await apiFetch<TPostResponseContent>("/admin/banners", {
+        method: "POST",
         body: data,
       });
 
@@ -183,25 +157,14 @@ export const useCreateBanner = () => {
 };
 
 export const useUpdateBanner = () => {
-  const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const { toast } = useToast();
 
   return useMutation({
     mutationFn: async (data: TBanner) => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(bannerContract, token);
-      const response = await client.updateBanner({
+      const response = await apiFetch<TPostResponseContent>("/admin/banners", {
+        method: "PUT",
         body: data,
       });
 
@@ -230,25 +193,14 @@ export const useUpdateBanner = () => {
 };
 
 export const useDeleteBanner = () => {
-  const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const { toast } = useToast();
 
   return useMutation({
     mutationFn: async (id: TBanner["banner_id"]) => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(bannerContract, token);
-      const response = await client.deleteBanner({
+      const response = await apiFetch<TPostResponseContent>("/admin/banners", {
+        method: "DELETE",
         body: { banner_id: id },
       });
 

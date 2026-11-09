@@ -1,19 +1,21 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { useToast } from "@/hooks/use-toast";
-import apiClient from "@/services/client";
-import { staffContract } from "@/services/contracts/staff";
+import { apiFetch } from "@/services/api-client";
 import { paginationSchema } from "@/services/types/schema";
 
 import type {
   TStaffQuery,
   TCreateStaffUser,
   TStaffUser,
-} from "@/services/contracts/staff";
+} from "@/services/schemas/staff";
+import type {
+  TGetResponseContent,
+  TPostResponseContent,
+} from "@/services/types/schema";
 
 const validatePasswordComplexity = (password: string) => {
   if (password.length < 8) return false;
@@ -82,7 +84,6 @@ export type TStaffCreateForm = z.infer<ReturnType<typeof useCreateStaffSchema>>;
 export type TStaffUpdateForm = z.infer<ReturnType<typeof useUpdateStaffSchema>>;
 
 export const useGetStaffList = (query: Partial<TStaffQuery>) => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
@@ -128,20 +129,12 @@ export const useGetStaffList = (query: Partial<TStaffQuery>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(staffContract, token);
-      const response = await client.getStaff({
-        query: queryParams ?? {},
-      });
+      const response = await apiFetch<TGetResponseContent<TStaffUser[]>>(
+        "/admin/staff",
+        {
+          query: queryParams ?? {},
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -164,20 +157,14 @@ export const useGetStaffList = (query: Partial<TStaffQuery>) => {
 };
 
 export const useCreateStaff = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (staffData: TCreateStaffUser) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error("未授權");
-      }
-
-      const client = apiClient(staffContract, token);
-      const response = await client.createStaff({
+      const response = await apiFetch<TPostResponseContent>("/admin/staff", {
+        method: "POST",
         body: staffData,
       });
 
@@ -206,20 +193,14 @@ export const useCreateStaff = () => {
 };
 
 export const useUpdateStaff = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (staffData: TStaffUser) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error("未授權");
-      }
-
-      const client = apiClient(staffContract, token);
-      const response = await client.updateStaff({
+      const response = await apiFetch<TPostResponseContent>("/admin/staff", {
+        method: "PUT",
         body: staffData,
       });
 
@@ -248,20 +229,14 @@ export const useUpdateStaff = () => {
 };
 
 export const useDeleteStaff = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (staffId: string) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error("未授權");
-      }
-
-      const client = apiClient(staffContract, token);
-      const response = await client.deleteStaff({
+      const response = await apiFetch<TPostResponseContent>("/admin/staff", {
+        method: "DELETE",
         body: { staff_id: staffId },
       });
 

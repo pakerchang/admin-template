@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
@@ -7,13 +6,8 @@ import { z } from "zod";
 
 import { useToast } from "@/hooks/use-toast";
 import { useValidationMessage } from "@/lib/gen-validate-message";
-import apiClient from "@/services/client";
-import { generateProductData } from "@/services/contracts/mock-data";
-import {
-  productContract,
-  productSchema,
-  productTypeEnums,
-} from "@/services/contracts/product";
+import { apiFetch } from "@/services/api-client";
+import { productSchema, productTypeEnums } from "@/services/schemas/product";
 import {
   activeStatusEnums,
   imageResponseSchema,
@@ -22,46 +16,35 @@ import {
 } from "@/services/types/schema";
 
 import type { TransKey } from "@/constants/locales";
-import type { TProductQuery, TProduct } from "@/services/contracts/product";
+import type { TProductQuery, TProduct } from "@/services/schemas/product";
+import type {
+  TGetResponseContent,
+  TPostResponseContent,
+} from "@/services/types/schema";
 
 export const useCreateProduct = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { getToken } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (_data: Omit<TProduct, "product_id">) => {
-      const token = await getToken();
-      if (!token) {
+    mutationFn: async (data: Omit<TProduct, "product_id">) => {
+      const response = await apiFetch<TPostResponseContent>("/admin/products", {
+        method: "POST",
+        body: data,
+      });
+
+      if (response.status !== 200) {
         toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
+          title: t("common.error"),
+          description: t("toast.product.create.error"),
           variant: "destructive",
         });
         return undefined;
       }
 
-      // const client = apiClient(productContract, token);
-      // const response = await client.createProduct({
-      //   body: data,
-      // });
-
-      // if (response.status !== 200) {
-      //   toast({
-      //     title: t("common.error"),
-      //     description: t("toast.product.create.error"),
-      //     variant: "destructive",
-      //   });
-      //   return undefined;
-      // }
-
-      // return response.body;
-
-      const mockData = generateProductData();
-
-      return mockData;
+      return response.body;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["productList"] });
@@ -85,25 +68,15 @@ export const useCreateProduct = () => {
 export const useUpdateProduct = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { getToken } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (product: TProduct) => {
-      const token = await getToken();
-      if (!token) {
-        return toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-      }
-
-      const client = apiClient(productContract, token);
-      const response = await client.updateProduct({
-        body: product,
-      });
+      const response = await apiFetch<TPostResponseContent>(
+        "/admin/products/update",
+        { method: "POST", body: product }
+      );
 
       if (response.status !== 200) {
         return toast({
@@ -137,7 +110,6 @@ export const useUpdateProduct = () => {
 export const useGetProductList = (query: Partial<TProductQuery>) => {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { getToken } = useAuth();
 
   const pageQuery = useMemo(() => {
     const hasContent =
@@ -177,20 +149,12 @@ export const useGetProductList = (query: Partial<TProductQuery>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(productContract, token);
-      const response = await client.getProducts({
-        query: pageQuery ?? {},
-      });
+      const response = await apiFetch<TGetResponseContent<TProduct[]>>(
+        "/admin/products",
+        {
+          query: pageQuery ?? {},
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -200,7 +164,7 @@ export const useGetProductList = (query: Partial<TProductQuery>) => {
         });
         return undefined;
       }
-      return response.body.data;
+      return response.body;
     },
     gcTime: 1000 * 60 * 5,
     staleTime: 1000 * 60 * 2,
@@ -214,27 +178,18 @@ export const useGetProductList = (query: Partial<TProductQuery>) => {
 export const useGetProduct = (product_id: string) => {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { getToken } = useAuth();
 
   return useQuery({
     queryKey: ["product", product_id],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return undefined;
-      }
-
-      const client = apiClient(productContract, token);
-      const response = await client.getProduct({
-        query: {
-          product_id,
-        },
-      });
+      const response = await apiFetch<TGetResponseContent<TProduct[]>>(
+        "/admin/products",
+        {
+          query: {
+            product_id,
+          },
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -254,22 +209,12 @@ export const useGetProduct = (product_id: string) => {
 export const useDeleteProduct = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { getToken } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (product_id: TProduct["product_id"]) => {
-      const token = await getToken();
-      if (!token) {
-        return toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-      }
-
-      const client = apiClient(productContract, token);
-      const response = await client.deleteProduct({
+      const response = await apiFetch<TPostResponseContent>("/admin/products", {
+        method: "DELETE",
         body: { product_id },
       });
 
@@ -474,23 +419,13 @@ export const useProductValidation = () => {
 export const useGetAllProducts = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { getToken } = useAuth();
 
   return useQuery({
     queryKey: ["allProducts"],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        throw new Error("Unauthorized");
-      }
-
-      const client = apiClient(productContract, token);
-      const response = await client.getAllProducts();
+      const response = await apiFetch<TGetResponseContent<TProduct[]>>(
+        "/admin/products"
+      );
 
       if (response.status !== 200) {
         toast({

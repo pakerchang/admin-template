@@ -8,9 +8,9 @@ import Paper from "@/components/shared/Paper";
 import { TextInput } from "@/components/shared/TextInputs";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { userSchema } from "@/services/contracts/user";
+import { userSchema } from "@/services/schemas/user";
 
-import type { TUser } from "@/services/contracts/user";
+import type { TUser } from "@/services/schemas/user";
 
 type TUserForm = Omit<TUser, "created_at" | "updated_at" | "role">;
 

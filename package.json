@@ -19,8 +19,6 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@clerk/clerk-react": "^5.30.0",
-    "@clerk/themes": "^2.2.40",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-collapsible": "^1.1.7",
@@ -44,8 +42,6 @@
     "@tiptap/pm": "^2.14.0",
     "@tiptap/react": "^2.14.0",
     "@tiptap/starter-kit": "^2.14.0",
-    "@ts-rest/core": "^3.52.1",
-    "axios": "^1.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
@@ -66,7 +62,6 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
-    "@anatine/zod-mock": "^3.14.0",
     "@tanstack/eslint-plugin-router": "^1.115.0",
     "@tanstack/router-plugin": "^1.116.1",
     "@testing-library/jest-dom": "^6.6.3",

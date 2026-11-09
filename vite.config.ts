@@ -57,15 +57,10 @@ export default defineConfig({
             return "form-vendor";
           }
           if (
-            ["axios", "dayjs", "ramda", "immer"].some((v) => id.includes(v))
+            ["dayjs", "ramda", "immer"].some((v) => id.includes(v))
           ) {
             return "utils-vendor";
           }
-          if (
-            id.includes("@faker-js/faker") ||
-            id.includes("@anatine/zod-mock")
-          )
-            return "mock-vendor";
         },
       },
     },

@@ -19,7 +19,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/hooks/use-toast";
-import { EOrderStatus } from "@/services/contracts/orders";
+import { EOrderStatus } from "@/services/schemas/orders";
 import { paginationSchema } from "@/services/types/schema";
 
 import EditDialogContent from "./components/EditDialogContent";
@@ -32,7 +32,7 @@ import {
 import { copyOrderToClipboard } from "./utils/copy-order";
 import { getOrderStatusText } from "./utils/order-status";
 
-import type { TOrder } from "@/services/contracts/orders";
+import type { TOrder } from "@/services/schemas/orders";
 import type {
   ColumnDef,
   ColumnFiltersState,

@@ -1,17 +1,19 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isEmpty } from "ramda";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useToast } from "@/hooks/use-toast";
-import apiClient from "@/services/client";
-import { orderContract } from "@/services/contracts/orders";
+import { apiFetch } from "@/services/api-client";
 import { paginationSchema } from "@/services/types/schema";
 
 import type { ApiSortingParams } from "@/components/shared/table";
-import type { TOrder, EOrderStatus } from "@/services/contracts/orders";
-import type { TPagination } from "@/services/types/schema";
+import type { TOrder, EOrderStatus } from "@/services/schemas/orders";
+import type {
+  TPagination,
+  TGetResponseContent,
+  TPostResponseContent,
+} from "@/services/types/schema";
 
 export const useGetOrderList = (
   pagination: Partial<TPagination> &
@@ -19,7 +21,6 @@ export const useGetOrderList = (
 ) => {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { getToken } = useAuth();
 
   const pageQuery = useMemo(() => {
     if (isEmpty(pagination)) return undefined;
@@ -56,20 +57,12 @@ export const useGetOrderList = (
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return null;
-      }
-
-      const client = apiClient(orderContract, token);
-      const response = await client.getOrders({
-        query: pageQuery ?? {},
-      });
+      const response = await apiFetch<TGetResponseContent<TOrder[]>>(
+        "/admin/order",
+        {
+          query: pageQuery ?? {},
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -94,25 +87,16 @@ export const useGetOrderList = (
 export const useGetOrder = (order_id: string) => {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { getToken } = useAuth();
 
   return useQuery({
     queryKey: ["order", order_id],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return null;
-      }
-
-      const client = apiClient(orderContract, token);
-      const response = await client.getOrder({
-        query: { order_id },
-      });
+      const response = await apiFetch<TGetResponseContent<TOrder[]>>(
+        "/admin/order",
+        {
+          query: { order_id },
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -132,26 +116,17 @@ export const useGetOrder = (order_id: string) => {
 export const useGetOrderDetail = (order_id: string) => {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { getToken } = useAuth();
   const queryClient = useQueryClient();
 
   return useQuery({
     queryKey: ["orderDetail", order_id],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return null;
-      }
-
-      const client = apiClient(orderContract, token);
-      const response = await client.getOrder({
-        query: { order_id },
-      });
+      const response = await apiFetch<TGetResponseContent<TOrder[]>>(
+        "/admin/order",
+        {
+          query: { order_id },
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -193,7 +168,6 @@ export const useGetOrderDetail = (order_id: string) => {
 export const useUpdateOrderStatus = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { getToken } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -204,23 +178,16 @@ export const useUpdateOrderStatus = () => {
       order_id: TOrder["order_id"];
       order_status: EOrderStatus;
     }) => {
-      const token = await getToken();
-      if (!token) {
-        toast({
-          title: t("toast.auth.unauthorized.title"),
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        return null;
-      }
-
-      const client = apiClient(orderContract, token);
-      const response = await client.updateOrderStatus({
-        body: {
-          order_id,
-          order_status,
-        },
-      });
+      const response = await apiFetch<TPostResponseContent>(
+        "/admin/order/update",
+        {
+          method: "POST",
+          body: {
+            order_id,
+            order_status,
+          },
+        }
+      );
 
       if (response.status !== 200) {
         toast({

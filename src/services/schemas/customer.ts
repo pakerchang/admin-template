@@ -1,16 +1,11 @@
-import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
-import { contactInfoSchema } from "@/services/contracts/orders";
+import { contactInfoSchema } from "@/services/schemas/orders";
 import {
   paginationSchema,
   imageResponseSchema,
   sortOrderEnum,
 } from "@/services/types/schema";
-
-import type { TGetResponseContent, TError } from "@/services/types/schema";
-
-const c = initContract();
 
 export const customerSchema = z.object({
   user_id: z.string(),
@@ -85,26 +80,3 @@ export type TTransactionHistoryQuery = z.infer<
 export type TTransactionHistoryResponse = z.infer<
   typeof transactionHistoryResponseSchema
 >;
-
-export const customerContract = c.router({
-  getCustomers: {
-    method: "GET",
-    path: "/admin/customers",
-    query: customerQuerySchema,
-    responses: {
-      200: c.type<TGetResponseContent<TCustomer[]>>(),
-      400: c.type<TError>(),
-      500: c.type<TError>(),
-    },
-  },
-  getTransactionHistory: {
-    method: "GET",
-    path: "/admin/transaction_history",
-    query: transactionHistoryQuerySchema,
-    responses: {
-      200: c.type<TTransactionHistoryResponse>(),
-      400: c.type<TError>(),
-      500: c.type<TError>(),
-    },
-  },
-});

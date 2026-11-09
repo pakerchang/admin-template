@@ -31,7 +31,7 @@ import { paginationSchema } from "@/services/types/schema";
 import TagFormDialog from "./components/TagFormDialog";
 import { useGetTagList, useDeleteTag } from "./hooks/use-tag";
 
-import type { TTag } from "@/services/contracts/tag";
+import type { TTag } from "@/services/schemas/tag";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 
 const TagList = () => {

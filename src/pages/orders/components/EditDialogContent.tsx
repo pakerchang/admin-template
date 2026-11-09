@@ -11,9 +11,9 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { EOrderStatus } from "@/services/contracts/orders";
+import { EOrderStatus } from "@/services/schemas/orders";
 
-import type { TOrder } from "@/services/contracts/orders";
+import type { TOrder } from "@/services/schemas/orders";
 
 interface EditDialogContentProps {
   defaultStatus: TOrder["order_status"];

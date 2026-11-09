@@ -17,7 +17,7 @@ import { paginationSchema } from "@/services/types/schema";
 
 import { useDeleteArticle, useGetArticleList } from "./hooks/use-article";
 
-import type { TArticle } from "@/services/contracts/article";
+import type { TArticle } from "@/services/schemas/article";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 
 const ArticleListPage = () => {

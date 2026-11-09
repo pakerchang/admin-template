@@ -25,7 +25,7 @@ import {
 
 import type { TransKey } from "@/constants/locales";
 import type { TransTypes } from "@/locales/types";
-import type { TProduct } from "@/services/contracts/product";
+import type { TProduct } from "@/services/schemas/product";
 import type {
   ColumnDef,
   PaginationState,

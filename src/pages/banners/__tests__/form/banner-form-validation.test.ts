@@ -50,6 +50,7 @@ describe("Banner Form Validation", () => {
         title: "",
         redirect_url: "https://example.com",
         banner_status: "active",
+        sort_order: 9,
         desktop_image_url: "https://example.com/desktop.jpg",
         mobile_image_url: "https://example.com/mobile.jpg",
       });
@@ -67,6 +68,7 @@ describe("Banner Form Validation", () => {
         title: "Test Banner",
         redirect_url: "https://example.com",
         banner_status: "active",
+        sort_order: 9,
         desktop_image_url: "https://example.com/desktop.jpg",
         mobile_image_url: "https://example.com/mobile.jpg",
       });
@@ -87,6 +89,7 @@ describe("Banner Form Validation", () => {
         title: "Test Banner",
         redirect_url: "",
         banner_status: "active",
+        sort_order: 9,
         desktop_image_url: "https://example.com/desktop.jpg",
         mobile_image_url: "https://example.com/mobile.jpg",
       });
@@ -104,6 +107,7 @@ describe("Banner Form Validation", () => {
         title: "Test Banner",
         redirect_url: "invalid-url",
         banner_status: "active",
+        sort_order: 9,
         desktop_image_url: "https://example.com/desktop.jpg",
         mobile_image_url: "https://example.com/mobile.jpg",
       });
@@ -119,6 +123,7 @@ describe("Banner Form Validation", () => {
         title: "Test Banner",
         redirect_url: "http://example.com",
         banner_status: "active",
+        sort_order: 9,
         desktop_image_url: "https://example.com/desktop.jpg",
         mobile_image_url: "https://example.com/mobile.jpg",
       });
@@ -134,6 +139,7 @@ describe("Banner Form Validation", () => {
         title: "Test Banner",
         redirect_url: "https://example.com",
         banner_status: "active",
+        sort_order: 9,
         desktop_image_url: "https://example.com/desktop.jpg",
         mobile_image_url: "https://example.com/mobile.jpg",
       });
@@ -154,6 +160,7 @@ describe("Banner Form Validation", () => {
         title: "Test Banner",
         redirect_url: "https://example.com",
         banner_status: "active",
+        sort_order: 9,
         desktop_image_url: "",
         mobile_image_url: "https://example.com/mobile.jpg",
       });
@@ -171,6 +178,7 @@ describe("Banner Form Validation", () => {
         title: "Test Banner",
         redirect_url: "https://example.com",
         banner_status: "active",
+        sort_order: 9,
         desktop_image_url: "https://example.com/desktop.jpg",
         mobile_image_url: "",
       });
@@ -188,6 +196,7 @@ describe("Banner Form Validation", () => {
         title: "Test Banner",
         redirect_url: "https://example.com",
         banner_status: "active",
+        sort_order: 9,
         desktop_image_url: "https://example.com/desktop.jpg",
         mobile_image_url: "https://example.com/mobile.jpg",
       });

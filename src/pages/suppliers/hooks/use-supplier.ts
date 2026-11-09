@@ -1,4 +1,3 @@
-import { useAuth } from "@clerk/clerk-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,18 +5,20 @@ import { z } from "zod";
 
 import { useToast } from "@/hooks/use-toast";
 import { useValidationMessage } from "@/lib/gen-validate-message";
-import apiClient from "@/services/client";
-import {
-  supplierContract,
-  supplierSchema,
-} from "@/services/contracts/supplier";
+import { apiFetch } from "@/services/api-client";
+import { supplierSchema } from "@/services/schemas/supplier";
 import { paginationSchema } from "@/services/types/schema";
 
 import type {
   TCreateSupplier,
   TUpdateSupplier,
   TSupplierQuery,
-} from "@/services/contracts/supplier";
+  TSupplier,
+} from "@/services/schemas/supplier";
+import type {
+  TGetResponseContent,
+  TPostResponseContent,
+} from "@/services/types/schema";
 
 export const useCreateSupplierSchema = () => {
   const getMessage = useValidationMessage();
@@ -53,20 +54,15 @@ export const useCreateSupplierSchema = () => {
 export type TSupplierForm = z.infer<ReturnType<typeof useCreateSupplierSchema>>;
 
 export const useGetSupplierAll = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
   return useQuery({
     queryKey: ["suppliers", "all"],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error(t("toast.auth.unauthorized.title"));
-      }
-
-      const client = apiClient(supplierContract, token);
-      const response = await client.getAllSuppliers();
+      const response = await apiFetch<TGetResponseContent<TSupplier[]>>(
+        "/admin/supplier"
+      );
 
       if (response.status !== 200) {
         toast({
@@ -89,7 +85,6 @@ export const useGetSupplierAll = () => {
 };
 
 export const useGetSupplierList = (query: Partial<TSupplierQuery>) => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
 
@@ -117,24 +112,15 @@ export const useGetSupplierList = (query: Partial<TSupplierQuery>) => {
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) {
-        const errorMsg = t("toast.auth.unauthorized.title");
-        toast({
-          title: errorMsg,
-          description: t("toast.auth.unauthorized.description"),
-          variant: "destructive",
-        });
-        throw new Error(errorMsg);
-      }
-
-      const client = apiClient(supplierContract, token);
-      const response = await client.getSuppliers({
-        query: queryParams ?? {
-          page: paginationSchema.parse({}).page,
-          limit: paginationSchema.parse({}).limit,
-        },
-      });
+      const response = await apiFetch<TGetResponseContent<TSupplier[]>>(
+        "/admin/supplier",
+        {
+          query: queryParams ?? {
+            page: paginationSchema.parse({}).page,
+            limit: paginationSchema.parse({}).limit,
+          },
+        }
+      );
 
       if (response.status !== 200) {
         toast({
@@ -157,20 +143,14 @@ export const useGetSupplierList = (query: Partial<TSupplierQuery>) => {
 };
 
 export const useCreateSupplier = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (supplierData: TCreateSupplier) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error(t("toast.auth.unauthorized.title"));
-      }
-
-      const client = apiClient(supplierContract, token);
-      const response = await client.createSupplier({
+      const response = await apiFetch<TPostResponseContent>("/admin/supplier", {
+        method: "POST",
         body: supplierData,
       });
 
@@ -199,20 +179,14 @@ export const useCreateSupplier = () => {
 };
 
 export const useUpdateSupplier = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (supplierData: TUpdateSupplier) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error(t("toast.auth.unauthorized.title"));
-      }
-
-      const client = apiClient(supplierContract, token);
-      const response = await client.updateSupplier({
+      const response = await apiFetch<TPostResponseContent>("/admin/supplier", {
+        method: "PUT",
         body: supplierData,
       });
 
@@ -241,20 +215,14 @@ export const useUpdateSupplier = () => {
 };
 
 export const useDeleteSupplier = () => {
-  const { getToken } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (supplierId: string) => {
-      const token = await getToken();
-      if (!token) {
-        throw new Error(t("toast.auth.unauthorized.title"));
-      }
-
-      const client = apiClient(supplierContract, token);
-      const response = await client.deleteSupplier({
+      const response = await apiFetch<TPostResponseContent>("/admin/supplier", {
+        method: "DELETE",
         body: { supplier_id: supplierId },
       });
 

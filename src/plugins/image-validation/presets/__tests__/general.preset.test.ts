@@ -2,6 +2,9 @@ import { describe, it, expect } from "vitest";
 
 import { createGeneralImageValidationManager } from "../general.preset";
 
+// 檔案大小需 >= 1KB 才會通過 file-size 規則
+const VALID_SIZE_CONTENT = "x".repeat(2 * 1024);
+
 // 測試用的預期配置
 const EXPECTED_GENERAL_CONFIG = {
   allowedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -78,7 +81,7 @@ describe("General Image Validation Manager", () => {
   describe("File validation", () => {
     it("should accept valid JPEG files", async () => {
       const manager = createGeneralImageValidationManager();
-      const mockFile = new File(["test"], "test-image.jpg", {
+      const mockFile = new File([VALID_SIZE_CONTENT], "test-image.jpg", {
         type: "image/jpeg",
       });
 
@@ -91,7 +94,7 @@ describe("General Image Validation Manager", () => {
 
     it("should accept valid PNG files", async () => {
       const manager = createGeneralImageValidationManager();
-      const mockFile = new File(["test"], "test-image.png", {
+      const mockFile = new File([VALID_SIZE_CONTENT], "test-image.png", {
         type: "image/png",
       });
 
@@ -103,7 +106,7 @@ describe("General Image Validation Manager", () => {
 
     it("should accept valid WebP files", async () => {
       const manager = createGeneralImageValidationManager();
-      const mockFile = new File(["test"], "test-image.webp", {
+      const mockFile = new File([VALID_SIZE_CONTENT], "test-image.webp", {
         type: "image/webp",
       });
 
@@ -115,7 +118,7 @@ describe("General Image Validation Manager", () => {
 
     it("should reject invalid file types", async () => {
       const manager = createGeneralImageValidationManager();
-      const mockFile = new File(["test"], "test-doc.pdf", {
+      const mockFile = new File([VALID_SIZE_CONTENT], "test-doc.pdf", {
         type: "application/pdf",
       });
 
@@ -127,7 +130,7 @@ describe("General Image Validation Manager", () => {
 
     it("should reject invalid filename formats", async () => {
       const manager = createGeneralImageValidationManager();
-      const mockFile = new File(["test"], "test 圖片.jpg", {
+      const mockFile = new File([VALID_SIZE_CONTENT], "test 圖片.jpg", {
         type: "image/jpeg",
       });
 
@@ -144,7 +147,9 @@ describe("General Image Validation Manager", () => {
 
     it("should accept files without prefix requirement", async () => {
       const manager = createGeneralImageValidationManager();
-      const mockFile = new File(["test"], "image.jpg", { type: "image/jpeg" });
+      const mockFile = new File([VALID_SIZE_CONTENT], "image.jpg", {
+        type: "image/jpeg",
+      });
 
       const result = await manager.validateImage(mockFile);
 
