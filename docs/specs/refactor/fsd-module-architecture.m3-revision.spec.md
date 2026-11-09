@@ -1228,17 +1228,17 @@ expected: exit 0
 **User Story**：As a maintainer, I want the whole API defined by one hand-written `openapi.yaml` with orval generating each module's client and MSW handlers and an extract script generating the kernel's operation table, so that the mock backend, client types and permission table derive from one source of truth.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: repo 根有單一 `openapi.yaml`（R14）；`pnpm gen:api` 後產物無 diff（產物已進 git 且與契約一致）
+- [x] AC-1 `[cmd]`: repo 根有單一 `openapi.yaml`（R14）；`pnpm gen:api` 後產物無 diff（產物已進 git 且與契約一致）
   - 驗證：`pnpm gen:api && git diff --exit-code -- src/modules src/app/operations.gen.ts`
 - [x] AC-2 `[cmd]`: extract 斷言：fixture YAML 中某 operation 有 0 個或 2 個 tag、tag 不在 `tags` 清單、`operationId` 重複、缺 `x-permission`、`x-permission` 格式不是 `resource:action` / `public`（例 `orders`、`orders:*`）、**`x-permission: public` 但缺 `security: []`**（R21）、**`x-permission` 非 public 卻寫了 `security: []`**（R27 負例，例 `x-permission: orders:read` + `security: []`）時 `extract-operations.ts` 皆 exit 1 並指名 operation；extract 不做權限目錄比對（R27：目錄比對屬 build 期，見 AC-3）
   - 驗證：`pnpm exec vitest run scripts`
-- [ ] AC-3 `[cmd]`: 以產生的 `operations.gen.ts` + 實際 10 個 module 建 app，`build()` 不 throw（每個 operation 都有 permission 或 `"public"`，每個非 public 值都是某 module 權限目錄中完整的 `resource:action`，R21）；把 fixture YAML 的一個 `x-permission` 改成 `orders:typo` 重新 extract 後 `build()` throw 並指名該 operation
+- [x] AC-3 `[cmd]`: 以產生的 `operations.gen.ts` + 實際 10 個 module 建 app，`build()` 不 throw（每個 operation 都有 permission 或 `"public"`，每個非 public 值都是某 module 權限目錄中完整的 `resource:action`，R21）；把 fixture YAML 的一個 `x-permission` 改成 `orders:typo` 重新 extract 後 `build()` throw 並指名該 operation
   - 驗證：`pnpm exec vitest run src/app/kernel`
-- [ ] AC-4 `[cmd]`: fetcher mutator：orval client 經 mutator 回傳 body（非 `{ data, status, headers }`），非 2xx throw；queryKey 為相對 path（不含 baseUrl）——PoC 未驗 mutator，本 AC 首次驗證
+- [x] AC-4 `[cmd]`: fetcher mutator：orval client 經 mutator 回傳 body（非 `{ data, status, headers }`），非 2xx throw；queryKey 為相對 path（不含 baseUrl）——PoC 未驗 mutator，本 AC 首次驗證
   - 驗證：`pnpm exec vitest run src/shared/api`
-- [ ] AC-5 `[cmd]`: `api/` 只含產物、`mocks/` 的 `*.msw.ts` 只有 `<id>.msw.ts`（R15）；M2 adapter 與手寫 `apiFetch` hooks 已刪
+- [x] AC-5 `[cmd]`: `api/` 只含產物、`mocks/` 的 `*.msw.ts` 只有 `<id>.msw.ts`（R15）；M2 adapter 與手寫 `apiFetch` hooks 已刪
   - 驗證：`for f in src/modules/*/mocks/*.msw.ts; do id=$(basename "$(dirname "$(dirname "$f")")"); test "$(basename "$f")" = "$id.msw.ts" || exit 1; done && test ! -e src/app/mock/legacy-adapter.ts && ! grep -rn "apiFetch" src/modules`
-- [ ] AC-6 `[cmd]`: create 後 list 讀得到（seed 記憶體狀態經 orval handler override 生效）；手寫的非 200 handler（例：PUT 不存在的 id → 404）排在 orval handler 前且生效；代表性 module 各一條
+- [x] AC-6 `[cmd]`: create 後 list 讀得到（seed 記憶體狀態經 orval handler override 生效）；手寫的非 200 handler（例：PUT 不存在的 id → 404）排在 orval handler 前且生效；代表性 module 各一條
   - 驗證：`pnpm exec vitest run src/modules`
 - [ ] AC-7 `[manual]`: `VITE_API_MOCK=true pnpm dev` 各頁 CRUD 與 M6 一致
 

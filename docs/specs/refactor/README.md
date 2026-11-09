@@ -10,7 +10,7 @@
 
 | 檔名 | 主題 | 狀態 | 證據 |
 |---|---|---|---|
-| `fsd-module-architecture.m3-revision.spec.md` | Microkernel + Modular Monolith 目標架構（M0–M8），含 M3 W1 獲准修訂的最新版 | M0–M6 完成（M6 已併入 `refactor/integration`）；M7a 完成；M7b、M8 未開始 | 見下方 milestone 表 |
+| `fsd-module-architecture.m3-revision.spec.md` | Microkernel + Modular Monolith 目標架構（M0–M8），含 M3 W1 獲准修訂的最新版 | M0–M7 完成（M7 已併入 `refactor/integration`，tip `ca6b62f`）；M8 未開始 | 見下方 milestone 表 |
 
 > master 上的 `docs/specs/fsd-module-architecture.spec.md`（#6 合入）為修訂前版本，不在本目錄更動；本目錄版本取自 `feat/m3-module-wiring:docs/specs/fsd-module-architecture.spec.md`。
 
@@ -24,7 +24,7 @@
 | M4 權限四強制點 + 內容區 403 | 完成，已併入本地整合分支 `refactor/integration`（AC-1～5、AC-7 有自動測試證據；AC-6 `[manual]` 瀏覽器驗收**待驗**，由 main 統一派；角色 grants 矩陣為 **main 代 owner 裁決，待 owner 覆核**） | integration tip `ec5a55f`（ff-only，基線 exit 0、32 files / 316 tests、LINT_OK）；branch `feat/m4-permission-enforcement` @ `ec5a55f` 未 push（origin 停在 rebase 前 `66e94c0`）；codex acd05c0 FAIL（C1 mock token 可偽造、C2 profile 提權）→ fix1/fix2 → 2988875 PASS-with-fixes（arch chain `reviews/arch-m4-fix-codex-verdict.md`）→ fix3 修 W1（重新整理後 session 失效）後依 owner 指示不再複審直接併入；AC-1 路徑 `/users/user-list` → `/users`（main 核准） |
 | M5 Kernel / shared 搬遷 + 邊界 lint | 完成，已併入本地整合分支 `refactor/integration`（AC-1～4 有證據；`jsdom-node-abort.env.ts` 已刪；UI 外觀僅 CSS 產物比對，瀏覽器目視**待驗**） | integration tip `96f1565`（ff-only from `571d1af`；基線含 eslint exit 0、33 files / 328 tests、LINT_OK）；branch `feat/m5-shared-boundaries`：原實作 `43dfba8`（base `ec5a55f`，已 push）codex 一輪 PASS（arch chain `reviews/arch-m5-codex-verdict.md`）→ rebase 到 571d1af 只有 lock context 不同（`96f1565` push 於 `feat/m5-shared-boundaries-r1`）；boundaries 實測：`policies` 為正式 key（`rules` deprecated）、elements first-match、policies last-match |
 | M6 Module 內嵌搬遷 | 完成，已併入本地整合分支 `refactor/integration`（AC-1～5 有證據；AC-6 `[manual]` 兩語系文字以字典比對佐證 zh 475／en 474 key→value 全同，瀏覽器目視**待驗**） | integration tip `60ff9c2`（ff-only from `96f1565`；基線含 eslint exit 0、34 files / 333 tests、LINT_OK）；branch `feat/m6-module-colocation` @ `60ff9c2`（已 push）；codex 首輪 FAIL（唯一阻擋項：consumers 購買紀錄不隨訂單更新）→ main 依 spec R5／OQ-3 裁定只記錄（撤回修正棒 m6-fix1，未 commit）→ 同一 commit 重審 PASS（arch chain `reviews/arch-m6-rereview-codex-verdict.md`）；`src/pages`、`src/services`、`src/components` 已移除，boundaries `LEGACY_PATHS` 已移除 |
-| M7 orval 契約層 | **main 裁決拆兩段**。**M7a 完成**，已併入本地整合分支 `refactor/integration`：repo 根 `openapi.yaml`（36 operations）、`scripts/extract-operations.ts` + AC-2 fixture 測試、extract 結果與現行 `operations.gen.ts` 的一致性比對、根目錄 `orval.config.ts`（只寫檔未跑 gen）；AC-2 已勾。**M7b 未開始**（等 M6 併入）：gen 進 modules、mutator（AC-4）、刪 adapter（AC-5）、AC-1 / AC-3 / AC-6 / AC-7 | M7a：integration tip `571d1af`（ff-only；基線 exit 0、33 files / 328 tests、LINT_OK、`vitest run scripts` 12 tests）；branch `feat/m7a-openapi-contract` @ `571d1af`（base `ec5a55f`）；codex 首輪 PASS（api chain `reviews/api-m7a-codex-verdict.md`）；lead 第一手重跑 Done Command exit 0、`M7A_DONE_OK`。M4 決定：M7 前 mock 404 沿用 legacy body `No mock handler for …`；M7 起改為 `not found: no operation for …`（spec §6.5） |
+| M7 orval 契約層 | 完成，已併入本地整合分支 `refactor/integration`（main 裁決拆兩段 M7a / M7b；AC-1～6 有自動測試證據；AC-7 `[manual]` 瀏覽器 CRUD **待驗**）。M7a：repo 根 `openapi.yaml`（36 operations）、`scripts/extract-operations.ts` + AC-2 fixture 測試、根目錄 `orval.config.ts`。M7b：`pnpm gen:api`（orval + prettier + extract）產生 `src/modules/<id>/api/**`、`mocks/<id>.msw.ts` 與 `src/app/operations.gen.ts`；`shared/api/fetcher.ts` 為 orval mutator（回 HTTP body、非 2xx throw、queryKey 相對路徑）；legacy adapter 與 `apiFetch` 已刪；mock 404 body 改為 `not found: no operation for …`（spec §6.5，依 M4 決定） | M7b：integration tip `ca6b62f`（ff-only from `60ff9c2`；基線 `pnpm gen:api` 後無 diff、build、38 files / 347 tests、`vitest run scripts` 12 tests、lint 後工作樹乾淨，exit 0）；branch `feat/m7b-orval-gen` @ `ca6b62f`（未 push）；codex 首輪 PASS（api chain `reviews/api-m7b-codex-verdict.md`，8 條實作 DECISION 皆判相容 / 可接受）；lead 第一手重跑 Done Command exit 0。M7a：tip `571d1af`；codex 首輪 PASS（api chain `reviews/api-m7a-codex-verdict.md`） |
 | M8 D1 / D4 驗收自動化與收尾 | 未開始 | — |
 
 ### 架構主線已知問題 / follow-up
@@ -58,6 +58,14 @@
 | M7a | pnpm-lock 中既有 `unplugin@3.7.0` 的 optional `esbuild` 隨新增 orval 從 0.25.12 解析為 0.28.2（`package.json` 既有版本未變；無故障證據） | api chain `reviews/api-m7a-codex-verdict.md` info 1 |
 | M7a | extract 輸出與現行手寫 `src/app/operations.gen.ts`（`crud()` helper）不逐字相同，M7a 只做資料比對、未覆蓋；產物直接放進 src 後的 eslint 由 M7b `gen:api` 實際驗證 | api chain m7a-impl 交付報告 |
 | M7a | `scripts/**` 與 `orval.config.ts` 不在 `pnpm build` 的 tsc 範圍，也不在 `pnpm lint` 範圍（只用暫時 tsconfig 檢查過一次） | api chain m7a-impl 交付報告 |
+| M7b | 非 mock 模式仍靜態載入 mock handlers 與 `@faker-js/faker`（`app/modules.ts → module index → mocks/handlers.ts → *.msw.ts → faker`；`VITE_API_MOCK` 只控制 worker 啟動），正式 bundle 很可能含 faker 與 mock 程式，增量未實測；faker 從根入口匯入，`locale: "en"` 不保證只載英文 locale | api chain `reviews/api-m7b-codex-verdict.md` info |
+| M7b | 新增依賴 `@faker-js/faker@10.6.0`（dependencies；orval 產生的 msw 檔必 import）超出 spec Touches 原列的 orval / yaml devDeps | api chain `reviews/m7b-impl-report.md` DECISION 5 |
+| M7b | spec §4.5 fetcher 的「403 統一 toast、401 清 session」未實作（base 無此行為，且會與各 hook 自己的 toast 重複，依行為紅線維持原狀） | api chain `reviews/m7b-impl-report.md` |
+| M7b | hooks 沿用手寫 queryKey，未改用 orval `get*QueryKey`（保持 invalidation 與 base 相同）；mutator 回 HTTP body，不再剝 `ApiEnvelope.data`（列表需 `total`）——spec 文字待 M8 同步 | api chain `reviews/m7b-impl-report.md` DECISION 1、2 |
+| M7b | eslint 過渡 policy「mocks 可讀本 module 的 `model/`」未收回（seed 型別仍取自 `model/`）；產物只關 `import/order` | api chain `reviews/m7b-impl-report.md` |
+| M7b | `docs/TRAPS.md` B 區 M7 相關條目（K1 / K3 / K4）已驗證但未移到 A 區或刪除 | api chain `reviews/m7b-impl-report.md` |
+| M7b | AC-7 瀏覽器 `setupWorker` 下 orval handler 與 hooks 未實測（只在 node `setupServer` 驗過，對應 K6 / K8）；codex 唯讀 sandbox 下 vitest 因 EPERM 未執行，測試數由實作棒、lead 與併入棒三方重跑佐證 | api chain `reviews/m7b-impl-report.md`、`reviews/api-m7b-codex-verdict.md` |
+| M7b | orval 對空字串 / null query 的序列化與舊 helper 不同，現行 hook 的參數整理下未見可觸發問題 | api chain `reviews/api-m7b-codex-verdict.md` |
 
 ## 依賴升級（deps chain）
 
