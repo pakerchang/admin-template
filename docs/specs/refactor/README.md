@@ -35,8 +35,8 @@
 | `deps-p1-eslint9.spec.md` | ESLint 9 flat config 遷移 | 完成 | PR #5 |
 | `deps-p2-prettier3.spec.md` | Prettier 2 → 3 | 完成 | PR #7 |
 | `deps-p3-vitest5.spec.md` | Vitest 3 → 5 | 完成，已 ff-only 併入 `refactor/integration`（tip `f864fc6`） | 原實作 `d29739c` codex PASS（`~/.claude/.claude/reviews/20261109T170530Z-58436-codex-review.md`，AC1–AC7 PASS；AC8 遠端狀態由子 session 以 ls-remote / gh pr list 補證）；rebase 後 `f864fc6`（parent `d7a6fc3`，作者 pakerchang）delta PASS（`~/.claude/.claude/reviews/20261109T193445Z-2644-codex-review.md`）；Done Command exit 0，19 files / 196 tests（AC5 的 16 / 179 為 rebase 前 base `46d13b6` 的基線）；併入後整合基線 install / build / vitest 19 / 196 / eslint 0 warning，exit 0 |
-
 | `deps-p4-zod4.spec.md` | Zod 3 → 4 | codex review PASS，待併入 `refactor/integration` | branch `chore/deps-p4-zod4`（base `8458b19`）：`b6cbc5f` 升級＋必改、`3c92e5a` deprecated API 遷移，作者 pakerchang；第 1 輪 codex FAIL 只因 AC3 驗收指令在 base 已壞（`copy-order.ts:127` TS2742，與 zod 無關）→ lead 依派工授權改寫 AC3 為 `tsc -b tsconfig.app.json`，v3 / v4 型別斷言皆過；重審 PASS（`~/.claude/.claude/reviews/20261109T201731Z-83751-codex-review.md`）；Done Command exit 0，24 files / 229 tests；commit 1 單獨 build＋test 亦過 |
+
 
 P5（TS 6）依 owner 舊裁決，M3 後確認 arch spec 修訂定稿再開。
 
