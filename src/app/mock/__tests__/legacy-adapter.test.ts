@@ -1,7 +1,7 @@
 import { getResponse } from "msw";
 import { describe, expect, it } from "vitest";
 
-import { toHttpHandlers, toNotFoundHandlers } from "@/app/mock/adapter";
+import { legacyOperations, toHttpHandlers } from "@/app/mock/legacy-adapter";
 import { DEMO_ACCOUNT } from "@/services/mock/data";
 import { handlers } from "@/services/mock/handlers";
 
@@ -32,24 +32,23 @@ describe("toHttpHandlers", () => {
   });
 });
 
-describe("toNotFoundHandlers", () => {
-  const notFound = toNotFoundHandlers({ baseUrl: BASE });
+describe("legacyOperations (M3 過渡表，R28)", () => {
+  const ops = legacyOperations(handlers);
 
-  it("404s any apiFetch-style request on the base origin", async () => {
-    const res = await getResponse(
-      notFound,
-      new Request(`${BASE}/nope`, {
-        headers: { "Content-Type": "application/json" },
-      })
+  it("one route per legacy METHOD path, every permission explicitly public", () => {
+    expect(ops.routes.map((r) => `${r.method} ${r.path}`)).toEqual(
+      Object.keys(handlers)
     );
-    expect(res?.status).toBe(404);
+    expect(Object.keys(ops.permissions)).toEqual(
+      ops.routes.map((r) => r.operationId)
+    );
+    expect(new Set(Object.values(ops.permissions))).toEqual(
+      new Set(["public"])
+    );
   });
 
-  it("passes through non-API requests (vite assets / HMR)", async () => {
-    const res = await getResponse(
-      notFound,
-      new Request(`${BASE}/src/main.tsx`)
-    );
-    expect(res).toBeUndefined();
+  it("keeps the four existing API prefixes unchanged (R24)", () => {
+    const prefixes = new Set(ops.routes.map((r) => r.path.split("/")[1]));
+    expect(prefixes).toEqual(new Set(["api", "users", "user", "admin"]));
   });
 });
