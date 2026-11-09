@@ -37,6 +37,13 @@
 - **禁令**：M8 驗收完成前凍結新增 module（owner 裁決，spec 的「恰好 10 個」不改）；新 module 需求排到 M8 之後。
 - **來源**：arch chain inbox「2026-11-09 owner 裁決：重構期間凍結新增 module（main 轉達）」。
 
+### commit 照樣跳權限確認框（git-write 放行 hook 沒生效）
+
+- **症狀**：feature branch 上 `cc-git-write.sh commit` 仍跳確認框。
+- **真因**：hook 只放行單一簡單指令；commit message 用 heredoc / `$(…)`、或 `cd x && …` 串接，整串含 `$ < & ;` 即回退確認（刻意 fail-safe）。worktree 未 rebase 到含此 hook 的 master 時也不會載入。
+- **禁令**：commit message 用多個 `-m '…'`（括號、冒號可用）或 `-F <file>`；禁止為了放行而改 hook 放寬字元檢查。
+- **來源**：`.claude/hooks/git-write-project-allow.sh`（D3）；`docs/specs/project-git-write-allow.spec.md`。
+
 ## B. spec / PoC 預警，待對應 milestone 驗證
 
 ### orval 產的 MSW handler 回不了 404 / 422（M7 起）
