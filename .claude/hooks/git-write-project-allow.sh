@@ -11,7 +11,8 @@ DEFAULT_PROTECTED="main master develop dev staging stage uat prd prod production
 REPO="${CLAUDE_PROJECT_DIR:-}"
 [ "${GIT_WRITE_ALLOW_TEST:-}" = 1 ] && REPO="${GIT_WRITE_ALLOW_REPO:-}"
 for v in $(compgen -e); do case "$v" in
-  GIT_EDITOR|GIT_WRITE_ALLOW_REPO|GIT_WRITE_ALLOW_TEST) unset "$v" ;;
+  GIT_EDITOR) [ "$GIT_EDITOR" = true ] || exit 0; unset GIT_EDITOR ;;   # rebase --continue 會叫編輯器
+  GIT_WRITE_ALLOW_REPO|GIT_WRITE_ALLOW_TEST) unset "$v" ;;
   GIT_*) exit 0 ;;
 esac; done
 [ -n "$REPO" ] || exit 0
@@ -72,7 +73,15 @@ case "$VERB" in
     esac; done <<<"$cfg" ;;
   rebase)                                                                                           # D6
     case "${ARGS[*]-}" in origin/master|--continue|--abort|--skip) ;; *) exit 0 ;; esac
-    [ "$(git -C "$CWD" config --bool --get rebase.updaterefs 2>/dev/null)" = true ] && exit 0 ;;
+    [ "$(git -C "$CWD" config --bool --get rebase.updaterefs 2>/dev/null)" = true ] && exit 0
+    # --continue/--skip 會執行既有 rebase 狀態：todo 只能剩 pick（無 exec 等），且未指定 merge strategy
+    case "${ARGS[0]}" in --continue|--skip)
+      d=$(git -C "$CWD" rev-parse --path-format=absolute --git-path rebase-merge 2>/dev/null) || exit 0
+      [ -e "$d/strategy" ] || [ -e "$d/strategy_opts" ] && exit 0
+      if [ -e "$d/git-rebase-todo" ]; then   # grep rc 1＝沒有非 pick 行；0（有）或 2（讀不了）→ 退回
+        grep -Evq '^((pick|p) [0-9a-f]+( .*)?|#.*|[[:space:]]*)$' "$d/git-rebase-todo"; [ $? -eq 1 ] || exit 0
+      fi ;;
+    esac ;;
   *) exit 0 ;;
 esac
 echo '{"hookSpecificOutput":{"hookEventName":"PermissionRequest","decision":{"behavior":"allow"}}}'

@@ -71,6 +71,19 @@ for kv in "remote.origin.mirror true" "push.default matching" "push.default noth
   set -- $kv; cfg "$1" "$2"; run none "$T/wt" "$W push origin feat/x"; cfg --unset "$1"
 done
 cfg rebase.updateRefs true; run none "$T/wt" "$W rebase origin/master"; cfg --unset rebase.updateRefs
+# 重審 8318313 發現：編輯器非 Claude Code 預設值、rebase 狀態含 exec / strategy → --continue/--skip 退回
+run none "$T/wt" "$W rebase --continue" GIT_EDITOR="sh -c id"
+run none "$T/wt" "$W commit -m 'x'" GIT_EDITOR=vi
+RM=$(env "${CLEAN[@]}" git -C "$T/wt" rev-parse --path-format=absolute --git-path rebase-merge) && mkdir -p "$RM" || { echo "FIXTURE_FAIL: rebase-merge"; exit 1; }
+printf 'pick 0123abc # a (x)\n\n# comment\np 4567def b\n' >"$RM/git-rebase-todo" || { echo "FIXTURE_FAIL: todo"; exit 1; }
+run allow "$T/wt" "$W rebase --continue"; run allow "$T/wt" "$W rebase --skip"; run allow "$T/wt" "$W rebase --continue" GIT_EDITOR=true
+for line in "exec id" "x id" "pick 0123abc a"$'\n'"exec id" "break" "edit 0123abc a" "reword 0123abc a" "update-ref refs/heads/master" "label x" "pick zzz a"; do
+  printf '%s\n' "$line" >"$RM/git-rebase-todo" || { echo "FIXTURE_FAIL: todo"; exit 1; }
+  run none "$T/wt" "$W rebase --continue"; run none "$T/wt" "$W rebase --skip"
+done
+run allow "$T/wt" "$W rebase --abort"                                          # abort 不執行 todo
+printf 'pick 0123abc a\n' >"$RM/git-rebase-todo"; touch "$RM/strategy"; run none "$T/wt" "$W rebase --continue"; rm -f "$RM/strategy"
+touch "$RM/strategy_opts"; run none "$T/wt" "$W rebase --continue"; rm -rf "$RM"
 
 # ── AC-2 非白名單形狀
 for c in "push" "push origin" "push -u origin HEAD" "push origin HEAD" "push origin HEAD:feat/x" "push origin feat/x:feat/x" \
