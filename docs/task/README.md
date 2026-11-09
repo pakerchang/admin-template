@@ -2,6 +2,8 @@
 
 此資料夾包含專案的任務文件，已按功能領域分類管理。
 
+> **歷史文件**：本目錄僅作開發紀錄保存，不再新增；新任務走全域 task-format（`/dev-orchestrator-task-format`）。
+
 ## 📁 資料夾結構
 
 ### `/products/` - 商品管理相關任務
@@ -14,9 +16,9 @@
 - `order-list-search-enhancement.md` - 訂單ID搜尋功能增強
 - `order-status-dropdown-filter.md` - 訂單狀態下拉選單篩選
 
-### `/content/` - 內容管理相關任務
+### `/article/` - 內容管理相關任務
 包含內容編輯和管理功能
-- `post.md` - 文章編輯管理系統頁面
+- `article-page-create.md` - 文章編輯管理系統頁面
 
 ### `/components/` - 通用元件相關任務
 包含可重複使用的元件功能

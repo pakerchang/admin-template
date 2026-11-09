@@ -1,224 +1,46 @@
----
-description: Admin Dashboard - Multi-purpose administration system
-globs:
-  - "package.json"
-  - "src/services/client.ts"
-  - "src/services/types/*.ts"
-  - "src/services/contacts/*.ts"
-  - "src/components/layouts/*.tsx"
-  - "src/types/*.ts"
-  - "vite.config.ts"
-  - "tsconfig.json"
-  - ".claude/rules/*.md"
-alwaysApply: true
----
-
-<!--
-CLAUDE.md Configuration Explanation:
-
-- description: Project overview for Claude Code context
-- globs: Files that Claude MUST automatically read as basic context before any task
-  - All files listed in globs are treated as essential project knowledge
-  - .claude/rules/*.md files contain mandatory rules that override any other guidance
-  - These files provide architectural understanding and constraints
-- alwaysApply: true - This configuration is ALWAYS active and cannot be overridden
-
-Claude MUST read all glob files at the start of each session to establish proper context.
--->
-
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+React admin dashboard。回覆一律繁體中文；流程規範沿用使用者全域設定，本檔只記專案事實。
 
-## 📋 Configuration Context
+## 指令
 
-This CLAUDE.md file uses the following configuration:
+- `pnpm dev` / `pnpm build`（`tsc -b tsconfig.app.json tsconfig.node.json && vite build`）
+- `pnpm lint` —— **帶 `--fix`，會改檔**；只檢查用 `pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"`
+- `pnpm test` —— **watch 模式**，非互動環境會掛住；一次性執行用 `pnpm exec vitest run`
+- `pnpm test:coverage`、`pnpm prettier`（`--write src/**`）
+- pre-commit：husky → lint-staged（`eslint --fix` + `prettier --write`）
+- 環境變數：`.env.example` → `.env`
 
-- **globs**: Lists essential files that Claude MUST read automatically as basic context
-- **alwaysApply: true**: This configuration is permanently active and cannot be overridden
-- **.claude/rules/\*.md**: Contains mandatory rules that take precedence over other guidance
+## 架構
 
-All files in the `globs` array should be treated as essential project knowledge that informs every decision and action.
-
-## Rules Integration Protocol
-
-### Self-Check Enforcement
-- **Mandatory Checkpoint**: Claude MUST execute self-check protocol at critical decision points
-- **Rule Compliance Verification**: Actively verify adherence to applicable rules before proceeding
-- **Agent Mode Strict Adherence**: When invoked via @agent-[type], operate strictly within that agent's scope
-- **Phase-Based Execution**: Follow phase-workflow.md mandatory review stops
-
-### Task-Based Rule Application
-- **Development Tasks**: Apply `.claude/rules/development-process.md` and `.claude/rules/phase-workflow.md`
-- **Git Operations**: Apply `.claude/rules/commit-rules.md`
-- **File Creation**: Apply `.claude/rules/naming-conventions.md`
-- **Documentation**: Apply `.claude/rules/phase-workflow.md`
-
-### Rule Priority Hierarchy
-1. **development-process.md** - Process control and workflow
-2. **commit-rules.md** - Version control standards
-3. **naming-conventions.md** - Code organization standards
-4. **phase-workflow.md** - Cross-agent coordination
-5. **CLAUDE.md** - Project context and integration
-
-## Rule Files Usage
-
-Rules in `.claude/rules/` take precedence over guidance in this file. Apply rules based on task context:
-- Development work: `development-process.md` + `phase-workflow.md`
-- Git commits: `commit-rules.md`
-- File creation: `naming-conventions.md`
-
-## Language Preference
-
-### **Communication & Documentation Language**
-
-- Always respond in Traditional Chinese (繁體中文) unless explicitly asked to use another language
-- All user interactions must be in Traditional Chinese
-- Development documents and implementation plans must be in Traditional Chinese
-- Technical documentation and specifications must be in Traditional Chinese
-
-### **Exception: Core Rule Files Only**
-
-- Files in `.claude/rules/` directory use English for precise technical specification understanding
-- These are low-level execution principle files that Claude must interpret accurately
-- This exception applies ONLY to core rule files, not to development documents or user communication
-
-## Development Commands
-
-### Core Commands
-
-- `pnpm install` - Install dependencies
-- `pnpm run dev` - Start development server
-- `pnpm run build` - Build for production (includes TypeScript compilation)
-- `pnpm run lint` - Run ESLint with auto-fix
-- `pnpm run test` - Run tests with Vitest
-- `pnpm run test:coverage` - Run tests with coverage report
-
-### Environment Setup
-
-- Copy `.env.example` to `.env` for environment configuration
-
-## Architecture Overview
-
-This is a React admin dashboard built with modern TypeScript stack:
-
-### Core Technologies
-
-- **Frontend**: React 19 + TypeScript + Vite
-- **Routing**: TanStack Router with file-based routing
-- **State Management**: TanStack Query for server state, React Hook Form for forms
-- **Authentication**: Clerk for user authentication
-- **UI Framework**: Tailwind CSS + Radix UI components
-- **Testing**: Vitest + Testing Library
-- **Package Manager**: pnpm
-
-### Project Structure
+- React 19 + TypeScript + Vite，path alias `@` → `src/`
+- 路由：TanStack Router **code-based**（`src/router/routes.tsx` 用 `createRoute`，非檔案式路由）
+- Server state：TanStack Query；表單：React Hook Form + Zod
+- API：`@ts-rest/core` 契約在 `src/services/contracts/`，client 在 `src/services/client.ts`
+- 認證：Clerk；權限用 `useUserPermissions()` 的語意方法（如 `canManageUsers`），不直接比 role
+- UI：Tailwind + Radix，shadcn 元件在 `src/components/ui/`
+- i18n：react-i18next，`src/locales/` 只有 `en.json`、`zh.json`
+- 測試：Vitest + Testing Library，jsdom，setup 在 `src/test/setup.ts`
 
 ```
 src/
-├── components/           # Reusable UI components
-│   ├── layouts/         # Layout components (AuthLayout, ProtectedAppLayout)
-│   ├── shared/          # Business-specific shared components
-│   └── ui/              # Generic UI components (shadcn/ui)
-├── pages/               # Feature-based page components
-│   ├── banners/         # Banner management
-│   ├── orders/          # Order management
-│   ├── product/         # Product management
-│   └── users/           # User management
-├── services/            # API layer with ts-rest contracts
-├── hooks/               # Custom React hooks
-├── utils/               # Utility functions
-└── locales/             # i18n translations (en, th, zh)
+├── components/{layouts,shared,ui}/
+├── pages/<feature>/{components,hooks,__tests__}/
+│   # articles banners consumers orders product suppliers tags team-members users
+├── services/{client.ts,contracts/,types/}
+├── router/  hooks/  utils/  lib/  constants/  types/  locales/
+└── plugins/image-validation/  test/  styles/
 ```
 
-### Key Architectural Patterns
+## 慣例
 
-#### API Layer
+- 元件 PascalCase（`BannerForm.tsx`）；hooks / utils / constants / 測試 kebab-case（`use-banner.ts`、`banner-form.test.tsx`）
+- 已知例外（不改名）：`src/components/shared/table/hooks/useApiSorting.ts`、`useColumnVisibility.ts`
+- 測試放同層 `__tests__/`
+- 頁面專屬元件 / hooks 放 `src/pages/<feature>/`，跨頁共用放 `src/components/shared/`
+- Commit：Conventional Commits `type(scope): description`（feat / fix / refactor / docs / test / chore），不帶 issue 號或 Phase
 
-- Uses `@ts-rest/core` for type-safe API contracts
-- Centralized API client in `src/services/client.ts`
-- Contract definitions in `src/services/contacts/`
+## Git
 
-#### Authentication & Authorization
-
-- Global user role management with prefetching in `ProtectedAppLayout`
-- Permission-based access control via `useUserPermissions` hook
-- Comprehensive role system (admin, superadmin, agent, vip, user, new, cservice)
-
-#### Form Management
-
-- React Hook Form with Zod validation
-- Consistent form patterns across features
-- Centralized validation message generation
-
-#### State Management
-
-- TanStack Query for server state with strategic caching
-- Long-term cache strategy for user roles (staleTime: 1hr, gcTime: 24hr)
-- Optimistic updates where appropriate
-
-#### Component Organization
-
-- Feature-based folder structure under `pages/`
-- Each feature has its own components, hooks, and utilities
-- Shared components in `components/shared/`
-
-## File Naming Conventions
-
-Follow naming conventions as detailed in `.claude/rules/naming-conventions.md`
-
-## Development Guidelines
-
-### Testing
-
-- Test files use kebab-case naming
-- Tests located in `__tests__/` directories within feature folders
-- Comprehensive test coverage for banner functionality exists as reference
-
-### Internationalization
-
-- Three languages supported: English, Thai, Chinese
-- Translation files in `src/locales/`
-- Use `react-i18next` for translations
-
-### Code Quality
-
-- ESLint configuration enforces consistent code style
-- Prettier for code formatting
-- Husky for pre-commit hooks
-- TypeScript strict mode enabled
-
-### Permission System
-
-- Use `useUserPermissions()` hook for role-based access control
-- Prefer semantic permission checks (`canManageUsers`) over direct role comparison
-- Global prefetching of user roles for immediate availability
-
-## Important Notes
-
-- This is a multi-purpose admin system - ensure compliance with relevant regulations
-- User role management is implemented as a global cold data system with prefetching
-- The codebase uses mixed languages (English code, Chinese documentation)
-- Banner management includes drag-and-drop sorting functionality
-- Order management supports batch operations
-
-## Version Control & Deployment
-
-### Git Repository
-
-- **Main Branch**: `master`
-- Uses standard Git workflow with feature branches
-
-### Deployment
-
-- Framework supports various deployment platforms
-- Environment configuration via `.env` files
-- Build artifacts generated with `pnpm build`
-
-### Pull Request Guidelines
-
-- Target branch is typically `master`
-- Run build and lint checks before creating PR
-- Use descriptive titles and comprehensive descriptions
-- Follow conventional commit message format
-
+- 主幹 `master`；工作走 feature branch → PR 到 master
+- `docs/task/` 為歷史任務文件，新任務走全域 task-format
