@@ -37,8 +37,7 @@ export const makeApp = (core: Partial<TCore> = {}) =>
   );
 
 export const routerAt = (app: ReturnType<typeof makeApp>, url: string) => {
-  const { routeTree, registry } = app.build();
-  const router = createAppRouter(routeTree, registry);
+  const router = createAppRouter(app.build().routeTree);
   router.update({ history: createMemoryHistory({ initialEntries: [url] }) });
   return router;
 };

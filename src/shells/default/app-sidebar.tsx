@@ -38,7 +38,7 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { clearAuth } from "@/services/api-client";
-import { useNav } from "@/shells/default/use-nav";
+import { useVisibleNav } from "@/shared/module";
 
 import type { TransKey } from "@/constants/locales";
 
@@ -46,7 +46,7 @@ export const AppSidebar = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { t, i18n } = useTranslation();
-  const nav = useNav();
+  const nav = useVisibleNav();
 
   const handleLogout = () => {
     clearAuth();

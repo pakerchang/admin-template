@@ -57,10 +57,12 @@ describe("protected guard with real session and default core", () => {
     setAuth({
       token: "t",
       user: { user_id: "1", email: "a@b.c", name: "a", role: "user" },
+      grants: ["app:access", "users:read"],
     });
     const router = routerAt(realSessionApp(), "/users");
     await router.load();
     expect(router.state.location.pathname).toBe("/users");
     expect(router.state.matches.at(-1)?.routeId).toBe("/users/");
+    expect(router.state.matches.every((m) => !m.error)).toBe(true);
   });
 });

@@ -19,11 +19,14 @@ export const createIndexRedirect = (
   const wrapper = createRoute({
     getParentRoute: () => parent,
     id: "_index",
+    staticData: { permission: "authenticated" },
   });
   return wrapper.addChildren([
     createRoute({
       getParentRoute: () => wrapper,
       path: "/",
+      // 可見性由 nav permission 決定（R9），本身不另設權限
+      staticData: { permission: "authenticated" },
       beforeLoad: () => {
         const first = nav.find((n) => can(getGrants(), n.permission));
         if (first) throw redirect({ to: first.to });

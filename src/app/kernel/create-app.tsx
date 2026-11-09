@@ -7,19 +7,15 @@ import { startMockWorker } from "@/app/mock/start-worker";
 
 import { build } from "./build";
 
-import type { TCore, TRegistry } from "./build";
+import type { TCore } from "./build";
 import type { TModule, TRouteId, TShell } from "@/shared/module";
 import type { TOperationTable } from "@/shared/permission";
 import type { AnyRoute } from "@tanstack/react-router";
 import type { ComponentType } from "react";
 
-/** shell 經 router context 取 nav（shell 不 import app，§3.1）；M4 改 useVisibleNav() */
-export const createAppRouter = (routeTree: AnyRoute, registry: TRegistry) =>
-  createRouter({
-    routeTree,
-    defaultPreload: "intent",
-    context: { nav: registry.nav },
-  });
+/** nav / grants 由 build() 在 protected layout 外層以 context 提供（shell 經 useVisibleNav() 取用） */
+export const createAppRouter = (routeTree: AnyRoute) =>
+  createRouter({ routeTree, defaultPreload: "intent" });
 
 export const createApp = ({
   shell,
@@ -63,7 +59,7 @@ export const createApp = ({
       // ponytail: module 尚未帶 i18n（M6），registry.i18n 不寫入 i18next；字典仍由 locales/i18n.ts 載入
       createRoot(document.querySelector(selector)!).render(
         <StrictMode>
-          <RouterProvider router={createAppRouter(routeTree, registry)} />
+          <RouterProvider router={createAppRouter(routeTree)} />
         </StrictMode>
       );
     },

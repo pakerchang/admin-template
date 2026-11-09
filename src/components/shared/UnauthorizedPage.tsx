@@ -12,7 +12,9 @@ export const UnauthorizedPage = ({ className }: IUnauthorizedPageProps) => {
   const { t } = useTranslation();
 
   return (
-    <div className={cn(className, "flex h-screen items-center justify-center")}>
+    <div
+      className={cn("flex size-full items-center justify-center", className)}
+    >
       <div className="text-center">
         <h1 className="mb-4 text-2xl font-bold text-destructive">
           {t("unauthorized.accessDenied.title")}

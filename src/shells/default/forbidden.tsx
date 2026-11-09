@@ -1,4 +1,4 @@
 import { UnauthorizedPage } from "@/components/shared/UnauthorizedPage";
 
-// ponytail: R10 內容區高度（h-screen → h-full）在 M4 改 UnauthorizedPage 時一起做
+/** R10：內容區 403（填滿 protected layout 的 <Outlet /> 區域，不蓋掉 sidebar） */
 export const Forbidden = () => <UnauthorizedPage />;

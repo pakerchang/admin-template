@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- route opts 經 runtime 驗證，型別由 shared/module 的 helper 型別把關 */
 import { createRoute, redirect } from "@tanstack/react-router";
+import { createElement } from "react";
 
+import { createForbiddenBoundary } from "@/app/router/forbidden-boundary";
 import { createIndexRedirect } from "@/app/router/index-redirect";
-import { guardedRoute } from "@/shared/permission";
+import { NavContext } from "@/shared/module";
+import { GrantsContext, guardedRoute } from "@/shared/permission";
 
 import type {
   TLocale,
@@ -278,10 +281,27 @@ export function build({
       });
     };
 
-  const guarded = (opts: any) => guardedRoute(opts, core.getGrants);
+  // §6.2 / R10：module route 無權限 → ForbiddenError → 內容區 shell.Forbidden（URL、shell 保留）
+  const ForbiddenBoundary = createForbiddenBoundary(shell.Forbidden);
+  const guarded = (opts: any) =>
+    guardedRoute(
+      { ...opts, errorComponent: ForbiddenBoundary },
+      core.getGrants
+    );
   const plain = (opts: any) => createRoute(opts) as AnyRoute;
 
-  // ponytail: ForbiddenBoundary（內容區 403）屬 M4
+  // shell 只經 useVisibleNav() / useCan() 取 nav 與 grants（§6.3、§6.4）；Provider 包在 protected layout 外
+  const ProtectedRoot = () =>
+    createElement(
+      GrantsContext.Provider,
+      { value: core.getGrants },
+      createElement(
+        NavContext.Provider,
+        { value: nav },
+        createElement(shell.ProtectedLayout)
+      )
+    );
+
   const isAuthenticated = core.isAuthenticated;
   const authRoute = createRoute({
     getParentRoute: () => core.root,
@@ -296,7 +316,8 @@ export function build({
   const protectedRoute = createRoute({
     getParentRoute: () => core.root,
     id: "/",
-    component: shell.ProtectedLayout as any,
+    component: ProtectedRoot,
+    staticData: { permission: "authenticated" },
     beforeLoad: () => {
       if (isAuthenticated && !isAuthenticated())
         throw redirect({ to: "/login" });
