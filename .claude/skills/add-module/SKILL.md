@@ -19,9 +19,20 @@ description: 依 docs/specs/fsd-module-architecture.spec.md 新增或改寫一�
 | `modules/<id>/{model,ui,mocks,locales}` 內嵌結構、裸字典 i18n、自帶 seed | M6 |
 | `openapi.yaml` + orval 產 `api/` 與 `<id>.msw.ts` | M7 |
 
-- **M3 之前**：不要建 `src/modules/`。照現況結構寫：頁面放 `src/pages/<feature>/`、route 加在 `src/router/routes.tsx`（`createRoute`）、選單加在 `src/constants/sidebar.tsx`、mock 加在 `src/services/mock/{handlers,data}.ts`、schema 放 `src/services/schemas/`、i18n key 加在 `src/locales/{en,zh}.json`。
-- **M3 到 M7 之間**：只有已落地 milestone 涵蓋的部分照 spec 做；新 module 的 `api/`、`mocks/`、`locales/` 要放哪裡 spec 沒有針對過渡期寫明 → 先問 owner。
-- 全部（M1、M3、M4、M6、M7）落地後才能完整照下列步驟走。
+### 過渡期落點（依已落地的 milestone 分期）
+
+spec 只定義「搬遷既有程式碼」的落點，沒有針對過渡期「新增 module」另寫規則。下表只列 spec 有明文的落點；**標「未定義」的一律先問 owner，不要自己推一個位置**。
+
+- **M3 落地前**：不要建 `src/modules/`。照現況結構寫：頁面放 `src/pages/<feature>/`、route 加在 `src/router/routes.tsx`（`createRoute`）、選單加在 `src/constants/sidebar.tsx`、mock 加在 `src/services/mock/{handlers,data}.ts`、schema 放 `src/services/schemas/`、i18n key 加在 `src/locales/{en,zh}.json`。
+- **M3 落地後、M6 落地前（M3–M5）**：
+  - 已定義：`src/modules/<id>/index.ts`（defineModule + route composition，指向頁面）、`src/modules/<id>/model/routes.ts`（route 定義，不 import ui）、`src/app/modules.ts` 加 `.use()`、nav 寫在 `defineModule({ nav })`——spec §9 L932、M3 Touches L1121、§5.1 L523/L534。M4 落地後另有：operation 加進手寫 `src/app/operations.gen.ts`（spec L933、M4 Touches L1158、§5.1 L542）。M5 落地後共用程式碼的落點改為 `src/shared/`（spec L934、M5 Touches L1183）。
+  - 未定義 → **先問 owner**：新 module 的頁面 UI、schema / model hooks、mock handler 與 seed、i18n key。spec 在這段期間只說既有 module 的 `index.ts`「指向現有 pages」（L932），既有 mock 走 `app/mock/legacy-adapter.ts`（§5.1 L542，M2–M6），沒說新 module 的這些檔案放 `src/pages/` 等舊位置還是直接放 `modules/<id>/`。
+- **M6 落地後、M7 落地前**：
+  - 已定義：`modules/<id>/{model,ui,mocks,locales}` 內嵌結構、i18n 裸字典、module 自帶 seed（spec §9 L935、M6 L1194–1212、§3 L156–195、§5.4）。
+  - 未定義 → **先問 owner**：API client / query hook 的落點。`api/` 保留給 M7 的 orval 產物（L935、R15），手寫 api hooks 到 M7 才刪（L936），期間新 module 的 API 呼叫寫在哪裡 spec 沒寫明。
+- **M7 落地後**：`openapi.yaml` → `pnpm gen:api` 產生 `api/**` 與 `mocks/<id>.msw.ts`、`mocks/handlers.ts` 包 orval handler（spec §9 L936、M7 L1222–1248、§4.5）。到這裡才能完整照下列步驟走。
+
+> spec 張力（未裁，先問 owner）：M3 AC-1 檢查 `app/modules.ts` **恰好** 10 個 `.use(`（spec L1106–1107），M6 AC-3、M7 AC-3 也以「實際 10 個 module」驗證（L1203、L1231）。在這些 milestone 驗收前多加第 11 個 module 會讓驗收指令失敗。
 
 ## 步驟
 
@@ -81,6 +92,8 @@ description: 依 docs/specs/fsd-module-architecture.spec.md 新增或改寫一�
 11. **頁面可覆寫**（§4.4）：不需額外動作；shell 以 `pages["<id>.<name>"]` 或 app 以 `.override("<id>.<name>", Page)` 覆寫。`shells/default` 不得覆寫或 import module（§4.4、§7.2）。
 
 ## 依賴方向檢查點（§3.1、§7.2）
+
+> §7.2 的 boundaries 設定是**草案**：設定 key 用 `rules` 還是 `policies`、element 比對順序，待 M5 AC-1 實測（spec L811、L1174）。下列方向是 §3.1 的規則本身；不要把 §7.2 的設定語法當定案照抄。
 
 - `ui → model → api → shared`；`mocks → api、shared`；`index.ts → 本 module 各 segment`。
 - `ui` 不直接 import `api`（§0.4 R18）；`model` 不 import `ui`。

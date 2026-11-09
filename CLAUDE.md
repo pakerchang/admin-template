@@ -21,20 +21,20 @@ React admin dashboard（純 UI showcase，無真後端）。回覆一律繁體�
 - 認證：`/login`（`AuthLayout`）打 mock `POST /api/auth/login`，session 存 localStorage（`getAuth` / `setAuth` / `clearAuth` 在 `api-client.ts`）；路由以 `beforeLoad` 守衛。Demo 帳號 `admin@example.com / admin123`（superadmin）
 - 權限：`useUserPermissions()`（`src/pages/users/hooks/use-user.ts`，role 讀自 `getAuth()`）的語意方法（如 `canManageUsers`），不直接比 role
 - UI：Tailwind + Radix，shadcn 元件在 `src/components/ui/`
-- i18n：react-i18next，`src/locales/` 只有 `en.json`、`zh.json`
+- i18n：react-i18next，`src/locales/` 的語系字典為 `en.json`、`zh.json`，另有 `i18n.ts`（i18next 初始化）、`types.ts`
 - 測試：Vitest + Testing Library，jsdom，setup 在 `src/test/setup.ts`
 
 ```
 src/
 ├── components/{layouts,shared,ui}/
-├── pages/<feature>/{components,hooks,__tests__}/
+├── pages/<feature>/{components,hooks}/   # 部分 feature 另有 utils/ docs/ 等；測試在各層的 __tests__/
 │   # articles banners consumers orders product suppliers tags team-members users
 ├── services/{api-client.ts,mock/,schemas/,types/}
 ├── router/  hooks/  utils/  lib/  constants/  types/  locales/
 └── plugins/image-validation/  test/  styles/
 ```
 
-> 上面描述的是 **現況**（master）。目標架構見下一段，尚未落地。
+> 上面描述的是 **現況**（master `6029bf0`）。目標架構見下一段，尚未落地。
 
 ## 架構遷移（進行中）
 
@@ -55,7 +55,7 @@ src/
 過渡期規則：
 
 - 某 milestone 落地前，新程式碼**照上面的現況結構寫**；落地後，該 milestone 涵蓋的部分依 spec 放置（各 milestone 範圍見 §9）。milestone 完成時更新上表狀態。
-- 依賴方向（§3.1，M5 起 lint 強制）：`shared` 不 import `app` / `shells` / `modules`；跨 module 只 import `@/modules/<id>`（`index.ts`），且對方須列在 `requires`（§5.3）；module 內 `ui → model → api`，`ui` 不直接 import `api`。
+- 依賴方向（§3.1，M5 起 lint 強制）：`shared` 不 import `app` / `shells` / `modules`；跨 module 只 import `@/modules/<id>`（`index.ts`），且對方須列在 `requires`（§5.3）；module 內 `ui → model → api`，`ui` 不直接 import `api`。lint 設定以 §7.2 草案為起點，但設定 key 用 `rules` 還是 `policies`、element 比對順序，待 M5 AC-1 實測（spec L811），不要照草案定案。
 - 權限：禁止在元件內散寫權限條件渲染（`canX && <Button/>`、比對 role）。M4 前需新增權限判斷先問 owner；M4 起一律走宣告式 `rowActions` / `FormSubmit` / `<Guarded>`（§6.4）。
 - 每棒 done 基線：`pnpm build && pnpm exec vitest run` exit 0（§9）。
 
