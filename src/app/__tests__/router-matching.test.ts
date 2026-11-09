@@ -1,6 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { makeApp, routerAt } from "./fixture";
+import { createCore } from "@/app/core";
+import { createApp } from "@/app/kernel/create-app";
+import { operations } from "@/app/mock";
+import { installModules } from "@/app/modules";
+import { apiBaseUrl, clearAuth, setAuth } from "@/services/api-client";
+
+import { fixtureShell, makeApp, routerAt } from "./fixture";
 
 const matches = (path: string) => routerAt(makeApp(), "/").matchRoutes(path);
 
@@ -23,5 +29,38 @@ describe("module router matching", () => {
 
   it("/orders/9 resolves params.id", () => {
     expect(matches("/orders/9").at(-1)?.params).toEqual({ id: "9" });
+  });
+});
+
+// 不覆寫 isAuthenticated / getGrants：走 setAuth/clearAuth → getAuth → 預設 createCore() → guard 整條接線
+const realSessionApp = () =>
+  installModules(
+    createApp({
+      shell: fixtureShell,
+      operations,
+      apiBaseUrl,
+      core: createCore(),
+    })
+  );
+
+describe("protected guard with real session and default core", () => {
+  beforeEach(() => clearAuth());
+  afterEach(() => clearAuth());
+
+  it("redirects unauthenticated /users to /login", async () => {
+    const router = routerAt(realSessionApp(), "/users");
+    await router.load();
+    expect(router.state.location.pathname).toBe("/login");
+  });
+
+  it("keeps authenticated /users", async () => {
+    setAuth({
+      token: "t",
+      user: { user_id: "1", email: "a@b.c", name: "a", role: "user" },
+    });
+    const router = routerAt(realSessionApp(), "/users");
+    await router.load();
+    expect(router.state.location.pathname).toBe("/users");
+    expect(router.state.matches.at(-1)?.routeId).toBe("/users/");
   });
 });
