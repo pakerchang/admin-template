@@ -311,7 +311,7 @@ export type TShell = {
   pages?: Partial<Record<TRouteId, ComponentType<any>>>;    // shell 逐頁覆寫表，key = route id（§4.4；shell 欄位，非 module 欄位）
 };
 
-// app/kernel/create-app.ts
+// app/kernel/create-app.ts（TCore / TRegistry 實際定義在 app/kernel/build.ts，與 build() 同檔）
 import type { TOperationTable } from "@/shared/permission";   // ★ R13 中間格式 { routes, permissions }，定義見 §6.1
 
 export type TRegistry = {
@@ -326,13 +326,14 @@ export type TRegistry = {
 
 // operations 由 app/main.tsx 傳入：import { operations } from "./operations.gen"
 // apiBaseUrl（R22，必填）：與 fetcher 組 URL 用的同一個 base（shared/config/env），guard 依它判斷哪些 request 屬於 API（§6.5）
-export const createApp = ({ shell, operations, apiBaseUrl }: { shell: TShell; operations: TOperationTable; apiBaseUrl: string }) => {
+// core（TCore，必填）：kernel 自有、由 app 層提供的零件 —— { root: AnyRootRoute; i18n: core 字典; guard: MSW guard factory; mockHandlers: core handler; getGrants: () => readonly TGrant[] }
+export const createApp = ({ shell, operations, apiBaseUrl, core }: { shell: TShell; operations: TOperationTable; apiBaseUrl: string; core: TCore }) => {
   const modules: TModule[] = [];
   const overrides = new Map<TRouteId, ComponentType<any>>();
   const app = {
     use(m: TModule) { modules.push(m); return app; },
     override(id: TRouteId, page: ComponentType<any>) { overrides.set(id, page); return app; },
-    build() { return build({ modules, shell, overrides, operations, apiBaseUrl }); },   // 純函式，§4.3
+    build() { return build({ modules, shell, overrides, operations, apiBaseUrl, core }); },   // 純函式，§4.3
     async mount(selector: string) {
       const { router, registry } = app.build();                // 驗證失敗在這裡 throw（fail fast）
       if (import.meta.env.VITE_API_MOCK === "true") await startMockWorker(registry);  // app/mock，§6.5
@@ -660,6 +661,7 @@ export const ForbiddenBoundary = ({ error }: ErrorComponentProps) => {
 };
 ```
 
+- **grants 來源**：M1 的 `guardedRoute(opts, getGrants)` 以第二參數注入 grants（kernel 傳入 `core.getGrants`），取代上面 pseudo code 的 `getSession()`；session store 於 M4 接上後由 app 層提供 `getGrants`。
 - **依賴方向（C2）**：`shared/permission` 只 export `guardedRoute` 與 `ForbiddenError`，不 import `app` / `shells`；`app/router` 的 `ForbiddenBoundary` import `ForbiddenError`（app → shared，合法）並經 `useRegistry()` 取 `shell.Forbidden`；kernel 在 `ctx.layout` / `ctx.page` 把 `errorComponent: ForbiddenBoundary` 注入每個 module route。§7.2 的 `shared` 規則只允許 `shared → shared`，任何 `shared → app` import 會被 boundaries 擋下。
 - **行為**：無權限時 URL 保留、shell（sidebar / navbar）保留，`shell.Forbidden`（預設 = 現行 `UnauthorizedPage` 改為內容區高度）渲染在 protected layout 的 `<Outlet />` 位置。**不新增 `/403` route**。
 - protected route 自身缺 `app:access`：layout 照常渲染（nav 經 `useVisibleNav` 會是空的），內容區顯示 `shell.Forbidden`——取代現行 `ProtectedAppLayout.tsx:11-13` 換掉整個 layout 的行為（**行為變更**，屬 R10 裁決範圍）。
@@ -978,7 +980,7 @@ export function build({ modules, shell, overrides, operations, apiBaseUrl, core 
     registry: {
       modules, nav, operations, routeIds,
       permissions: catalogue,
-      i18n: scopeAndMerge(core.i18n, modules),          // { ...core, [m.id]: m.i18n[lng] }，scope 只在這裡
+      i18n: scopeAndMerge(core.i18n, modules),          // §4.3 步驟 4 mergeDeep(core[lng], { [m.id]: m.i18n[lng] ?? {} })：同名 key 深層合併、core 既有 key 不被覆蓋（AC-4），scope 只在這裡
       mockHandlers: [core.guard({ ...operations, apiBaseUrl }), ...core.mockHandlers, ...modules.flatMap(m => m.mockHandlers ?? [])],
     },
   };
