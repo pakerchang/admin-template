@@ -13,7 +13,7 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: "./src/test/jsdom-node-abort.env.ts",
+    environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     // R24：mock 的 apiBaseUrl 必須是專用絕對 origin（與 jsdom 的 location.origin 不同）
     env: { VITE_API_BASE_URL: "http://mock-api.test" },
