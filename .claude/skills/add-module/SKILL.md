@@ -32,7 +32,7 @@ spec 只定義「搬遷既有程式碼」的落點，沒有針對過渡期「新
   - 未定義 → **先問 owner**：API client / query hook 的落點。`api/` 保留給 M7 的 orval 產物（L935、R15），手寫 api hooks 到 M7 才刪（L936），期間新 module 的 API 呼叫寫在哪裡 spec 沒寫明。
 - **M7 落地後**：`openapi.yaml` → `pnpm gen:api` 產生 `api/**` 與 `mocks/<id>.msw.ts`、`mocks/handlers.ts` 包 orval handler（spec §9 L936、M7 L1222–1248、§4.5）。到這裡才能完整照下列步驟走。
 
-> spec 張力（未裁，先問 owner）：M3 AC-1 檢查 `app/modules.ts` **恰好** 10 個 `.use(`（spec L1106–1107），M6 AC-3、M7 AC-3 也以「實際 10 個 module」驗證（L1203、L1231）。在這些 milestone 驗收前多加第 11 個 module 會讓驗收指令失敗。
+> **已裁定（owner 2026-11-09）：M8 驗收完成前凍結新增 module。** 重構期間不新增第 11 個 module；M3 AC-1（`app/modules.ts` **恰好** 10 個 `.use(`，spec L1106–1107）、M6 AC-3、M7 AC-3（「實際 10 個 module」，L1203、L1231）不改。M8 驗收前有新增 module 的需求 → 回報 owner 排到 M8 之後，不要動手。見 `docs/TRAPS.md`「重構期間想新增第 11 個 module」。
 
 ## 步驟
 
