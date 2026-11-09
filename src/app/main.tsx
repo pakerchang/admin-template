@@ -3,8 +3,8 @@ import "@/styles/global.css";
 
 import { createCore } from "@/app/core";
 import { createApp } from "@/app/kernel/create-app";
-import { operations } from "@/app/mock";
 import { installModules } from "@/app/modules";
+import { operations } from "@/app/operations.gen";
 import { apiBaseUrl } from "@/services/api-client";
 import { defaultShell } from "@/shells/default";
 

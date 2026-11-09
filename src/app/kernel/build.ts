@@ -15,6 +15,7 @@ import type {
 } from "@/shared/module";
 import type {
   TGrant,
+  TGrantMatrix,
   TOperationTable,
   TPermissionCatalog,
 } from "@/shared/permission";
@@ -24,12 +25,20 @@ import type { ComponentType } from "react";
 
 type TI18n = Record<TLocale, Record<string, unknown>>;
 
-/** kernel 自有、由 app 層提供的零件（root route、core 字典、MSW guard factory、core handler、session grants） */
+/** kernel 自有、由 app 層提供的零件（root route、core 字典、MSW handler factory、session grants） */
 export type TCore = {
   root: AnyRootRoute;
   i18n: TI18n;
-  guard: (opts: TOperationTable & { apiBaseUrl: string }) => HttpHandler;
-  mockHandlers: HttpHandler[];
+  /**
+   * kernel 的 MSW handler：[guard, ...core handler]，guard 必在第一位（§4.3 步驟 5）。
+   * mockGrants = 已安裝 module 的 `permissions.mockGrants`：login 回傳的 session.grants 與 guard 的 token → grants 都依它展開
+   */
+  mock: (
+    opts: TOperationTable & {
+      apiBaseUrl: string;
+      mockGrants: readonly TGrantMatrix[];
+    }
+  ) => HttpHandler[];
   getGrants: () => readonly TGrant[];
   /** 登入守衛：未登入進 protected → /login；已登入進 auth → "/"。省略 = 不守衛（測試 fixture） */
   isAuthenticated?: () => boolean;
@@ -101,7 +110,8 @@ const assertI18nBare = (modules: readonly TModule[]) => {
 };
 
 const catalog = (modules: readonly TModule[]): TPermissionCatalog => {
-  const out: Record<string, string[]> = {};
+  // kernel 自有 resource：§6.1 core `app:access`（R29 core operation 與 profile 也引用它）
+  const out: Record<string, string[]> = { app: ["access"] };
   for (const m of modules)
     for (const [resource, actions] of Object.entries(
       m.permissions?.resources ?? {}
@@ -330,8 +340,13 @@ export function build({
     permissions: catalogue,
     i18n: scopeAndMerge(core.i18n, modules),
     mockHandlers: [
-      core.guard({ ...operations, apiBaseUrl }),
-      ...core.mockHandlers,
+      ...core.mock({
+        ...operations,
+        apiBaseUrl,
+        mockGrants: modules.flatMap((m) =>
+          m.permissions?.mockGrants ? [m.permissions.mockGrants] : []
+        ),
+      }),
       ...modules.flatMap((m) => m.mockHandlers ?? []),
     ],
   };

@@ -21,5 +21,8 @@ export default defineModule({
       order: 80,
     },
   ],
-  permissions: { resources: { articles: ["read"] } },
+  permissions: {
+    resources: { articles: ["read", "create", "update", "delete"] },
+    mockGrants: { admin: ["articles:*"] },
+  },
 });

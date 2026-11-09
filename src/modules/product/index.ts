@@ -30,5 +30,8 @@ export default defineModule({
       order: 50,
     },
   ],
-  permissions: { resources: { product: ["read"] } },
+  permissions: {
+    resources: { product: ["read", "create", "update", "delete"] },
+    mockGrants: { admin: ["product:*"], partner: ["product:*"] },
+  },
 });

@@ -1,6 +1,5 @@
-import { delay, http, HttpResponse } from "msw";
+import { http, HttpResponse } from "msw";
 
-import { DELAY_MS } from "@/services/mock/handlers";
 import { can } from "@/shared/permission";
 
 import type {
@@ -28,7 +27,8 @@ const matchOperation = (
 
 /**
  * R22 判定（spec §6.5）：apiBaseUrl 外放行 → 對不到 route 404 → 未宣告 403 → public 放行 → 無權限 403 → 有權限 fall through。
- * ponytail: 先住 app/mock；M4 依 spec 移到 shared/api/mock/permission-guard.ts 並接 session grants。
+ * apiBaseUrl 劃界用正規化 origin 比對（host 小寫、去預設 port；R24 起 base 必為純 origin），等同 spec「前綴補 /」：
+ * `http://api.test` 不會吃到 `http://api.testing/...`，帶不帶結尾 `/` 結果相同。
  */
 export const createPermissionGuard = ({
   routes,
@@ -37,23 +37,21 @@ export const createPermissionGuard = ({
   getGrants,
 }: TOperationTable & {
   apiBaseUrl: string;
+  /** 未帶 token / 查無 session = []（R25：403，不回 401） */
   getGrants: (request: Request) => readonly TGrant[];
 }): HttpHandler => {
-  // 與 client / handler 的 new URL(path, base) 同一套正規化（host 小寫、去預設 port）；base 須為純 origin（start-worker 驗）
   const origin = new URL(apiBaseUrl).origin;
-  return http.all("*", async ({ request }) => {
+  return http.all("*", ({ request }) => {
     const url = new URL(request.url);
     if (url.origin !== origin) return;
     const path = url.pathname;
     const route = matchOperation(routes, request.method, path);
-    if (!route) {
-      await delay(DELAY_MS);
-      // 沿用舊 mock client 的 404 body（行為不變）
+    if (!route)
+      // 沿用舊 mock client 的 404 body（mock API 回應 body 不變）
       return HttpResponse.json(
         { error: `No mock handler for ${request.method} ${path}` },
         { status: 404 }
       );
-    }
     const required = permissions[route.operationId];
     if (required === undefined)
       return HttpResponse.json(

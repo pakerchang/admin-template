@@ -1,4 +1,5 @@
 import type { TUserRole } from "@/services/schemas/user";
+import type { TGrant } from "@/shared/permission";
 
 const AUTH_STORAGE_KEY = "auth";
 
@@ -12,6 +13,8 @@ export type TAuthUser = {
 export type TAuthSession = {
   token: string;
   user: TAuthUser;
+  /** 登入時後端（mock：矩陣展開）給的 grants；前端只認它，不讀 role（§6.1）。M4 前存的舊 session 沒有此欄 */
+  grants?: TGrant[];
 };
 
 export const getAuth = (): TAuthSession | null => {

@@ -9,5 +9,8 @@ export default defineModule({
   id: "users",
   kind: "generic",
   routes: (ctx) => usersRoutes(ctx, { list: UserListPage, edit: UserFormPage }),
-  permissions: { resources: { users: ["read"] } },
+  permissions: {
+    resources: { users: ["read", "update", "update-role"] },
+    mockGrants: { admin: ["users:read", "users:update"] },
+  },
 });

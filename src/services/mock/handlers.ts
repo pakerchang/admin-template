@@ -120,6 +120,13 @@ const users = resource("users", "user_id");
 const currentUser = () =>
   db.users.find((user) => user.email === seed.DEMO_ACCOUNT.email)!;
 
+const tokenOf = (userId: unknown) => `mock-token-${userId}`;
+
+/** mock session：token → 目前（記憶體 db）角色；查無 → undefined。角色被改後下一個 request 即生效 */
+export const mockRoleOfToken = (token: string) =>
+  db.users.find((user) => tokenOf(user.user_id) === token)?.role as
+    string | undefined;
+
 export const handlers: Record<string, THandler> = {
   "POST /api/auth/login": ({ body }) => {
     const user = db.users.find((u) => u.email === body.email);
@@ -128,7 +135,7 @@ export const handlers: Record<string, THandler> = {
     }
     return {
       body: {
-        token: `mock-token-${user.user_id}`,
+        token: tokenOf(user.user_id),
         user: {
           user_id: user.user_id,
           email: user.email,

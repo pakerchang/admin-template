@@ -21,5 +21,8 @@ export default defineModule({
       order: 70,
     },
   ],
-  permissions: { resources: { banners: ["read"] } },
+  permissions: {
+    resources: { banners: ["read", "create", "update", "delete"] },
+    mockGrants: { admin: ["banners:*"] },
+  },
 });

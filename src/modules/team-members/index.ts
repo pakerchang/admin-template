@@ -19,5 +19,8 @@ export default defineModule({
       order: 20,
     },
   ],
-  permissions: { resources: { "team-members": ["read"] } },
+  permissions: {
+    resources: { "team-members": ["read", "create", "update", "delete"] },
+    mockGrants: { admin: ["team-members:*"] },
+  },
 });

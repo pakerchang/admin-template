@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { createCore } from "@/app/core";
 import { createApp } from "@/app/kernel/create-app";
-import { operations } from "@/app/mock";
 import { installModules } from "@/app/modules";
+import { operations } from "@/app/operations.gen";
 import { apiBaseUrl, clearAuth, setAuth } from "@/services/api-client";
 
 import { fixtureShell, makeApp, routerAt } from "./fixture";

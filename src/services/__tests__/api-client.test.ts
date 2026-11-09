@@ -15,6 +15,17 @@ import type { TAuthSession } from "@/services/api-client";
 import type { TProduct } from "@/services/schemas/product";
 import type { TGetResponseContent } from "@/services/types/schema";
 
+/** M4 起 mock API 依 grants 判權（R22）：資料類測試以 superadmin 登入 */
+const signInAsSuperadmin = async () =>
+  setAuth(
+    (
+      await apiFetch<TAuthSession>("/api/auth/login", {
+        method: "POST",
+        body: DEMO_ACCOUNT,
+      })
+    ).body
+  );
+
 describe("apiFetch + MSW setupServer", () => {
   beforeEach(() => {
     clearAuth();
@@ -29,6 +40,7 @@ describe("apiFetch + MSW setupServer", () => {
     expect(res.status).toBe(200);
     expect(res.body.token).toBeTruthy();
     expect(res.body.user.role).toBe("superadmin");
+    expect(res.body.grants).toEqual(["*"]);
 
     setAuth(res.body);
     expect(getAuth()).toEqual(res.body);
@@ -62,6 +74,7 @@ describe("apiFetch + MSW setupServer", () => {
   });
 
   it("GET 依 query 過濾與分頁，回傳 total", async () => {
+    await signInAsSuperadmin();
     const res = await apiFetch<TGetResponseContent<TProduct[]>>(
       "/admin/products",
       { query: { page: 1, limit: 3, product_status: "active" } }
@@ -79,6 +92,7 @@ describe("apiFetch + MSW setupServer", () => {
   });
 
   it("寫入操作更新記憶體狀態（create / update / delete）", async () => {
+    await signInAsSuperadmin();
     await apiFetch("/admin/tag", {
       method: "POST",
       body: { tag_name: "From Test" },

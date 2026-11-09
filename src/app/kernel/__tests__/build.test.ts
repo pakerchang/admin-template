@@ -44,8 +44,7 @@ const makeCore = () => ({
     en: { common: { save: "Save" } },
     zh: { common: { save: "儲存" } },
   },
-  guard: vi.fn(() => fakeGuard),
-  mockHandlers: [{ kind: "core" } as any],
+  mock: vi.fn(() => [fakeGuard, { kind: "core" } as any]),
   getGrants: () => [],
 });
 
@@ -419,14 +418,22 @@ describe("assembly (AC-4)", () => {
     );
     expect(registry.nav.map((n) => n.id)).toEqual(["n4", "n2", "n1", "n3"]);
   });
-  it("mockHandlers[0] is the guard built from operations + apiBaseUrl", () => {
-    const input = ctx([mod("m", { mockHandlers: [{ kind: "m" } as any] })]);
+  it("mockHandlers = [...core.mock(operations, apiBaseUrl, module mockGrants), ...module handlers]", () => {
+    const grants = { support: ["m:read" as const] };
+    const input = ctx([
+      mod("m", {
+        mockHandlers: [{ kind: "m" } as any],
+        permissions: { resources: { m: ["read"] }, mockGrants: grants },
+      }),
+      mod("n"),
+    ]);
     const { registry } = build(input);
     expect(registry.mockHandlers[0]).toBe(fakeGuard);
     expect(registry.mockHandlers).toHaveLength(3);
-    expect(input.core.guard).toHaveBeenCalledWith({
+    expect(input.core.mock).toHaveBeenCalledWith({
       ...emptyOps,
       apiBaseUrl: "http://api.test",
+      mockGrants: [grants],
     });
   });
 });

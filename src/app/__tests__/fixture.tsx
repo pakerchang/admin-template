@@ -2,8 +2,8 @@ import { createMemoryHistory, Outlet } from "@tanstack/react-router";
 
 import { createCore } from "@/app/core";
 import { createApp, createAppRouter } from "@/app/kernel/create-app";
-import { operations } from "@/app/mock";
 import { installModules } from "@/app/modules";
+import { operations } from "@/app/operations.gen";
 import { apiBaseUrl } from "@/services/api-client";
 
 import type { TCore } from "@/app/kernel/build";

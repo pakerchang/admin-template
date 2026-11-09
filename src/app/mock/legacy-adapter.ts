@@ -3,7 +3,6 @@ import { delay, http, HttpResponse } from "msw";
 import { DELAY_MS } from "@/services/mock/handlers";
 
 import type { THandler } from "@/services/mock/handlers";
-import type { TOperationTable } from "@/shared/permission";
 import type { HttpHandler } from "msw";
 
 type TMethod = "get" | "post" | "put" | "delete";
@@ -34,20 +33,3 @@ export const toHttpHandlers = (
       resolve(fn)
     );
   });
-
-/**
- * M3 過渡 operation 表（R28）：舊表每個 `METHOD path` 一條 route，operationId 即該 key，permission 一律 "public"。
- * guard 據此「表內放行、表外 404」，等同舊 mock client 的 404 fallback。M4 換成手寫 app/operations.gen.ts。
- */
-export const legacyOperations = (
-  table: Record<string, THandler>
-): TOperationTable => {
-  const keys = Object.keys(table);
-  return {
-    routes: keys.map((key) => {
-      const [method, path] = key.split(" ");
-      return { method, path, operationId: key };
-    }),
-    permissions: Object.fromEntries(keys.map((key) => [key, "public"])),
-  };
-};
