@@ -326,7 +326,11 @@ export type TRegistry = {
 
 // operations 由 app/main.tsx 傳入：import { operations } from "./operations.gen"
 // apiBaseUrl（R22，必填）：與 fetcher 組 URL 用的同一個 base（shared/config/env），guard 依它判斷哪些 request 屬於 API（§6.5）
-// core（TCore，必填）：kernel 自有、由 app 層提供的零件 —— { root: AnyRootRoute; i18n: core 字典; guard: MSW guard factory; mockHandlers: core handler; getGrants: () => readonly TGrant[] }
+// core（TCore，必填）：kernel 自有、由 app 層提供的零件 —— { root: AnyRootRoute; i18n: core 字典; mock: MSW handler factory; getGrants: () => readonly TGrant[]; isAuthenticated?: () => boolean }
+//   M4 實作：mock(opts: TOperationTable & { apiBaseUrl; mockGrants: TGrantMatrix[] }) => HttpHandler[] 回傳 [guard, ...core handler]，
+//   取代原 guard + mockHandlers 兩欄（build 時才拿得到已安裝 module 的 mockGrants，login 與 guard 都依合併後矩陣展開）。
+//   build() 的權限目錄（catalog）含 kernel 自有 resource `app: ["access"]`；/user/me/profile（GET/PUT）與 /admin/images 屬 core operation（R29），
+//   profile 的 permission 為 `app:access`，handler 依 token 綁定呼叫者本人。
 export const createApp = ({ shell, operations, apiBaseUrl, core }: { shell: TShell; operations: TOperationTable; apiBaseUrl: string; core: TCore }) => {
   const modules: TModule[] = [];
   const overrides = new Map<TRouteId, ComponentType<any>>();
@@ -374,7 +378,9 @@ export const installModules = (app: TApp) =>
 2. **Router tree**：
    ```ts
    const authRoute = createAuthRoute(rootRoute, shell.AuthLayout);            // 已登入 → redirect "/"
-   const protectedRoute = createProtectedRoute(rootRoute, shell.ProtectedLayout); // 未登入 → /login；缺 app:access → ForbiddenError（§6.2）
+   const protectedRoute = createProtectedRoute(rootRoute, shell.ProtectedLayout); // 未登入 → /login；protected route 自身不檢查 app:access
+   // app:access 由 core.getGrants = sessionGrants() 處理：session 缺 app:access → grants 清空 → layout 照常渲染、nav 全濾掉、
+   // 子 route 各自 guardedRoute 拋 ForbiddenError → 各自內容區 shell.Forbidden（與 §6.2 一致）
    const routeIds = new Set<TRouteId>();
    // app/kernel：每個 module 一組 ctx.layout / ctx.page —— shared 的 guardedRoute（只拋 ForbiddenError）+ app 注入的部分
    const layoutFor = (moduleId: string) => (opts) => {
@@ -628,6 +634,17 @@ export const coreGrants: Record<string, TGrant[]> = {
 // 組裝：matrix[role] = coreGrants[role] ∪ ⋃modules.permissions.mockGrants[role]
 ```
 
+**角色 grants 矩陣（M4 落地；main 代 owner 裁決，待 owner 覆核）**：
+
+| role | grants（core ∪ module mockGrants） |
+|---|---|
+| superadmin | `*` |
+| admin | `app:access`、`users:read`、`product:*`、`orders:*`；重構前無檢查的頁維持 `consumers:*`、`team-members:*`、`suppliers:*`、`tags:*`、`banners:*`、`articles:*`（**無** `users:update`、`users:update-role`：舊 `canManageUsers` / `canEditUserRole` 只限 superadmin） |
+| support | `app:access`、`orders:*`；重構前無檢查的頁補 read：`consumers`、`team-members`、`suppliers`、`tags`、`banners`、`articles` |
+| partner | `app:access`、`product:*`、`suppliers:read`、`tags:read`；重構前無檢查的頁補 read：`consumers`、`team-members`、`banners`、`articles` |
+
+行為不變原則：重構前沒有權限檢查的頁（6029bf0 sidebar 與 route 無檢查）對所有可進後台的角色至少可讀；各角色可見 nav 由 `src/app/mock/__tests__/role-visibility.test.tsx` 鎖定。
+
 - `auth` module 的登入 handler 回傳 `session.user.role` + `session.grants`（矩陣展開，wildcard 保留）；前端只認 `grants`，**不知道 role→grant 對照**（接真後端時由後端給 grants，前端不改）。
 - core resource：`app:access`（取代 `canAccessAdminPanel`，`ProtectedAppLayout.tsx:9`）。
 - 現行語意方法對照（遷移用）：`canViewUserList` → `users:read`、`canEditUserRole` → `users:update-role`、`canManageUsers` → `users:update`、`canManageProducts` → `product:*`、`canManageOrders` → `orders:*`、`canViewReports` → 無消費點，刪除。
@@ -716,7 +733,7 @@ type TRowAction<T> = {
 | request | 結果 |
 |---|---|
 | URL 不在 `apiBaseUrl` 底下（vite 資源、HMR、靜態檔、第三方） | **放行**（`return undefined`）。前綴比對一律補 `/`：`http://api.test` 不會誤吃 `http://api.testing/...` |
-| 在 `apiBaseUrl` 底下，但 method + path 對不到任何 `OperationRoute` | **404** `not found: no operation for <METHOD> <path>`（契約外 request 不會落到任何手寫 handler；module 手寫了契約外的 `http.*` handler 也會被擋，逼先改契約） |
+| 在 `apiBaseUrl` 底下，但 method + path 對不到任何 `OperationRoute` | **404**：M7 前沿用 legacy 404 body `No mock handler for <METHOD> <path>`；M7 起改 `not found: no operation for <METHOD> <path>`（契約外 request 不會落到任何手寫 handler；module 手寫了契約外的 `http.*` handler 也會被擋，逼先改契約） |
 | 對到 route，但 `permissions` 沒有該 operationId | **403** `forbidden: <operationId> has no permission declaration` |
 | 宣告為 `"public"` | **放行**（不看 token） |
 | 有宣告且 `can(grants, required)` 為真 | **放行**（fall through 到 module handler） |
@@ -1159,8 +1176,8 @@ expected: exit 0
   - 驗證：`pnpm exec vitest run src/app && ! grep -rn "useUserPermissions" src`
 - [ ] AC-6 `[manual]`: superadmin demo 帳號所有頁面與操作仍可見可用
 
-**Touches**：`src/shared/permission/**`、`src/shared/api/**`、`src/shared/module/**`、`src/services/api-client.ts`、`src/services/mock/**`、`src/components/shared/{DataTable,EditActions,UnauthorizedPage}.tsx`、`src/components/shared/table/**`、`src/shells/default/**`、`src/pages/users/**`、`src/modules/**`、`src/app/**`（含新增手寫 `src/app/operations.gen.ts`，檔頭註明 hand-maintained until M7）
-**Must-Not-Touch**：其他 `src/pages/**` 業務邏輯（只改 action 宣告處）；行為紅線：superadmin 可見範圍不縮減；不新增 `/403` route
+**Touches**：`src/shared/permission/**`、`src/shared/api/**`、`src/shared/module/**`、`src/services/api-client.ts`、`src/services/mock/**`、`src/components/shared/{DataTable,EditActions,UnauthorizedPage}.tsx`、`src/components/shared/table/**`、`src/shells/default/**`、`src/pages/users/**`、`src/modules/**`、`src/app/**`（含新增手寫 `src/app/operations.gen.ts`，檔頭註明 hand-maintained until M7）；例外（main 06:4x 代 owner 核准）：`src/shared/ui/**`（`FormSubmit`）、`src/services/__tests__/api-client.test.ts`、`CLAUDE.md`（M4 狀態、權限描述與舊 session 重新登入說明）
+**Must-Not-Touch**：其他 `src/pages/**` 業務邏輯（只改 action 宣告處）；行為紅線：superadmin 可見範圍不縮減；不新增 `/403` route；login 回應新增 `grants` 為 §6.1 指定例外；既有欄位不變
 
 **Done Command**
 ```bash
