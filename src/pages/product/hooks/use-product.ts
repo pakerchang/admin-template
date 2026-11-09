@@ -423,9 +423,8 @@ export const useGetAllProducts = () => {
   return useQuery({
     queryKey: ["allProducts"],
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TProduct[]>>(
-        "/admin/products"
-      );
+      const response =
+        await apiFetch<TGetResponseContent<TProduct[]>>("/admin/products");
 
       if (response.status !== 200) {
         toast({

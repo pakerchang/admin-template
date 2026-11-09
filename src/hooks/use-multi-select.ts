@@ -8,7 +8,7 @@ import type { FieldPath, FieldValues, UseFormReturn } from "react-hook-form";
  */
 export const useMultiSelect = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(
   fieldName: TName,
   form: UseFormReturn<TFieldValues>

@@ -100,9 +100,7 @@ const isCreateModeDisabled = useMemo(
     }
     return false;
   },
-  [
-    /* 相關依賴 */
-  ]
+  [/* 相關依賴 */]
 );
 ```
 

@@ -134,8 +134,7 @@ const OrderListPage = () => {
   const handleColumnFiltersChange = useCallback(
     (
       updater:
-        | ColumnFiltersState
-        | ((prev: ColumnFiltersState) => ColumnFiltersState)
+        ColumnFiltersState | ((prev: ColumnFiltersState) => ColumnFiltersState)
     ) => {
       if (typeof updater === "function") {
         setColumnFilters((prev) => {

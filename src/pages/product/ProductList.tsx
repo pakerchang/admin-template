@@ -52,8 +52,7 @@ const ProductPage = () => {
   const handleColumnFiltersChange = useCallback(
     (
       updaterOrValue:
-        | ColumnFiltersState
-        | ((old: ColumnFiltersState) => ColumnFiltersState)
+        ColumnFiltersState | ((old: ColumnFiltersState) => ColumnFiltersState)
     ) => {
       setColumnFilters(updaterOrValue);
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));

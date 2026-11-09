@@ -19,7 +19,7 @@ interface SelectOption {
 
 interface MultiSelectFieldProps<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > {
   fieldName: TName;
   form: UseFormReturn<TFieldValues>;
@@ -32,7 +32,7 @@ interface MultiSelectFieldProps<
 
 export const MultiSelectField = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   fieldName,
   form,

@@ -45,9 +45,8 @@ export const useGetAllTags = () => {
   return useQuery({
     queryKey: ["tags", "all"],
     queryFn: async () => {
-      const response = await apiFetch<TGetResponseContent<TTag[]>>(
-        "/admin/tag"
-      );
+      const response =
+        await apiFetch<TGetResponseContent<TTag[]>>("/admin/tag");
 
       if (response.status !== 200) {
         toast({
