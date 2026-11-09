@@ -13,6 +13,7 @@ import { DEMO_ACCOUNT, users } from "@/services/mock/data";
 import { server } from "@/test/setup";
 
 import type { TAuthSession } from "@/services/api-client";
+import type { TUser } from "@/services/schemas/user";
 
 const login = (email: string) =>
   apiFetch<TAuthSession>("/api/auth/login", {
@@ -136,6 +137,53 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
         const b = (await login(emailOf("support"))).body.token;
         expect(a).not.toBe(b);
         expect(a).not.toContain("user-");
+      });
+    });
+
+    describe("/user/me/profile is bound to the caller (C2)", () => {
+      const support = users.find((u) => u.role === "support")!;
+      const getProfile = () =>
+        apiFetch<TUser>("/user/me/profile").then((r) => r.body);
+
+      it("GET returns the caller, not the demo account", async () => {
+        await signIn(support.email);
+        expect(await getProfile()).toMatchObject({
+          user_id: support.user_id,
+          email: support.email,
+          role: "support",
+        });
+      });
+
+      it("PUT applies whitelisted fields only; role / user_id / email cannot be changed", async () => {
+        const session = await signIn(support.email);
+        const res = await apiFetch("/user/me/profile", {
+          method: "PUT",
+          body: {
+            role: "superadmin",
+            user_id: "user-1",
+            email: DEMO_ACCOUNT.email,
+            first_name: "Caroline",
+          },
+        });
+        expect(res.status).toBe(200);
+        expect(await getProfile()).toMatchObject({
+          user_id: support.user_id,
+          email: support.email,
+          role: "support",
+          first_name: "Caroline",
+        });
+
+        // 同一 token 仍是 support 的權限
+        expect((await apiFetch("/admin/order")).status).toBe(200);
+        expect((await apiFetch("/users")).status).toBe(403);
+        // 也沒有把 superadmin 那筆改掉
+        setAuth((await login(DEMO_ACCOUNT.email)).body);
+        expect(await getProfile()).toMatchObject({
+          user_id: "user-1",
+          role: "superadmin",
+        });
+        setAuth(session);
+        expect((await apiFetch("/users")).status).toBe(403);
       });
     });
 

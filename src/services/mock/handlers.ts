@@ -122,9 +122,6 @@ const staff = resource("staff", "staff_id");
 const articles = resource("articles", "article_id", { searchField: "title" });
 const users = resource("users", "user_id");
 
-const currentUser = () =>
-  db.users.find((user) => user.email === seed.DEMO_ACCOUNT.email)!;
-
 // ponytail: 記憶體 session 表（token → user_id），重新整理頁面即失效、需重新登入；沒有 logout operation 所以不移除
 const sessions = new Map<string, unknown>();
 
@@ -148,6 +145,15 @@ export const mockUserOfAuthorization = (authorization?: string | null) => {
   return db.users.find((user) => user.user_id === sessions.get(token));
 };
 
+/** profile 自助可改的欄位（= UserForm 欄位扣掉 user_id / email） */
+const PROFILE_FIELDS = [
+  "first_name",
+  "last_name",
+  "phone_number",
+  "address",
+  "remark",
+] as const;
+
 export const handlers: Record<string, THandler> = {
   "POST /api/auth/login": ({ body }) => {
     const user = db.users.find((u) => u.email === body.email);
@@ -168,10 +174,18 @@ export const handlers: Record<string, THandler> = {
   },
 
   "GET /users": users.GET,
-  "GET /user/me/profile": () => ({ body: currentUser() }),
-  "PUT /user/me/profile": ({ body }) => {
-    Object.assign(currentUser(), body, { updated_at: now() });
-    return ok(currentUser());
+  // 綁 request token 的本人；guard 已擋未登入，這裡的 403 是防線第二層
+  "GET /user/me/profile": ({ authorization }) => {
+    const me = mockUserOfAuthorization(authorization);
+    return me ? { body: me } : { status: 403, body: { error: "forbidden" } };
+  },
+  // 只套用白名單欄位；role / user_id / email 等身分與權限欄位忽略（呼叫端會送整個 TUser）
+  "PUT /user/me/profile": ({ authorization, body }) => {
+    const me = mockUserOfAuthorization(authorization);
+    if (!me) return { status: 403, body: { error: "forbidden" } };
+    for (const key of PROFILE_FIELDS) if (key in body) me[key] = body[key];
+    me.updated_at = now();
+    return ok(me);
   },
   "POST /admin/user/role": ({ body }) => {
     const target = db.users.find((u) => u.user_id === body.target_user_id);
