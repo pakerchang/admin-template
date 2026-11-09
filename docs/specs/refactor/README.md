@@ -34,7 +34,7 @@
 | `deps-p0-node22.spec.md` | Node 22 前置 | 完成 | PR #4 |
 | `deps-p1-eslint9.spec.md` | ESLint 9 flat config 遷移 | 完成 | PR #5 |
 | `deps-p2-prettier3.spec.md` | Prettier 2 → 3 | 完成 | PR #7 |
-| `deps-p3-vitest5.spec.md` | Vitest 3 → 5 | codex delta review PASS（rebase 後），ff-only 併入 `refactor/integration` 進行中 | 原實作 `d29739c` codex PASS（`~/.claude/.claude/reviews/20261109T170530Z-58436-codex-review.md`，AC1–AC7 PASS；AC8 遠端狀態由子 session 以 ls-remote / gh pr list 補證）；rebase 後 `f864fc6`（parent `d7a6fc3`，作者 pakerchang）delta PASS（`~/.claude/.claude/reviews/20261109T193445Z-2644-codex-review.md`）；Done Command exit 0，19 files / 196 tests（AC5 的 16 / 179 為 rebase 前 base `46d13b6` 的基線） |
+| `deps-p3-vitest5.spec.md` | Vitest 3 → 5 | 完成，已 ff-only 併入 `refactor/integration`（tip `f864fc6`） | 原實作 `d29739c` codex PASS（`~/.claude/.claude/reviews/20261109T170530Z-58436-codex-review.md`，AC1–AC7 PASS；AC8 遠端狀態由子 session 以 ls-remote / gh pr list 補證）；rebase 後 `f864fc6`（parent `d7a6fc3`，作者 pakerchang）delta PASS（`~/.claude/.claude/reviews/20261109T193445Z-2644-codex-review.md`）；Done Command exit 0，19 files / 196 tests（AC5 的 16 / 179 為 rebase 前 base `46d13b6` 的基線）；併入後整合基線 install / build / vitest 19 / 196 / eslint 0 warning，exit 0 |
 
 deps spec 中未提及 P4 / P5。
 
