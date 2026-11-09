@@ -26,12 +26,10 @@ export type TUpdateTag = z.infer<typeof updateTagSchema>;
 export type TDeleteTag = z.infer<typeof deleteTagSchema>;
 
 export const tagQuerySchema = paginationSchema
-  .merge(
-    z.object({
-      sort_by: z.enum(["tag_id", "tag_name"]).optional(),
-      order: sortOrderEnum.optional(),
-    })
-  )
+  .extend({
+    sort_by: z.enum(["tag_id", "tag_name"]).optional(),
+    order: sortOrderEnum.optional(),
+  })
   .extend({
     search: z.string().optional(),
   });

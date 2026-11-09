@@ -10,11 +10,11 @@ export const bannerSchema = z.object({
   title: z.string(),
   desktop_image_url: imageResponseSchema,
   mobile_image_url: imageResponseSchema,
-  redirect_url: z.string().url(),
+  redirect_url: z.url(),
   sort_order: z.number(),
   banner_status: activeStatusEnums,
-  created_at: z.string().datetime().optional(),
-  updated_at: z.string().datetime().optional(),
+  created_at: z.iso.datetime().optional(),
+  updated_at: z.iso.datetime().optional(),
 });
 
 export type TBanner = z.infer<typeof bannerSchema>;

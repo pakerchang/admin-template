@@ -9,8 +9,8 @@ export const staffUserSchema = z.object({
   first_name: z.string(),
   last_name: z.string(),
   role: z.string(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: z.iso.datetime(),
+  updated_at: z.iso.datetime(),
 });
 
 export const createStaffUserSchema = z.object({
@@ -26,7 +26,7 @@ export type TStaffUser = z.infer<typeof staffUserSchema>;
 export type TCreateStaffUser = z.infer<typeof createStaffUserSchema>;
 
 export const staffQuerySchema = paginationSchema
-  .merge(sortSchema.partial())
+  .extend(sortSchema.partial().shape)
   .extend({
     role: z.string().optional(),
     staff_id: z.string().optional(),

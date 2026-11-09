@@ -9,14 +9,14 @@ import {
 
 export const customerSchema = z.object({
   user_id: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   first_name: z.string(),
   last_name: z.string(),
   phone_number: z.string(),
   total_spent: z.number(),
   order_count: z.number(),
-  last_order_date: z.string().datetime().nullable(),
-  created_at: z.string().datetime(),
+  last_order_date: z.iso.datetime().nullable(),
+  created_at: z.iso.datetime(),
 });
 
 export type TCustomer = z.infer<typeof customerSchema>;

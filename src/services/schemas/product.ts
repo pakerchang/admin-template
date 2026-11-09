@@ -46,15 +46,15 @@ export const productSchema = z.object({
     scene_matching: langSchema,
     food_pairing: langSchema,
   }),
-  created_at: z.string().datetime().optional(),
-  updated_at: z.string().datetime().optional(),
+  created_at: z.iso.datetime().optional(),
+  updated_at: z.iso.datetime().optional(),
 });
 
 export type TProduct = z.infer<typeof productSchema>;
 export type TProductDetails = z.infer<typeof productSchema>["product_detail"];
 
 export const productQuerySchema = paginationSchema
-  .merge(sortSchema.partial())
+  .extend(sortSchema.partial().shape)
   .extend({
     product_status: activeStatusEnums.optional(),
   });

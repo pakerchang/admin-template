@@ -13,7 +13,7 @@ export type TUserRole = z.infer<typeof userRoleEnum>;
 
 export const userSchema = z.object({
   user_id: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   first_name: z.string().min(1),
   last_name: z.string().min(1),
   phone_number: z
@@ -23,8 +23,8 @@ export const userSchema = z.object({
   address: z.string().min(1),
   remark: z.string(),
   role: userRoleEnum,
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: z.iso.datetime(),
+  updated_at: z.iso.datetime(),
 });
 
 export type TUser = z.infer<typeof userSchema>;

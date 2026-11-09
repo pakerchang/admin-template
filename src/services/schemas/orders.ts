@@ -50,8 +50,8 @@ export const baseOrderSchema = z.object({
   delivery_time: z.string(),
   total_order_fee: z.string(),
   user_id: z.string(),
-  created_at: z.string().datetime().optional(),
-  updated_at: z.string().datetime().optional(),
+  created_at: z.iso.datetime().optional(),
+  updated_at: z.iso.datetime().optional(),
 });
 
 export type TOrder = z.infer<typeof baseOrderSchema>;
