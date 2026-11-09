@@ -498,3 +498,104 @@ describe("i18n scope", () => {
     expect((registry.i18n.en as any).common.save).toBe("Save");
   });
 });
+
+describe("i18n deep merge hardening", () => {
+  const hasOwn = (o: object, k: string) =>
+    Object.prototype.hasOwnProperty.call(o, k);
+  const withCore = (en: Record<string, unknown>, modules: TModule[]) => {
+    const core = makeCore();
+    core.i18n = { en, zh: {} } as any;
+    return build(ctx(modules, emptyOps, { core })).registry.i18n.en as any;
+  };
+
+  it("writes __proto__ keys as own properties without touching prototypes", () => {
+    const en = JSON.parse(
+      '{"common":{"save":"Save","__proto__":{"x":"core"}},"__proto__":{"top":"core"}}'
+    );
+    const common = mod("common", {
+      i18n: { en: { cancel: "Cancel" }, zh: {} },
+    });
+    const out = withCore(en, [common]);
+    expect(Object.getPrototypeOf(out)).toBe(Object.prototype);
+    expect(Object.getPrototypeOf(out.common)).toBe(Object.prototype);
+    expect(hasOwn(out, "__proto__")).toBe(true);
+    expect(hasOwn(out.common, "__proto__")).toBe(true);
+    expect(Object.getOwnPropertyDescriptor(out, "__proto__")?.value).toEqual({
+      top: "core",
+    });
+    expect(
+      Object.getOwnPropertyDescriptor(out.common, "__proto__")?.value
+    ).toEqual({ x: "core" });
+    expect(out.common.cancel).toBe("Cancel");
+    expect(out.common.save).toBe("Save");
+    expect(({} as any).x).toBeUndefined();
+    expect(({} as any).top).toBeUndefined();
+  });
+
+  it("deep-merges __proto__ subtrees present on both sides as own data", () => {
+    const en = JSON.parse('{"common":{"__proto__":{"x":"core"}}}');
+    const common = mod("common", {
+      i18n: { en: JSON.parse('{"__proto__":{"x":"mod","y":"mod"}}'), zh: {} },
+    });
+    const out = withCore(en, [common]);
+    expect(Object.getPrototypeOf(out.common)).toBe(Object.prototype);
+    expect(
+      Object.getOwnPropertyDescriptor(out.common, "__proto__")?.value
+    ).toEqual({ x: "core", y: "mod" });
+    expect(({} as any).y).toBeUndefined();
+  });
+
+  it("keeps a core Date leaf when the module has an object at the same path", () => {
+    const when = new Date(0);
+    const common = mod("common", {
+      i18n: { en: { when: { label: "mod" } }, zh: {} },
+    });
+    const out = withCore({ common: { when } }, [common]);
+    expect(out.common.when).toBe(when);
+  });
+
+  it("keeps a core class instance leaf with its prototype and methods", () => {
+    class Greeter {
+      constructor(public name: string) {}
+      hi() {
+        return `hi ${this.name}`;
+      }
+    }
+    const g = new Greeter("core");
+    const common = mod("common", {
+      i18n: { en: { greeter: { name: "mod", extra: 1 } }, zh: {} },
+    });
+    const out = withCore({ common: { greeter: g } }, [common]);
+    expect(out.common.greeter).toBe(g);
+    expect(out.common.greeter.hi()).toBe("hi core");
+  });
+
+  it("resolves nested multi-level conflicts with core leaf priority", () => {
+    const d = new Date(1);
+    const common = mod("common", {
+      i18n: {
+        en: { a: { b: { c: "mod", d: { x: 1 }, e: "mod" }, f: "mod" } },
+        zh: {},
+      },
+    });
+    const out = withCore(
+      { common: { a: { b: { c: "core", d }, g: ["core"] } } },
+      [common]
+    );
+    expect(out).toEqual({
+      common: { a: { b: { c: "core", d, e: "mod" }, f: "mod", g: ["core"] } },
+    });
+    expect(out.common.a.b.d).toBe(d);
+  });
+
+  it("does not mutate core or module input dicts", () => {
+    const en = { common: { save: "Save", nested: { a: "core" } } };
+    const modEn = { cancel: "Cancel", nested: { a: "mod", b: "mod" } };
+    const snapCore = JSON.stringify(en);
+    const snapMod = JSON.stringify(modEn);
+    const out = withCore(en, [mod("common", { i18n: { en: modEn, zh: {} } })]);
+    expect(out.common.nested).toEqual({ a: "core", b: "mod" });
+    expect(JSON.stringify(en)).toBe(snapCore);
+    expect(JSON.stringify(modEn)).toBe(snapMod);
+  });
+});

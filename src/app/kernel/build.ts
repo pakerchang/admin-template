@@ -159,17 +159,30 @@ const assertOperations = (
   }
 };
 
-const isDict = (v: unknown): v is Record<string, unknown> =>
-  typeof v === "object" && v !== null && !Array.isArray(v);
+/** 只有 plain object 會被遞迴；Date / class instance / 陣列 / 函式 / null 皆為 leaf */
+const isPlainDict = (v: unknown): v is Record<string, unknown> => {
+  if (typeof v !== "object" || v === null) return false;
+  const proto = Object.getPrototypeOf(v);
+  return proto === Object.prototype || proto === null;
+};
 
-/** 遞迴合併；leaf 衝突時 `winner` 勝 */
+/** 遞迴合併；leaf 衝突時 `winner` 勝。own-property 讀寫，`__proto__` 等特殊鍵不觸發 setter */
 const mergeDeep = (
   base: Record<string, unknown>,
   winner: Record<string, unknown>
 ): Record<string, unknown> => {
   const out = { ...base };
-  for (const [k, v] of Object.entries(winner))
-    out[k] = isDict(out[k]) && isDict(v) ? mergeDeep(out[k], v) : v;
+  for (const [k, v] of Object.entries(winner)) {
+    const cur = Object.prototype.hasOwnProperty.call(out, k)
+      ? out[k]
+      : undefined;
+    Object.defineProperty(out, k, {
+      value: isPlainDict(cur) && isPlainDict(v) ? mergeDeep(cur, v) : v,
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    });
+  }
   return out;
 };
 
