@@ -10,7 +10,7 @@
 
 | 檔名 | 主題 | 狀態 | 證據 |
 |---|---|---|---|
-| `fsd-module-architecture.m3-revision.spec.md` | Microkernel + Modular Monolith 目標架構（M0–M8），含 M3 W1 獲准修訂的最新版 | M0–M5 完成（M5 已併入 `refactor/integration`）；M7a 完成；M6、M7b、M8 未開始 | 見下方 milestone 表 |
+| `fsd-module-architecture.m3-revision.spec.md` | Microkernel + Modular Monolith 目標架構（M0–M8），含 M3 W1 獲准修訂的最新版 | M0–M6 完成（M6 已併入 `refactor/integration`）；M7a 完成；M7b、M8 未開始 | 見下方 milestone 表 |
 
 > master 上的 `docs/specs/fsd-module-architecture.spec.md`（#6 合入）為修訂前版本，不在本目錄更動；本目錄版本取自 `feat/m3-module-wiring:docs/specs/fsd-module-architecture.spec.md`。
 
@@ -23,7 +23,7 @@
 | M3 Module 接線 + default shell | 完成，已併入本地整合分支 `refactor/integration`（AC-1～7 已勾；AC-5 由 main 派 s28 瀏覽器行為層驗證，owner 尚未親驗） | integration tip `8458b19`（ff-only，基線 exit 0、23 files / 227 tests、LINT_OK）；`feat/m3-module-wiring` @ `8458b19` 已 push；codex 259e4c3 FAIL → d685823 PASS-with-fixes → 03acca9 PASS →（rebase）edfd74d PASS-with-fixes → 8458b19 PASS（arch chain `reviews/arch-m3-fix3-codex-verdict.md`）；中間 commit 509dc96..2aae3e6 不可單獨 build（bisect skip，main 已裁決接受） |
 | M4 權限四強制點 + 內容區 403 | 完成，已併入本地整合分支 `refactor/integration`（AC-1～5、AC-7 有自動測試證據；AC-6 `[manual]` 瀏覽器驗收**待驗**，由 main 統一派；角色 grants 矩陣為 **main 代 owner 裁決，待 owner 覆核**） | integration tip `ec5a55f`（ff-only，基線 exit 0、32 files / 316 tests、LINT_OK）；branch `feat/m4-permission-enforcement` @ `ec5a55f` 未 push（origin 停在 rebase 前 `66e94c0`）；codex acd05c0 FAIL（C1 mock token 可偽造、C2 profile 提權）→ fix1/fix2 → 2988875 PASS-with-fixes（arch chain `reviews/arch-m4-fix-codex-verdict.md`）→ fix3 修 W1（重新整理後 session 失效）後依 owner 指示不再複審直接併入；AC-1 路徑 `/users/user-list` → `/users`（main 核准） |
 | M5 Kernel / shared 搬遷 + 邊界 lint | 完成，已併入本地整合分支 `refactor/integration`（AC-1～4 有證據；`jsdom-node-abort.env.ts` 已刪；UI 外觀僅 CSS 產物比對，瀏覽器目視**待驗**） | integration tip `96f1565`（ff-only from `571d1af`；基線含 eslint exit 0、33 files / 328 tests、LINT_OK）；branch `feat/m5-shared-boundaries`：原實作 `43dfba8`（base `ec5a55f`，已 push）codex 一輪 PASS（arch chain `reviews/arch-m5-codex-verdict.md`）→ rebase 到 571d1af 只有 lock context 不同（`96f1565` push 於 `feat/m5-shared-boundaries-r1`）；boundaries 實測：`policies` 為正式 key（`rules` deprecated）、elements first-match、policies last-match |
-| M6 Module 內嵌搬遷 | 未開始 | — |
+| M6 Module 內嵌搬遷 | 完成，已併入本地整合分支 `refactor/integration`（AC-1～5 有證據；AC-6 `[manual]` 兩語系文字以字典比對佐證 zh 475／en 474 key→value 全同，瀏覽器目視**待驗**） | integration tip `60ff9c2`（ff-only from `96f1565`；基線含 eslint exit 0、34 files / 333 tests、LINT_OK）；branch `feat/m6-module-colocation` @ `60ff9c2`（已 push）；codex 首輪 FAIL（唯一阻擋項：consumers 購買紀錄不隨訂單更新）→ main 依 spec R5／OQ-3 裁定只記錄（撤回修正棒 m6-fix1，未 commit）→ 同一 commit 重審 PASS（arch chain `reviews/arch-m6-rereview-codex-verdict.md`）；`src/pages`、`src/services`、`src/components` 已移除，boundaries `LEGACY_PATHS` 已移除 |
 | M7 orval 契約層 | **main 裁決拆兩段**。**M7a 完成**，已併入本地整合分支 `refactor/integration`：repo 根 `openapi.yaml`（36 operations）、`scripts/extract-operations.ts` + AC-2 fixture 測試、extract 結果與現行 `operations.gen.ts` 的一致性比對、根目錄 `orval.config.ts`（只寫檔未跑 gen）；AC-2 已勾。**M7b 未開始**（等 M6 併入）：gen 進 modules、mutator（AC-4）、刪 adapter（AC-5）、AC-1 / AC-3 / AC-6 / AC-7 | M7a：integration tip `571d1af`（ff-only；基線 exit 0、33 files / 328 tests、LINT_OK、`vitest run scripts` 12 tests）；branch `feat/m7a-openapi-contract` @ `571d1af`（base `ec5a55f`）；codex 首輪 PASS（api chain `reviews/api-m7a-codex-verdict.md`）；lead 第一手重跑 Done Command exit 0、`M7A_DONE_OK`。M4 決定：M7 前 mock 404 沿用 legacy body `No mock handler for …`；M7 起改為 `not found: no operation for …`（spec §6.5） |
 | M8 D1 / D4 驗收自動化與收尾 | 未開始 | — |
 
@@ -47,6 +47,14 @@
 | M6 | `components/shared/Card.tsx` 歸 product、`components/layouts/LoginPage.tsx` 歸 auth、`components/shared/Navbar.tsx` re-export shim 待刪；`shared/i18n/types.ts` 的 `TranslationResources` 與 §5.4 同名不同義 | arch chain `reviews/m5-impl-report.md` 自行決定 1、2、7 |
 | M5 | spec 文字差異（§7.2 `rules`→`policies`、§5.1 檔名 kebab-case、Card 未搬、upload hook 落點）待 M8 同步 | arch chain `reviews/m5-impl-report.md`「spec 差異」 |
 | M6 | `en.json` 比 zh 少 71 個 key（例 `pages.tag.addTag`） | arch chain 觀察 |
+| M6 | consumers 購買紀錄為自帶 seed，不隨訂單狀態更新（R5/OQ-3 設計代價；codex M6 verdict 判 demo-breaking，main 依 spec 裁定只記錄） | arch chain `reviews/arch-m6-codex-verdict.md`、`arch-m6-rereview-codex-verdict.md` |
+| M6 | `shared/api/mock/session-store.ts` 全域 grant 矩陣「最後寫入者勝」，多 app build 時 login grants 可能與 guard 不一致，且無 reset 生命週期（單 app demo 不受影響） | arch chain `reviews/arch-m6-codex-verdict.md` W2 |
+| M6 | i18n 只搬了 en `users.*`；其餘 domain key（`pages.*`、`dashboard.menu.*`、`table.headers.*` 等，約 770 處 `t()`）與 nav label 尚未改成 `<id>.` scope，需改 key 名 + codemod，另案處理 | arch chain `reviews/m6-impl-report.md` 自行決定 5、spec 差異 |
+| M6 | `shared/ui/navbar/use-breadcrumb.ts` 仍硬編 domain 路徑與翻譯 key，未改由 route `staticData.breadcrumb` 驅動 | arch chain `reviews/arch-m6-codex-verdict.md` info |
+| M6 | AC-6 瀏覽器目視待驗；module 字典的 `mount` 寫入順序（先 `loadLanguages` 再 `addResourceBundle`）只在 vitest 模擬過 | arch chain `reviews/m6-impl-report.md` |
+| M6 | 測試預設 server 只有 guard + core handler；新測試打 module API 須 `resetHandlers(registry.mockHandlers)` | arch chain `reviews/m6-impl-report.md` 已知問題 |
+| M6 | AC-2 grep 擋不到相對路徑的跨 module import（由 boundaries lint 擋） | arch chain `reviews/m6-impl-report.md` 破壞性驗證 3 |
+| M6 | spec 文字差異 8 項待 M8 同步：§5.1 i18n 拆分範圍、adapter 落點 `shared/api/mock/legacy-adapter.ts`、Navbar/Breadcrumb 落點 `shared/ui/navbar/`、§5.2 auth `requires: ["users"]`、§4.5 `createCollection(seed, idKey, opts)`、§7.2 lint 放行（mocks→同 module model、`__tests__`）、§9 M6 Touches 未列 `shared/api`/`shells`、AC-5「14 檔」過時 | arch chain `reviews/m6-impl-report.md`「spec 差異」 |
 | M7a | pnpm-lock 中既有 `unplugin@3.7.0` 的 optional `esbuild` 隨新增 orval 從 0.25.12 解析為 0.28.2（`package.json` 既有版本未變；無故障證據） | api chain `reviews/api-m7a-codex-verdict.md` info 1 |
 | M7a | extract 輸出與現行手寫 `src/app/operations.gen.ts`（`crud()` helper）不逐字相同，M7a 只做資料比對、未覆蓋；產物直接放進 src 後的 eslint 由 M7b `gen:api` 實際驗證 | api chain m7a-impl 交付報告 |
 | M7a | `scripts/**` 與 `orval.config.ts` 不在 `pnpm build` 的 tsc 範圍，也不在 `pnpm lint` 範圍（只用暫時 tsconfig 檢查過一次） | api chain m7a-impl 交付報告 |
