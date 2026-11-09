@@ -4,7 +4,7 @@
     "incremental": true,
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ES2020", "DOM"],
     "module": "ESNext",
     "skipLibCheck": true,
 
@@ -24,16 +24,12 @@
     "noUncheckedSideEffectImports": true,
 
     /* Paths */
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
 
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-
     /* Type Declaration Files */
-    "typeRoots": ["./src/shared/types", "./node_modules/@types"]
+    "types": ["node"]
   },
   "include": ["src/**/*", "tailwind.config.ts"]
 }
