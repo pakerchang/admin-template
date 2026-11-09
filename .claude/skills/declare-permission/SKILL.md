@@ -17,7 +17,7 @@ description: 依 docs/specs/fsd-module-architecture.spec.md 宣告或修改權�
 | 登入回 grants、mock 矩陣、route guard、`useVisibleNav`、`rowActions` / `FormSubmit` / `<Guarded>`、手寫 `src/app/operations.gen.ts`、fail-closed MSW guard | M4 |
 | `openapi.yaml` 的 `x-permission` + `pnpm gen:api` 產生 operation 表 | M7 |
 
-- **M4 之前**：權限仍由 `useUserPermissions()`（`src/pages/users/hooks/use-user.ts`）的語意方法提供（見 `CLAUDE.md`「架構」）。這段期間要新增權限判斷**先問 owner**，不要另外散寫 `role === …` 或 `canX && <X/>`。
+- **M4 之前**：權限仍由 `useUserPermissions()`（`src/pages/users/hooks/use-user.ts`）的語意方法提供（見 `CLAUDE.md`「架構」）。這段期間**允許沿用** `useUserPermissions()` 的語意方法，**禁止新增**直接比對 role 的寫法（`role === …`）或散寫 `canX && <X/>`；M4 統一換成宣告式（owner 2026-11-09 裁決）。
 - **M4 到 M7 之間**：operation → permission 寫在手寫的 `src/app/operations.gen.ts`（檔頭註明 hand-maintained until M7，§4.5、§6.5 表 M4–M6 列）；其餘步驟照下文。
 - **M7 起**：operation → permission **只**寫在 `openapi.yaml`（§0.5 R21）。
 

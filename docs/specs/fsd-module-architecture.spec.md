@@ -311,7 +311,7 @@ export type TShell = {
   pages?: Partial<Record<TRouteId, ComponentType<any>>>;    // shell 逐頁覆寫表，key = route id（§4.4；shell 欄位，非 module 欄位）
 };
 
-// app/kernel/create-app.ts
+// app/kernel/create-app.ts（TCore / TRegistry 實際定義在 app/kernel/build.ts，與 build() 同檔）
 import type { TOperationTable } from "@/shared/permission";   // ★ R13 中間格式 { routes, permissions }，定義見 §6.1
 
 export type TRegistry = {
@@ -326,13 +326,14 @@ export type TRegistry = {
 
 // operations 由 app/main.tsx 傳入：import { operations } from "./operations.gen"
 // apiBaseUrl（R22，必填）：與 fetcher 組 URL 用的同一個 base（shared/config/env），guard 依它判斷哪些 request 屬於 API（§6.5）
-export const createApp = ({ shell, operations, apiBaseUrl }: { shell: TShell; operations: TOperationTable; apiBaseUrl: string }) => {
+// core（TCore，必填）：kernel 自有、由 app 層提供的零件 —— { root: AnyRootRoute; i18n: core 字典; guard: MSW guard factory; mockHandlers: core handler; getGrants: () => readonly TGrant[] }
+export const createApp = ({ shell, operations, apiBaseUrl, core }: { shell: TShell; operations: TOperationTable; apiBaseUrl: string; core: TCore }) => {
   const modules: TModule[] = [];
   const overrides = new Map<TRouteId, ComponentType<any>>();
   const app = {
     use(m: TModule) { modules.push(m); return app; },
     override(id: TRouteId, page: ComponentType<any>) { overrides.set(id, page); return app; },
-    build() { return build({ modules, shell, overrides, operations, apiBaseUrl }); },   // 純函式，§4.3
+    build() { return build({ modules, shell, overrides, operations, apiBaseUrl, core }); },   // 純函式，§4.3
     async mount(selector: string) {
       const { router, registry } = app.build();                // 驗證失敗在這裡 throw（fail fast）
       if (import.meta.env.VITE_API_MOCK === "true") await startMockWorker(registry);  // app/mock，§6.5
@@ -361,7 +362,7 @@ export const installModules = (app: TApp) =>
    1. module `id` 不重複。
    2. **`requires`（R8）**：每個 `m.requires[i]` 都必須是已 `.use()` 的 module id，否則 `throw new Error(\`module "${m.id}" requires "${dep}" but it is not installed\`)`；`requires` 形成環 → throw。
    3. `i18n` 是**裸字典**：每個 locale 的頂層 key **不得**等於 module `id`（擋下「已自行 scope」的字典，避免合併後出現 `orders.orders.*`）。
-   4. nav `permission` 的 resource 必須在某 module 的 `permissions.resources` 宣告過。
+   4. nav `permission` 必須是**已安裝** module 權限目錄中完整的 `resource:action`（與 1.5.3 同一比對）：`resource` 是某 module `permissions.resources` 的 key，**且** `action` 在該 key 的 actions 陣列內；只有 resource 存在不夠（`orders` 已宣告但 nav 寫 `orders:typo` → throw，訊息含 module id 與該 permission）。（owner 2026-11-09 nav 粒度裁決）
    5. **Operation 表（R13 / OQ-14，fail-closed）**，輸入為 `createApp({ operations })` 傳入的 `app/operations.gen.ts`：
       1. `operations.routes` 的每個 `operationId` 都必須是 `operations.permissions` 的 key（值為 permission 或 `"public"`），否則 `throw new Error(\`operation "${operationId}" has no permission declared (use "public" explicitly)\`)`。
       2. `operations.permissions` 的每個 key 都必須出現在 `routes`（擋孤兒權限）。
@@ -660,6 +661,7 @@ export const ForbiddenBoundary = ({ error }: ErrorComponentProps) => {
 };
 ```
 
+- **grants 來源**：M1 的 `guardedRoute(opts, getGrants)` 以第二參數注入 grants（kernel 傳入 `core.getGrants`），取代上面 pseudo code 的 `getSession()`；session store 於 M4 接上後由 app 層提供 `getGrants`。
 - **依賴方向（C2）**：`shared/permission` 只 export `guardedRoute` 與 `ForbiddenError`，不 import `app` / `shells`；`app/router` 的 `ForbiddenBoundary` import `ForbiddenError`（app → shared，合法）並經 `useRegistry()` 取 `shell.Forbidden`；kernel 在 `ctx.layout` / `ctx.page` 把 `errorComponent: ForbiddenBoundary` 注入每個 module route。§7.2 的 `shared` 規則只允許 `shared → shared`，任何 `shared → app` import 會被 boundaries 擋下。
 - **行為**：無權限時 URL 保留、shell（sidebar / navbar）保留，`shell.Forbidden`（預設 = 現行 `UnauthorizedPage` 改為內容區高度）渲染在 protected layout 的 `<Outlet />` 位置。**不新增 `/403` route**。
 - protected route 自身缺 `app:access`：layout 照常渲染（nav 經 `useVisibleNav` 會是空的），內容區顯示 `shell.Forbidden`——取代現行 `ProtectedAppLayout.tsx:11-13` 換掉整個 layout 的行為（**行為變更**，屬 R10 裁決範圍）。
@@ -945,7 +947,7 @@ export default [
 **Acceptance Criteria**
 - [ ] AC-1 `[cmd]`: `can()` 正確處理精確 grant、`resource:*`、`*`、無 grant 四種情況
   - 驗證：`pnpm exec vitest run src/shared/permission`
-- [ ] AC-2 `[cmd]`: `build()` 對重複 module id、缺 `requires` 依賴、`requires` 成環、i18n 裸字典頂層含 module id（已自行 scope）、nav 引用未宣告 resource 各 throw，訊息含 module id
+- [ ] AC-2 `[cmd]`: `build()` 對重複 module id、缺 `requires` 依賴、`requires` 成環、i18n 裸字典頂層含 module id（已自行 scope）、nav 引用未宣告 resource、nav 引用的 resource 存在但 action 不在目錄（完整 `resource:action` 比對，例 `orders:typo`；owner 2026-11-09 nav 粒度裁決）各 throw，訊息含 module id
   - 驗證：`pnpm exec vitest run src/app/kernel`
 - [ ] AC-3 `[cmd]`: override 解析順序為 app `.override()` > `shell.pages` > module 預設；`.override()` 未知 route id throw；`shell.pages` 未知 id 忽略；routeId 重複時 throw；routeId 不符 R23 格式（前綴不是所屬 module id）時 throw；`registry.routeIds` 等於 fixture 宣告的 routeId 集合
   - 驗證：同上
@@ -956,7 +958,7 @@ export default [
 - [ ] AC-5 `[cmd]`: operation 表 fail-closed（R13 / OQ-14 / R21）：`routes` 有 operationId 但 `permissions` 無對應 key → throw 且訊息含 operationId 與 `"public"` 提示；`permissions` 有孤兒 key → throw；非 public permission 的 resource 未被已安裝 module 宣告 → throw；**負例 `orders:typo`：已安裝 module 宣告 `resources: { orders: ["read","update","export"] }`，operation 宣告 `orders:typo` → throw，訊息含 operationId 與 `orders:typo`**（resource 存在但 action 不在目錄也必須失敗）；值為 `"public"` 者通過；`orders:read` 通過
   - 驗證：`pnpm exec vitest run src/app/kernel`
 - [ ] AC-6 `[cmd]`: 既有行為不變（既有檔案無任何改動，新碼未被 import）
-  - 驗證：`pnpm build && pnpm exec vitest run && git diff --quiet master -- src ':!src/shared' ':!src/app'`
+  - 驗證：`pnpm build && pnpm exec vitest run && git diff --quiet fcc673a -- src ':!src/shared' ':!src/app'`
 
 **Pseudo code**
 ```ts
@@ -965,8 +967,8 @@ export function build({ modules, shell, overrides, operations, apiBaseUrl, core 
   assertUniqueIds(modules);
   assertRequires(modules);            // 每個 dep ∈ ids；DFS 偵測環
   assertI18nBare(modules);            // 裸字典頂層 key 不得 === module id
-  assertNavResources(modules);
   const catalogue = catalog(modules);
+  assertNavPermissions(modules, catalogue);  // §4.3 1.4：nav permission 必須是目錄中完整的 resource:action
   assertOperations(operations, catalogue);   // §4.3 1.5：未宣告 / 孤兒 / resource:action 不在目錄（R21，完整比對）/ method+path 重複 → throw
   const nav = stableSortBy(m => m.order ?? 100, modules.flatMap(m => m.nav ?? []));
   const routeIds = new Set();
@@ -978,7 +980,7 @@ export function build({ modules, shell, overrides, operations, apiBaseUrl, core 
     registry: {
       modules, nav, operations, routeIds,
       permissions: catalogue,
-      i18n: scopeAndMerge(core.i18n, modules),          // { ...core, [m.id]: m.i18n[lng] }，scope 只在這裡
+      i18n: scopeAndMerge(core.i18n, modules),          // §4.3 步驟 4 mergeDeep(core[lng], { [m.id]: m.i18n[lng] ?? {} })：同名 key 深層合併、core 既有 key 不被覆蓋（AC-4），scope 只在這裡
       mockHandlers: [core.guard({ ...operations, apiBaseUrl }), ...core.mockHandlers, ...modules.flatMap(m => m.mockHandlers ?? [])],
     },
   };

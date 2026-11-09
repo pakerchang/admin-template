@@ -30,6 +30,13 @@
 - **禁令**：不要把「重新整理後資料消失」當 bug 修；需要持久化先問 owner。
 - **來源**：`src/services/mock/handlers.ts:8-9`。
 
+### 重構期間想新增第 11 個 module，驗收指令失敗
+
+- **症狀**：M3–M8 期間新增 module 後，M3 AC-1（`app/modules.ts` 恰好 10 個 `.use(`）、M6 AC-3 / M7 AC-3（實際 10 個 module）的驗收指令失敗。
+- **真因**：spec 驗收以「恰好 10 個 module」寫死（spec L1106–1107、L1203、L1231）。
+- **禁令**：M8 驗收完成前凍結新增 module（owner 裁決，spec 的「恰好 10 個」不改）；新 module 需求排到 M8 之後。
+- **來源**：arch chain inbox「2026-11-09 owner 裁決：重構期間凍結新增 module（main 轉達）」。
+
 ## B. spec / PoC 預警，待對應 milestone 驗證
 
 ### orval 產的 MSW handler 回不了 404 / 422（M7 起）
