@@ -40,7 +40,7 @@ export const toHttpHandlers = (
   });
 
 /**
- * 對應舊 mockFetch 的「查無 handler 回 404」。只罩住表內出現過的頂層前綴（/api /users /user /admin），
+ * 對應舊版 mock client 的「查無 handler 回 404」。只罩住表內出現過的頂層前綴（/api /users /user /admin），
  * 同源 base 時才不會吃掉 vite 資源；必須排在 toHttpHandlers 之後。
  */
 export const toNotFoundHandlers = (
