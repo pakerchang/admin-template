@@ -1,4 +1,6 @@
 import { createRouter, RouterProvider } from "@tanstack/react-router";
+// 預設 instance：main.tsx 先 import "@/shared/i18n/i18n" 完成 init（這裡不 import 它，避免測試載入 i18n 副作用）
+import i18next from "i18next";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -56,7 +58,12 @@ export const createApp = ({
               m.startBrowserWorker(handlers)
             ),
         });
-      // ponytail: module 尚未帶 i18n（M6），registry.i18n 不寫入 i18next；字典仍由 shared/i18n/i18n.ts 載入
+      // §4.3 步驟 4：module 字典（已 scope）寫入同一 namespace。core 字典由 shared/i18n/i18n.ts 的 backend 載入，
+      // 必須先載完：bundle 已存在時 i18next 會跳過 backend，先寫 module 字典會讓該語系的 core 字典永遠不載
+      const lngs = Object.keys(registry.i18n);
+      await i18next.loadLanguages(lngs);
+      for (const [lng, dict] of Object.entries(registry.i18n))
+        i18next.addResourceBundle(lng, "translation", dict, true, false);
       createRoot(document.querySelector(selector)!).render(
         <StrictMode>
           <RouterProvider router={createAppRouter(routeTree)} />

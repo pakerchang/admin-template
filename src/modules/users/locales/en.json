@@ -1,0 +1,11 @@
+{
+  "userForm": {
+    "title": "Edit User Profile",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "phoneNumber": "Contact Number",
+    "address": "Contact Address",
+    "remark": "Additional Notes"
+  }
+}

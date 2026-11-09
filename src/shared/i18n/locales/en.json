@@ -156,7 +156,6 @@
     "completed": "Completed",
     "cancelled": "Cancelled"
   },
-
   "order": {
     "orderNumber": "Order Number",
     "totalAmount": "Total Amount",
@@ -179,18 +178,15 @@
     "email": "Email",
     "contactInfoTitle": "Contact Information"
   },
-
   "breadcrumb": {
     "home": "Home",
     "create": "Create",
     "edit": "Edit"
   },
-
   "action": {
     "add": "Add",
     "remove": "Remove"
   },
-
   "dashboard": {
     "title": "DAMA Admin",
     "menu": {
@@ -235,7 +231,6 @@
       }
     }
   },
-
   "pages": {
     "article": {
       "basicInfo": "Basic Information",
@@ -453,17 +448,6 @@
       "deleteFailed": "Failed to delete tag"
     }
   },
-  "users": {
-    "userForm": {
-      "title": "Edit User Profile",
-      "firstName": "First Name",
-      "lastName": "Last Name",
-      "email": "Email Address",
-      "phoneNumber": "Contact Number",
-      "address": "Contact Address",
-      "remark": "Additional Notes"
-    }
-  },
   "table": {
     "columnVisibility": "Column Visibility",
     "showHideColumns": "Show/Hide Columns",
@@ -525,7 +509,6 @@
       "itemsSelected": "items"
     }
   },
-
   "dialog": {
     "order": {
       "title": "Update Order Status",
@@ -543,7 +526,6 @@
       "allowedFormats": "Allowed formats: {{formats}}"
     }
   },
-
   "toast": {
     "img": {
       "upload": {
@@ -658,7 +640,6 @@
       }
     }
   },
-
   "unauthorized": {
     "accessDenied": {
       "title": "Access Denied",
@@ -670,7 +651,6 @@
     },
     "loading": "Loading..."
   },
-
   "staff": {
     "staffId": "Staff ID",
     "account": "Account",
@@ -703,7 +683,6 @@
       "cservice": "Customer Service"
     }
   },
-
   "consumer": {
     "consumerId": "Consumer ID",
     "name": "Name",
