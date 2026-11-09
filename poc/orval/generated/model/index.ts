@@ -21,5 +21,7 @@ export * from './listBannersParams';
 export * from './listUsers200';
 export * from './listUsersOrder';
 export * from './listUsersParams';
+export * from './login200';
+export * from './loginBody';
 export * from './user';
 export * from './userRole';

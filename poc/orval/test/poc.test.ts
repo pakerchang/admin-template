@@ -7,7 +7,7 @@ import { listUsers } from "../generated/api/users/users";
 import { getListUsersMockHandler } from "../generated/api/users/users.msw";
 import type { Banner, CreateBannerBody } from "../generated/model";
 import { operationPermissions, operationRoutes } from "../generated/operations.gen";
-import { createPermissionGuard, fromModules, type AppModule } from "../src/permissions";
+import { createPermissionGuard, fromModules, PUBLIC, type AppModule } from "../src/permissions";
 
 // 記憶體狀態（代表日後的 mock-db）
 const bannerDb: Banner[] = [];
@@ -49,9 +49,12 @@ const guard = createPermissionGuard({
   routes: operationRoutes,
   permissions: operationPermissions, // 來源 (b)
   getGranted: (req) => new Set(ROLE_PERMS[req.headers.get("authorization")?.replace(/^Bearer /, "") ?? ""] ?? []),
+  apiBaseUrl: "http://api.test",
 });
 
-const modules = [bannersModule, usersModule];
+// a3：yaml 加了公開的 login；a1 這裡只宣告、不掛 handler
+const authModule: AppModule = { id: "auth", mockHandlers: [], permissions: { login: PUBLIC } };
+const modules = [bannersModule, usersModule, authModule];
 const server = setupServer(guard, ...modules.flatMap((m) => m.mockHandlers));
 
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }) /* msw 3：onUnhandledRequest → onUnhandledFrame */);
@@ -110,6 +113,7 @@ describe("AC4 operationId → permission 中間格式 + guard", () => {
         routes: operationRoutes,
         permissions: fromModules(modules), // 來源 (a)
         getGranted: () => new Set(), // 誰都沒權限
+        apiBaseUrl: "http://api.test",
       })
     );
     expect((await listBanners(undefined, as("admin"))).status).toBe(403);

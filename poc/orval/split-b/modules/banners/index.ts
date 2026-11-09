@@ -9,6 +9,7 @@ export type { Banner, CreateBannerBody } from "./model";
 export const bannerDb: Banner[] = []; // ponytail: 代表日後的 mock-db
 export const bannersModule: AppModule = {
   id: "banners",
+  permissions: { listBanners: "banners.read", createBanner: "banners.manage" },
   mockHandlers: [
     getListBannersMockHandler(() => ({ code: 200, msg: "success", error: "", data: bannerDb, total: bannerDb.length })),
     getCreateBannerMockHandler(async ({ request }) => {

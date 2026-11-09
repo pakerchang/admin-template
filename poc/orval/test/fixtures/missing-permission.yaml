@@ -1,0 +1,15 @@
+openapi: 3.1.0
+info: { title: fixture, version: 0.0.0 }
+paths:
+  /admin/banners:
+    get:
+      operationId: listBanners
+      x-permission: banners.read
+      responses: { "200": { description: ok } }
+    post:
+      operationId: createBanner
+      responses: { "200": { description: ok } }
+  /admin/banners/{id}:
+    delete:
+      operationId: deleteBanner
+      responses: { "200": { description: ok } }

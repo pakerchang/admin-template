@@ -15,4 +15,4 @@ const mod = (id: string) => ({
   },
 });
 
-export default defineConfig({ banners: mod("banners"), users: mod("users") });
+export default defineConfig({ banners: mod("banners"), users: mod("users"), auth: mod("auth") });

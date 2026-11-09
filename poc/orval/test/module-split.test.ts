@@ -26,6 +26,7 @@ describe.each([
     routes: gen.operationRoutes,
     permissions: gen.operationPermissions,
     getGranted: (req) => new Set(ROLE_PERMS[req.headers.get("authorization")?.replace(/^Bearer /, "") ?? ""] ?? []),
+    apiBaseUrl: "http://api.test",
   });
   const server = setupServer(guard, ...app.modules.flatMap((m) => m.mockHandlers));
   beforeAll(() => server.listen({ onUnhandledFrame: "error" }));

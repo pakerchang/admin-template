@@ -5,6 +5,7 @@ info:
 tags:
   - name: banners
   - name: users
+  - name: auth
 security:
   - bearerAuth: []
 paths:
@@ -196,6 +197,38 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorBody"
+  /auth/login:
+    post:
+      operationId: login
+      tags:
+        - auth
+      x-permission: public
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
 components:
   securitySchemes:
     bearerAuth:

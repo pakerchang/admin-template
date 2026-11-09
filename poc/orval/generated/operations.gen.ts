@@ -16,11 +16,17 @@ export const operationRoutes: OperationRoute[] = [
     "method": "GET",
     "path": "/users",
     "operationId": "listUsers"
+  },
+  {
+    "method": "POST",
+    "path": "/auth/login",
+    "operationId": "login"
   }
 ];
 
 export const operationPermissions: OperationPermissions = {
   "listBanners": "banners.read",
   "createBanner": "banners.manage",
-  "listUsers": "users.read"
+  "listUsers": "users.read",
+  "login": "public"
 };
