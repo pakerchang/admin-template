@@ -33,33 +33,30 @@ export const toHttpHandlers = (
 ): HttpHandler[] =>
   Object.entries(table).map(([key, fn]) => {
     const [method, path] = key.split(" ");
+    // 與 apiFetch 同樣用 new URL(path, base) 解析，base 帶尾斜線或路徑時才對得上
     return http[method.toLowerCase() as TMethod](
-      `${baseUrl}${path}`,
+      new URL(path, baseUrl).href,
       resolve(fn)
     );
   });
 
 /**
- * 對應舊版 mock client 的「查無 handler 回 404」。只罩住表內出現過的頂層前綴（/api /users /user /admin），
- * 同源 base 時才不會吃掉 vite 資源；必須排在 toHttpHandlers 之後。
+ * 對應舊版 mock client 的「查無 handler 回 404」：罩住整個 base origin，
+ * 但只接 apiFetch 發出的請求（必帶 `Content-Type: application/json`），
+ * 同源 base 時 vite 資源 / HMR 不帶此 header，照常放行。必須排在 toHttpHandlers 之後。
  */
-export const toNotFoundHandlers = (
-  table: Record<string, THandler>,
-  { baseUrl }: { baseUrl: string }
-): HttpHandler[] => {
-  const prefixes = new Set(
-    Object.keys(table).map((key) => key.split(" ")[1].split("/")[1])
-  );
-  return [...prefixes].flatMap((prefix) =>
-    [`${baseUrl}/${prefix}`, `${baseUrl}/${prefix}/*`].map((path) =>
-      http.all(path, ({ request }) =>
-        resolve(() => ({
-          status: 404,
-          body: {
-            error: `No mock handler for ${request.method} ${new URL(request.url).pathname}`,
-          },
-        }))({ request })
-      )
-    )
-  );
-};
+export const toNotFoundHandlers = ({
+  baseUrl,
+}: {
+  baseUrl: string;
+}): HttpHandler[] => [
+  http.all(new URL("/*", baseUrl).href, ({ request }) => {
+    if (request.headers.get("Content-Type") !== "application/json") return;
+    return resolve(() => ({
+      status: 404,
+      body: {
+        error: `No mock handler for ${request.method} ${new URL(request.url).pathname}`,
+      },
+    }))({ request });
+  }),
+];

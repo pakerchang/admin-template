@@ -114,6 +114,10 @@ describe("apiFetch + MSW setupServer", () => {
     expect(res.status).toBe(404);
     expect(res.body.error).toBe("No mock handler for GET /admin/nope");
 
+    const outsidePrefixes = await apiFetch<{ error: string }>("/nope");
+    expect(outsidePrefixes.status).toBe(404);
+    expect(outsidePrefixes.body.error).toBe("No mock handler for GET /nope");
+
     const unknownMethod = await apiFetch("/users", { method: "DELETE" });
     expect(unknownMethod.status).toBe(404);
   });
