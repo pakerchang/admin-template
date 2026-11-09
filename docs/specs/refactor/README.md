@@ -18,9 +18,9 @@
 |---|---|---|
 | M0（前置：deps P0 Node 22 + P1 ESLint 9） | 完成 | PR #4、#5 |
 | M1 Kernel 契約與權限引擎 | 完成 | PR #8 |
-| M2 MSW 取代 mockFetch | 完成 | PR #9 |
+| M2 MSW 取代 mockFetch | 完成（AC-5 已勾：main 派 s28 瀏覽器行為層驗證，owner 尚未親驗） | PR #9；AC-5 證據 s28 `ac5-browser-report.md`（tip 8458b19） |
 | router pathless hotfix | 完成 | PR #10；spec 在 master `docs/specs/router-pathless-hotfix.spec.md` |
-| M3 Module 接線 + default shell | 完成，已併入本地整合分支 `refactor/integration`（AC-1～4、6、7 已勾；AC-5 manual 待 owner） | integration tip `8458b19`（ff-only，基線 exit 0、23 files / 227 tests、LINT_OK）；`feat/m3-module-wiring` @ `8458b19` 已 push；codex 259e4c3 FAIL → d685823 PASS-with-fixes → 03acca9 PASS →（rebase）edfd74d PASS-with-fixes → 8458b19 PASS（arch chain `reviews/arch-m3-fix3-codex-verdict.md`）；中間 commit 509dc96..2aae3e6 不可單獨 build（bisect skip，main 已裁決接受） |
+| M3 Module 接線 + default shell | 完成，已併入本地整合分支 `refactor/integration`（AC-1～7 已勾；AC-5 由 main 派 s28 瀏覽器行為層驗證，owner 尚未親驗） | integration tip `8458b19`（ff-only，基線 exit 0、23 files / 227 tests、LINT_OK）；`feat/m3-module-wiring` @ `8458b19` 已 push；codex 259e4c3 FAIL → d685823 PASS-with-fixes → 03acca9 PASS →（rebase）edfd74d PASS-with-fixes → 8458b19 PASS（arch chain `reviews/arch-m3-fix3-codex-verdict.md`）；中間 commit 509dc96..2aae3e6 不可單獨 build（bisect skip，main 已裁決接受） |
 | M4 權限四強制點 + 內容區 403 | 進行中（實作棒 m4-impl，branch `feat/m4-permission-enforcement` 從 integration `8458b19` 開） | AC-1 路徑 `/users/user-list` → `/users`（main 核准，同 M3 W1） |
 | M5 Kernel / shared 搬遷 + 邊界 lint | 未開始 | — |
 | M6 Module 內嵌搬遷 | 未開始 | — |

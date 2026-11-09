@@ -1087,7 +1087,7 @@ expected: exit 0；`src/shared/permission`、`src/app/kernel` 測試檔出現在
   - 驗證：`pnpm exec vitest run src/services`
 - [ ] AC-4 `[cmd]`: `public/mockServiceWorker.js` 存在且進 git
   - 驗證：`git ls-files --error-unmatch public/mockServiceWorker.js`
-- [ ] AC-5 `[manual]`: `VITE_API_MOCK=true pnpm dev` 登入後各頁 CRUD 與重構前一致；Network 面板顯示請求由 service worker 回應（PoC 只驗過 node `setupServer`，browser `setupWorker` + vite dev 由本 AC 首次驗證，§11.1）
+- [x] AC-5 `[manual]`: `VITE_API_MOCK=true pnpm dev` 登入後各頁 CRUD 與重構前一致；Network 面板顯示請求由 service worker 回應（PoC 只驗過 node `setupServer`，browser `setupWorker` + vite dev 由本 AC 首次驗證，§11.1）（main 派 s28 瀏覽器行為層驗證，tip 8458b19，owner 尚未親驗；只有 tags 做滿 CRUD，未與重構前並排實跑）
 
 **預設值**：mock 預設開——只有 `VITE_API_MOCK === "false"` 才關閉（未設、`"true"` 或其他值都開；owner 2026-11-10 裁決），判斷集中在 `src/app/mock/enabled.ts` 的 `isMockEnabled`。
 
@@ -1120,7 +1120,7 @@ expected: exit 0
   - 驗證：`pnpm exec vitest run src/app/mock`
 - [x] AC-7 `[cmd]`（R24 負例）: mock 模式下 `apiBaseUrl` 未設定、為相對路徑、或與 app 同源（`new URL(apiBaseUrl).origin === location.origin`，含同源根目錄 `location.origin + "/"` 與同源非根路徑 `location.origin + "/api"` 兩個負例）時 `startMockWorker` throw；設為專用絕對 origin 時正常啟動，且 legacy 表的 route 涵蓋 `/api`、`/user`、`/users`、`/admin` 四個前綴（路徑未改）
   - 驗證：`pnpm exec vitest run src/app/mock`
-- [ ] AC-5 `[manual]`: `pnpm dev` 登入後 sidebar 項目、順序、各頁 CRUD 與重構前相同；語系切換正常
+- [x] AC-5 `[manual]`: `pnpm dev` 登入後 sidebar 項目、順序、各頁 CRUD 與重構前相同；語系切換正常（main 派 s28 瀏覽器行為層驗證，tip 8458b19，owner 尚未親驗；只有 tags 做滿 CRUD，未與重構前並排實跑）
 
 **Touches**：`src/main.tsx`、`index.html`、`src/router/**`、`src/constants/sidebar.tsx`、`src/components/layouts/**`、`src/components/shared/{AppSidebar,Navbar,Breadcrumb}.tsx`、`src/hooks/use-breadcrumb.ts`、`src/locales/i18n.ts`、`src/app/**`、`src/shells/default/**`（新）、`src/modules/*/index.ts`（新，含 route composition）、`src/modules/*/model/routes.ts`（新，不 import ui/pages）、`.env.example`（mock 模式 `VITE_API_BASE_URL`）；例外（main 02:33 代 owner 核准）：`vite.config.ts`（test env 的 `VITE_API_BASE_URL`）、`CLAUDE.md`（M3 狀態與路由描述）
 **Must-Not-Touch**：`src/pages/**` 內部實作（只被 import）；`src/components/ui/**`；行為紅線：URL、i18n key、mock API 路徑不變
