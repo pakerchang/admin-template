@@ -34,7 +34,7 @@ src/
 └── plugins/image-validation/  test/  styles/
 ```
 
-> 上面描述的是 **現況**（master `6029bf0`）。目標架構見下一段，尚未落地。
+> 上面描述的是 **現況**（master `1614c24`）。目標架構見下一段，尚未落地。
 
 ## 架構遷移（進行中）
 
@@ -42,7 +42,7 @@ src/
 
 | Milestone | 內容 | 狀態 |
 |---|---|---|
-| M0 | deps 前置：Node 22 + ESLint 9 flat config（deps chain 負責，§9） | 未開始 |
+| M0 | deps 前置：Node 22 + ESLint 9 flat config（deps chain 負責，§9） | 完成（#4 `engines.node >=22`、#5 `eslint.config.js`） |
 | M1 | kernel 契約 + 權限引擎（純新增、未接線） | 未開始 |
 | M2 | MSW 取代 `mockFetch`（行為不變） | 未開始 |
 | M3 | module 接線 + default shell（行為不變） | 未開始 |
