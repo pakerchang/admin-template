@@ -159,16 +159,31 @@ const assertOperations = (
   }
 };
 
+const isDict = (v: unknown): v is Record<string, unknown> =>
+  typeof v === "object" && v !== null && !Array.isArray(v);
+
+/** 遞迴合併；leaf 衝突時 `winner` 勝 */
+const mergeDeep = (
+  base: Record<string, unknown>,
+  winner: Record<string, unknown>
+): Record<string, unknown> => {
+  const out = { ...base };
+  for (const [k, v] of Object.entries(winner))
+    out[k] = isDict(out[k]) && isDict(v) ? mergeDeep(out[k], v) : v;
+  return out;
+};
+
+/** §4.3 步驟 4：module 字典 scope 到 module id 後與 core 深層合併；core 既有 key 不被覆蓋（AC-4） */
 const scopeAndMerge = (core: TI18n, modules: readonly TModule[]): TI18n =>
   Object.fromEntries(
     Object.entries(core).map(([lng, dict]) => [
       lng,
-      {
-        ...dict,
-        ...Object.fromEntries(
+      mergeDeep(
+        Object.fromEntries(
           modules.map((m) => [m.id, m.i18n?.[lng as TLocale] ?? {}])
         ),
-      },
+        dict
+      ),
     ])
   ) as TI18n;
 
