@@ -1,23 +1,19 @@
 import { useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
-import { ArrowUpDown, UserCog } from "lucide-react";
+import { ArrowUpDown, Pencil, UserCog } from "lucide-react";
 import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import DataTable from "@/components/shared/DataTable";
-import EditActions from "@/components/shared/EditActions";
 import { Navbar } from "@/components/shared/Navbar";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { paginationSchema } from "@/services/types/schema";
 
 import EditUserRoleDialogContent from "./components/EditUserRoleDialogContent";
-import {
-  useGetUserList,
-  useUserPermissions,
-  useUpdateUserRole,
-} from "./hooks/use-user";
+import { useGetUserList, useUpdateUserRole } from "./hooks/use-user";
 
+import type { TRowAction } from "@/components/shared/table/row-actions";
 import type { TUser, TUserRole } from "@/services/schemas/user";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 
@@ -25,7 +21,6 @@ const UserList = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { canEditUserRole } = useUserPermissions();
   const { mutate: updateUserRole } = useUpdateUserRole();
 
   const [pagination, setPagination] = useState<PaginationState>({
@@ -153,29 +148,24 @@ const UserList = () => {
         );
       },
     },
+  ];
+
+  // §6.4：權限宣告在操作上，DataTable 依 grants 過濾（取代 canEditUserRole &&）
+  const rowActions: TRowAction<TUser>[] = [
     {
-      accessorKey: "actions",
-      enableHiding: false,
-      header: () => <h4 className="">{t("table.headers.order.actions")}</h4>,
-      cell: ({ row }) => {
-        const id = row.getValue<TUser["user_id"]>("user_id");
-        const role = row.original.role;
-        return (
-          <EditActions
-            onEdit={() => navigate({ to: "/users/edit/$id", params: { id } })}
-          >
-            {canEditUserRole && (
-              <Button
-                key={id}
-                variant="outline"
-                onClick={() => onOpenEditRoleDialog(id, role)}
-              >
-                <UserCog size={16} />
-              </Button>
-            )}
-          </EditActions>
-        );
-      },
+      id: "edit",
+      label: t("common.edit"),
+      icon: Pencil,
+      permission: "users:update",
+      onSelect: ({ user_id: id }) =>
+        navigate({ to: "/users/edit/$id", params: { id } }),
+    },
+    {
+      id: "edit-role",
+      label: t("table.headers.user.role"),
+      icon: UserCog,
+      permission: "users:update-role",
+      onSelect: ({ user_id, role }) => onOpenEditRoleDialog(user_id, role),
     },
   ];
 
@@ -185,6 +175,8 @@ const UserList = () => {
       <div className="p-4">
         <DataTable
           columns={columns}
+          rowActions={rowActions}
+          rowActionsHeader={<h4>{t("table.headers.order.actions")}</h4>}
           data={userList?.data ?? []}
           isLoading={isLoading}
           pagination={{

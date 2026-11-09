@@ -280,13 +280,18 @@ const ProductPage = () => {
         const id = row.original.product_id;
         return (
           <EditActions
-            onEdit={() =>
-              navigate({
-                to: "/products/edit/$id",
-                params: { id },
-              })
-            }
-            onDelete={() => onDeleteProduct(id)}
+            onEdit={{
+              handler: () =>
+                navigate({
+                  to: "/products/edit/$id",
+                  params: { id },
+                }),
+              permission: "product:update",
+            }}
+            onDelete={{
+              handler: () => onDeleteProduct(id),
+              permission: "product:delete",
+            }}
           >
             <Button
               variant="outline"
@@ -356,13 +361,18 @@ const ProductPage = () => {
                   footer={
                     <EditActions
                       className="w-full justify-end"
-                      onEdit={() =>
-                        navigate({
-                          to: "/products/edit/$id",
-                          params: { id: prd.product_id },
-                        })
-                      }
-                      onDelete={() => onDeleteProduct(prd.product_id)}
+                      onEdit={{
+                        handler: () =>
+                          navigate({
+                            to: "/products/edit/$id",
+                            params: { id: prd.product_id },
+                          }),
+                        permission: "product:update",
+                      }}
+                      onDelete={{
+                        handler: () => onDeleteProduct(prd.product_id),
+                        permission: "product:delete",
+                      }}
                     >
                       <Button
                         variant="outline"

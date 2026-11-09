@@ -282,8 +282,14 @@ const OrderListPage = () => {
         const order = row.original;
         return (
           <EditActions
-            onEdit={() => onOpenEditDialog(id, status)}
-            onView={() => navigate({ to: "/orders/$id", params: { id } })}
+            onEdit={{
+              handler: () => onOpenEditDialog(id, status),
+              permission: "orders:update",
+            }}
+            onView={{
+              handler: () => navigate({ to: "/orders/$id", params: { id } }),
+              permission: "orders:read",
+            }}
           >
             <Button variant="outline" onClick={() => handleCopy(order)}>
               <Copy size={16} />

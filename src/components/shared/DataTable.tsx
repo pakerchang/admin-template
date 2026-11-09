@@ -27,7 +27,9 @@ import {
 } from "@/components/ui/table";
 
 import { ColumnVisibilityDropdown, useColumnVisibility } from "./table";
+import { RowActions } from "./table/row-actions";
 
+import type { TRowAction } from "./table/row-actions";
 import type {
   ColumnDef,
   ColumnFiltersState,
@@ -36,6 +38,7 @@ import type {
   SortingState,
   VisibilityState,
 } from "@tanstack/react-table";
+import type { ReactNode } from "react";
 
 interface DataTableProps<T> {
   data: T[];
@@ -57,11 +60,14 @@ interface DataTableProps<T> {
   onSortingChange?: OnChangeFn<SortingState>;
   columnFilters?: ColumnFiltersState;
   onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
+  /** §6.4：宣告式列操作，附加在最後一欄；無權限項依 `denied` 隱藏（預設）或 disabled */
+  rowActions?: readonly TRowAction<T>[];
+  rowActionsHeader?: ReactNode;
 }
 
 const DataTable = <T,>({
   data,
-  columns,
+  columns: baseColumns,
   isLoading,
   initialState,
   pagination,
@@ -72,7 +78,24 @@ const DataTable = <T,>({
   onSortingChange,
   columnFilters: externalColumnFilters,
   onColumnFiltersChange: externalOnColumnFiltersChange,
+  rowActions,
+  rowActionsHeader,
 }: DataTableProps<T>) => {
+  // ponytail: 與既有 columns 一樣每次 render 重建（呼叫端本來就沒 memo）
+  const columns: ColumnDef<T>[] = rowActions
+    ? [
+        ...baseColumns,
+        {
+          id: "actions",
+          enableHiding: false,
+          header: () => rowActionsHeader,
+          cell: ({ row }) => (
+            <RowActions row={row.original} actions={rowActions} />
+          ),
+        },
+      ]
+    : baseColumns;
+
   const [internalColumnFilters, setInternalColumnFilters] =
     useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});

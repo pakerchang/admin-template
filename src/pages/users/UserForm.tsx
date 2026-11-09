@@ -6,9 +6,9 @@ import { useTranslation } from "react-i18next";
 import { Navbar } from "@/components/shared/Navbar";
 import Paper from "@/components/shared/Paper";
 import { TextInput } from "@/components/shared/TextInputs";
-import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { userSchema } from "@/services/schemas/user";
+import { FormSubmit } from "@/shared/ui/form-submit";
 
 import type { TUser } from "@/services/schemas/user";
 
@@ -59,14 +59,14 @@ const UserFormPage = () => {
 
   const navbarActions = (
     <div className="flex w-full items-center justify-end">
-      <Button
-        type="submit"
+      <FormSubmit
+        permission="users:update"
         form="user-form"
         className="h-10 w-fit"
         disabled={!form.formState.isDirty}
       >
         {t("common.submit")}
-      </Button>
+      </FormSubmit>
     </div>
   );
 

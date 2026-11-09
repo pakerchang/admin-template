@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useToast } from "@/hooks/use-toast";
-import { apiFetch, getAuth } from "@/services/api-client";
+import { apiFetch } from "@/services/api-client";
 import { paginationSchema } from "@/services/types/schema";
 
 import type { TUser, TUserRole } from "@/services/schemas/user";
@@ -141,34 +141,4 @@ export const useUpdateUserRole = () => {
       });
     },
   });
-};
-
-export const useUserPermissions = () => {
-  // 角色來自登入時 mock 回傳並存在 localStorage 的 session
-  const userRole: TUserRole = getAuth()?.user.role ?? "guest";
-
-  return {
-    userRole,
-    // 基礎權限檢查
-    isAdmin: Boolean(["admin", "superadmin"].includes(userRole)),
-    isSuperAdmin: Boolean(["superadmin"].includes(userRole)),
-    isPartner: Boolean(["partner"].includes(userRole)),
-    isPremium: Boolean(["premium"].includes(userRole)),
-    isUser: Boolean(["user"].includes(userRole)),
-    isGuest: Boolean(["guest"].includes(userRole)),
-    isSupport: Boolean(["support"].includes(userRole)),
-
-    // 業務權限組合
-    canAccessAdminPanel: Boolean(["admin", "superadmin"].includes(userRole)),
-    canViewUserList: Boolean(["admin", "superadmin"].includes(userRole)),
-    canEditUserRole: Boolean(["superadmin"].includes(userRole)),
-    canManageUsers: Boolean(["superadmin"].includes(userRole)),
-    canManageProducts: Boolean(
-      ["admin", "superadmin", "partner"].includes(userRole)
-    ),
-    canManageOrders: Boolean(
-      ["admin", "superadmin", "support"].includes(userRole)
-    ),
-    canViewReports: Boolean(["admin", "superadmin"].includes(userRole)),
-  };
 };

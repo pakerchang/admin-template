@@ -244,13 +244,18 @@ const ArticleListPage = () => {
         const id = row.original.article_id;
         return (
           <EditActions
-            onEdit={() =>
-              navigate({
-                to: "/articles/edit/$id",
-                params: { id },
-              })
-            }
-            onDelete={() => onDeleteArticle(id)}
+            onEdit={{
+              handler: () =>
+                navigate({
+                  to: "/articles/edit/$id",
+                  params: { id },
+                }),
+              permission: "articles:update",
+            }}
+            onDelete={{
+              handler: () => onDeleteArticle(id),
+              permission: "articles:delete",
+            }}
           />
         );
       },
