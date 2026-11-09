@@ -4,6 +4,7 @@ import { createElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { defineModule } from "@/shared/module";
+import { ForbiddenError } from "@/shared/permission";
 
 import { build } from "../build";
 import { createApp } from "../create-app";
@@ -276,6 +277,45 @@ describe("page / layout routes (F5)", () => {
       /module "orders".*must not have a component/
     );
   });
+  it("throws when a page route has a routeId but no component", () => {
+    const m = mod("orders", {
+      routes: (c) => [
+        c.page({
+          getParentRoute: () => c.parent,
+          path: "list",
+          permission: "authenticated",
+          routeId: rid("orders.list"),
+        } as any),
+      ],
+    });
+    expect(() => build(ctx([m]))).toThrow(
+      /module "orders".*requires routeId and component/
+    );
+  });
+  it("protected page from build() runs the permission guard in beforeLoad", () => {
+    const m = mod("orders", {
+      routes: (c) => [
+        c.page({
+          getParentRoute: () => c.parent,
+          path: "list",
+          permission: "orders:read",
+          routeId: rid("orders.list"),
+          component: page("x"),
+        }),
+      ],
+    });
+    const beforeLoadWith = (grants: string[]) => {
+      const input = ctx([m]);
+      input.core.getGrants = () => grants as any;
+      const route = findByRouteId(build(input).routeTree, "orders.list");
+      expect(route?.options.staticData).toMatchObject({
+        permission: "orders:read",
+      });
+      return () => (route?.options as any).beforeLoad({});
+    };
+    expect(beforeLoadWith([])).toThrow(ForbiddenError);
+    expect(beforeLoadWith(["orders:read"])).not.toThrow();
+  });
   it("applies the same checks to publicRoutes", () => {
     const m = mod("auth", {
       publicRoutes: (c) => [
@@ -391,6 +431,28 @@ describe("assembly (AC-4)", () => {
   });
 });
 
+describe("permission catalog", () => {
+  it("unions and dedupes actions when two modules declare the same resource", () => {
+    const a = mod("a", {
+      permissions: { resources: { orders: ["read", "update"] } },
+      nav: [{ id: "n", label: "a.nav", to: "/a", permission: "orders:export" }],
+    });
+    const b = mod("b", {
+      permissions: { resources: { orders: ["update", "export"] } },
+      nav: [{ id: "m", label: "b.nav", to: "/b", permission: "orders:read" }],
+    });
+    const ops: TOperationTable = {
+      routes: [
+        { method: "GET", path: "/orders", operationId: "listOrders" },
+        { method: "POST", path: "/orders/export", operationId: "exportOrders" },
+      ],
+      permissions: { listOrders: "orders:read", exportOrders: "orders:export" },
+    };
+    const { registry } = build(ctx([a, b], ops));
+    expect(registry.permissions.orders).toEqual(["read", "update", "export"]);
+  });
+});
+
 describe("i18n scope", () => {
   it("scopes bare module dict under module id exactly once", () => {
     const o = mod("orders", {
@@ -404,6 +466,26 @@ describe("i18n scope", () => {
     expect(en.orders.list.title).toBe("Orders");
     expect(en.orders.orders).toBeUndefined();
     expect((registry.i18n.zh as any).orders.list.title).toBe("訂單");
+  });
+  it("deep-merges a module whose id equals a core top-level key", () => {
+    const common = mod("common", {
+      i18n: {
+        en: { cancel: "Cancel", save: "Module Save" },
+        zh: { cancel: "取消" },
+      },
+    });
+    const { registry } = build(ctx([common]));
+    expect(registry.i18n.en).toEqual({
+      common: { save: "Save", cancel: "Cancel" },
+    });
+    expect(registry.i18n.zh).toEqual({
+      common: { save: "儲存", cancel: "取消" },
+    });
+  });
+  it("keeps the core subtree when a same-name module has no i18n", () => {
+    const { registry } = build(ctx([mod("common")]));
+    expect(registry.i18n.en).toEqual({ common: { save: "Save" } });
+    expect(registry.i18n.zh).toEqual({ common: { save: "儲存" } });
   });
   it("keeps core keys", () => {
     const o = mod("orders", {
