@@ -1138,7 +1138,7 @@ expected: exit 0
 **User Story**：As an admin of a specific role, I want routes, menu, actions and API to consistently reflect my grants, and to see a 403 inside the app shell without losing my URL, so that permission behavior is declared once per module.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: `support` session 無 `users:read` → 進 `/users/user-list` 時 URL 不變、shell（sidebar）仍渲染、內容區為 `shell.Forbidden`；sidebar 無 users 項
+- [ ] AC-1 `[cmd]`: `support` session 無 `users:read` → 進 `/users` 時 URL 不變、shell（sidebar）仍渲染、內容區為 `shell.Forbidden`；sidebar 無 users 項
   - 驗證：`pnpm exec vitest run src/app/router src/shared/module`
 - [ ] AC-2 `[cmd]`: MSW guard 依 R22（a3）判定，`setupServer` 實發 request 驗證下列情況：
   1. **非 API 放行**：`apiBaseUrl` 外的 request（例 `http://cdn.test/x`）guard 回 `undefined`（不攔截）
