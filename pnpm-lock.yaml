@@ -168,9 +168,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.72.1
         version: 8.72.1(eslint@8.57.1)(typescript@5.9.3)
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20250618.1
-        version: 7.0.0-dev.20250618.1
       '@vitejs/plugin-react':
         specifier: ^4.7.0
         version: 4.7.0(vite@6.4.6(@types/node@22.20.5)(jiti@1.21.7)(tsx@4.20.3)(yaml@2.9.1))
@@ -1795,53 +1792,6 @@ packages:
   '@typescript-eslint/visitor-keys@8.72.1':
     resolution: {integrity: sha512-SB8xqipSzZHUePCCLNeYxqnxq83X61/qzNhjQGbTfjxGZIeOEP7tBgWYX05Tcd6CgE02WdTJnh5b8kMZJ/+bnQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20250618.1':
-    resolution: {integrity: sha512-h4fokGV0LQ+mCfc/Cpubn1m4OURNozMPQhzyI4pHOlGZdyZyYRj2e2LLzr3OwqeRnn71al2fcBfay63d/P3FSQ==}
-    engines: {node: '>=20.6.0'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@typescript/native-preview-darwin-x64@7.0.0-dev.20250618.1':
-    resolution: {integrity: sha512-ERqUV+rbk2/rAhmHq9ivTVtbMvUpkAsgdveFqEGzZsTtrHWvL2ELQOamqqKyK3hQfjzt9RHwdC0VrLE2U3SGbg==}
-    engines: {node: '>=20.6.0'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@typescript/native-preview-linux-arm64@7.0.0-dev.20250618.1':
-    resolution: {integrity: sha512-1RyP3DqqDMIYcce9FN7CF3feuRGcf1MLkxs1iMqlReuF7lVrUXdAc+OzPoNIUdiIXPa0Ri6s8H495aDJ5YnGCA==}
-    engines: {node: '>=20.6.0'}
-    cpu: [arm64]
-    os: [linux]
-
-  '@typescript/native-preview-linux-arm@7.0.0-dev.20250618.1':
-    resolution: {integrity: sha512-X9idSQ9FLlBlHbeqh0Yzxr/ReeaOT42vqD9wjOLsuJkOEyc/b19D8zGVDoxBRNnxAGqSWRmbCFXRaqcJF59Kiw==}
-    engines: {node: '>=20.6.0'}
-    cpu: [arm]
-    os: [linux]
-
-  '@typescript/native-preview-linux-x64@7.0.0-dev.20250618.1':
-    resolution: {integrity: sha512-7YHLpNI6i0TT4SDkeHuXuY533Kgu38P+GVJBuXgS5FkRI8PLmxhBMHaQwyCcHqT13P4o5VPwphBtbS/JsEBBkw==}
-    engines: {node: '>=20.6.0'}
-    cpu: [x64]
-    os: [linux]
-
-  '@typescript/native-preview-win32-arm64@7.0.0-dev.20250618.1':
-    resolution: {integrity: sha512-YTuCMALzxu1aGYLWFHhQG8rUoEbbE6O5zawETfcNC0zwr430la/apSG1nla7x+nG2DBb9bJMuQWYErjTCGyM2g==}
-    engines: {node: '>=20.6.0'}
-    cpu: [arm64]
-    os: [win32]
-
-  '@typescript/native-preview-win32-x64@7.0.0-dev.20250618.1':
-    resolution: {integrity: sha512-DetIr5Cc16W+4vhjfGW8LQHAauvmUJh0F8uf5eWpCPSH9rbbytWSqcQXzMxvfnVT3uek78Hi7oHOXK6A5AoiDQ==}
-    engines: {node: '>=20.6.0'}
-    cpu: [x64]
-    os: [win32]
-
-  '@typescript/native-preview@7.0.0-dev.20250618.1':
-    resolution: {integrity: sha512-FkisKblT8PEyq08bjVXND137ojhr+1CfRhSIwvzilMcnEwav2wzxEGZndLNSGzwUlqkS+xQCRx1ch8clpsLq9Q==}
-    engines: {node: '>=20.6.0'}
-    hasBin: true
 
   '@ungap/structured-clone@1.4.0':
     resolution: {integrity: sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ==}
@@ -6014,37 +5964,6 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.72.1
       eslint-visitor-keys: 5.0.1
-
-  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20250618.1':
-    optional: true
-
-  '@typescript/native-preview-darwin-x64@7.0.0-dev.20250618.1':
-    optional: true
-
-  '@typescript/native-preview-linux-arm64@7.0.0-dev.20250618.1':
-    optional: true
-
-  '@typescript/native-preview-linux-arm@7.0.0-dev.20250618.1':
-    optional: true
-
-  '@typescript/native-preview-linux-x64@7.0.0-dev.20250618.1':
-    optional: true
-
-  '@typescript/native-preview-win32-arm64@7.0.0-dev.20250618.1':
-    optional: true
-
-  '@typescript/native-preview-win32-x64@7.0.0-dev.20250618.1':
-    optional: true
-
-  '@typescript/native-preview@7.0.0-dev.20250618.1':
-    optionalDependencies:
-      '@typescript/native-preview-darwin-arm64': 7.0.0-dev.20250618.1
-      '@typescript/native-preview-darwin-x64': 7.0.0-dev.20250618.1
-      '@typescript/native-preview-linux-arm': 7.0.0-dev.20250618.1
-      '@typescript/native-preview-linux-arm64': 7.0.0-dev.20250618.1
-      '@typescript/native-preview-linux-x64': 7.0.0-dev.20250618.1
-      '@typescript/native-preview-win32-arm64': 7.0.0-dev.20250618.1
-      '@typescript/native-preview-win32-x64': 7.0.0-dev.20250618.1
 
   '@ungap/structured-clone@1.4.0': {}
 

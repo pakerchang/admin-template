@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { apiFetch, setAuth } from "@/services/api-client";
 
 import type { TAuthSession } from "@/services/api-client";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 
 export const AuthLayout = () => {
   const { t } = useTranslation();
@@ -31,7 +31,7 @@ export const AuthLayout = () => {
     },
   });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     login.mutate({
