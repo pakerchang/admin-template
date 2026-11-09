@@ -1107,18 +1107,18 @@ expected: exit 0
 **User Story**：As a maintainer, I want every page group registered via `createApp().use(module)` and rendered inside a replaceable default shell, so that adding/removing a feature is one `.use()` line and pages can be overridden by id.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: `router/routes.tsx`、`constants/sidebar.tsx` 不存在；`app/modules.ts` 恰有 10 個 `.use(`
+- [x] AC-1 `[cmd]`: `router/routes.tsx`、`constants/sidebar.tsx` 不存在；`app/modules.ts` 恰有 10 個 `.use(`
   - 驗證：`test ! -e src/router/routes.tsx && test ! -e src/constants/sidebar.tsx && test "$(grep -o '\.use(' src/app/modules.ts | wc -l | tr -d ' ')" -eq 10`（`grep -o … | wc -l` 逐 occurrence 計數；`.use()` 鏈式排版一行多個，只計行數會少算）
-- [ ] AC-2 `[cmd]`: registry 產出的路徑集合與重構前一致（快照列出全部 fullPath），另多一條 `/` index redirect
+- [x] AC-2 `[cmd]`: registry 產出的路徑集合與重構前一致（快照列出全部 fullPath），另多一條 `/` index redirect
   - 驗證：`pnpm exec vitest run src/app`
-- [ ] AC-3 `[cmd]`: `/` 依 grants 導向第一個可見 nav；無可見 nav 時內容區渲染 `shell.Forbidden`
+- [x] AC-3 `[cmd]`: `/` 依 grants 導向第一個可見 nav；無可見 nav 時內容區渲染 `shell.Forbidden`
   - 驗證：`pnpm exec vitest run src/app/router`
-- [ ] AC-4 `[cmd]`: 以 fixture `.override("users.list", Stub)` 建 app，`/users` 渲染 Stub 而非預設頁（`users.list` 為該 route 的 routeId，R19；格式依 R23）
+- [x] AC-4 `[cmd]`: 以 fixture `.override("users.list", Stub)` 建 app，`/users` 渲染 Stub 而非預設頁（`users.list` 為該 route 的 routeId，R19；格式依 R23）
   - 驗證：`pnpm exec vitest run src/app`
 - 註：M3 尚無正式 operation 表。依 R22，guard 在 `apiBaseUrl` 內對不到 route 一律 404，傳空表會讓所有 API 變 404，因此 M3 由 `app/mock/legacy-adapter.ts` 從現行 `handlers` 表導出 `legacyOperations()`：每個 `METHOD path` 一條 route、permission 一律 `"public"`（**R28 已裁**：M3 過渡期全 public，明確 public，非 fall-through），`build()` 1.5 通過；guard 行為 = 表內放行、表外 404，與現行 `mockFetch` 的 404 fallback（`handlers.ts:209-214`）一致。mock 模式的 `VITE_API_BASE_URL` 同時改為專用絕對 origin（R24，§6.5），API 路徑不變。M4 換成手寫 `app/operations.gen.ts`，自 M4 起 fail-closed（R28）。
-- [ ] AC-6 `[cmd]`: M3 的 guard 掛載行為不變：`apiBaseUrl` 外的 request 放行、表內 operation 放行、表外 path 回 404
+- [x] AC-6 `[cmd]`: M3 的 guard 掛載行為不變：`apiBaseUrl` 外的 request 放行、表內 operation 放行、表外 path 回 404
   - 驗證：`pnpm exec vitest run src/app/mock`
-- [ ] AC-7 `[cmd]`（R24 負例）: mock 模式下 `apiBaseUrl` 未設定、為相對路徑、或與 app 同源（`new URL(apiBaseUrl).origin === location.origin`，含同源根目錄 `location.origin + "/"` 與同源非根路徑 `location.origin + "/api"` 兩個負例）時 `startMockWorker` throw；設為專用絕對 origin 時正常啟動，且 legacy 表的 route 涵蓋 `/api`、`/user`、`/users`、`/admin` 四個前綴（路徑未改）
+- [x] AC-7 `[cmd]`（R24 負例）: mock 模式下 `apiBaseUrl` 未設定、為相對路徑、或與 app 同源（`new URL(apiBaseUrl).origin === location.origin`，含同源根目錄 `location.origin + "/"` 與同源非根路徑 `location.origin + "/api"` 兩個負例）時 `startMockWorker` throw；設為專用絕對 origin 時正常啟動，且 legacy 表的 route 涵蓋 `/api`、`/user`、`/users`、`/admin` 四個前綴（路徑未改）
   - 驗證：`pnpm exec vitest run src/app/mock`
 - [ ] AC-5 `[manual]`: `pnpm dev` 登入後 sidebar 項目、順序、各頁 CRUD 與重構前相同；語系切換正常
 

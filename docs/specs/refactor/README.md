@@ -20,7 +20,7 @@
 | M1 Kernel 契約與權限引擎 | 完成 | PR #8 |
 | M2 MSW 取代 mockFetch | 完成 | PR #9 |
 | router pathless hotfix | 完成 | PR #10；spec 在 master `docs/specs/router-pathless-hotfix.spec.md` |
-| M3 Module 接線 + default shell | codex review PASS，待併入本地整合分支 `refactor/integration` | `feat/m3-module-wiring` @ `03acca9` |
+| M3 Module 接線 + default shell | codex review PASS，待併入本地整合分支 `refactor/integration`（AC-1～4、6、7 已勾；AC-5 manual 待 owner） | `feat/m3-module-wiring` @ `03acca9`（Done Command exit 0、219 tests）；codex 259e4c3 FAIL → d685823 PASS-with-fixes → 03acca9 PASS（arch chain `reviews/arch-m3-fix2-codex-verdict.md`） |
 | M4 權限四強制點 + 內容區 403 | 未開始 | — |
 | M5 Kernel / shared 搬遷 + 邊界 lint | 未開始 | — |
 | M6 Module 內嵌搬遷 | 未開始 | — |
