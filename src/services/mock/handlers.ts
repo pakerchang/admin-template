@@ -1,7 +1,12 @@
 import * as seed from "@/services/mock/data";
 
 type TRecord = Record<string, unknown>;
-type THandlerContext = { query: Record<string, string>; body: TRecord };
+type THandlerContext = {
+  query: Record<string, string>;
+  body: TRecord;
+  /** request 的 Authorization header（legacy-adapter 帶入） */
+  authorization?: string | null;
+};
 type THandlerResult = { status?: number; body?: unknown };
 export type THandler = (ctx: THandlerContext) => THandlerResult;
 
@@ -120,12 +125,28 @@ const users = resource("users", "user_id");
 const currentUser = () =>
   db.users.find((user) => user.email === seed.DEMO_ACCOUNT.email)!;
 
-const tokenOf = (userId: unknown) => `mock-token-${userId}`;
+// ponytail: 記憶體 session 表（token → user_id），重新整理頁面即失效、需重新登入；沒有 logout operation 所以不移除
+const sessions = new Map<string, unknown>();
 
-/** mock session：token → 目前（記憶體 db）角色；查無 → undefined。角色被改後下一個 request 即生效 */
-export const mockRoleOfToken = (token: string) =>
-  db.users.find((user) => tokenOf(user.user_id) === token)?.role as
-    string | undefined;
+/** login 簽發不可預測的 token（128 bit；getRandomValues 在非 secure context 也可用） */
+const issueToken = (userId: unknown) => {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  const token = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join(
+    ""
+  );
+  sessions.set(token, userId);
+  return token;
+};
+
+/**
+ * 唯一的 token → 使用者入口：只認 `Bearer <已簽發 token>`，其餘一律 undefined（R25）。
+ * 回傳記憶體 db 的那筆 user，角色被改後下一個 request 即生效。
+ */
+export const mockUserOfAuthorization = (authorization?: string | null) => {
+  const token = /^Bearer (\S+)$/.exec(authorization ?? "")?.[1];
+  if (!token || !sessions.has(token)) return undefined;
+  return db.users.find((user) => user.user_id === sessions.get(token));
+};
 
 export const handlers: Record<string, THandler> = {
   "POST /api/auth/login": ({ body }) => {
@@ -135,7 +156,7 @@ export const handlers: Record<string, THandler> = {
     }
     return {
       body: {
-        token: tokenOf(user.user_id),
+        token: issueToken(user.user_id),
         user: {
           user_id: user.user_id,
           email: user.email,

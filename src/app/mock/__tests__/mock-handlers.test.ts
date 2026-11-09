@@ -91,6 +91,54 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
       expect(res.body.error).toBe("No mock handler for GET /admin/nope");
     });
 
+    it("superadmin: every non-GET operation passes the guard and reaches its handler (AC-6 API side)", async () => {
+      await signIn(DEMO_ACCOUNT.email);
+      const writes = operations.routes.filter((r) => r.method !== "GET");
+      expect(writes.length).toBeGreaterThan(0);
+      for (const { method, path } of writes) {
+        const res = await apiFetch<{ error?: string } | null>(path, {
+          method: method as "POST" | "PUT" | "DELETE",
+          body: {},
+        });
+        // 403 = guard 擋；guard 的 404 body 是 "No mock handler…"；其餘都是 handler 自己的回應
+        expect([method, path, res.status]).not.toEqual([method, path, 403]);
+        expect(res.body?.error ?? "").not.toMatch(/^No mock handler/);
+      }
+    });
+
+    describe("session token cannot be forged (C1)", () => {
+      /** 直接把 Authorization header 設成指定值，不經 setAuth 的 Bearer 包裝 */
+      const fetchWith = (authorization: string) =>
+        fetch(new URL("/admin/order", apiBaseUrl), {
+          headers: { Authorization: authorization },
+        });
+
+      it("a guessed legacy-format token without login → 403", async () => {
+        for (const id of users.map((u) => u.user_id)) {
+          expect((await fetchWith(`Bearer mock-token-${id}`)).status).toBe(403);
+        }
+      });
+
+      it("an issued token works only verbatim behind `Bearer `", async () => {
+        const { token } = (await login(emailOf("support"))).body;
+        expect((await fetchWith(`Bearer ${token}`)).status).toBe(200);
+
+        const last = token.at(-1) === "0" ? "1" : "0";
+        expect(
+          (await fetchWith(`Bearer ${token.slice(0, -1)}${last}`)).status
+        ).toBe(403);
+        expect((await fetchWith(token)).status).toBe(403);
+        expect((await fetchWith(`bearer ${token}`)).status).toBe(403);
+      });
+
+      it("tokens are not derived from the user id", async () => {
+        const a = (await login(emailOf("support"))).body.token;
+        const b = (await login(emailOf("support"))).body.token;
+        expect(a).not.toBe(b);
+        expect(a).not.toContain("user-");
+      });
+    });
+
     it("an unknown token gets no grants", async () => {
       setAuth({
         token: "forged",

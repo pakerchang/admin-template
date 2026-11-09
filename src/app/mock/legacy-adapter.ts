@@ -17,6 +17,7 @@ const resolve =
     const { status = 200, body } = fn({
       query: Object.fromEntries(url.searchParams),
       body: text ? JSON.parse(text) : {},
+      authorization: request.headers.get("Authorization"),
     });
     return HttpResponse.json(body ?? null, { status });
   };

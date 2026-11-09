@@ -2,7 +2,7 @@ import { toHttpHandlers } from "@/app/mock/legacy-adapter";
 import { coreGrants, mergeGrants } from "@/app/mock/permission-matrix";
 import { operations } from "@/app/operations.gen";
 import { apiBaseUrl } from "@/services/api-client";
-import { handlers, mockRoleOfToken } from "@/services/mock/handlers";
+import { handlers, mockUserOfAuthorization } from "@/services/mock/handlers";
 import { createPermissionGuard } from "@/shared/api/mock/permission-guard";
 
 import type { THandler } from "@/services/mock/handlers";
@@ -24,12 +24,12 @@ const withGrants =
     return { ...res, body: { ...body, grants: matrix[body.user.role] ?? [] } };
   };
 
-/** Authorization: Bearer <token> → mock session 角色 → 矩陣展開；無 token / 查無 session → []（R25） */
+/** Authorization: Bearer <已簽發 token> → mock session 使用者角色 → 矩陣展開；無 token / 查無 session → []（R25） */
 const grantsOf =
   (matrix: TGrantMatrix) =>
   (request: Request): readonly TGrant[] => {
-    const token = request.headers.get("Authorization")?.replace(/^Bearer /, "");
-    const role = token ? mockRoleOfToken(token) : undefined;
+    const role = mockUserOfAuthorization(request.headers.get("Authorization"))
+      ?.role as string | undefined;
     return (role && matrix[role]) || [];
   };
 
