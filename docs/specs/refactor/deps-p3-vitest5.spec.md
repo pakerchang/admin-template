@@ -10,14 +10,14 @@
 
 ### Acceptance Criteria
 
-- [ ] AC1 `vitest` 與 `@vitest/coverage-v8` 升到同一個最新穩定 5.x 版本；coverage-v8 維持 exact pin
-- [ ] AC2 `jsdom` 升到最新穩定版；`@testing-library/jest-dom` 升到 7.x；補上必要 peer `@testing-library/dom`（10.x）
-- [ ] AC3 移除 `@types/jest`；`src/` 不再依賴 `jest.Matchers` 型別
-- [ ] AC4 jest-dom matcher 型別改由 `@testing-library/jest-dom/vitest` 提供；`vite.config.ts` 的型別參照改為 `/// <reference types="vitest/config" />`
-- [ ] AC5 升級前後 `pnpm exec vitest run` 的 files / tests 數相同（baseline 16 files / 179 tests），全部通過，無 skip、無刪測試
-- [ ] AC6 `vitest run --coverage` exit 0 並產出 coverage 報告
-- [ ] AC7 build、eslint（`--max-warnings 0`）、prettier check 全綠
-- [ ] AC8 單一 commit `chore(deps): upgrade to Vitest 5 and jest-dom 7`，無 AI 署名，不 push、不開 PR
+- [x] AC1 `vitest` 與 `@vitest/coverage-v8` 升到同一個最新穩定 5.x 版本；coverage-v8 維持 exact pin
+- [x] AC2 `jsdom` 升到最新穩定版；`@testing-library/jest-dom` 升到 7.x；補上必要 peer `@testing-library/dom`（10.x）
+- [x] AC3 移除 `@types/jest`；`src/` 不再依賴 `jest.Matchers` 型別
+- [x] AC4 jest-dom matcher 型別改由 `@testing-library/jest-dom/vitest` 提供；`vite.config.ts` 的型別參照改為 `/// <reference types="vitest/config" />`
+- [x] AC5 升級前後 `pnpm exec vitest run` 的 files / tests 數相同（baseline 16 files / 179 tests），全部通過，無 skip、無刪測試
+- [x] AC6 `vitest run --coverage` exit 0 並產出 coverage 報告
+- [x] AC7 build、eslint（`--max-warnings 0`）、prettier check 全綠
+- [x] AC8 單一 commit `chore(deps): upgrade to Vitest 5 and jest-dom 7`，無 AI 署名，不 push、不開 PR
 
 ### Touches
 
