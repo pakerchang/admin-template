@@ -6,11 +6,13 @@ import ProductEditFormPage from "@/pages/product/ProductEditForm";
 import ProductListPage from "@/pages/product/ProductList";
 import { defineModule } from "@/shared/module";
 
+import { productMockHandlers } from "./mocks/handlers";
 import { productRoutes } from "./model/routes";
 
 export default defineModule({
   id: "product",
   kind: "domain",
+  mockHandlers: productMockHandlers,
   // 表單用 suppliers / tags 的 hooks（spec §5.2）
   requires: ["suppliers", "tags"],
   routes: (ctx) =>

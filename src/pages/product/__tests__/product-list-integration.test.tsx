@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { products } from "@/services/mock/data";
+import { products } from "@/modules/product/mocks/seed";
 
 import ProductList from "../ProductList";
 

@@ -4,11 +4,13 @@ import ArticleFormPage from "@/pages/articles/ArticleForm";
 import ArticleListPage from "@/pages/articles/ArticleList";
 import { defineModule } from "@/shared/module";
 
+import { articlesMockHandlers } from "./mocks/handlers";
 import { articlesRoutes } from "./model/routes";
 
 export default defineModule({
   id: "articles",
   kind: "domain",
+  mockHandlers: articlesMockHandlers,
   routes: (ctx) =>
     articlesRoutes(ctx, { list: ArticleListPage, form: ArticleFormPage }),
   nav: [

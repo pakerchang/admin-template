@@ -1,9 +1,17 @@
 import { delay, http, HttpResponse } from "msw";
 
-import { DELAY_MS } from "@/services/mock/handlers";
-
-import type { THandler } from "@/services/mock/handlers";
 import type { HttpHandler } from "msw";
+
+type THandlerContext = {
+  query: Record<string, string>;
+  body: Record<string, unknown>;
+  /** request 的 Authorization header */
+  authorization?: string | null;
+};
+type THandlerResult = { status?: number; body?: unknown };
+export type THandler = (ctx: THandlerContext) => THandlerResult;
+
+export const DELAY_MS = import.meta.env.MODE === "test" ? 0 : 300;
 
 type TMethod = "get" | "post" | "put" | "delete";
 
@@ -22,6 +30,10 @@ const resolve =
     return HttpResponse.json(body ?? null, { status });
   };
 
+/**
+ * 過渡 adapter（spec §4.5，M2 起；M7b 換 orval 產物後刪除）：`METHOD path` 表 → MSW `HttpHandler[]`。
+ * M6 起住 shared：各 module 的 `mocks/handlers.ts` 與 kernel 的 core handler 都用它（module 不可 import app）。
+ */
 export const toHttpHandlers = (
   table: Record<string, THandler>,
   { baseUrl }: { baseUrl: string }

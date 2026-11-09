@@ -4,7 +4,6 @@ import { createCore } from "@/app/core";
 import { createApp } from "@/app/kernel/create-app";
 import { installModules } from "@/app/modules";
 import { operations } from "@/app/operations.gen";
-import { handlers } from "@/services/mock/handlers";
 import { apiBaseUrl } from "@/shared/api/fetcher";
 import { defaultShell } from "@/shells/default";
 
@@ -22,9 +21,15 @@ const appWith = (ops: TOperationTable) =>
 
 describe("hand-written app/operations.gen.ts (AC-3, R13 / R21 fail-closed)", () => {
   it("covers every METHOD path of the mock handler table, nothing more", () => {
+    // M6 起 handler 表拆在 kernel core handler 與各 module 的 mocks/handlers.ts；guard（http.all "*"）除外
+    const [, ...handlers] = appWith(operations).build().registry.mockHandlers;
     expect(
       operations.routes.map((r) => `${r.method} ${r.path}`).sort()
-    ).toEqual(Object.keys(handlers).sort());
+    ).toEqual(
+      handlers
+        .map((h) => `${h.info.method} ${new URL(String(h.info.path)).pathname}`)
+        .sort()
+    );
   });
 
   it("build() accepts the real table with the 10 installed modules", () => {

@@ -3,11 +3,13 @@ import { Tags } from "lucide-react";
 import TagListPage from "@/pages/tags/TagList";
 import { defineModule } from "@/shared/module";
 
+import { tagsMockHandlers } from "./mocks/handlers";
 import { tagsRoutes } from "./model/routes";
 
 export default defineModule({
   id: "tags",
   kind: "domain",
+  mockHandlers: tagsMockHandlers,
   routes: (ctx) => tagsRoutes(ctx, { list: TagListPage }),
   nav: [
     {

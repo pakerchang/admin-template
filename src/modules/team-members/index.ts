@@ -3,11 +3,13 @@ import { UserCog } from "lucide-react";
 import TeamMemberListPage from "@/pages/team-members/TeamMemberList";
 import { defineModule } from "@/shared/module";
 
+import { teamMembersMockHandlers } from "./mocks/handlers";
 import { teamMembersRoutes } from "./model/routes";
 
 export default defineModule({
   id: "team-members",
   kind: "generic",
+  mockHandlers: teamMembersMockHandlers,
   routes: (ctx) => teamMembersRoutes(ctx, { list: TeamMemberListPage }),
   nav: [
     {

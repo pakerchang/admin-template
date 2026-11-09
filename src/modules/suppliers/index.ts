@@ -3,11 +3,13 @@ import { Building2 } from "lucide-react";
 import SupplierListPage from "@/pages/suppliers/SupplierList";
 import { defineModule } from "@/shared/module";
 
+import { suppliersMockHandlers } from "./mocks/handlers";
 import { suppliersRoutes } from "./model/routes";
 
 export default defineModule({
   id: "suppliers",
   kind: "domain",
+  mockHandlers: suppliersMockHandlers,
   routes: (ctx) => suppliersRoutes(ctx, { list: SupplierListPage }),
   nav: [
     {

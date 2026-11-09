@@ -246,6 +246,8 @@ export default tseslint.config(
   },
   {
     files: ["src/{app,shared,shells,modules}/**/*.{ts,tsx}"],
+    // 測試是白箱（可讀 module 內部的 seed 等），與 boundaries/ignore 一致
+    ignores: ["**/__tests__/**"],
     rules: {
       "no-restricted-imports": [
         "error",

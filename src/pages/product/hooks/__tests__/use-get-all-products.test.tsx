@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { products } from "@/services/mock/data";
+import { products } from "@/modules/product/mocks/seed";
 
 import { useGetAllProducts } from "../use-product";
 

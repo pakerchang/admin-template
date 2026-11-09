@@ -1,7 +1,9 @@
 import { http, HttpResponse } from "msw";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { DEMO_ACCOUNT, products } from "@/services/mock/data";
+import { makeApp } from "@/app/__tests__/fixture";
+import { DEMO_ACCOUNT } from "@/modules/auth/mocks/seed";
+import { products } from "@/modules/product/mocks/seed";
 import { apiBaseUrl, apiFetch } from "@/shared/api/fetcher";
 import { clearAuth, getAuth, setAuth } from "@/shared/api/session";
 import { server } from "@/test/setup";
@@ -23,6 +25,8 @@ const signInAsSuperadmin = async () =>
 
 describe("apiFetch + MSW setupServer", () => {
   beforeEach(() => {
+    // M6 起 module 的 mock handler 由各 module 提供（setup 的預設 server 只有 kernel 的 guard + core handler）
+    server.resetHandlers(...makeApp().build().registry.mockHandlers);
     clearAuth();
   });
 

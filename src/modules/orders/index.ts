@@ -4,11 +4,13 @@ import OrderDetailsPage from "@/pages/orders/order-details";
 import OrderListPage from "@/pages/orders/OrderList";
 import { defineModule } from "@/shared/module";
 
+import { ordersMockHandlers } from "./mocks/handlers";
 import { ordersRoutes } from "./model/routes";
 
 export default defineModule({
   id: "orders",
   kind: "domain",
+  mockHandlers: ordersMockHandlers,
   routes: (ctx) =>
     ordersRoutes(ctx, { list: OrderListPage, details: OrderDetailsPage }),
   nav: [

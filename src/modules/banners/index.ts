@@ -4,11 +4,13 @@ import BannerFormPage from "@/pages/banners/BannerForm";
 import BannerListPage from "@/pages/banners/BannerList";
 import { defineModule } from "@/shared/module";
 
+import { bannersMockHandlers } from "./mocks/handlers";
 import { bannersRoutes } from "./model/routes";
 
 export default defineModule({
   id: "banners",
   kind: "domain",
+  mockHandlers: bannersMockHandlers,
   routes: (ctx) =>
     bannersRoutes(ctx, { list: BannerListPage, form: BannerFormPage }),
   nav: [

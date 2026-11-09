@@ -1,9 +1,11 @@
+import { getResponse } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { makeApp } from "@/app/__tests__/fixture";
 import { mockHandlers } from "@/app/mock";
 import { operations } from "@/app/operations.gen";
-import { DEMO_ACCOUNT, users } from "@/services/mock/data";
+import { DEMO_ACCOUNT } from "@/modules/auth/mocks/seed";
+import { users } from "@/modules/users/mocks/seed";
 import { apiBaseUrl, apiFetch } from "@/shared/api/fetcher";
 import { clearAuth, setAuth } from "@/shared/api/session";
 import { server } from "@/test/setup";
@@ -266,18 +268,20 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
       it("without storage (node), issued tokens live in memory for this runtime", async () => {
         vi.stubGlobal("localStorage", undefined);
         vi.resetModules();
-        const fresh = await import("@/services/mock/handlers");
-        const res = fresh.handlers["POST /api/auth/login"]({
-          query: {},
-          body: { email: DEMO_ACCOUNT.email, password: DEMO_ACCOUNT.password },
-        });
-        const { token } = res.body as { token: string };
-        expect(fresh.mockUserOfAuthorization(`Bearer ${token}`)).toMatchObject({
-          role: "superadmin",
-        });
-        expect(fresh.mockUserOfAuthorization(`Bearer ${"0".repeat(32)}`)).toBe(
-          undefined
+        // auth 的 login handler 與 session store 同一份新載入的模組（users module 隨 auth 載入並註冊角色查詢）
+        const { authMockHandlers } =
+          await import("@/modules/auth/mocks/handlers");
+        const store = await import("@/shared/api/mock/session-store");
+        const res = await getResponse(
+          authMockHandlers,
+          new Request(new URL("/api/auth/login", apiBaseUrl), {
+            method: "POST",
+            body: JSON.stringify(DEMO_ACCOUNT),
+          })
         );
+        const { token } = (await res!.json()) as { token: string };
+        expect(store.mockRoleOf(`Bearer ${token}`)).toBe("superadmin");
+        expect(store.mockRoleOf(`Bearer ${"0".repeat(32)}`)).toBe(undefined);
         vi.unstubAllGlobals();
         expect(localStorage.getItem(KEY)).toBeNull();
       });

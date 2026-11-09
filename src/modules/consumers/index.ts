@@ -3,11 +3,13 @@ import { Users } from "lucide-react";
 import CustomerListPage from "@/pages/consumers/CustomerList";
 import { defineModule } from "@/shared/module";
 
+import { consumersMockHandlers } from "./mocks/handlers";
 import { consumersRoutes } from "./model/routes";
 
 export default defineModule({
   id: "consumers",
   kind: "domain",
+  mockHandlers: consumersMockHandlers,
   routes: (ctx) => consumersRoutes(ctx, { list: CustomerListPage }),
   nav: [
     {
