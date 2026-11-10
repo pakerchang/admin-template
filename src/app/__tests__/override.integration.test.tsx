@@ -86,13 +86,17 @@ const renderOrderList = (shell: TShell) => {
 const loadedOrderLists = async (client: QueryClient) => {
   let queries: ReturnType<ReturnType<QueryClient["getQueryCache"]>["findAll"]> =
     [];
-  await waitFor(() => {
-    queries = client
-      .getQueryCache()
-      .findAll({ queryKey: ["orderList"] })
-      .filter((q) => q.state.status === "success");
-    expect(queries).not.toHaveLength(0);
-  });
+  await waitFor(
+    () => {
+      queries = client
+        .getQueryCache()
+        .findAll({ queryKey: ["orderList"] })
+        .filter((q) => q.state.status === "success");
+      expect(queries).not.toHaveLength(0);
+      // 全量平行跑時首次渲染整個 shell 會超過預設 1s（實測 1.4s 失敗）
+    },
+    { timeout: 5000 }
+  );
   return queries.map((q) => ({ key: q.queryKey, data: q.state.data }));
 };
 
