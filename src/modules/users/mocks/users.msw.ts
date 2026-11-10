@@ -15,12 +15,15 @@ import type {
 
 import { UserRole } from "../api/model";
 import type {
+  GetUser200,
   ListUsers200,
   ProfileUpdate,
   UpdateMyProfile200,
+  UpdateUser200,
   UpdateUserRole200,
   UpdateUserRoleBody,
   User,
+  UserUpdate,
 } from "../api/model";
 
 export const getListUsersResponseMock = (): ListUsers200 => ({
@@ -48,6 +51,60 @@ export const getListUsersResponseMock = (): ListUsers200 => ({
         created_at: faker.string.alpha({ length: { min: 10, max: 20 } }),
         updated_at: faker.string.alpha({ length: { min: 10, max: 20 } }),
       })),
+      undefined,
+    ]),
+  },
+});
+
+export const getGetUserResponseMock = (): GetUser200 => ({
+  ...{
+    code: faker.number.int(),
+    msg: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    data: faker.helpers.arrayElement([{}, undefined]),
+    total: faker.helpers.arrayElement([faker.number.int(), undefined]),
+  },
+  ...{
+    data: faker.helpers.arrayElement([
+      {
+        user_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        first_name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        last_name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        phone_number: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        remark: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        role: faker.helpers.arrayElement(Object.values(UserRole)),
+        created_at: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        updated_at: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      },
+      undefined,
+    ]),
+  },
+});
+
+export const getUpdateUserResponseMock = (): UpdateUser200 => ({
+  ...{
+    code: faker.number.int(),
+    msg: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    data: faker.helpers.arrayElement([{}, undefined]),
+    total: faker.helpers.arrayElement([faker.number.int(), undefined]),
+  },
+  ...{
+    data: faker.helpers.arrayElement([
+      {
+        user_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        first_name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        last_name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        phone_number: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        remark: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        role: faker.helpers.arrayElement(Object.values(UserRole)),
+        created_at: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        updated_at: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      },
       undefined,
     ]),
   },
@@ -136,6 +193,56 @@ export const getListUsersMockHandler = (
   );
 };
 
+export const getGetUserMockHandler = (
+  overrideResponse?:
+    | GetUser200
+    | ((
+        info: Parameters<HttpResponseResolver<{ id: string }>>[0]
+      ) => Promise<GetUser200> | GetUser200),
+  options?: RequestHandlerOptions
+) => {
+  return http.get<{ id: string }>(
+    "*/users/:id",
+    async (info: Parameters<HttpResponseResolver<{ id: string }>>[0]) => {
+      return HttpResponse.json(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetUserResponseMock(),
+        { status: 200 }
+      );
+    },
+    options
+  );
+};
+
+export const getUpdateUserMockHandler = (
+  overrideResponse?:
+    | UpdateUser200
+    | ((
+        info: Parameters<HttpResponseResolver<{ id: string }, UserUpdate>>[0]
+      ) => Promise<UpdateUser200> | UpdateUser200),
+  options?: RequestHandlerOptions
+) => {
+  return http.put<{ id: string }, UserUpdate>(
+    "*/users/:id",
+    async (
+      info: Parameters<HttpResponseResolver<{ id: string }, UserUpdate>>[0]
+    ) => {
+      return HttpResponse.json(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getUpdateUserResponseMock(),
+        { status: 200 }
+      );
+    },
+    options
+  );
+};
+
 export const getGetMyProfileMockHandler = (
   overrideResponse?:
     | User
@@ -213,6 +320,8 @@ export const getUpdateUserRoleMockHandler = (
 };
 export const getAdminTemplateAPIMock = () => [
   getListUsersMockHandler(),
+  getGetUserMockHandler(),
+  getUpdateUserMockHandler(),
   getGetMyProfileMockHandler(),
   getUpdateMyProfileMockHandler(),
   getUpdateUserRoleMockHandler(),

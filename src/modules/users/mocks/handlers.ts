@@ -15,8 +15,10 @@ import {
 import { users } from "./seed";
 import {
   getGetMyProfileMockHandler,
+  getGetUserMockHandler,
   getListUsersMockHandler,
   getUpdateMyProfileMockHandler,
+  getUpdateUserMockHandler,
   getUpdateUserRoleMockHandler,
 } from "./users.msw";
 
@@ -49,6 +51,13 @@ const PROFILE_FIELDS = [
   "remark",
 ] as const;
 
+/** 管理者編輯他人可改的欄位（role 走 updateUserRole；user_id 取自 path） */
+const USER_FIELDS = ["email", ...PROFILE_FIELDS] as const;
+
+/** path id 不存在 → 404（K1：排在 orval handler 前） */
+const notFoundById = ({ params }: { params: Record<string, unknown> }) =>
+  byId(String(params.id)) ? undefined : errorResponse(404, "Not found");
+
 /** 本人不存在（無效 token）→ 403；guard 已擋未登入，這裡是防線第二層（K1：非 200 由手寫 handler 回） */
 const forbiddenUnlessMe = ({ request }: { request: Request }) =>
   me(request.headers.get("Authorization"))
@@ -63,7 +72,17 @@ export const usersMockHandlers: HttpHandler[] = [
       ? undefined
       : errorResponse(404, "Not found")
   ),
+  http.get("*/users/:id", notFoundById),
+  http.put("*/users/:id", notFoundById),
   getListUsersMockHandler(collection.list),
+  getGetUserMockHandler(({ params }) => ok(byId(String(params.id))!)),
+  getUpdateUserMockHandler(async ({ params, request }) => {
+    const user = byId(String(params.id))!;
+    const body = await bodyOf(request);
+    for (const key of USER_FIELDS) if (key in body) user[key] = body[key];
+    user.updated_at = now();
+    return ok(user);
+  }),
   getGetMyProfileMockHandler(
     ({ request }) => me(request.headers.get("Authorization")) as unknown as User
   ),

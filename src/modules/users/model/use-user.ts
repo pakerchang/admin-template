@@ -9,8 +9,10 @@ import { useToast } from "@/shared/lib/use-toast";
 
 import {
   getMyProfile,
+  getUser,
   listUsers,
   updateMyProfile,
+  updateUser,
   updateUserRole,
 } from "../api/users";
 
@@ -53,6 +55,63 @@ export const useGetUserList = (pagination: Partial<TPagination>) => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
     placeholderData: (prev) => prev,
+  });
+};
+
+export const useGetUser = (id: TUser["user_id"]) => {
+  const { t } = useTranslation();
+  const { toast } = useToast();
+
+  return useQuery({
+    queryKey: ["users", "detail", id],
+    queryFn: async () => {
+      const response = await getUser(id).catch(nullOnApiError);
+
+      if (!response) {
+        toast({
+          title: t("common.error"),
+          description: t("toast.user.get.error"),
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      return response.data ?? null;
+    },
+    enabled: Boolean(id),
+  });
+};
+
+/** 管理者編輯他人（role 另走 useUpdateUserRole）；成功回傳更新後的使用者，失敗回 undefined */
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({
+      user_id,
+      ...data
+    }: Omit<TUser, "created_at" | "updated_at" | "role">) => {
+      const response = await updateUser(user_id, data).catch(nullOnApiError);
+
+      if (!response) {
+        toast({
+          title: t("common.error"),
+          description: t("toast.user.update.error"),
+          variant: "destructive",
+        });
+        return undefined;
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast({
+        title: t("common.success"),
+        description: t("toast.user.update.success"),
+        variant: "success",
+      });
+      return response.data;
+    },
   });
 };
 
