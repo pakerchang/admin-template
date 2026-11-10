@@ -48,7 +48,7 @@ nav label：9 個（8 個 module 頂層 + `orders` 子項 `orderList`），全�
 
 對應關係：zh 缺的 74 個中，**70 個在 en 的舊路徑有對應譯文**（`pages.<x>.…` ↔ en `<x>.…` 63 個；`pages.users.userForm.*` ↔ `users/locales/en.json` 的 `userForm.*` 7 個——後者 UI 引用的是 `pages.users.userForm.*`，`users.userForm.*` 實際沒被用到）。**完全沒有 en 譯文的只有 4 個**：`pages.banner.confirmDelete`、`pages.banner.deleteConfirm`、`pages.banner.deleteDescription`、`validation.email.invalid`。
 
-與引用狀態交叉：**4 個無譯文的全部有引用**；**14 個無引用的全部落在「70 個有舊路徑譯文」之中**（`pages.banner.active` / `inactive`、`pages.banner.bannerCreate.active` / `inactive` / `status` / `statusPlaceholder`、`pages.supplier.deleteSupplier` / `description` / `title` / `messages.createFeaturePending` / `messages.editFeaturePending`、`pages.tag.deleteTag` / `description` / `title`），且屬於 §1.2 的 117 個無引用 key。因此依 OD-I18N-2 刪除無引用 key 後：**保留並補 en 的是 60 個（56 個沿用舊路徑譯文 + 4 個新撰）**，另 14 個連同 zh 值一併刪除、不搬、不補。
+與引用狀態交叉：**4 個無譯文的全部有引用**；**14 個無引用的全部落在「70 個有舊路徑譯文」之中**（`pages.banner.active` / `inactive`、`pages.banner.bannerCreate.active` / `inactive` / `status` / `statusPlaceholder`、`pages.supplier.deleteSupplier` / `description` / `title` / `messages.createFeaturePending` / `messages.editFeaturePending`、`pages.tag.deleteTag` / `description` / `title`），且屬於 §1.2 的 117 個無引用 key。因此依 OD-I18N-2 刪除無引用 key 後：**保留並補 en 的是 60 個（56 個沿用舊路徑譯文 + 4 個新撰）**，另 14 個連同 zh 值一併刪除、不搬、不補。60 個之中，`validation.email.invalid` 被 suppliers 與 team-members 共用，依 OD-I18N-3 **留 core、key 名不變**（en 新譯文補在 core `en.json`）；其餘 59 個（56 個沿用 + 3 個新撰 `pages.banner.confirmDelete` / `deleteConfirm` / `deleteDescription`）只被單一 module 引用，改名搬進 module 字典。
 
 ### 1.4 硬寫中文字串（非 i18n）
 
@@ -84,7 +84,7 @@ nav label：9 個（8 個 module 頂層 + `orders` 子項 `orderList`），全�
   2. key 對照表（OD-I18N-2 A、OD-I18N-3 A）：依 §1.2 判準與 OD-I18N-2 A 命名規則產生 old → new 對照，存成測試 fixture（AC-6）。
   3. codemod（OD-I18N-4 A）：依對照表改寫非測試與測試碼的字串字面值；動態組 key 的 7 處與 `gen-validate-message.ts` 的 `TFieldPath` 手改。
   4. 字典搬移：361 個 module key 從 core `en.json` / `zh.json` 移到 `modules/<id>/locales/{en,zh}.json`（裸字典），`defineModule({ i18n: { en, zh } })`；`users/locales/en.json` 既有 `userForm.*` 與 UI 改用的 key 對齊。**9 個 nav label** 改放各 module 字典的 `nav` 段（`dashboard.menu.<x>.title` → `<id>` 字典 `nav.title`；`dashboard.menu.orders.sub.orderList` → orders 字典 `nav.orderList`），不適用 OD-I18N-3 引用者判準（§2 例外）。只被 breadcrumb 引用、沒有對應 nav 項目的 `dashboard.menu.users.title`、`dashboard.menu.orders.sub.batchOrders`（及 `dashboard.menu.*` 其餘無引用 key）在步驟 8 移除引用後成為無引用 key，依 OD-I18N-2 刪除。
-  5. 補齊互缺（OD-I18N-6）：有引用的 56 個沿用 en 舊路徑譯文、放到新 key；4 個無譯文的補英文（皆有引用）；無引用的 117 個 key（含 63 個 en 孤兒，以及 §1.3 的 14 個 zh 有、en 缺且無引用的 key）依 OD-I18N-2 裁決從 core en / zh 字典刪除，不搬進 module 字典、不補譯文。
+  5. 補齊互缺（OD-I18N-6）：有引用的 56 個沿用 en 舊路徑譯文、放到新 key；4 個無譯文的補英文（皆有引用；其中 `validation.email.invalid` 留 core、補在 core `en.json`，另 3 個搬進 banners 字典）；無引用的 117 個 key（含 63 個 en 孤兒，以及 §1.3 的 14 個 zh 有、en 缺且無引用的 key）依 OD-I18N-2 裁決從 core en / zh 字典刪除，不搬進 module 字典、不補譯文。
   6. nav label 頂層控管（OD-I18N-7，補裁 2）：
      - 型別：`TNavItem.label`（與 `children[].label`）語意改為**局部 key**；`defineModule` 從 `i18n` 欄位推導「en 與 zh 字典 `nav` 段共同的 leaf key」並約束 `nav[].label` / `children[].label`（無 `i18n` 或字典無 `nav` 段時，宣告 nav 即 `tsc` 失敗）。不得用 cast；推導寫法參照 PoC（見「已知事項」與 Owner Decisions 補裁 2）。現行 `defineModule` 的 `const M` 字面型別回傳須保留（PoC 變體證明可同時成立）。registry 收的寬型別 `TModule` 維持 `label: string`。
      - 執行期（第二道防線）：`build()` 為每個 nav 項目（含 `children`）組 `${id}.nav.${label}`，在合併後的 `registry.i18n.zh` 與 `.en` 都必須解析為字串，否則 throw，錯誤訊息含 module id 與局部 key（同 `assertI18nBare` 形式）；label 含 `.`（例誤寫完整路徑）一併 throw。`registry.nav` 的 label 存組好的全域 key（kernel 內部型別），不再是 module 宣告的局部 key。
@@ -102,10 +102,11 @@ nav label：9 個（8 個 module 頂層 + `orders` 子項 `orderList`），全�
 - [ ] AC-4 [cmd] 型別：(1) module key 進 `TransKey`。型別測試 `src/modules/tags/__tests__/i18n-types.test.ts` 以 `expectTypeOf` / `// @ts-expect-error` 鎖住：`t("tags.<存在的 key>")` 合法；`t("tags.<typo>")`、搬遷前的舊 key（例 `pages.tag.addTag`）`tsc` 失敗；core key（例 `common.cancel`）合法。(2) nav 局部 key 推導：型別測試 `src/shared/module/__tests__/nav-label-types.test.ts`（以測試內 `as const` 字典呼叫 `defineModule`，不 import domain module，core-safe）鎖住：正例（頂層與 `children` 用存在的局部 key）通過；以 `// @ts-expect-error` 標記的反例全部 `tsc` 失敗——不存在的局部 key、`children` 不存在的 key、別的 module 字典才有的 key、完整路徑 key（`"tags.nav.title"`）、nav 段以外的 key、只存在於單一語系的 key、字典無 `nav` 段卻宣告 nav、無 `i18n` 卻宣告 nav；另斷言 `defineModule` 回傳仍保留 `id` 字面型別。實作與測試皆不得以 cast 讓正例通過。`pnpm exec tsc -b tsconfig.app.json` exit 0。
 - [ ] AC-5 [cmd] core-only：`pnpm verify:core-only` exit 0、輸出含 `core-only build: OK`（拔掉 7 個 domain module 後 `TransKey` 只含 core 與 generic module 的 key，build 照過）。
 - [ ] AC-6 [cmd] 行為不變（值）與刪除，兩份 fixture 由 codemod 產生、互斥：
-  - **保留**：`src/shared/i18n/__tests__/fixtures/scope-keymap.json` 只收**搬遷後仍保留**的 key（有引用且 key 名改變者，即搬進 module 字典的 key；留 core 且 key 名不變的 key **不列**，避免下方計數重複），每列 `{ old, new, zh, en }`，`zh` / `en` 為 `43c76a9` 時該 old key 的值；en 原本缺的列共 60 列——56 列填 en 舊路徑譯文、4 列填新譯文並標 `"enSource": "new"`。`src/shared/i18n/__tests__/scope-migration.test.ts` 以 `makeApp().build().registry.i18n` 斷言每列 `zh[new] === zh`、`en[new] === en`，並斷言 `"enSource": "new"` 恰為 §1.3 的 4 個 old key。
+  - **保留**：`src/shared/i18n/__tests__/fixtures/scope-keymap.json` 只收**搬遷後仍保留**的 key（有引用且 key 名改變者，即搬進 module 字典的 key；留 core 且 key 名不變的 key **不列**，避免下方計數重複），每列 `{ old, new, zh, en }`，`zh` / `en` 為 `43c76a9` 時該 old key 的值；en 原本缺的列共 59 列——56 列填 en 舊路徑譯文、3 列填新譯文並標 `"enSource": "new"`。`src/shared/i18n/__tests__/scope-migration.test.ts` 以 `makeApp().build().registry.i18n` 斷言每列 `zh[new] === zh`、`en[new] === en`，並斷言 `"enSource": "new"` 恰為 `pages.banner.confirmDelete` / `deleteConfirm` / `deleteDescription` 3 個 old key。
+  - **core 補譯（不改名）**：`src/shared/i18n/__tests__/fixtures/core-en-additions.json` 收留 core、key 名不變、只補 en 的 key，每列 `{ key, zh, en, "enSource": "new" }`——目前恰 1 列 `validation.email.invalid`（§1.3）。同一測試檔斷言每列 core `zh[key] === zh`（值未改）、core `en[key] === en`，且 `key` 不出現在另兩份 fixture；三份 fixture 合計 `"enSource": "new"` 恰為 §1.3 的 4 個 key。此列屬「留 core 且 key 名不變」，計入下方計數的第三項。
   - **刪除**：`src/shared/i18n/__tests__/fixtures/scope-deleted.json` 列出依 OD-I18N-2 刪除的 old key（117 個，含 63 個 en 孤兒、§1.3 的 14 個無引用 key）；同一測試檔斷言：每個 old key 在 `registry.i18n.zh` / `.en` 都解析不到，且沒有出現在 `scope-keymap.json` 的 `old` 欄（兩份 fixture 互斥）；並以計數鎖住覆蓋完整：`scope-keymap.json` 列數 + `scope-deleted.json` 列數 + 搬遷後 core 字典（en ∪ zh）中 key 名未變、未列入 keymap 的 leaf key 數 = **552**（§1.2 `43c76a9` core 字典 en ∪ zh 聯集）。實際刪除數若因判準細節與 117 不同，實作棒在交付報告列出差異清單與原因。
   - 此檔引用 domain key → 補進 `FULL_INSTALL_TESTS`（若未被 grep 排除）。`pnpm exec vitest run src/shared/i18n/__tests__/scope-migration.test.ts` exit 0。
-- [ ] AC-7 [cmd] 舊 key 歸零：`git grep -nE "[\"'\`](pages|dashboard\.menu|staff|consumer|login|toast\.(banner|article|order|product|user)|table\.headers\.(article|order|product|supplier|tag|user))\." -- 'src/**/*.ts' 'src/**/*.tsx'` 只剩對照表判定留 core 的 key（實作棒把預期殘留清單寫進交付報告；理想為 0 筆）；`git grep -n "dashboard\.menu" -- src` 0 筆（含 core 字典、`use-breadcrumb.ts`）；`git grep -n "as TransKey" -- src/shells` 0 筆。
+- [ ] AC-7 [cmd] 舊 key 歸零：`git grep -nE "[\"'\`](pages|dashboard\.menu|staff|consumer|login|toast\.(banner|article|order|product|user)|table\.headers\.(article|order|product|supplier|tag|user))\." -- 'src/**/*.ts' 'src/**/*.tsx' ':!src/modules/tags/__tests__/i18n-types.test.ts'` 只剩對照表判定留 core 的 key（實作棒把預期殘留清單寫進交付報告；理想為 0 筆）；`git grep -n "dashboard\.menu" -- src ':!src/shared/i18n/__tests__/fixtures/' ':!src/modules/tags/__tests__/i18n-types.test.ts'` 0 筆（含 core 字典、`use-breadcrumb.ts`）。兩處排除是本 spec 刻意保留舊 key 名的地方：AC-6 的歷史對照 fixture（`old` 欄必含 `dashboard.menu.*`）與 AC-4 型別測試的「舊 key 必須 `tsc` 失敗」反例；除這兩處外，任何生產碼或其他測試出現即 FAIL。前一條 `pages|…` 的 grep 同理排除該型別測試檔（fixture 是 `.json`，不在其 pathspec 內）；`git grep -n "as TransKey" -- src/shells` 0 筆。
 - [ ] AC-8 [cmd] 既有行為：`pnpm build && pnpm exec vitest run` exit 0；原以畫面文字（中文）斷言的測試不改斷言文字即通過（只允許改 key 字面值與測試的字典掛載方式）。
 - [ ] AC-9 [cmd] `pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"` 0 error（boundaries 規則不放寬）。
 - [ ] AC-10 [manual] 瀏覽器文字比對（zh / en 各一輪）。**步驟**：
@@ -123,7 +124,7 @@ nav label：9 個（8 個 module 頂層 + `orders` 子項 `orderList`），全�
 
 - `src/shared/i18n/locales/{en,zh}.json`（移出 module key、補齊、刪除無引用的 117 個 key）
 - `src/shared/i18n/types.ts`（`TranslationResources`、`TransKey`）；`src/shared/i18n/i18next.d.ts`（若 overload 需調整）
-- `src/shared/i18n/__tests__/`（`key-ownership.test.ts`、`scope-migration.test.ts`、`fixtures/scope-keymap.json`、`module-dictionaries.test.ts` 新增案例）
+- `src/shared/i18n/__tests__/`（`key-ownership.test.ts`、`scope-migration.test.ts`、`fixtures/{scope-keymap,scope-deleted,core-en-additions}.json`、`module-dictionaries.test.ts` 新增案例）
 - `src/modules/<id>/locales/{en,zh}.json` 與 augmentation 檔（10 個 module）；`src/modules/<id>/index.ts`（`i18n`、nav `label`）
 - `src/modules/<id>/**/*.{ts,tsx}` 與其 `__tests__/`（key 字面值、動態組 key 前綴）；`src/modules/tags/__tests__/i18n-types.test.ts`（新增）
 - `src/shared/lib/gen-validate-message.ts`（`TFieldPath`）
@@ -150,7 +151,7 @@ nav label：9 個（8 個 module 頂層 + `orders` 子項 `orderList`），全�
 ### Done Command
 
 ```bash
-pnpm build && pnpm exec vitest run && pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}" && pnpm exec vitest run src/shared/i18n/__tests__/ src/app/kernel/__tests__/build.test.ts src/app/__tests__/nav-labels.test.ts src/shared/module/__tests__/use-visible-nav.test.tsx src/shared/ui/navbar/__tests__/use-breadcrumb.test.tsx && ! git grep -n "dashboard\.menu" -- src && pnpm verify:core-only
+pnpm build && pnpm exec vitest run && pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}" && pnpm exec vitest run src/shared/i18n/__tests__/ src/app/kernel/__tests__/build.test.ts src/app/__tests__/nav-labels.test.ts src/shared/module/__tests__/use-visible-nav.test.tsx src/shared/ui/navbar/__tests__/use-breadcrumb.test.tsx && ! git grep -n "dashboard\.menu" -- src ':!src/shared/i18n/__tests__/fixtures/' ':!src/modules/tags/__tests__/i18n-types.test.ts' && pnpm verify:core-only
 ```
 
 expected: exit 0；輸出含 `core-only build: OK`
