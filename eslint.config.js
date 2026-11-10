@@ -1,4 +1,5 @@
 import pluginRouter from "@tanstack/eslint-plugin-router";
+import boundaries from "eslint-plugin-boundaries";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import importPlugin from "eslint-plugin-import";
 import prettierPlugin from "eslint-plugin-prettier";
@@ -7,6 +8,20 @@ import reactHooks from "eslint-plugin-react-hooks";
 import tailwind from "eslint-plugin-tailwindcss";
 import globals from "globals";
 import tseslint from "typescript-eslint";
+
+const MODULE_TYPES = [
+  "module",
+  "module-api",
+  "module-model",
+  "module-ui",
+  "module-mocks",
+];
+const MODULE_ENTRY = {
+  element: { type: "module", fileInternalPath: "index.ts" },
+};
+const SAME_MODULE = (type) => ({
+  element: { type, captured: { module: "{{ from.element.captured.module }}" } },
+});
 
 export default tseslint.config(
   {
@@ -83,7 +98,10 @@ export default tseslint.config(
       semi: ["error", "always"],
       // options live in .prettierrc (eslint-plugin-prettier 5 usePrettierrc)
       "prettier/prettier": "error",
-      "@typescript-eslint/no-unused-vars": ["warn", { varsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { varsIgnorePattern: "^_" },
+      ],
       "@typescript-eslint/no-empty-object-type": "warn",
       "tailwindcss/no-custom-classname": ["off"],
       "import/order": [
@@ -134,6 +152,141 @@ export default tseslint.config(
     files: ["vite.config.ts"],
     languageOptions: {
       parserOptions: { project: "./tsconfig.node.json" },
+    },
+  },
+  // 依賴方向（spec §3.1、§7.2）
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    plugins: { boundaries },
+    settings: {
+      "boundaries/elements": [
+        {
+          type: "module-api",
+          pattern: "src/modules/*/api",
+          capture: ["module"],
+        },
+        {
+          type: "module-model",
+          pattern: "src/modules/*/model",
+          capture: ["module"],
+        },
+        { type: "module-ui", pattern: "src/modules/*/ui", capture: ["module"] },
+        {
+          type: "module-mocks",
+          pattern: "src/modules/*/mocks",
+          capture: ["module"],
+        },
+        { type: "module", pattern: "src/modules/*", capture: ["module"] },
+        { type: "shell", pattern: "src/shells/*", capture: ["shell"] },
+        { type: "app", pattern: "src/app" },
+        { type: "shared", pattern: "src/shared" },
+      ],
+      "boundaries/ignore": ["src/test/**", "**/__tests__/**"],
+    },
+    rules: {
+      "boundaries/no-unknown-files": "error",
+      "boundaries/dependencies": [
+        "error",
+        {
+          default: "disallow",
+          policies: [
+            {
+              from: { element: { type: "app" } },
+              allow: {
+                to: [
+                  { element: { type: ["app", "shared", "shell"] } },
+                  MODULE_ENTRY,
+                ],
+              },
+            },
+            {
+              from: { element: { type: "shared" } },
+              allow: { to: { element: { type: "shared" } } },
+            },
+            {
+              from: { element: { type: "shell" } },
+              allow: { to: [{ element: { type: "shared" } }, MODULE_ENTRY] },
+            },
+            // default shell 屬 core：禁 import 任何 module（§4.4 D4 保證）
+            {
+              from: {
+                element: { type: "shell", captured: { shell: "default" } },
+              },
+              disallow: { to: { element: { type: MODULE_TYPES } } },
+            },
+            // module 根（index.ts）→ 本 module 各 segment（route composition 只在這裡）
+            {
+              from: { element: { type: "module" } },
+              allow: { to: MODULE_TYPES.map(SAME_MODULE) },
+            },
+            // module 內單向：ui → model → api；mocks → api（R18）
+            {
+              from: { element: { type: "module-ui" } },
+              allow: { to: SAME_MODULE("module-model") },
+            },
+            {
+              from: { element: { type: "module-model" } },
+              allow: { to: SAME_MODULE("module-api") },
+            },
+            // ponytail: M7 前沒有 api/ 產物，seed 的型別 / enum 取自本 module 的 model；M7 改指 api/model 後收回
+            {
+              from: { element: { type: "module-mocks" } },
+              allow: {
+                to: [SAME_MODULE("module-api"), SAME_MODULE("module-model")],
+              },
+            },
+            // 所有 module 內部 → shared、他 module 的 index.ts（requires 由 build() 檢查）
+            {
+              from: { element: { type: MODULE_TYPES } },
+              allow: { to: [{ element: { type: "shared" } }, MODULE_ENTRY] },
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/{app,shared,shells,modules}/**/*.{ts,tsx}"],
+    // 測試是白箱（可讀 module 內部的 seed 等），與 boundaries/ignore 一致
+    ignores: ["**/__tests__/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/modules/*/*"],
+              message:
+                "跨 module 只能 import `@/modules/<id>`（index.ts）；同 module 內用相對路徑",
+            },
+            {
+              group: ["**/use-user-permissions*"],
+              message: "改用宣告式 permission（spec §6.4）",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // orval 產物（gen:api 已跑 prettier）：只關 import 排序，其餘規則（含 boundaries）照常檢查
+  {
+    files: ["src/modules/*/api/**/*.ts", "src/modules/*/mocks/*.msw.ts"],
+    rules: { "import/order": "off" },
+  },
+  {
+    files: ["src/modules/**/*.{ts,tsx}", "src/shells/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "CallExpression[callee.name='createRoute']",
+          message: "module 只能用 ctx.layout / ctx.page 建 route（§4.1、§6.2）",
+        },
+        {
+          selector: "CallExpression[callee.name='useCan']",
+          message: "改用 DataTable rowActions / FormSubmit / <Guarded>（§6.4）",
+        },
+      ],
     },
   }
 );

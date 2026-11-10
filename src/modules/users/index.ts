@@ -1,0 +1,24 @@
+import { defineModule } from "@/shared/module";
+
+import en from "./locales/en.json";
+import { usersMockHandlers } from "./mocks/handlers";
+import { usersRoutes } from "./model/routes";
+import UserFormPage from "./ui/UserForm";
+import UserListPage from "./ui/UserList";
+
+// 現行 sidebar 沒有 users 項目，不宣告 nav（行為不變）
+export default defineModule({
+  id: "users",
+  kind: "generic",
+  mockHandlers: usersMockHandlers,
+  routes: (ctx) => usersRoutes(ctx, { list: UserListPage, edit: UserFormPage }),
+  // 裸字典（§5.4）；zh 原本就沒有這組 key
+  i18n: { en, zh: {} },
+  permissions: {
+    resources: { users: ["read", "update", "update-role"] },
+    mockGrants: { admin: ["users:read"] },
+  },
+});
+
+// auth module 的 mock login 查帳號用（auth requires users）
+export { findMockUserByEmail } from "./mocks/handlers";

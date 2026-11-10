@@ -23,6 +23,8 @@ export type TModulePermissions = {
   /** 權限目錄：{ orders: ["read","update","export"] }，含非 API 操作 */
   resources: Record<string, readonly string[]>;
   /** 角色預設 grant，只給 mock 矩陣用 */
-  mockGrants?: Record<string /* roleId */, TGrant[]>;
+  mockGrants?: TGrantMatrix;
 };
+/** mock 端角色矩陣：roleId → grants（wildcard 保留，§6.1） */
+export type TGrantMatrix = Record<string /* roleId */, readonly TGrant[]>;
 export type TPermissionCatalog = Record<string, readonly string[]>;

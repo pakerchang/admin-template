@@ -14,6 +14,17 @@ describe("can()", () => {
     [["orders:read"], "orders:update", false],
     [["order:*"], "orders:read", false],
     [[], "app:access", false],
+    // 負向：只認完全相等，不做正規化或前綴比對
+    [["Orders:read"], "orders:read", false],
+    [["ORDERS:*"], "orders:read", false],
+    [["orders::read"], "orders:read", false],
+    [["orders:read:"], "orders:read", false],
+    [["orders::*"], "orders:read", false],
+    [[" orders:read"], "orders:read", false],
+    [["orders:read "], "orders:read", false],
+    // grants 來自 login response JSON，執行期可能不符型別
+    [["orders" as TGrant], "orders:read", false],
+    [["orders:"], "orders:read", false],
   ])("can(%j, %s) === %s", (grants, p, expected) =>
     expect(can(grants, p)).toBe(expected)
   );

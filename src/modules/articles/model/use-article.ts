@@ -1,0 +1,318 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { isEmpty } from "ramda";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { z } from "zod";
+
+import { ApiError, fetcher, nullOnApiError } from "@/shared/api/fetcher";
+import { paginationSchema } from "@/shared/api/schema";
+import { useValidationMessage } from "@/shared/lib/gen-validate-message";
+import { useToast } from "@/shared/lib/use-toast";
+
+import {
+  createArticle,
+  deleteArticle,
+  listArticles,
+  updateArticle,
+} from "../api/articles";
+
+import { articleFormSchema } from "./schema";
+
+import type { TArticle, TArticleForm } from "./schema";
+import type { TPagination, TSortOrder } from "@/shared/api/schema";
+
+/** `/user/me/profile` 回應中本 module 用到的欄位（不 import users module 的型別，spec §5.2 articles 無 requires） */
+type TProfile = { user_id: string; first_name: string; last_name: string };
+
+type TArticleListParams = TPagination & {
+  sort_by?: string;
+  order?: TSortOrder;
+};
+
+export const useGetArticleList = (params: Partial<TArticleListParams>) => {
+  const { t } = useTranslation();
+  const { toast } = useToast();
+
+  const pageQuery = useMemo(() => {
+    if (isEmpty(params)) return undefined;
+    return {
+      page: params.page ? params.page : paginationSchema.parse({}).page,
+      limit: params.limit ? params.limit : paginationSchema.parse({}).limit,
+      ...(params.sort_by && { sort_by: params.sort_by }),
+      ...(params.order && { order: params.order }),
+    };
+  }, [params]);
+
+  const queryKey = useMemo(() => {
+    const page = params.page ?? paginationSchema.parse({}).page;
+    const limit = params.limit ?? paginationSchema.parse({}).limit;
+    return ["articleList", page, limit, params.sort_by, params.order];
+  }, [params.page, params.limit, params.sort_by, params.order]);
+
+  return useQuery({
+    queryKey,
+    queryFn: async () => {
+      const response = await listArticles(pageQuery ?? {}).catch(
+        nullOnApiError
+      );
+
+      if (!response) {
+        toast({
+          title: t("common.error"),
+          description: t("toast.article.get.listError"),
+          variant: "destructive",
+        });
+        return undefined;
+      }
+
+      return {
+        data: response.data || [],
+        total: response.total,
+      };
+    },
+    gcTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 2,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    placeholderData: (prev) => prev,
+  });
+};
+
+export const useGetArticle = (id: string) => {
+  const { t } = useTranslation();
+  const { toast } = useToast();
+
+  return useQuery({
+    queryKey: ["getArticle", id],
+    queryFn: async () => {
+      const response = await listArticles({ article_id: id }).catch(
+        nullOnApiError
+      );
+
+      if (!response) {
+        toast({
+          title: t("common.error"),
+          description: t("toast.article.get.error"),
+          variant: "destructive",
+        });
+        return undefined;
+      }
+
+      return response.data?.[0];
+    },
+    enabled: !!id,
+  });
+};
+
+export const useCreateArticle = () => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async (data: TArticleFormData) => {
+      // 先調用 getUserProfile API 獲取最新用戶資料
+      // `/user/me/profile` 屬 users tag；本 module 無 requires，直接經 mutator 取用、不 import users 產物（§5.2）
+      const currentUser =
+        await fetcher<TProfile>("/user/me/profile").catch(nullOnApiError);
+
+      if (!currentUser) {
+        toast({
+          title: t("common.error"),
+          description: "獲取用戶資訊失敗，請重新登入",
+          variant: "destructive",
+        });
+        throw new Error("Failed to get user profile");
+      }
+
+      // API 回應結構：用戶資料直接在 body 中，不在 data 中
+
+      if (!currentUser?.user_id) {
+        toast({
+          title: t("common.error"),
+          description: "無法獲取用戶資訊，請重新登入",
+          variant: "destructive",
+        });
+        throw new Error("No user data available");
+      }
+
+      const response = await createArticle({
+        ...data,
+        user_id: currentUser.user_id, // 使用工作人員表的 staff_id
+        nick_name: `${currentUser.first_name}${currentUser.last_name}`, // 組合 first_name + last_name
+      } as TArticleForm).catch((error: unknown) => {
+        if (!(error instanceof ApiError)) throw error;
+        toast({
+          title: t("common.error"),
+          description: t("toast.article.create.error"),
+          variant: "destructive",
+        });
+        throw new Error(`Create article failed: ${error.status}`);
+      });
+
+      return response;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["articleList"] });
+      toast({
+        title: t("common.success"),
+        description: t("toast.article.create.success"),
+        variant: "success",
+      });
+      navigate({
+        to: "/articles",
+      });
+    },
+    onError: (error) => {
+      if (error) {
+        toast({
+          title: t("common.error"),
+          description: t("toast.article.create.error"),
+          variant: "destructive",
+        });
+      }
+    },
+  });
+};
+
+export const useUpdateArticle = () => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async (data: TArticleFormData & { article_id: string }) => {
+      // 先調用 getUserProfile API 獲取最新用戶資料
+      // `/user/me/profile` 屬 users tag；本 module 無 requires，直接經 mutator 取用、不 import users 產物（§5.2）
+      const currentUser =
+        await fetcher<TProfile>("/user/me/profile").catch(nullOnApiError);
+
+      if (!currentUser) {
+        toast({
+          title: t("common.error"),
+          description: "獲取用戶資訊失敗，請重新登入",
+          variant: "destructive",
+        });
+        throw new Error("Failed to get user profile");
+      }
+
+      // API 回應結構：用戶資料直接在 body 中，不在 data 中
+
+      if (!currentUser?.user_id) {
+        toast({
+          title: t("common.error"),
+          description: "無法獲取用戶資訊，請重新登入",
+          variant: "destructive",
+        });
+        throw new Error("No user data available");
+      }
+
+      const response = await updateArticle({
+        ...data,
+        user_id: currentUser.user_id, // 使用工作人員表的 staff_id
+        nick_name: `${currentUser.first_name}${currentUser.last_name}`, // 組合 first_name + last_name
+      } as TArticle).catch((error: unknown) => {
+        if (!(error instanceof ApiError)) throw error;
+        toast({
+          title: t("common.error"),
+          description: t("toast.article.update.error"),
+          variant: "destructive",
+        });
+        throw new Error(`Update article failed: ${error.status}`);
+      });
+
+      return response;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["articleList"] });
+      await queryClient.invalidateQueries({ queryKey: ["getArticle"] });
+
+      toast({
+        title: t("common.success"),
+        description: t("toast.article.update.success"),
+        variant: "success",
+      });
+      navigate({
+        to: "/articles",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: t("common.error"),
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+export const useDeleteArticle = () => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (id: TArticle["article_id"]) => {
+      const response = await deleteArticle({ article_id: id }).catch(
+        nullOnApiError
+      );
+
+      if (!response) {
+        toast({
+          title: t("common.error"),
+          description: t("toast.article.delete.error"),
+          variant: "destructive",
+        });
+        return undefined;
+      }
+
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["articleList"] });
+      toast({
+        title: t("common.success"),
+        description: t("toast.article.delete.success"),
+        variant: "success",
+      });
+    },
+  });
+};
+
+export const useCreateArticleSchema = () => {
+  const validationMessage = useValidationMessage();
+
+  const createArticleSchema = articleFormSchema
+    .omit({
+      user_id: true,
+      nick_name: true,
+    })
+    .extend({
+      title: z.string().min(1, {
+        message: validationMessage.getRequiredMessage("pages.article.title"),
+      }),
+      image_url: z
+        .object({
+          file_name: z.string(),
+          file_url: z.string(),
+        })
+        .optional()
+        .refine((data) => data && data.file_name && data.file_url, {
+          message: validationMessage.getRequiredMessage(
+            "pages.article.coverImage"
+          ),
+        }),
+      // content_html 不在這裡驗證，在提交時手動驗證
+      content_html: z.string().optional(),
+    });
+
+  return createArticleSchema;
+};
+
+export type TArticleFormData = z.infer<
+  ReturnType<typeof useCreateArticleSchema>
+>;

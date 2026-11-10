@@ -1,0 +1,1435 @@
+# admin-template API 契約（R14：單一手寫 openapi.yaml）
+# - tags = module id 清單 + 保留 tag `core`（R29，kernel 自有、orval 跳過）
+# - 每個 operation：唯一 camelCase operationId、恰好一個 tag、x-permission（resource:action 或 public）
+# - x-permission: public 必同時寫 security: []；非 public 不得寫（R21 / R27）
+# - 路徑與回應形狀 = 現行 mock（src/services/mock/handlers.ts），不得改動（M7 紅線）
+# - `pnpm gen:api:extract` → src/app/operations.gen.ts
+openapi: 3.1.0
+info:
+  title: admin-template API
+  version: 1.0.0
+tags:
+  - name: core
+    description: kernel 自有 operation（R29），client / mock 手寫，orval 跳過
+  - name: auth
+  - name: users
+  - name: team-members
+  - name: orders
+  - name: product
+  - name: suppliers
+  - name: consumers
+  - name: banners
+  - name: articles
+  - name: tags
+security:
+  - bearerAuth: []
+
+paths:
+  # ---------------------------------------------------------------- auth
+  /api/auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      x-permission: public
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: 登入成功；mock 依角色矩陣展開 grants
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          $ref: "#/components/responses/Error"
+
+  # ---------------------------------------------------------------- users
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      x-permission: users:read
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort_by"
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/search"
+      responses:
+        "200":
+          description: 使用者列表
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/User"
+        "403":
+          $ref: "#/components/responses/Error"
+  /user/me/profile:
+    get:
+      operationId: getMyProfile
+      tags: [users]
+      x-permission: app:access
+      responses:
+        "200":
+          description: 登入者本人（不包信封）
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "403":
+          $ref: "#/components/responses/Error"
+    put:
+      operationId: updateMyProfile
+      tags: [users]
+      x-permission: app:access
+      requestBody:
+        required: true
+        description: 呼叫端送整個 User；只套用 first_name / last_name / phone_number / address / remark
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileUpdate"
+      responses:
+        "200":
+          description: 更新後的本人
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/User"
+        "403":
+          $ref: "#/components/responses/Error"
+  /admin/user/role:
+    post:
+      operationId: updateUserRole
+      tags: [users]
+      x-permission: users:update-role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target_user_id, role]
+              properties:
+                target_user_id:
+                  type: string
+                role:
+                  $ref: "#/components/schemas/UserRole"
+      responses:
+        "200":
+          description: 新角色
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        required: [role]
+                        properties:
+                          role:
+                            $ref: "#/components/schemas/UserRole"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+
+  # ---------------------------------------------------------------- product
+  /admin/products:
+    get:
+      operationId: listProducts
+      tags: [product]
+      x-permission: product:read
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort_by"
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/search"
+        - in: query
+          name: product_id
+          schema:
+            type: string
+        - in: query
+          name: product_status
+          schema:
+            $ref: "#/components/schemas/ActiveStatus"
+      responses:
+        "200":
+          description: 商品列表（帶 product_id 即單筆查詢）
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Product"
+        "403":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: createProduct
+      tags: [product]
+      x-permission: product:create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+    delete:
+      operationId: deleteProduct
+      tags: [product]
+      x-permission: product:delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [product_id]
+              properties:
+                product_id:
+                  type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+  /admin/products/update:
+    post:
+      operationId: updateProduct
+      tags: [product]
+      x-permission: product:update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+
+  # ---------------------------------------------------------------- core（R29）
+  /admin/images:
+    post:
+      operationId: uploadImage
+      tags: [core]
+      x-permission: app:access
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageUpload"
+      responses:
+        "200":
+          description: mock 直接把 base64 當 file_url 回傳（不包信封）
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageFile"
+        "403":
+          $ref: "#/components/responses/Error"
+    delete:
+      operationId: deleteImage
+      tags: [core]
+      x-permission: app:access
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [file_names]
+              properties:
+                file_names:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+
+  # ---------------------------------------------------------------- orders
+  /admin/order:
+    get:
+      operationId: listOrders
+      tags: [orders]
+      x-permission: orders:read
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort_by"
+        - $ref: "#/components/parameters/order"
+        - in: query
+          name: order_id
+          schema:
+            type: string
+        - in: query
+          name: order_status
+          schema:
+            $ref: "#/components/schemas/OrderStatus"
+      responses:
+        "200":
+          description: 訂單列表（帶 order_id 即單筆查詢）
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Order"
+        "403":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: saveOrder
+      tags: [orders]
+      x-permission: orders:update
+      description: 現行 mock 與 updateOrder 同為「依 order_id 合併更新」
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderUpdate"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  /admin/order/update:
+    post:
+      operationId: updateOrder
+      tags: [orders]
+      x-permission: orders:update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderUpdate"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+
+  # ---------------------------------------------------------------- banners
+  /admin/banners:
+    get:
+      operationId: listBanners
+      tags: [banners]
+      x-permission: banners:read
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort_by"
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/search"
+        - in: query
+          name: banner_id
+          schema:
+            type: string
+        - in: query
+          name: banner_status
+          schema:
+            $ref: "#/components/schemas/ActiveStatus"
+      responses:
+        "200":
+          description: Banner 列表（帶 banner_id 即單筆查詢）
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Banner"
+        "403":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: createBanner
+      tags: [banners]
+      x-permission: banners:create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BannerInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+    put:
+      operationId: updateBanner
+      tags: [banners]
+      x-permission: banners:update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Banner"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    delete:
+      operationId: deleteBanner
+      tags: [banners]
+      x-permission: banners:delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [banner_id]
+              properties:
+                banner_id:
+                  type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+
+  # ---------------------------------------------------------------- consumers
+  /admin/customers:
+    get:
+      operationId: listCustomers
+      tags: [consumers]
+      x-permission: consumers:read
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - in: query
+          name: sort_by
+          schema:
+            type: string
+            enum: [total_spent, order_count]
+        - $ref: "#/components/parameters/order"
+        - in: query
+          name: user_id
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 顧客列表
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Customer"
+        "403":
+          $ref: "#/components/responses/Error"
+  /admin/transaction_history:
+    get:
+      operationId: listTransactionHistory
+      tags: [consumers]
+      x-permission: consumers:read
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - in: query
+          name: user_id
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 某顧客的訂單紀錄（mock 讀 orders 資料）
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Order"
+        "403":
+          $ref: "#/components/responses/Error"
+
+  # ---------------------------------------------------------------- suppliers
+  /admin/supplier:
+    get:
+      operationId: listSuppliers
+      tags: [suppliers]
+      x-permission: suppliers:read
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort_by"
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/search"
+      responses:
+        "200":
+          description: 供應商列表
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Supplier"
+        "403":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: createSupplier
+      tags: [suppliers]
+      x-permission: suppliers:create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupplierInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+    put:
+      operationId: updateSupplier
+      tags: [suppliers]
+      x-permission: suppliers:update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/SupplierInput"
+                - type: object
+                  required: [supplier_id]
+                  properties:
+                    supplier_id:
+                      type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    delete:
+      operationId: deleteSupplier
+      tags: [suppliers]
+      x-permission: suppliers:delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [supplier_id]
+              properties:
+                supplier_id:
+                  type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+
+  # ---------------------------------------------------------------- tags
+  /admin/tag:
+    get:
+      operationId: listTags
+      tags: [tags]
+      x-permission: tags:read
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - in: query
+          name: sort_by
+          schema:
+            type: string
+            enum: [tag_id, tag_name]
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/search"
+      responses:
+        "200":
+          description: 標籤列表
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Tag"
+        "403":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: createTag
+      tags: [tags]
+      x-permission: tags:create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tag_name]
+              properties:
+                tag_name:
+                  type: string
+                  minLength: 1
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+    put:
+      operationId: updateTag
+      tags: [tags]
+      x-permission: tags:update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tag"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    delete:
+      operationId: deleteTag
+      tags: [tags]
+      x-permission: tags:delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tag_id]
+              properties:
+                tag_id:
+                  type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+
+  # ---------------------------------------------------------------- team-members
+  /admin/staff:
+    get:
+      operationId: listStaffs
+      tags: [team-members]
+      x-permission: team-members:read
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort_by"
+        - $ref: "#/components/parameters/order"
+        - in: query
+          name: role
+          schema:
+            type: string
+        - in: query
+          name: staff_id
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 員工列表
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Staff"
+        "403":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: createStaff
+      tags: [team-members]
+      x-permission: team-members:create
+      requestBody:
+        required: true
+        description: password 不存進 mock 狀態
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffCreate"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+    put:
+      operationId: updateStaff
+      tags: [team-members]
+      x-permission: team-members:update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Staff"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    delete:
+      operationId: deleteStaff
+      tags: [team-members]
+      x-permission: team-members:delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [staff_id]
+              properties:
+                staff_id:
+                  type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+
+  # ---------------------------------------------------------------- articles
+  /admin/articles:
+    get:
+      operationId: listArticles
+      tags: [articles]
+      x-permission: articles:read
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort_by"
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/search"
+        - in: query
+          name: article_id
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 文章列表（帶 article_id 即單筆查詢）
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Article"
+        "403":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: createArticle
+      tags: [articles]
+      x-permission: articles:create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArticleInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+    put:
+      operationId: updateArticle
+      tags: [articles]
+      x-permission: articles:update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Article"
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    delete:
+      operationId: deleteArticle
+      tags: [articles]
+      x-permission: articles:delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [article_id]
+              properties:
+                article_id:
+                  type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Message"
+        "403":
+          $ref: "#/components/responses/Error"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  parameters:
+    page:
+      in: query
+      name: page
+      schema:
+        type: integer
+    limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+    sort_by:
+      in: query
+      name: sort_by
+      schema:
+        type: string
+    order:
+      in: query
+      name: order
+      schema:
+        $ref: "#/components/schemas/SortOrder"
+    search:
+      in: query
+      name: search
+      schema:
+        type: string
+
+  responses:
+    Message:
+      description: 寫入成功
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageBody"
+    Error:
+      description: 錯誤（401 帳密錯誤 / 403 guard 或本人檢查 / 404 找不到）
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"
+
+  schemas:
+    # ---- 共用（R15：shared/api/types.ts 另有手寫版，產物重複不 dedupe）
+    ApiEnvelope:
+      type: object
+      required: [code, msg, error]
+      properties:
+        code:
+          type: integer
+        msg:
+          type: string
+        error:
+          type: string
+        data: {}
+        total:
+          type: integer
+    ErrorBody:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    MessageBody:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+    SortOrder:
+      type: string
+      enum: [ASC, DESC]
+    ActiveStatus:
+      type: string
+      enum: [active, inactive]
+    Lang:
+      type: object
+      required: [zh, th, en]
+      properties:
+        zh:
+          type: string
+        th:
+          type: string
+        en:
+          type: string
+    ImageUpload:
+      type: object
+      required: [file_name, file_value]
+      properties:
+        file_name:
+          type: string
+        file_value:
+          type: string
+    ImageFile:
+      type: object
+      required: [file_name, file_url]
+      properties:
+        file_name:
+          type: string
+        file_url:
+          type: string
+    ContactInfo:
+      type: object
+      required: [address, phone, email]
+      properties:
+        address:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+
+    # ---- auth
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      required: [token, user, grants]
+      properties:
+        token:
+          type: string
+        user:
+          type: object
+          required: [user_id, email, name, role]
+          properties:
+            user_id:
+              type: string
+            email:
+              type: string
+            name:
+              type: string
+            role:
+              $ref: "#/components/schemas/UserRole"
+        grants:
+          type: array
+          items:
+            type: string
+
+    # ---- users
+    UserRole:
+      type: string
+      enum: [guest, user, premium, partner, support, admin, superadmin]
+    User:
+      type: object
+      required:
+        - user_id
+        - email
+        - first_name
+        - last_name
+        - phone_number
+        - address
+        - remark
+        - role
+        - created_at
+        - updated_at
+      properties:
+        user_id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone_number:
+          type: string
+        address:
+          type: string
+        remark:
+          type: string
+        role:
+          $ref: "#/components/schemas/UserRole"
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    ProfileUpdate:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone_number:
+          type: string
+        address:
+          type: string
+        remark:
+          type: string
+
+    # ---- product
+    ProductType:
+      type: string
+      enum:
+        [
+          ELECTRONICS,
+          ACCESSORIES,
+          CONSUMABLES,
+          DEVICES,
+          MATERIALS,
+          FOOD,
+          CLOTHING,
+          OTHER,
+          NO_TYPE,
+        ]
+    ProductDetail:
+      type: object
+      required:
+        - product_description
+        - short_title
+        - ingredients
+        - introduction
+        - precautions
+        - shelf_life
+        - origin
+        - aroma_level
+        - flavor
+        - appearance
+        - best_occasion
+        - scene_matching
+        - food_pairing
+      properties:
+        product_description:
+          $ref: "#/components/schemas/Lang"
+        short_title:
+          $ref: "#/components/schemas/Lang"
+        ingredients:
+          $ref: "#/components/schemas/Lang"
+        introduction:
+          $ref: "#/components/schemas/Lang"
+        precautions:
+          $ref: "#/components/schemas/Lang"
+        shelf_life:
+          type: string
+        origin:
+          $ref: "#/components/schemas/Lang"
+        aroma_level:
+          type: string
+        flavor:
+          $ref: "#/components/schemas/Lang"
+        appearance:
+          $ref: "#/components/schemas/Lang"
+        best_occasion:
+          $ref: "#/components/schemas/Lang"
+        scene_matching:
+          $ref: "#/components/schemas/Lang"
+        food_pairing:
+          $ref: "#/components/schemas/Lang"
+    ProductInput:
+      type: object
+      required: [product_name, product_images, product_price, product_detail]
+      properties:
+        product_type:
+          $ref: "#/components/schemas/ProductType"
+        product_name:
+          type: string
+        product_images:
+          type: array
+          items:
+            $ref: "#/components/schemas/ImageFile"
+        product_price:
+          type: string
+        product_status:
+          $ref: "#/components/schemas/ActiveStatus"
+        product_size:
+          type: string
+        vendor_id:
+          type: array
+          items:
+            type: string
+        tag_id:
+          type: array
+          items:
+            type: string
+        product_detail:
+          $ref: "#/components/schemas/ProductDetail"
+    Product:
+      allOf:
+        - $ref: "#/components/schemas/ProductInput"
+        - type: object
+          required: [product_id]
+          properties:
+            product_id:
+              type: string
+            created_at:
+              type: string
+            updated_at:
+              type: string
+
+    # ---- orders
+    OrderStatus:
+      type: string
+      enum: [new, pending, paid, shipped, refunded, completed, cancelled]
+    OrderItem:
+      type: object
+      required:
+        [
+          product_name,
+          product_id,
+          size,
+          price,
+          order_id,
+          promotion_note,
+          product_images,
+        ]
+      properties:
+        product_name:
+          type: string
+        product_id:
+          type: string
+        size:
+          type: string
+        price:
+          type: string
+        order_id:
+          type: string
+        promotion_note:
+          type: string
+        product_images:
+          type: array
+          items:
+            $ref: "#/components/schemas/ImageFile"
+    Order:
+      type: object
+      required:
+        - vendor_id
+        - order_id
+        - order_detail
+        - order_status
+        - contact_info
+        - remark
+        - delivery_fee
+        - delivery_note
+        - delivery_time
+        - total_order_fee
+        - user_id
+      properties:
+        vendor_id:
+          type: string
+        order_id:
+          type: string
+        order_detail:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        order_status:
+          $ref: "#/components/schemas/OrderStatus"
+        contact_info:
+          $ref: "#/components/schemas/ContactInfo"
+        remark:
+          type: string
+        delivery_fee:
+          type: string
+        delivery_note:
+          type: string
+        delivery_time:
+          type: string
+        total_order_fee:
+          type: string
+        user_id:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    OrderUpdate:
+      description: 依 order_id 合併更新；其餘欄位可選
+      type: object
+      required: [order_id]
+      properties:
+        order_id:
+          type: string
+        order_status:
+          $ref: "#/components/schemas/OrderStatus"
+        remark:
+          type: string
+      additionalProperties: true
+
+    # ---- banners
+    BannerInput:
+      type: object
+      required:
+        [
+          title,
+          desktop_image_url,
+          mobile_image_url,
+          redirect_url,
+          sort_order,
+          banner_status,
+        ]
+      properties:
+        title:
+          type: string
+        desktop_image_url:
+          $ref: "#/components/schemas/ImageFile"
+        mobile_image_url:
+          $ref: "#/components/schemas/ImageFile"
+        redirect_url:
+          type: string
+          format: uri
+        sort_order:
+          type: number
+        banner_status:
+          $ref: "#/components/schemas/ActiveStatus"
+    Banner:
+      allOf:
+        - $ref: "#/components/schemas/BannerInput"
+        - type: object
+          required: [banner_id]
+          properties:
+            banner_id:
+              type: string
+            created_at:
+              type: string
+            updated_at:
+              type: string
+
+    # ---- consumers
+    Customer:
+      type: object
+      required:
+        - user_id
+        - email
+        - first_name
+        - last_name
+        - phone_number
+        - total_spent
+        - order_count
+        - last_order_date
+        - created_at
+      properties:
+        user_id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone_number:
+          type: string
+        total_spent:
+          type: number
+        order_count:
+          type: integer
+        last_order_date:
+          type: [string, "null"]
+        created_at:
+          type: string
+
+    # ---- suppliers
+    SupplierInput:
+      type: object
+      required: [supplier_name, contact_info]
+      properties:
+        supplier_name:
+          type: string
+        contact_info:
+          $ref: "#/components/schemas/ContactInfo"
+        remark:
+          type: string
+    Supplier:
+      allOf:
+        - $ref: "#/components/schemas/SupplierInput"
+        - type: object
+          required: [supplier_id, created_at, updated_at]
+          properties:
+            supplier_id:
+              type: string
+            created_at:
+              type: string
+            updated_at:
+              type: string
+
+    # ---- tags
+    Tag:
+      type: object
+      required: [tag_id, tag_name]
+      properties:
+        tag_id:
+          type: string
+        tag_name:
+          type: string
+
+    # ---- team-members
+    Staff:
+      type: object
+      required:
+        [
+          staff_id,
+          account,
+          email,
+          first_name,
+          last_name,
+          role,
+          created_at,
+          updated_at,
+        ]
+      properties:
+        staff_id:
+          type: string
+        account:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        role:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    StaffCreate:
+      type: object
+      required: [account, email, password, first_name, last_name, role]
+      properties:
+        account:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+          minLength: 6
+        first_name:
+          type: string
+        last_name:
+          type: string
+        role:
+          type: string
+
+    # ---- articles
+    ArticleInput:
+      type: object
+      required: [user_id, nick_name, title, image_url, content_html]
+      properties:
+        user_id:
+          type: string
+        nick_name:
+          type: string
+        title:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        describe:
+          type: string
+        image_url:
+          $ref: "#/components/schemas/ImageFile"
+        content_html:
+          type: string
+    Article:
+      allOf:
+        - $ref: "#/components/schemas/ArticleInput"
+        - type: object
+          required: [article_id, created_at, updated_at]
+          properties:
+            article_id:
+              type: string
+            created_at:
+              type: string
+            updated_at:
+              type: string

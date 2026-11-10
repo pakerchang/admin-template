@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- route opts 經 runtime 驗證，型別由 shared/module 的 helper 型別把關 */
-import { createRoute } from "@tanstack/react-router";
+import { createRoute, redirect } from "@tanstack/react-router";
+import { createElement } from "react";
 
-import { guardedRoute } from "@/shared/permission";
+import { createForbiddenBoundary } from "@/app/router/forbidden-boundary";
+import { createIndexRedirect } from "@/app/router/index-redirect";
+import { NavContext } from "@/shared/module";
+import { GrantsContext, guardedRoute } from "@/shared/permission";
 
 import type {
   TLocale,
@@ -14,6 +18,7 @@ import type {
 } from "@/shared/module";
 import type {
   TGrant,
+  TGrantMatrix,
   TOperationTable,
   TPermissionCatalog,
 } from "@/shared/permission";
@@ -23,13 +28,23 @@ import type { ComponentType } from "react";
 
 type TI18n = Record<TLocale, Record<string, unknown>>;
 
-/** kernel 自有、由 app 層提供的零件（root route、core 字典、MSW guard factory、core handler、session grants） */
+/** kernel 自有、由 app 層提供的零件（root route、core 字典、MSW handler factory、session grants） */
 export type TCore = {
   root: AnyRootRoute;
   i18n: TI18n;
-  guard: (opts: TOperationTable & { apiBaseUrl: string }) => HttpHandler;
-  mockHandlers: HttpHandler[];
+  /**
+   * kernel 的 MSW handler：[guard, ...core handler]，guard 必在第一位（§4.3 步驟 5）。
+   * mockGrants = 已安裝 module 的 `permissions.mockGrants`：login 回傳的 session.grants 與 guard 的 token → grants 都依它展開
+   */
+  mock: (
+    opts: TOperationTable & {
+      apiBaseUrl: string;
+      mockGrants: readonly TGrantMatrix[];
+    }
+  ) => HttpHandler[];
   getGrants: () => readonly TGrant[];
+  /** 登入守衛：未登入進 protected → /login；已登入進 auth → "/"。省略 = 不守衛（測試 fixture） */
+  isAuthenticated?: () => boolean;
 };
 
 export type TBuildInput = {
@@ -98,7 +113,8 @@ const assertI18nBare = (modules: readonly TModule[]) => {
 };
 
 const catalog = (modules: readonly TModule[]): TPermissionCatalog => {
-  const out: Record<string, string[]> = {};
+  // kernel 自有 resource：§6.1 core `app:access`（R29 core operation 與 profile 也引用它）
+  const out: Record<string, string[]> = { app: ["access"] };
   for (const m of modules)
     for (const [resource, actions] of Object.entries(
       m.permissions?.resources ?? {}
@@ -265,20 +281,48 @@ export function build({
       });
     };
 
-  const guarded = (opts: any) => guardedRoute(opts, core.getGrants);
+  // §6.2 / R10：module route 無權限 → ForbiddenError → 內容區 shell.Forbidden（URL、shell 保留）
+  const ForbiddenBoundary = createForbiddenBoundary(shell.Forbidden);
+  const guarded = (opts: any) =>
+    guardedRoute(
+      { ...opts, errorComponent: ForbiddenBoundary },
+      core.getGrants
+    );
   const plain = (opts: any) => createRoute(opts) as AnyRoute;
 
-  // ponytail: auth / protected 只建最小 pathless layout；登入守衛、"/" redirect（R9）、ForbiddenBoundary 屬 app/router（M3 / M4）
+  // shell 只經 useVisibleNav() / useCan() 取 nav 與 grants（§6.3、§6.4）；Provider 包在 protected layout 外
+  const ProtectedRoot = () =>
+    createElement(
+      GrantsContext.Provider,
+      { value: core.getGrants },
+      createElement(
+        NavContext.Provider,
+        { value: nav },
+        createElement(shell.ProtectedLayout)
+      )
+    );
+
+  const isAuthenticated = core.isAuthenticated;
   const authRoute = createRoute({
     getParentRoute: () => core.root,
     id: "_auth",
     component: shell.AuthLayout as any,
+    beforeLoad: () => {
+      if (isAuthenticated?.()) throw redirect({ to: "/" });
+    },
   });
+  // pathless 但 id 取 "/"：子 route id 維持 "/orders/$id" 形狀（頁面以 useParams({ from }) 依賴它）。
+  // 不用 path "/"：@tanstack/react-router 1.170 下 path "/" 的 route 比對不到任何子路徑。
   const protectedRoute = createRoute({
     getParentRoute: () => core.root,
-    id: "_protected",
-    component: shell.ProtectedLayout as any,
-  });
+    id: "/",
+    component: ProtectedRoot,
+    staticData: { permission: "authenticated" },
+    beforeLoad: () => {
+      if (isAuthenticated && !isAuthenticated())
+        throw redirect({ to: "/login" });
+    },
+  } as any);
 
   const routeTree = core.root.addChildren([
     authRoute.addChildren(
@@ -291,16 +335,17 @@ export function build({
           } as TPublicRouteContext) ?? []
       )
     ),
-    protectedRoute.addChildren(
-      modules.flatMap(
+    protectedRoute.addChildren([
+      createIndexRedirect(protectedRoute, nav, core.getGrants, shell.Forbidden),
+      ...modules.flatMap(
         (m) =>
           m.routes?.({
             parent: protectedRoute,
             layout: layoutFor(m.id, guarded),
             page: pageFor(m.id, guarded),
           } as TRouteContext) ?? []
-      )
-    ),
+      ),
+    ]),
   ]);
 
   // §4.3 1.6：所有 module routes 建完後才檢查
@@ -316,8 +361,13 @@ export function build({
     permissions: catalogue,
     i18n: scopeAndMerge(core.i18n, modules),
     mockHandlers: [
-      core.guard({ ...operations, apiBaseUrl }),
-      ...core.mockHandlers,
+      ...core.mock({
+        ...operations,
+        apiBaseUrl,
+        mockGrants: modules.flatMap((m) =>
+          m.permissions?.mockGrants ? [m.permissions.mockGrants] : []
+        ),
+      }),
       ...modules.flatMap((m) => m.mockHandlers ?? []),
     ],
   };
