@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { GrantsContext } from "@/shared/permission";
+
 import { products } from "../../mocks/seed";
 import ProductList from "../ProductList";
 
@@ -173,7 +175,10 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    // 寫入入口以 <Guarded> 宣告（F-1）：給全部權限，測的是 admin 視角的完整畫面
+    <GrantsContext.Provider value={() => ["*"]}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </GrantsContext.Provider>
   );
 };
 

@@ -42,6 +42,22 @@ describe("protected subtree permission structure (AC-5, §6.2)", () => {
   });
 });
 
+describe("F-1 AC-3：寫入表單 route 不能只要 :read", () => {
+  /** D2（OD-GRANT-1）：users 編輯表單是 stub、無 API，owner 接受 admin 可開表單、送出 disabled */
+  const EXCEPT = ["users.edit"];
+
+  it("routeId 結尾 .create / .edit / .draft 的 route 不是 :read", () => {
+    const formRoutes = protectedSubtree()
+      .map((r) => r.options.staticData ?? {})
+      .filter((s) => /\.(create|edit|draft)$/.test(s.routeId ?? ""))
+      .filter((s) => !EXCEPT.includes(s.routeId!));
+    expect(formRoutes.length).toBe(7);
+    expect(
+      formRoutes.filter((s) => String(s.permission).endsWith(":read"))
+    ).toEqual([]);
+  });
+});
+
 describe("superadmin grants keep every page reachable (AC-6 automated part)", () => {
   const leafPaths = () =>
     protectedSubtree()

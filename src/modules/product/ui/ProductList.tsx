@@ -13,6 +13,7 @@ import {
 } from "@/shared/ui/data-table";
 import DataTable from "@/shared/ui/data-table/data-table";
 import EditActions from "@/shared/ui/edit-actions";
+import { Guarded } from "@/shared/ui/guarded";
 import { Navbar } from "@/shared/ui/navbar/navbar";
 
 import {
@@ -293,19 +294,21 @@ const ProductPage = () => {
               permission: "product:delete",
             }}
           >
-            <Button
-              variant="outline"
-              title={t("pages.product.productDraft.copyToCreate")}
-              aria-label={t("pages.product.productDraft.copyToCreate")}
-              onClick={() =>
-                navigate({
-                  to: "/products/draft/$id",
-                  params: { id },
-                })
-              }
-            >
-              <Copy size={16} />
-            </Button>
+            <Guarded permission="product:create">
+              <Button
+                variant="outline"
+                title={t("pages.product.productDraft.copyToCreate")}
+                aria-label={t("pages.product.productDraft.copyToCreate")}
+                onClick={() =>
+                  navigate({
+                    to: "/products/draft/$id",
+                    params: { id },
+                  })
+                }
+              >
+                <Copy size={16} />
+              </Button>
+            </Guarded>
           </EditActions>
         );
       },
@@ -320,18 +323,20 @@ const ProductPage = () => {
             {toggleLayout ? <LayoutList /> : <LayoutGrid />}
           </Button>
 
-          <Button
-            onClick={() => {
-              try {
-                navigate({ to: "/products/create" });
-              } catch (error) {
-                console.error("Navigation error:", error);
-              }
-            }}
-          >
-            <Plus className="size-4" />
-            {t("pages.product.productCreate.addProduct")}
-          </Button>
+          <Guarded permission="product:create">
+            <Button
+              onClick={() => {
+                try {
+                  navigate({ to: "/products/create" });
+                } catch (error) {
+                  console.error("Navigation error:", error);
+                }
+              }}
+            >
+              <Plus className="size-4" />
+              {t("pages.product.productCreate.addProduct")}
+            </Button>
+          </Guarded>
         </div>
       </Navbar>
 
@@ -374,21 +379,23 @@ const ProductPage = () => {
                         permission: "product:delete",
                       }}
                     >
-                      <Button
-                        variant="outline"
-                        title={t("pages.product.productDraft.copyToCreate")}
-                        aria-label={t(
-                          "pages.product.productDraft.copyToCreate"
-                        )}
-                        onClick={() =>
-                          navigate({
-                            to: "/products/draft/$id",
-                            params: { id: prd.product_id },
-                          })
-                        }
-                      >
-                        <Copy size={16} />
-                      </Button>
+                      <Guarded permission="product:create">
+                        <Button
+                          variant="outline"
+                          title={t("pages.product.productDraft.copyToCreate")}
+                          aria-label={t(
+                            "pages.product.productDraft.copyToCreate"
+                          )}
+                          onClick={() =>
+                            navigate({
+                              to: "/products/draft/$id",
+                              params: { id: prd.product_id },
+                            })
+                          }
+                        >
+                          <Copy size={16} />
+                        </Button>
+                      </Guarded>
                     </EditActions>
                   }
                 />

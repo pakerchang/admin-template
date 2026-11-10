@@ -11,6 +11,7 @@ import { activeStatusEnums } from "@/shared/api/schema";
 import { useImgUpload } from "@/shared/api/upload";
 import { useToast } from "@/shared/lib/use-toast";
 import { Button } from "@/shared/ui/button";
+import { FormSubmit } from "@/shared/ui/form-submit";
 import ImageUploadDialog from "@/shared/ui/image-upload/image-upload-dialog";
 import { Label } from "@/shared/ui/label";
 import { Navbar } from "@/shared/ui/navbar/navbar";
@@ -320,8 +321,8 @@ const BannerForm = () => {
   return (
     <main className="flex size-full flex-col">
       <Navbar>
-        <Button
-          type="submit"
+        <FormSubmit
+          permission={isEditMode ? "banners:update" : "banners:create"}
           form="banner-form"
           className="h-10 w-fit"
           disabled={isSubmitDisabled}
@@ -329,7 +330,7 @@ const BannerForm = () => {
           {isCreateUploading || isEditUpdating
             ? t("pages.banner.bannerCreate.submitting")
             : t("common.submit")}
-        </Button>
+        </FormSubmit>
       </Navbar>
       <form
         id="banner-form"

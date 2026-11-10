@@ -638,7 +638,7 @@ export const coreGrants: Record<string, TGrant[]> = {
 // 組裝：matrix[role] = coreGrants[role] ∪ ⋃modules.permissions.mockGrants[role]
 ```
 
-**角色 grants 矩陣（M4 落地；main 代 owner 裁決，待 owner 覆核）**：
+**角色 grants 矩陣（M4 落地；main 代 owner 裁決，owner 2026-11-10 覆核定案（OD-GRANT-1））**：
 
 | role | grants（core ∪ module mockGrants） |
 |---|---|

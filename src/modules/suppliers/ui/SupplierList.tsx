@@ -1,12 +1,5 @@
 import dayjs from "dayjs";
-import {
-  ArrowUpDown,
-  Building2,
-  Edit,
-  Plus,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { ArrowUpDown, Building2, Plus, Search } from "lucide-react";
 import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -26,15 +19,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
+import EditActions from "@/shared/ui/edit-actions";
+import { Guarded } from "@/shared/ui/guarded";
 import { Input } from "@/shared/ui/input";
 import { Navbar } from "@/shared/ui/navbar/navbar";
 import { Spinner } from "@/shared/ui/spinner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/shared/ui/tooltip";
 
 import { useGetSupplierList, useDeleteSupplier } from "../model/use-supplier";
 
@@ -271,42 +260,16 @@ const SupplierList = () => {
       cell: ({ row }) => {
         const supplier = row.original;
         return (
-          <div className="flex justify-center space-x-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleEditSupplier(supplier)}
-                  >
-                    <Edit className="size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t("pages.supplier.editSupplier")}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteSupplier(supplier)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t("pages.supplier.deleteSupplier")}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <EditActions
+            onEdit={{
+              handler: () => handleEditSupplier(supplier),
+              permission: "suppliers:update",
+            }}
+            onDelete={{
+              handler: () => handleDeleteSupplier(supplier),
+              permission: "suppliers:delete",
+            }}
+          />
         );
       },
     },
@@ -334,10 +297,12 @@ const SupplierList = () => {
               {t("dashboard.menu.suppliers.title")}
             </h2>
           </div>
-          <Button onClick={handleCreateSupplier}>
-            <Plus className="mr-2 size-4" />
-            {t("pages.supplier.addSupplier")}
-          </Button>
+          <Guarded permission="suppliers:create">
+            <Button onClick={handleCreateSupplier}>
+              <Plus className="mr-2 size-4" />
+              {t("pages.supplier.addSupplier")}
+            </Button>
+          </Guarded>
         </div>
 
         <div className="flex items-center space-x-2">

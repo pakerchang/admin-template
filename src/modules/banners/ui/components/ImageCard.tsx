@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
+import { Guarded } from "@/shared/ui/guarded";
 
 interface IImageCardProps {
   className?: string;
@@ -72,33 +73,37 @@ export const ImageCard = ({
       )}
 
       {isActive && onDemoteToInactive && (
-        <div className="absolute right-2 top-2 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <Button
-            variant="secondary"
-            size="sm"
-            className="bg-red-600 text-white hover:bg-red-700"
-            onClick={onDemoteToInactive}
-            disabled={isButtonDisabled}
-          >
-            <TrendingDown className="mr-1 size-3" />
-            {demoteButtonText}
-          </Button>
-        </div>
+        <Guarded permission="banners:update">
+          <div className="absolute right-2 top-2 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-red-600 text-white hover:bg-red-700"
+              onClick={onDemoteToInactive}
+              disabled={isButtonDisabled}
+            >
+              <TrendingDown className="mr-1 size-3" />
+              {demoteButtonText}
+            </Button>
+          </div>
+        </Guarded>
       )}
 
       {!isActive && onPromoteToActive && (
-        <div className="absolute right-2 top-2 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <Button
-            variant="secondary"
-            size="sm"
-            className="bg-green-600 text-white hover:bg-green-700"
-            onClick={onPromoteToActive}
-            disabled={isButtonDisabled}
-          >
-            <TrendingUp className="mr-1 size-3" />
-            {promoteButtonText}
-          </Button>
-        </div>
+        <Guarded permission="banners:update">
+          <div className="absolute right-2 top-2 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-green-600 text-white hover:bg-green-700"
+              onClick={onPromoteToActive}
+              disabled={isButtonDisabled}
+            >
+              <TrendingUp className="mr-1 size-3" />
+              {promoteButtonText}
+            </Button>
+          </div>
+        </Guarded>
       )}
 
       <img
@@ -118,24 +123,32 @@ export const ImageCard = ({
         )}
       >
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="bg-white/10 hover:bg-white/20"
-            onClick={onEdit}
-            disabled={hasActiveOperation}
-          >
-            <Edit2 className="size-4 text-white" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="bg-white/10 hover:bg-white/20"
-            onClick={onDelete}
-            disabled={hasActiveOperation}
-          >
-            <Trash2 className="size-4 text-white" />
-          </Button>
+          <Guarded permission="banners:update">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="bg-white/10 hover:bg-white/20"
+              title={t("common.edit")}
+              aria-label={t("common.edit")}
+              onClick={onEdit}
+              disabled={hasActiveOperation}
+            >
+              <Edit2 className="size-4 text-white" />
+            </Button>
+          </Guarded>
+          <Guarded permission="banners:delete">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="bg-white/10 hover:bg-white/20"
+              title={t("common.delete")}
+              aria-label={t("common.delete")}
+              onClick={onDelete}
+              disabled={hasActiveOperation}
+            >
+              <Trash2 className="size-4 text-white" />
+            </Button>
+          </Guarded>
         </div>
       </div>
     </div>

@@ -31,14 +31,14 @@ export const articlesRoutes = (
       ctx.page({
         getParentRoute: () => base,
         path: "create",
-        permission: "articles:read",
+        permission: "articles:create",
         routeId: "articles.create",
         component: pages.form,
       }),
       ctx.page({
         getParentRoute: () => base,
         path: "edit/$id",
-        permission: "articles:read",
+        permission: "articles:update",
         routeId: "articles.edit",
         component: pages.form,
       }),

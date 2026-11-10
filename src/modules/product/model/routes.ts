@@ -1,4 +1,5 @@
 import type { TRouteContext } from "@/shared/module";
+import type { TPermission } from "@/shared/permission";
 import type { ComponentType } from "react";
 
 declare module "@/shared/module" {
@@ -25,20 +26,25 @@ export const productRoutes = (
     path: "products",
     permission: "product:read",
   });
-  const page = (path: string, name: keyof typeof pages) =>
+  const page = (
+    path: string,
+    name: keyof typeof pages,
+    permission: TPermission
+  ) =>
     ctx.page({
       getParentRoute: () => base,
       path,
-      permission: "product:read",
+      permission,
       routeId: `product.${name}`,
       component: pages[name],
     });
   return [
     base.addChildren([
-      page("/", "list"),
-      page("create", "create"),
-      page("edit/$id", "edit"),
-      page("draft/$id", "draft"),
+      page("/", "list", "product:read"),
+      page("create", "create", "product:create"),
+      page("edit/$id", "edit", "product:update"),
+      // draft = 複製既有商品為新商品（送出走 createProduct）
+      page("draft/$id", "draft", "product:create"),
     ]),
   ];
 };

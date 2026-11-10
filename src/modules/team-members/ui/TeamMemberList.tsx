@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { ArrowUpDown, Edit, Plus, Search, Trash2, Users } from "lucide-react";
+import { ArrowUpDown, Plus, Search, Users } from "lucide-react";
 import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -20,6 +20,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
+import EditActions from "@/shared/ui/edit-actions";
+import { Guarded } from "@/shared/ui/guarded";
 import { Input } from "@/shared/ui/input";
 import { Navbar } from "@/shared/ui/navbar/navbar";
 import { Spinner } from "@/shared/ui/spinner";
@@ -273,42 +275,16 @@ const TeamMemberList = () => {
       cell: ({ row }) => {
         const staff = row.original;
         return (
-          <div className="flex justify-center space-x-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleEditMember(staff)}
-                  >
-                    <Edit className="size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t("staff.editStaff")}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteMember(staff)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t("staff.deleteStaff")}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <EditActions
+            onEdit={{
+              handler: () => handleEditMember(staff),
+              permission: "team-members:update",
+            }}
+            onDelete={{
+              handler: () => handleDeleteMember(staff),
+              permission: "team-members:delete",
+            }}
+          />
         );
       },
     },
@@ -336,10 +312,12 @@ const TeamMemberList = () => {
               {t("staff.staffManagement")}
             </h2>
           </div>
-          <Button onClick={handleCreateMember}>
-            <Plus className="mr-2 size-4" />
-            {t("staff.createStaff")}
-          </Button>
+          <Guarded permission="team-members:create">
+            <Button onClick={handleCreateMember}>
+              <Plus className="mr-2 size-4" />
+              {t("staff.createStaff")}
+            </Button>
+          </Guarded>
         </div>
 
         <div className="flex items-center space-x-2">

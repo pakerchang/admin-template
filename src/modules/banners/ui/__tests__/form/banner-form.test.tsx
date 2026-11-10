@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+import { GrantsContext } from "@/shared/permission";
+
 import BannerForm from "../../BannerForm";
 
 /**
@@ -196,7 +198,12 @@ describe("BannerForm", () => {
       reset: vi.fn(),
     }));
 
-    render(<BannerForm />);
+    // 給全部權限，確保 disabled 來自驗證失敗而不是 FormSubmit 缺權限
+    render(
+      <GrantsContext.Provider value={() => ["*"]}>
+        <BannerForm />
+      </GrantsContext.Provider>
+    );
     const submitButton = screen.getByRole("button", { name: "common.submit" });
     expect(submitButton).toBeDisabled();
   });

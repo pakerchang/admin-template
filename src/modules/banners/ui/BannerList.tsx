@@ -8,6 +8,7 @@ import { paginationSchema } from "@/shared/api/schema";
 import { toast } from "@/shared/lib/use-toast";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
+import { Guarded } from "@/shared/ui/guarded";
 import { Navbar } from "@/shared/ui/navbar/navbar";
 import Paper from "@/shared/ui/paper";
 
@@ -136,22 +137,39 @@ const BannerList = () => {
     await removeFromActive(banner);
   };
 
+  const activeCard = (banner: TBanner) => (
+    <ImageCard
+      src={banner.desktop_image_url.file_url}
+      alt={banner.title}
+      isActive={true}
+      sortOrder={banner.sort_order}
+      onEdit={() => handleEdit(banner)}
+      onDelete={handleDelete}
+      onDemoteToInactive={() => handleDemoteToInactive(banner)}
+      isDemoting={isDemoting}
+      isUpdating={isUpdating}
+      isReordering={isReordering}
+    />
+  );
+
   return (
     <div className="flex size-full flex-col gap-4">
       <Navbar>
-        <Button
-          variant="default"
-          size="default"
-          disabled={hasAnyOperation}
-          onClick={() => {
-            navigate({
-              to: "/banners/create",
-            });
-          }}
-        >
-          <Plus className="mr-1 size-4" />
-          {t("pages.banner.addBanner")}
-        </Button>
+        <Guarded permission="banners:create">
+          <Button
+            variant="default"
+            size="default"
+            disabled={hasAnyOperation}
+            onClick={() => {
+              navigate({
+                to: "/banners/create",
+              });
+            }}
+          >
+            <Plus className="mr-1 size-4" />
+            {t("pages.banner.addBanner")}
+          </Button>
+        </Guarded>
       </Navbar>
 
       <div className="flex size-full flex-col gap-4 p-4">
@@ -173,52 +191,53 @@ const BannerList = () => {
               </div>
             </div>
           ) : (
-            <Reorder.Group
-              as="div"
-              axis="x"
-              values={sortedActiveBanners}
-              onReorder={handleReorder}
-              className={cn(
-                "relative grid w-full list-none auto-cols-fr grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
-                hasAnyOperation && "pointer-events-none opacity-75"
-              )}
+            // 排序寫入 = banners:update；無權限退回不可拖曳的 grid
+            <Guarded
+              permission="banners:update"
+              fallback={
+                <div className="grid w-full auto-cols-fr grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {sortedActiveBanners.map((banner) => (
+                    <div key={banner.banner_id}>{activeCard(banner)}</div>
+                  ))}
+                </div>
+              }
             >
-              {sortedActiveBanners.map((banner) => (
-                <Reorder.Item
-                  key={banner.banner_id}
-                  value={banner}
-                  className={cn(
-                    "relative list-none",
-                    hasAnyOperation
-                      ? "cursor-not-allowed"
-                      : "cursor-grab active:cursor-grabbing"
-                  )}
-                  layout
-                  initial={{ scale: 1, rotate: 0 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  whileDrag={dragAnimationConfig}
-                  whileHover={hoverAnimationConfig}
-                  onDragEnd={finalizeDragReorder}
-                  transition={{
-                    layout: { duration: 0.2, ease: "easeInOut" },
-                    default: { duration: 0.15, ease: "easeOut" },
-                  }}
-                >
-                  <ImageCard
-                    src={banner.desktop_image_url.file_url}
-                    alt={banner.title}
-                    isActive={true}
-                    sortOrder={banner.sort_order}
-                    onEdit={() => handleEdit(banner)}
-                    onDelete={handleDelete}
-                    onDemoteToInactive={() => handleDemoteToInactive(banner)}
-                    isDemoting={isDemoting}
-                    isUpdating={isUpdating}
-                    isReordering={isReordering}
-                  />
-                </Reorder.Item>
-              ))}
-            </Reorder.Group>
+              <Reorder.Group
+                as="div"
+                axis="x"
+                values={sortedActiveBanners}
+                onReorder={handleReorder}
+                className={cn(
+                  "relative grid w-full list-none auto-cols-fr grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
+                  hasAnyOperation && "pointer-events-none opacity-75"
+                )}
+              >
+                {sortedActiveBanners.map((banner) => (
+                  <Reorder.Item
+                    key={banner.banner_id}
+                    value={banner}
+                    className={cn(
+                      "relative list-none",
+                      hasAnyOperation
+                        ? "cursor-not-allowed"
+                        : "cursor-grab active:cursor-grabbing"
+                    )}
+                    layout
+                    initial={{ scale: 1, rotate: 0 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    whileDrag={dragAnimationConfig}
+                    whileHover={hoverAnimationConfig}
+                    onDragEnd={finalizeDragReorder}
+                    transition={{
+                      layout: { duration: 0.2, ease: "easeInOut" },
+                      default: { duration: 0.15, ease: "easeOut" },
+                    }}
+                  >
+                    {activeCard(banner)}
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+            </Guarded>
           )}
         </Paper>
 

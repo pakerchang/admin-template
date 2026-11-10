@@ -31,14 +31,14 @@ export const bannersRoutes = (
       ctx.page({
         getParentRoute: () => base,
         path: "create",
-        permission: "banners:read",
+        permission: "banners:create",
         routeId: "banners.create",
         component: pages.form,
       }),
       ctx.page({
         getParentRoute: () => base,
         path: "edit/$id",
-        permission: "banners:read",
+        permission: "banners:update",
         routeId: "banners.edit",
         component: pages.form,
       }),
