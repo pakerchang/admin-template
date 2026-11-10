@@ -447,6 +447,9 @@
     },
     "banner": {
       "addBanner": "新增 Banner",
+      "deleteConfirm": "確認刪除",
+      "deleteDescription": "您確定要刪除 Banner「{{name}}」嗎？此操作無法復原。",
+      "confirmDelete": "確認刪除",
       "activeTitle": "已啟用 Banner 列表",
       "inactiveTitle": "Banner 列表",
       "active": "啟用",

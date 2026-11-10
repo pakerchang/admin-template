@@ -8,11 +8,20 @@ import { paginationSchema } from "@/shared/api/schema";
 import { toast } from "@/shared/lib/use-toast";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/shared/ui/dialog";
 import { Guarded } from "@/shared/ui/guarded";
 import { Navbar } from "@/shared/ui/navbar/navbar";
 import Paper from "@/shared/ui/paper";
+import { Spinner } from "@/shared/ui/spinner";
 
-import { useGetBannerList } from "../model/use-banner";
+import { useDeleteBanner, useGetBannerList } from "../model/use-banner";
 import { useBannerSort } from "../model/use-banner-sort";
 
 import { ImageCard } from "./components/ImageCard";
@@ -27,6 +36,8 @@ const BannerList = () => {
 
   const [page, setPage] = useState(paginationSchema.parse({}).page);
   const [limit] = useState(paginationSchema.parse({}).limit);
+  const [bannerToDelete, setBannerToDelete] = useState<TBanner | null>(null);
+  const deleteBannerMutation = useDeleteBanner();
 
   const { data: bannerData } = useGetBannerList({
     page,
@@ -108,7 +119,7 @@ const BannerList = () => {
     });
   };
 
-  const handleDelete = () => {
+  const handleDelete = (banner: TBanner) => {
     if (hasAnyOperation) {
       toast({
         title: t("toast.banner.operationConflict.title"),
@@ -117,6 +128,16 @@ const BannerList = () => {
       });
       return;
     }
+    setBannerToDelete(banner);
+  };
+
+  const confirmDelete = async () => {
+    if (!bannerToDelete) return;
+    // 成功 / 失敗 toast 與列表 invalidate 由 useDeleteBanner 處理；失敗（回 undefined）時保留 dialog
+    const response = await deleteBannerMutation.mutateAsync(
+      bannerToDelete.banner_id
+    );
+    if (response) setBannerToDelete(null);
   };
 
   const handlePromoteToActive = (banner: TBanner) => {
@@ -144,7 +165,7 @@ const BannerList = () => {
       isActive={true}
       sortOrder={banner.sort_order}
       onEdit={() => handleEdit(banner)}
-      onDelete={handleDelete}
+      onDelete={() => handleDelete(banner)}
       onDemoteToInactive={() => handleDemoteToInactive(banner)}
       isDemoting={isDemoting}
       isUpdating={isUpdating}
@@ -287,7 +308,7 @@ const BannerList = () => {
                     isActive={false}
                     isPromoting={isPromoting === banner.banner_id}
                     onEdit={() => handleEdit(banner)}
-                    onDelete={handleDelete}
+                    onDelete={() => handleDelete(banner)}
                     onPromoteToActive={() => handlePromoteToActive(banner)}
                     isUpdating={isUpdating}
                     isReordering={isReordering}
@@ -303,6 +324,41 @@ const BannerList = () => {
           </div>
         </Paper>
       </div>
+
+      <Dialog
+        open={bannerToDelete !== null}
+        onOpenChange={(open) => !open && setBannerToDelete(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("pages.banner.deleteConfirm")}</DialogTitle>
+            <DialogDescription>
+              {t("pages.banner.deleteDescription", {
+                name: bannerToDelete?.title,
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setBannerToDelete(null)}
+              disabled={deleteBannerMutation.isPending}
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleteBannerMutation.isPending}
+            >
+              {deleteBannerMutation.isPending && (
+                <Spinner className="mr-2 size-4" />
+              )}
+              {t("pages.banner.confirmDelete")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

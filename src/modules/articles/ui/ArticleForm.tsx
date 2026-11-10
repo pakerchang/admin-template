@@ -118,11 +118,18 @@ const ArticleFormPage = () => {
     }
   }, [isEditMode, data, form]);
 
+  // 封面以表單 image_url 為準（schema 的 refine 只看它），與 BannerForm 一致用 setValue 同步上傳結果
+  const coverImage = uploadedImages[0];
   useEffect(() => {
-    if (uploadedImages.length > 0) {
+    if (coverImage) {
       setIsCurrentImageRemoved(false);
+      form.setValue("image_url", coverImage, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
     }
-  }, [uploadedImages.length]);
+  }, [coverImage, form]);
 
   useEffect(() => {
     const subscription = form.watch(
@@ -351,6 +358,14 @@ const ArticleFormPage = () => {
                     } else {
                       setIsCurrentImageRemoved(true);
                     }
+                    // 移除新上傳的圖：編輯模式退回原封面（預覽也會退回）；其餘情況清空
+                    form.setValue(
+                      "image_url",
+                      uploadedImages.length > 0 && isEditMode
+                        ? data.image_url
+                        : undefined,
+                      { shouldDirty: true, shouldValidate: true }
+                    );
                   }}
                   type="button"
                   title={t("action.remove")}
