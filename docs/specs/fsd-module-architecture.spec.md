@@ -975,17 +975,17 @@ export default [
 **User Story**：As a maintainer, I want the module contract (`defineModule` with `requires`, page overrides) and a pure `build()` with tests, so that later milestones wire modules against a verified kernel instead of ad-hoc glue.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: `can()` 正確處理精確 grant、`resource:*`、`*`、無 grant 四種情況
+- [x] AC-1 `[cmd]`: `can()` 正確處理精確 grant、`resource:*`、`*`、無 grant 四種情況（證據：src/shared/permission/__tests__/can.test.ts）
   - 驗證：`pnpm exec vitest run src/shared/permission`
-- [ ] AC-2 `[cmd]`: `build()` 對重複 module id、缺 `requires` 依賴、`requires` 成環、i18n 裸字典頂層含 module id（已自行 scope）、nav 引用未宣告 resource、nav 引用的 resource 存在但 action 不在目錄（完整 `resource:action` 比對，例 `orders:typo`；owner 2026-11-09 nav 粒度裁決）各 throw，訊息含 module id
+- [x] AC-2 `[cmd]`: `build()` 對重複 module id、缺 `requires` 依賴、`requires` 成環、i18n 裸字典頂層含 module id（已自行 scope）、nav 引用未宣告 resource、nav 引用的 resource 存在但 action 不在目錄（完整 `resource:action` 比對，例 `orders:typo`；owner 2026-11-09 nav 粒度裁決）各 throw，訊息含 module id（證據：src/app/kernel/__tests__/build.test.ts）
   - 驗證：`pnpm exec vitest run src/app/kernel`
-- [ ] AC-3 `[cmd]`: override 解析順序為 app `.override()` > `shell.pages` > module 預設；`.override()` 未知 route id throw；`shell.pages` 未知 id 忽略；routeId 重複時 throw；routeId 不符 R23 格式（前綴不是所屬 module id）時 throw；`registry.routeIds` 等於 fixture 宣告的 routeId 集合
+- [x] AC-3 `[cmd]`: override 解析順序為 app `.override()` > `shell.pages` > module 預設；`.override()` 未知 route id throw；`shell.pages` 未知 id 忽略；routeId 重複時 throw；routeId 不符 R23 格式（前綴不是所屬 module id）時 throw；`registry.routeIds` 等於 fixture 宣告的 routeId 集合（證據：src/app/kernel/__tests__/build.test.ts）
   - 驗證：同上
-- [ ] AC-3b `[cmd]`（F5 負例）: fixture module 以 `ctx.page` 建一個有 `component` 但缺 `routeId` 的 route（以 `as any` 繞過型別）→ `build()` throw，訊息含 module id 與 `requires routeId`；`ctx.layout` 帶 `component` → `build()` throw，訊息含 `must not have a component`（型別層的必填由 §4.1 `TPageRouteOpts` 保證，本 AC 驗 runtime 防線）
+- [x] AC-3b `[cmd]`（F5 負例）: fixture module 以 `ctx.page` 建一個有 `component` 但缺 `routeId` 的 route（以 `as any` 繞過型別）→ `build()` throw，訊息含 module id 與 `requires routeId`；`ctx.layout` 帶 `component` → `build()` throw，訊息含 `must not have a component`（型別層的必填由 §4.1 `TPageRouteOpts` 保證，本 AC 驗 runtime 防線）（證據：src/app/kernel/__tests__/build.test.ts）
   - 驗證：`pnpm exec vitest run src/app/kernel`
-- [ ] AC-4 `[cmd]`: 兩個 fixture module 組出的 route tree 含兩者子路由、nav 依 order 穩定排序、i18n 合併後 module key 為 `<id>.<key>`（無 `<id>.<id>.*`）且 core key 不被覆蓋、`registry.mockHandlers[0]` 為 guard
+- [x] AC-4 `[cmd]`: 兩個 fixture module 組出的 route tree 含兩者子路由、nav 依 order 穩定排序、i18n 合併後 module key 為 `<id>.<key>`（無 `<id>.<id>.*`）且 core key 不被覆蓋、`registry.mockHandlers[0]` 為 guard（證據：src/app/kernel/__tests__/build.test.ts）
   - 驗證：同上
-- [ ] AC-5 `[cmd]`: operation 表 fail-closed（R13 / OQ-14 / R21）：`routes` 有 operationId 但 `permissions` 無對應 key → throw 且訊息含 operationId 與 `"public"` 提示；`permissions` 有孤兒 key → throw；非 public permission 的 resource 未被已安裝 module 宣告 → throw；**負例 `orders:typo`：已安裝 module 宣告 `resources: { orders: ["read","update","export"] }`，operation 宣告 `orders:typo` → throw，訊息含 operationId 與 `orders:typo`**（resource 存在但 action 不在目錄也必須失敗）；值為 `"public"` 者通過；`orders:read` 通過
+- [x] AC-5 `[cmd]`: operation 表 fail-closed（R13 / OQ-14 / R21）：`routes` 有 operationId 但 `permissions` 無對應 key → throw 且訊息含 operationId 與 `"public"` 提示；`permissions` 有孤兒 key → throw；非 public permission 的 resource 未被已安裝 module 宣告 → throw；**負例 `orders:typo`：已安裝 module 宣告 `resources: { orders: ["read","update","export"] }`，operation 宣告 `orders:typo` → throw，訊息含 operationId 與 `orders:typo`**（resource 存在但 action 不在目錄也必須失敗）；值為 `"public"` 者通過；`orders:read` 通過（證據：src/app/kernel/__tests__/build.test.ts）
   - 驗證：`pnpm exec vitest run src/app/kernel`
 - [ ] AC-6 `[cmd]`: 既有行為不變（既有檔案無任何改動，新碼未被 import）
   - 驗證：`pnpm build && pnpm exec vitest run && git diff --quiet fcc673a -- src ':!src/shared' ':!src/app'`
@@ -1115,7 +1115,7 @@ expected: exit 0；`src/shared/permission`、`src/app/kernel` 測試檔出現在
   - 驗證：`pnpm exec vitest run src/app/mock`
 - [ ] AC-3 `[cmd]`: `api-client.test.ts` 改走 `setupServer` 後原有案例全綠（登入、帶 token、404 fallback）；`server.listen` 用 msw 3 的 `onUnhandledFrame`（`onUnhandledRequest` 在 msw 3 已改名，PoC a1 實測 TS2353）
   - 驗證：`pnpm exec vitest run src/services`
-- [ ] AC-4 `[cmd]`: `public/mockServiceWorker.js` 存在且進 git
+- [x] AC-4 `[cmd]`: `public/mockServiceWorker.js` 存在且進 git（證據：git ls-files --error-unmatch public/mockServiceWorker.js）
   - 驗證：`git ls-files --error-unmatch public/mockServiceWorker.js`
 - [ ] AC-5 `[manual]`: `VITE_API_MOCK=true pnpm dev` 登入後各頁 CRUD 與重構前一致；Network 面板顯示請求由 service worker 回應（PoC 只驗過 node `setupServer`，browser `setupWorker` + vite dev 由本 AC 首次驗證，§11.1）
 
@@ -1137,13 +1137,13 @@ expected: exit 0
 **User Story**：As a maintainer, I want every page group registered via `createApp().use(module)` and rendered inside a replaceable default shell, so that adding/removing a feature is one `.use()` line and pages can be overridden by id.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: `router/routes.tsx`、`constants/sidebar.tsx` 不存在；`app/modules.ts` 恰有 10 個 `.use(`
+- [x] AC-1 `[cmd]`: `router/routes.tsx`、`constants/sidebar.tsx` 不存在；`app/modules.ts` 恰有 10 個 `.use(`（證據：src/app/__tests__/app-wiring.test.tsx + 驗證指令）
   - 驗證：`test ! -e src/router/routes.tsx && test ! -e src/constants/sidebar.tsx && test "$(grep -o '\.use(' src/app/modules.ts | wc -l | tr -d ' ')" -eq 10`（`grep -o … | wc -l` 逐 occurrence 計數；`.use()` 鏈式排版一行多個，只計行數會少算）
-- [ ] AC-2 `[cmd]`: registry 產出的路徑集合與重構前一致（快照列出全部 fullPath），另多一條 `/` index redirect
+- [x] AC-2 `[cmd]`: registry 產出的路徑集合與重構前一致（快照列出全部 fullPath），另多一條 `/` index redirect（證據：src/app/__tests__/app-wiring.test.tsx）
   - 驗證：`pnpm exec vitest run src/app`
-- [ ] AC-3 `[cmd]`: `/` 依 grants 導向第一個可見 nav；無可見 nav 時內容區渲染 `shell.Forbidden`
+- [x] AC-3 `[cmd]`: `/` 依 grants 導向第一個可見 nav；無可見 nav 時內容區渲染 `shell.Forbidden`（證據：src/app/router/__tests__/index-redirect.test.tsx）
   - 驗證：`pnpm exec vitest run src/app/router`
-- [ ] AC-4 `[cmd]`: 以 fixture `.override("users.list", Stub)` 建 app，`/users` 渲染 Stub 而非預設頁（`users.list` 為該 route 的 routeId，R19；格式依 R23）
+- [x] AC-4 `[cmd]`: 以 fixture `.override("users.list", Stub)` 建 app，`/users` 渲染 Stub 而非預設頁（`users.list` 為該 route 的 routeId，R19；格式依 R23）（證據：src/app/__tests__/app-wiring.test.tsx）
   - 驗證：`pnpm exec vitest run src/app`
 - 註：M3 尚無正式 operation 表。依 R22，guard 在 `apiBaseUrl` 內對不到 route 一律 404，傳空表會讓所有 API 變 404，因此 M3 由 `app/mock/legacy-adapter.ts` 從現行 `handlers` 表導出 `legacyOperations()`：每個 `METHOD path` 一條 route、permission 一律 `"public"`（**R28 已裁**：M3 過渡期全 public，明確 public，非 fall-through），`build()` 1.5 通過；guard 行為 = 表內放行、表外 404，與現行 `mockFetch` 的 404 fallback（`handlers.ts:209-214`）一致。mock 模式的 `VITE_API_BASE_URL` 同時改為專用絕對 origin（R24，§6.5），API 路徑不變。M4 換成手寫 `app/operations.gen.ts`，自 M4 起 fail-closed（R28）。
 - [ ] AC-6 `[cmd]`: M3 的 guard 掛載行為不變：`apiBaseUrl` 外的 request 放行、表內 operation 放行、表外 path 回 404
