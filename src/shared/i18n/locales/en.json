@@ -205,7 +205,7 @@
     "remove": "Remove"
   },
   "dashboard": {
-    "title": "DAMA Admin",
+    "title": "Admin Template",
     "menu": {
       "users": {
         "title": "User Management",
