@@ -38,7 +38,7 @@ const ids = (items: TNavItem[]) =>
   items.flatMap((i) => [i.id, ...(i.children ?? []).map((c) => c.id)]);
 
 /**
- * 期望值 = 依 main 裁決調整後的矩陣（m4-fix2 報告「矩陣最終內容」，待 owner 覆核），不是 6029bf0 畫面的逐字重現：
+ * 期望值 = 依 main 裁決調整後的矩陣（m4-fix2 報告「矩陣最終內容」，owner 2026-11-10 覆核定案（OD-GRANT-1）），不是 6029bf0 畫面的逐字重現：
  * - 6029bf0 sidebar 8 項、AppSidebar 不過濾（constants/sidebar.tsx:20-65、AppSidebar.tsx:79），子頁 route 無檢查（router/routes.tsx:55-57）
  *   → 沒有檢查的頁 = 所有後台角色可見
  * - D1：support / partner 在 6029bf0 其實進不了後台（ProtectedAppLayout.tsx:9-13 的 canAccessAdminPanel 限 admin/superadmin）；
