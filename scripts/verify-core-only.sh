@@ -43,7 +43,6 @@ TESTS=$(find src scripts -type d -name node_modules -prune -o -type f \
 GREPPED=$(grep -lE "@/modules/($ALT)([\"'/]|$)|[\"'\`]($ALT)\.[A-Za-z]" $TESTS || true)
 # 斷言「完整安裝」的測試：以 URL / 權限字串 / YAML tag 引用 domain，或斷言 module / route 數量，上面的 grep 抓不到。
 # 不改這些測試（M8 Must-Not-Touch），在此明列；檔案不存在 → 失敗，避免清單過期。
-# key-ownership：歸屬判準依「實際引用者」，拔掉 domain 後 core 共用 key（status.* 等）會變成無引用 / 單一引用，只在完整安裝下成立。
 FULL_INSTALL_TESTS="
 src/app/__tests__/nav-labels.test.ts
 src/app/__tests__/permission-structure.test.ts
@@ -54,7 +53,6 @@ src/app/kernel/__tests__/operations-yaml.test.ts
 src/app/mock/__tests__/mock-handlers.test.ts
 src/app/router/__tests__/forbidden-boundary.test.tsx
 src/app/router/__tests__/index-redirect.test.tsx
-src/shared/i18n/__tests__/key-ownership.test.ts
 src/shared/i18n/__tests__/module-dictionaries.test.ts
 src/shared/i18n/__tests__/scope-migration.test.ts
 "

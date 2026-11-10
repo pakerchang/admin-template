@@ -7,7 +7,7 @@ import zh from "@/shared/i18n/locales/zh.json";
 /**
  * i18n scope 搬遷 AC-1 / AC-2：以原始碼字串字面值判定 key 歸屬（spec §1.2 判準）。
  * - 掃 `src/**` 非測試 `.ts/.tsx` 的字串字面值（含 template literal 內嵌的字面值），與字典 leaf key 完全相等即算引用
- * - template literal 的靜態前綴（`` `x.y.${z}` `` 的 `x.y.`）覆蓋其下所有 key，前綴必須列在 DYNAMIC_PREFIXES 白名單
+ * - template literal 的靜態前綴（`` `x.y.${z}` `` 的 `x.y.`）覆蓋其下所有 key，前綴必須列在 MODULE_DYNAMIC / CORE_DYNAMIC 白名單（局部前綴，不寫死 module id）
  * - 「看起來是 key」的字面值（首段是某字典的頂層 key 或 module id）即使不在任何字典也要檢查歸屬（抓外部 / 不存在的 key）
  * - module 字典 `nav` 段由 kernel 組 key 引用（AC-3 負責），不在此檢查
  */
@@ -21,19 +21,21 @@ const moduleLocales = import.meta.glob<Record<string, unknown>>(
 );
 
 /**
- * 動態組 key 的靜態前綴白名單（spec §1.2「動態組 key 處」）。新增動態 key 須在此登記；
- * 掃到未登記的前綴（且其下有字典 key）→ 測試失敗。本檔引用 domain key，列在 verify-core-only 的 FULL_INSTALL_TESTS
+ * 動態組 key 的靜態前綴白名單（spec §1.2「動態組 key 處」），以相對引用者的局部前綴登記，不寫死 module id（core-safe）：
+ * - MODULE_DYNAMIC：module 檔內 `` `<自己的 id>.<局部前綴>${x}` `` 的局部前綴
+ * - CORE_DYNAMIC：core 檔或 module 檔動態引用 core key 的前綴
+ * 掃到未登記的前綴 → 失敗；module 以動態前綴引用別的 module 的 key → (a) 失敗。
+ * `routeId: \`…${x}\`` 不是 i18n key，不計
  */
-const DYNAMIC_PREFIXES = [
-  "auth.demo.descriptions.",
-  "auth.demo.roles.",
-  "product.productCreate.",
-  "product.productTypes.",
-  "product.status.",
-  "team-members.roles.",
+const MODULE_DYNAMIC = [
+  "demo.descriptions.",
+  "demo.roles.",
+  "productCreate.",
+  "productTypes.",
+  "roles.",
+  "status.",
 ];
-/** 掃到但不是 i18n key 的 template 前綴（不計引用）：product routes 的 `routeId: \`product.${name}\`` */
-const NOT_I18N_PREFIXES = ["product."];
+const CORE_DYNAMIC: string[] = [];
 
 const leaves = (o: Record<string, unknown>, p = ""): string[] =>
   Object.entries(o).flatMap(([k, v]) =>
@@ -50,10 +52,15 @@ const literalsOf = (path: string, text: string) => {
   const sf = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true);
   const exact: string[] = [];
   const prefixes: string[] = [];
+  const isRouteId = (n: ts.Node) =>
+    ts.isPropertyAssignment(n.parent) && n.parent.name.getText() === "routeId";
   const visit = (n: ts.Node) => {
     if (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n))
       exact.push(n.text);
-    else if (ts.isTemplateExpression(n) || ts.isTemplateLiteralTypeNode(n))
+    else if (
+      (ts.isTemplateExpression(n) || ts.isTemplateLiteralTypeNode(n)) &&
+      !isRouteId(n)
+    )
       prefixes.push(n.head.text);
     ts.forEachChild(n, visit);
   };
@@ -84,24 +91,40 @@ const tops = new Set([
 const KEY_LIKE = /^[A-Za-z][\w-]*(\.[\w-]+)+$/;
 /** module → 引用的 key-like 字面值（含字典裡不存在的） */
 const keyLike = new Map<string, Set<string>>();
-const usedPrefixes = new Set<string>();
+/** 掃到的動態前綴，`module:<局部>` / `core:<前綴>` */
+const usedDynamic = new Set<string>();
+const addKeyLike = (owner: string, s: string) =>
+  keyLike.set(owner, (keyLike.get(owner) ?? new Set()).add(s));
+const coreSet = new Set(coreKeys);
 for (const [path, text] of Object.entries(sources)) {
   const owner = ownerOf(path);
   const { exact, prefixes } = literalsOf(path, text);
   for (const s of exact) {
     refs.get(s)?.add(owner);
-    if (KEY_LIKE.test(s) && tops.has(s.split(".")[0]))
-      keyLike.set(owner, (keyLike.get(owner) ?? new Set()).add(s));
+    if (KEY_LIKE.test(s) && tops.has(s.split(".")[0])) addKeyLike(owner, s);
   }
   for (const p of prefixes) {
     const covered = allKeys.filter((k) => k.startsWith(p));
-    if (!p.includes(".") || !covered.length || NOT_I18N_PREFIXES.includes(p))
-      continue;
-    usedPrefixes.add(p);
-    if (DYNAMIC_PREFIXES.includes(p))
-      for (const k of covered) refs.get(k)!.add(owner);
+    if (!p.includes(".") || !covered.length) continue;
+    const own = owner !== "core" && p.startsWith(`${owner}.`);
+    const entry = own ? `module:${p.slice(owner.length + 1)}` : `core:${p}`;
+    usedDynamic.add(entry);
+    const listed = own
+      ? MODULE_DYNAMIC.includes(p.slice(owner.length + 1))
+      : CORE_DYNAMIC.includes(p) && covered.every((k) => coreSet.has(k));
+    if (listed) for (const k of covered) refs.get(k)!.add(owner);
+    // 動態引用別的 module 的 key：交給 (a) 判定為跨 module 引用
+    else if (!own && owner !== "core") addKeyLike(owner, `${p}\${…}`);
   }
 }
+/**
+ * 完整安裝 = 仍有 `kind: "domain"` 的 module。core-only（verify-core-only 拔掉 domain module）時，
+ * core 共用 key 的引用者也被拔掉，「core key 無引用 / 單一引用」不再代表字典有誤 → (b) 與 (c) 的 core key 部分只在完整安裝下判定
+ */
+const fullInstall = Object.entries(sources).some(
+  ([p, t]) =>
+    /^\/src\/modules\/[^/]+\/index\.ts$/.test(p) && /kind:\s*"domain"/.test(t)
+);
 const users = (k: string) => [...refs.get(k)!];
 
 describe("i18n key 歸屬（i18n-scope-migration AC-1）", () => {
@@ -110,32 +133,49 @@ describe("i18n key 歸屬（i18n-scope-migration AC-1）", () => {
     expect(coreKeys.length).toBeGreaterThan(10);
   });
 
-  it("(a) module 引用的 key 不是自己的 `<id>.*` 就必須是 core key（含字典裡不存在的 key）", () => {
-    const core = new Set(coreKeys);
+  it("(a) module 引用的 key 不是自己的 `<id>.*` 就必須是 core key（含字典裡不存在的 key 與動態前綴）", () => {
     const bad: string[] = [];
     for (const [owner, lits] of keyLike)
       if (owner !== "core")
         for (const k of lits)
-          if (!k.startsWith(`${owner}.`) && !core.has(k))
+          if (!k.startsWith(`${owner}.`) && !coreSet.has(k))
             bad.push(`${owner} → ${k}`);
     expect(bad).toEqual([]);
   });
 
-  it("動態前綴與白名單一致（未登記的動態 key 失敗）", () => {
-    expect([...usedPrefixes].sort()).toEqual([...DYNAMIC_PREFIXES].sort());
+  it("掃到的動態前綴都在白名單（未登記的動態 key 失敗）", () => {
+    const listed = new Set([
+      ...MODULE_DYNAMIC.map((p) => `module:${p}`),
+      ...CORE_DYNAMIC.map((p) => `core:${p}`),
+    ]);
+    expect([...usedDynamic].filter((e) => !listed.has(e))).toEqual([]);
   });
 
-  it("(b) 不存在只被單一 module 引用的 core key", () => {
-    const single = coreKeys.filter((k) => {
-      const u = users(k);
-      return u.length === 1 && u[0] !== "core";
-    });
-    expect(single.map((k) => `${k} ← ${users(k)}`)).toEqual([]);
+  it.skipIf(!fullInstall)("白名單沒有過期項目（完整安裝）", () => {
+    const stale = [
+      ...MODULE_DYNAMIC.map((p) => `module:${p}`),
+      ...CORE_DYNAMIC.map((p) => `core:${p}`),
+    ].filter((e) => !usedDynamic.has(e));
+    expect(stale).toEqual([]);
   });
 
-  it("(c) core 與 module 字典沒有無引用的 key（module nav 段除外）", () => {
+  it.skipIf(!fullInstall)(
+    "(b) 不存在只被單一 module 引用的 core key（完整安裝）",
+    () => {
+      const single = coreKeys.filter((k) => {
+        const u = users(k);
+        return u.length === 1 && u[0] !== "core";
+      });
+      expect(single.map((k) => `${k} ← ${users(k)}`)).toEqual([]);
+    }
+  );
+
+  it("(c) core 與 module 字典沒有無引用的 key（module nav 段除外；core key 只在完整安裝下判定）", () => {
     const unused = allKeys.filter(
-      (k) => !refs.get(k)!.size && !(moduleKeys.includes(k) && isNavKey(k))
+      (k) =>
+        !refs.get(k)!.size &&
+        !(moduleKeys.includes(k) && isNavKey(k)) &&
+        (fullInstall || !coreSet.has(k))
     );
     expect(unused).toEqual([]);
   });
