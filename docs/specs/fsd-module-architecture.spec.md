@@ -1117,7 +1117,7 @@ expected: exit 0；`src/shared/permission`、`src/app/kernel` 測試檔出現在
   - 驗證：`pnpm exec vitest run src/services`
 - [x] AC-4 `[cmd]`: `public/mockServiceWorker.js` 存在且進 git（證據：git ls-files --error-unmatch public/mockServiceWorker.js）
   - 驗證：`git ls-files --error-unmatch public/mockServiceWorker.js`
-- [ ] AC-5 `[manual]`: `VITE_API_MOCK=true pnpm dev` 登入後各頁 CRUD 與重構前一致；Network 面板顯示請求由 service worker 回應（PoC 只驗過 node `setupServer`，browser `setupWorker` + vite dev 由本 AC 首次驗證，§11.1）
+- [ ] AC-5 `[manual]`: `VITE_API_MOCK=true pnpm dev` 登入後各頁 CRUD 與重構前一致；Network 面板顯示請求由 service worker 回應（PoC 只驗過 node `setupServer`，browser `setupWorker` + vite dev 由本 AC 首次驗證，§11.1）（owner 親驗 pending：owner 2026-11-10 裁決先註記、不阻擋交付；agent 已驗，證據 `docs/specs/refactor/README.md` M2 列（main 派 s28 瀏覽器行為層驗證，報告 `ac5-browser-report.md`，tip `8458b19`））
 
 **預設值**：mock 預設開——只有 `VITE_API_MOCK === "false"` 才關閉（未設、`"true"` 或其他值都開；owner 2026-11-10 裁決），判斷集中在 `src/app/mock/enabled.ts` 的 `isMockEnabled`。
 
@@ -1150,7 +1150,7 @@ expected: exit 0
   - 驗證：`pnpm exec vitest run src/app/mock`
 - [x] AC-7 `[cmd]`（R24 負例）: mock 模式下 `apiBaseUrl` 未設定、為相對路徑、或與 app 同源（`new URL(apiBaseUrl).origin === location.origin`，含同源根目錄 `location.origin + "/"` 與同源非根路徑 `location.origin + "/api"` 兩個負例）時 `startMockWorker` throw；設為專用絕對 origin 時正常啟動，且 legacy 表的 route 涵蓋 `/api`、`/user`、`/users`、`/admin` 四個前綴（路徑未改）（legacy 表已由 `src/app/operations.gen.ts` 取代（M7）；證據：`src/app/mock/__tests__/start-worker.test.ts`、`mock-handlers.test.ts`）
   - 驗證：`pnpm exec vitest run src/app/mock`
-- [ ] AC-5 `[manual]`: `pnpm dev` 登入後 sidebar 項目、順序、各頁 CRUD 與重構前相同；語系切換正常
+- [ ] AC-5 `[manual]`: `pnpm dev` 登入後 sidebar 項目、順序、各頁 CRUD 與重構前相同；語系切換正常（owner 親驗 pending：owner 2026-11-10 裁決先註記、不阻擋交付；agent 已驗，證據 `docs/specs/refactor/README.md` M3 列（main 派 s28 瀏覽器行為層驗證，報告 `ac5-browser-report.md`，tip `8458b19`））
 
 **Touches**：`src/main.tsx`、`index.html`、`src/router/**`、`src/constants/sidebar.tsx`、`src/components/layouts/**`、`src/components/shared/{AppSidebar,Navbar,Breadcrumb}.tsx`、`src/hooks/use-breadcrumb.ts`、`src/locales/i18n.ts`、`src/app/**`、`src/shells/default/**`（新）、`src/modules/*/index.ts`（新，含 route composition）、`src/modules/*/model/routes.ts`（新，不 import ui/pages）、`.env.example`（mock 模式 `VITE_API_BASE_URL`）；例外（main 02:33 代 owner 核准）：`vite.config.ts`（test env 的 `VITE_API_BASE_URL`）、`CLAUDE.md`（M3 狀態與路由描述）
 **Must-Not-Touch**：`src/pages/**` 內部實作（只被 import）；`src/components/ui/**`；行為紅線：URL、i18n key、mock API 路徑不變
@@ -1270,7 +1270,7 @@ expected: exit 0
   - 驗證：`for f in src/modules/*/mocks/*.msw.ts; do id=$(basename "$(dirname "$(dirname "$f")")"); test "$(basename "$f")" = "$id.msw.ts" || exit 1; done && test ! -e src/app/mock/legacy-adapter.ts && ! grep -rn "apiFetch" src/modules`
 - [x] AC-6 `[cmd]`: create 後 list 讀得到（seed 記憶體狀態經 orval handler override 生效）；手寫的非 200 handler（例：PUT 不存在的 id → 404）排在 orval handler 前且生效；代表性 module 各一條
   - 驗證：`pnpm exec vitest run src/modules`
-- [ ] AC-7 `[manual]`: `VITE_API_MOCK=true pnpm dev` 各頁 CRUD 與 M6 一致（待驗；node `setupServer` 已驗）
+- [ ] AC-7 `[manual]`: `VITE_API_MOCK=true pnpm dev` 各頁 CRUD 與 M6 一致（node `setupServer` 已驗）（owner 親驗 pending：owner 2026-11-10 裁決先註記、不阻擋交付；agent 驗收結論為**部分通過**，證據 `~/.claude/plans/admin-template/s1-browser-ac-report.md`：API 皆由 SW 回應，但當時有以下限制——F1 `/users` 直接載入／重新整理回 mock JSON（M7 regression）、P2 banner 刪除無作用、P3 文章無法新增（P2/P3 早於 M7）、空白新增商品未走完（改用複製建立代替）。後續修復另列，不改變當時結論：F1 由 #17 `fix/msw-origin-anchor` 修正（`docs/specs/msw-origin-anchor.spec.md`）；P2/P3 由 #19 `fix/p1-p3-defects` 修正（`docs/specs/p1-p3-defects.spec.md` (b)～(d) 自動測試、(f) agent 瀏覽器代驗）；空白新增商品至今未有瀏覽器驗證）
 
 **Touches**：`package.json`（`gen:api` script、orval / yaml devDeps）、`pnpm-lock.yaml`、`openapi.yaml`（新）、`orval.config.ts`（新）、`scripts/extract-operations.ts`（新）、`scripts/__tests__/**`（新）、`src/app/operations.gen.ts`（改為產物）、`src/shared/api/{fetcher.ts,types.ts,mock-db/**}`、`src/modules/*/{api,model,mocks}/**`、`src/app/mock/**`
 **Must-Not-Touch**：`src/modules/*/ui/**`（除 hook 名稱改動外）；`src/shells/**`；行為紅線：mock API 路徑與回應形狀不變
@@ -1294,7 +1294,7 @@ expected: exit 0
   - 驗證：`pnpm exec vitest run src/app/__tests__/override.integration.test.tsx`
 - [x] AC-3 `[cmd]`: 刪 `suppliers` 但保留 `product` 時 `build()` throw 並指名 `product`；只刪 module 目錄與 `.use()`、未刪 YAML tag 也未重 gen 時 `build()` 以驗證 1.5.3 throw（§8.2 漏做的 fail fast）
   - 驗證：`pnpm exec vitest run src/app/kernel`
-- [ ] AC-4 `[manual]`: core-only 副本 `pnpm dev`，登入後 sidebar 只有 team-members（users 本無 nav），`/` redirect 到 `/team-members`（待驗；`src/app/__tests__/core-only.test.tsx` 為自動佐證）
+- [ ] AC-4 `[manual]`: core-only 副本 `pnpm dev`，登入後 sidebar 只有 team-members（users 本無 nav），`/` redirect 到 `/team-members`（`src/app/__tests__/core-only.test.tsx` 為自動佐證）（owner 親驗 pending：owner 2026-11-10 裁決先註記、不阻擋交付；agent 已驗，證據 `~/.claude/plans/admin-template/s1-browser-ac-report.md`（core-only 副本登入後 sidebar 只有團隊成員管理、`/` redirect 到 `/team-members`））
 
 **Touches**：`scripts/verify-core-only.sh`（新）、`src/app/__tests__/**`、`package.json`（scripts）
 **Must-Not-Touch**：`src/modules/**`、`src/shells/default/**`、`openapi.yaml`；行為紅線：腳本不得修改工作目錄（只在暫存副本操作）

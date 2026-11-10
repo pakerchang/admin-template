@@ -16,13 +16,13 @@ mock 模式的登入頁加上展示帳號角色快選（owner 2026-11-10 裁決�
 
 ### Acceptance Criteria
 
-- [ ] AC-a：mock 模式（清單非空）渲染登入頁有 5 個快選（superadmin / admin / support / partner / premium），各帶角色與說明；點擊後 email / password 欄位值為該帳號與 `admin123`，且不送出（`login` 未被呼叫）。— `src/modules/auth/ui/__tests__/login-page.test.tsx`
-- [ ] AC-b：非 mock 模式不顯示：`demoAccountsFor("false")` 為空、`LoginPage` 無清單時不渲染快選；`demoAccountsFor` 與 `isMockEnabled` 對 `undefined / "" / "true" / "false"` 判斷一致。— `src/modules/auth/mocks/__tests__/demo-accounts.test.ts`、`login-page.test.tsx`
-- [ ] AC-c：快選帳號的 email / role 與 users seed 一致（每筆在 seed 找得到、role 相同）。— `demo-accounts.test.ts`
-- [ ] AC-d：每個快選帳號經 mock handler 實際 `POST /api/auth/login` 成功，回傳 user.role 等於清單角色。— `demo-accounts.test.ts`
-- [ ] AC-e：`pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"` exit 0（無 boundaries 違規、無新增 eslint-disable）。
-- [ ] AC-f `[manual]`：瀏覽器 `pnpm dev` 點快選 → 按登入 → 依角色看到對應畫面（留給 owner）。
-- [ ] AC-g：README 套用 `readme-accounts.patch`，並註明登入頁在 mock 模式有角色快選。
+- [x] AC-a：mock 模式（清單非空）渲染登入頁有 5 個快選（superadmin / admin / support / partner / premium），各帶角色與說明；點擊後 email / password 欄位值為該帳號與 `admin123`，且不送出（`login` 未被呼叫）。— `src/modules/auth/ui/__tests__/login-page.test.tsx`（證據：`src/modules/auth/ui/__tests__/login-page.test.tsx`，2026-11-10 exit 0）
+- [x] AC-b：非 mock 模式不顯示：`demoAccountsFor("false")` 為空、`LoginPage` 無清單時不渲染快選；`demoAccountsFor` 與 `isMockEnabled` 對 `undefined / "" / "true" / "false"` 判斷一致。— `src/modules/auth/mocks/__tests__/demo-accounts.test.ts`、`login-page.test.tsx`（證據：`src/modules/auth/mocks/__tests__/demo-accounts.test.ts`、`login-page.test.tsx`，2026-11-10 exit 0）
+- [x] AC-c：快選帳號的 email / role 與 users seed 一致（每筆在 seed 找得到、role 相同）。— `demo-accounts.test.ts`（證據：`src/modules/auth/mocks/__tests__/demo-accounts.test.ts`，2026-11-10 exit 0）
+- [x] AC-d：每個快選帳號經 mock handler 實際 `POST /api/auth/login` 成功，回傳 user.role 等於清單角色。— `demo-accounts.test.ts`（證據：`src/modules/auth/mocks/__tests__/demo-accounts.test.ts`，2026-11-10 exit 0）
+- [x] AC-e：`pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"` exit 0（無 boundaries 違規、無新增 eslint-disable）。（證據：`pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"`（無輸出），2026-11-10 exit 0）
+- [ ] AC-f `[manual]`：瀏覽器 `pnpm dev` 點快選 → 按登入 → 依角色看到對應畫面（留給 owner）。（owner 親驗 pending：owner 2026-11-10 裁決先註記、不阻擋交付）
+- [x] AC-g：README 套用 `readme-accounts.patch`，並註明登入頁在 mock 模式有角色快選。（證據：靜態核對 `README.md`「展示帳號」表與 L43 角色快選說明，2026-11-10；`readme-accounts.patch` 原檔不在 repo，以 README 內容核對）
 
 ### Touches
 

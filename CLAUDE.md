@@ -46,13 +46,13 @@ src/
 |---|---|---|
 | M0 | deps 前置：Node 22 + ESLint 9 flat config（deps chain 負責，§9） | 完成（#4 `engines.node >=22`、#5 `eslint.config.js`） |
 | M1 | kernel 契約 + 權限引擎（純新增、未接線） | 完成（#8） |
-| M2 | MSW 取代 `mockFetch`（行為不變） | 完成（#9；AC-5 瀏覽器驗收由 agent 驗過，owner 未親驗） |
-| M3 | module 接線 + default shell（行為不變） | 完成（#11；AC-5 同 M2，owner 未親驗） |
+| M2 | MSW 取代 `mockFetch`（行為不變） | 完成（#9；AC-5 瀏覽器驗收 agent 已驗，owner 親驗 pending：owner 2026-11-10 裁決先註記、不阻擋交付） |
+| M3 | module 接線 + default shell（行為不變） | 完成（#11；AC-5 同 M2：agent 已驗，owner 親驗 pending） |
 | M4 | 權限四強制點 + 內容區 403 | 完成（#11；角色 grants 矩陣 owner 2026-11-10 覆核定案（OD-GRANT-1），寫入入口權限宣告見 `docs/specs/f1-permission-declarations.spec.md`） |
 | M5 | kernel / shared 搬遷 + boundaries lint | 完成（#11） |
 | M6 | module 內嵌搬遷（pages / schemas / seed / i18n） | 完成（#11） |
-| M7 | orval 契約層（單一 `openapi.yaml`） | 完成（#11；AC-7 瀏覽器驗收待驗） |
-| M8 | D1 / D4 驗收自動化與收尾 | 完成（#11；AC-4 瀏覽器驗收待驗） |
+| M7 | orval 契約層（單一 `openapi.yaml`） | 完成（#11；AC-7 瀏覽器驗收 agent 驗為部分通過（當時的 `/users` 重新整理 regression 後由 #17、banner 刪除／文章新增缺陷後由 #19 修正；空白新增商品未驗），owner 親驗 pending） |
+| M8 | D1 / D4 驗收自動化與收尾 | 完成（#11；AC-4 瀏覽器驗收 agent 已驗，owner 親驗 pending） |
 
 各 milestone 的證據、review 結果與已知問題 / follow-up：`docs/specs/refactor/README.md`（#12）。
 

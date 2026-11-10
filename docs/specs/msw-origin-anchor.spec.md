@@ -23,12 +23,12 @@ M7 regression（s1 瀏覽器驗收 F1）：mock 模式登入後直接載入或�
 
 ### Acceptance Criteria
 
-- [ ] AC-1：app origin（非 `apiBaseUrl`）的 `GET /users`、`POST /admin/images`，以及 `operations.gen.ts` 每一條 route（`:param` 代入任意值）在 `registry.mockHandlers` 下都不被攔截（`getResponse` 回 `undefined` 或 passthrough response）。測試：`src/app/mock/__tests__/origin-anchor.test.ts`。
-- [ ] AC-2：`apiBaseUrl` origin 的 `GET /users` 照常由 mock 回應且經過 guard：未帶 token → 非 200（403）；superadmin token → 200。同檔測試。
-- [ ] AC-3：破壞性驗證——移除圍欄後 AC-1 測試失敗（紅燈先於實作記錄），還原後綠燈。
-- [ ] AC-4：`pnpm gen:api` 後 `src` 工作樹無 diff（本棒不改 orval config 與產物）。
-- [ ] AC-5：既有測試全綠；guard 仍是 `registry.mockHandlers[0]`。
-- [ ] AC-6 `[manual]`：瀏覽器 mock 模式登入後，在 `/users` 重新整理顯示 SPA 頁面（留給 owner）。
+- [x] AC-1：app origin（非 `apiBaseUrl`）的 `GET /users`、`POST /admin/images`，以及 `operations.gen.ts` 每一條 route（`:param` 代入任意值）在 `registry.mockHandlers` 下都不被攔截（`getResponse` 回 `undefined` 或 passthrough response）。測試：`src/app/mock/__tests__/origin-anchor.test.ts`。（證據：`src/app/mock/__tests__/origin-anchor.test.ts`，2026-11-10 exit 0）
+- [x] AC-2：`apiBaseUrl` origin 的 `GET /users` 照常由 mock 回應且經過 guard：未帶 token → 非 200（403）；superadmin token → 200。同檔測試。（證據：`src/app/mock/__tests__/origin-anchor.test.ts`「AC-2」，2026-11-10 exit 0）
+- [x] AC-3：破壞性驗證——移除圍欄後 AC-1 測試失敗（紅燈先於實作記錄），還原後綠燈。（證據：紅燈紀錄見 `~/.claude/plans/admin-template/s5-msw-origin-anchor-report.md`（實作前 `vitest run origin-anchor.test.ts` exit 1，34/36 route 被攔）；綠燈：`src/app/mock/__tests__/origin-anchor.test.ts`，2026-11-10 exit 0。本次未重做移除圍欄的破壞步驟）
+- [x] AC-4：`pnpm gen:api` 後 `src` 工作樹無 diff（本棒不改 orval config 與產物）。（證據：`pnpm gen:api && git diff --exit-code -- src`，2026-11-10 exit 0）
+- [x] AC-5：既有測試全綠；guard 仍是 `registry.mockHandlers[0]`。（證據：全量 vitest 48 files / 405 tests + `origin-anchor.test.ts`「guard stays first」、`mock-handlers.test.ts`，2026-11-10 exit 0）
+- [ ] AC-6 `[manual]`：瀏覽器 mock 模式登入後，在 `/users` 重新整理顯示 SPA 頁面（留給 owner）。（owner 親驗 pending：owner 2026-11-10 裁決先註記、不阻擋交付）
 
 ### Touches
 
