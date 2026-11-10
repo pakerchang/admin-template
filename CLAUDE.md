@@ -57,7 +57,7 @@ src/
 過渡期規則：
 
 - 某 milestone 落地前，新程式碼**照上面的現況結構寫**；落地後，該 milestone 涵蓋的部分依 spec 放置（各 milestone 範圍見 §9）。milestone 完成時更新上表狀態。
-- 依賴方向（§3.1，M5 起 lint 強制）：`shared` 不 import `app` / `shells` / `modules`；跨 module 只 import `@/modules/<id>`（`index.ts`），且對方須列在 `requires`（§5.3）；module 內 `ui → model → api`，`ui` 不直接 import `api`。lint 在 `eslint.config.js`（eslint-plugin-boundaries 7.4.2）：key 用 `policies`（`rules` 為 deprecated alias）；elements 取第一個符合者（具體者在前），policies 由最後一個符合者決定（M5 AC-1 實測）。M6 起沒有 legacy ignore（只 ignore `src/test/**`、`**/__tests__/**`）；M7 前 `mocks/` 可讀本 module 的 `model/`（seed 型別）。
+- 依賴方向（§3.1，M5 起 lint 強制）：`shared` 不 import `app` / `shells` / `modules`；跨 module 只 import `@/modules/<id>`（`index.ts`），且對方須列在 `requires`（§5.3）；module 內 `ui → model → api`，`ui` 不直接 import `api`。lint 在 `eslint.config.js`（eslint-plugin-boundaries 7.4.2）：key 用 `policies`（`rules` 為 deprecated alias）；elements 取第一個符合者（具體者在前），policies 由最後一個符合者決定（M5 AC-1 實測）。M6 起沒有 legacy ignore（只 ignore `src/test/**`、`**/__tests__/**`）；`mocks/` 可讀本 module 的 `model/`（seed 型別；原定 M7 收回，現況未收回）。
 - 權限：禁止在元件內散寫權限條件渲染（`canX && <Button/>`、比對 role）。M4 起統一用宣告式 `rowActions` / `EditActions` / `FormSubmit`（§6.4）；`useUserPermissions()` 已刪除。
 - M8 驗收完成前凍結新增 module：不新增第 11 個 module（owner 2026-11-09 裁決；M3 AC-1、M6 AC-3、M7 AC-3 的「恰好 10 個」不改，見 `docs/TRAPS.md`）。
 - 每棒 done 基線：`pnpm build && pnpm exec vitest run` exit 0（§9）。

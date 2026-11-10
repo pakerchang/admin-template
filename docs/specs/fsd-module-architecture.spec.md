@@ -177,7 +177,7 @@ src/
 │   ├── i18n/                     # i18next 實例、core 字典、TransKey 宣告合併
 │   └── config/                   # locales 常數、env
 ├── shells/
-│   └── default/                  # ★ 可替換 UI shell：ProtectedLayout、AuthLayout、Sidebar、Navbar、Breadcrumb、Forbidden、pages 覆寫表
+│   └── default/                  # ★ 可替換 UI shell：ProtectedLayout、AuthLayout、Sidebar、Forbidden、pages 覆寫表（Navbar / Breadcrumb 現況在 `shared/ui/navbar/`，§5.1）
 └── modules/
     ├── auth/  users/  team-members/                                  # generic
     └── orders/ product/ suppliers/ consumers/ banners/ articles/ tags/  # domain
@@ -249,7 +249,7 @@ export type TRouteId = Extract<keyof TRouteIdRegistry, string>;   // 命名格�
 
 export type TNavItem = {
   id: string;
-  label: string;              // i18n key，必須以 `${moduleId}.` 開頭
+  label: string;              // i18n key，目標為以 `${moduleId}.` 開頭；現況 nav label 仍是 `dashboard.menu.*`（M6 未搬，已知限制，見 refactor-specs README）
   to: string;                 // 絕對路徑（跨 module 導航只經 nav 字串）
   icon?: ComponentType<{ className?: string }>;
   permission: TPermission;    // 必填，nav 過濾依據（§6.3）
@@ -466,6 +466,8 @@ export const compactShell: TShell = {
 import { useOrderListModel, orderColumns } from "@/modules/orders";   // index.ts 具名 export
 ```
 
+> 現況：orders 的 `index.ts` 尚未具名 export headless hook；M8 AC-2 的覆寫測試頁直接 import `@/modules/orders/model/use-order`（測試檔不受 boundaries 檢查）。已知限制，見 refactor-specs README。
+
 **解析順序（`resolvePage(routeId, Default)`，build 期建 route 時解析，非 render 期查表）**：
 
 1. `createApp().override(id, Page)` — app 層，最後呼叫者勝；id 不在 `registry.routeIds` → throw（typo 保護，§4.3 驗證 1.6）
@@ -483,14 +485,14 @@ import { useOrderListModel, orderColumns } from "@/modules/orders";   // index.t
 | 項目 | 契約 |
 |------|------|
 | 契約真相 | **repo 根單一手寫 `openapi.yaml`**（R14）；`tags` 清單 = module id 清單 + 保留 tag `core`（R29，kernel 自有 operation）；每個 operation 必有 `operationId`（camelCase，全檔唯一）、**恰好一個** tag（∈ `tags`）、`x-permission`（`resource:action` 或字面值 `public`）；`x-permission: public` 的 operation 必須同時寫 `security: []`（R21）。operation → permission **只**在這裡宣告，module 不另宣告（R21） |
-| 共用型別 | 信封 `ApiEnvelope<T>`（`code/msg/error/data/total`）與 `ErrorBody` **手寫**於 `shared/api/types.ts`，fetcher mutator 用它 unwrap 與正規化錯誤；YAML 內同名 schema 在各 module 產物各有一份，接受重複、不 dedupe（R15） |
+| 共用型別 | 信封 `ApiEnvelope<T>`（`code/msg/error/data/total`）與 `ErrorBody` **手寫**於 `shared/api/types.ts`，hooks 以它描述 body 形狀（fetcher 不剝 `ApiEnvelope.data`，見下方 fetcher 列）；YAML 內同名 schema 在各 module 產物各有一份，接受重複、不 dedupe（R15） |
 | orval config | `orval.config.ts` 讀 `openapi.yaml` 的 `tags`，每個 tag 一個 target（跳過保留 tag `core`，R29）：`input.filters.tags: [id]`、`mode: "single"`、`target: src/modules/<id>/api/<id>.ts`、`schemas: src/modules/<id>/api/model`、`client: "react-query"`、`httpClient: "fetch"`、`mock: { path: src/modules/<id>/mocks, generators: [{ type: "msw" }] }`、`clean: true`、`override.mutator → shared/api/fetcher.ts`（骨架取自 PoC a2；新增 module 不改 config） |
 | 產物 | `modules/<id>/api/**`（整個目錄，R15）+ `modules/<id>/mocks/<id>.msw.ts`；產物進 git；zod 產物不在 M7 範圍（form schema 維持手寫於 `model/`；PoC a1 已驗 zod target 可行，日後要用再加） |
 | extract | `scripts/extract-operations.ts`：讀 `openapi.yaml` → 寫 `src/app/operations.gen.ts`（`export const operations: TOperationTable = { routes, permissions }`，kernel 檔，R15）。**斷言（任一失敗 exit 1，訊息指名 operation）**：每個 operation 恰好一個 tag 且該 tag 在 `tags` 清單；`operationId` 全檔唯一；每個 operation 有 `x-permission`，值為 `public` 或符合 `^[a-z][a-z0-9-]*:[a-z][a-z0-9-]*$` 的 `resource:action`（不得 wildcard）；**`x-permission: public` 缺 `security: []` → 失敗**（R21）；**非 public 卻寫了 `security: []` → 失敗**（R27）。path 參數 `{id}` 轉 `:id`。**R27 兩期分工**：gen 期（本腳本，只讀 YAML）只查格式與 `security: []`；「`resource:action` 必須在某 module 權限目錄內」的完整比對需要 module 宣告，放在 build 期，由 `build()` 驗證 1.5.3 執行（kernel 啟動即 throw，且 M7 AC-3 以實際 module 跑 `build()` 的 vitest 在每棒 done 基線內，CI 必紅） |
-| gen script | `pnpm gen:api` = `orval && tsx scripts/extract-operations.ts`；CI：`pnpm gen:api && git diff --exit-code -- src/modules/*/api src/modules/*/mocks src/app/operations.gen.ts` |
-| fetcher | `shared/api/fetcher.ts` 為 orval `override.mutator`：組 baseUrl、帶 `Authorization: Bearer <token>`、**把 fetch client 的 `{ data, status, headers }` unwrap 成 body（非 2xx throw）**、403 統一 toast、401 清 session（mutator 行為與 queryKey 形狀待 M7 驗證，§11.1） |
+| gen script | `pnpm gen:api` = `orval && prettier --write <產物> && pnpm gen:api:extract`（`gen:api:extract` = `tsx scripts/extract-operations.ts`）；CI：`pnpm gen:api && git diff --exit-code -- src/modules/*/api src/modules/*/mocks src/app/operations.gen.ts` |
+| fetcher | `shared/api/fetcher.ts` 為 orval `override.mutator`（`orval.config.ts` 設 `override.fetch.includeHttpResponseReturnType: false`）：以 `new URL(path, apiBaseUrl)` 組 URL、帶 `Authorization: Bearer <token>`、**回傳 HTTP body**（不是 `{ data, status, headers }`；也**不**再剝 `ApiEnvelope.data`，列表頁需要 `total`）、非 2xx throw `ApiError`（帶 status 與 body）；hooks 以 `.catch(nullOnApiError)` 接錯誤、保留原本各自的 toast / 回 null 路徑。**未實作**「403 統一 toast、401 清 session」（base 無此行為，依行為紅線維持原狀）。queryKey：orval 產物的 `get*QueryKey` 為相對 path（M7 AC-4 已驗），但 `model/use-*.ts` 沿用原本手寫 queryKey（invalidation 與 base 相同），未改用產物 key。測試用 `src/test/api-fetch.ts`（`{ status, body }`） |
 | mock | `modules/<id>/mocks/handlers.ts`（手寫，非 `*.msw.ts`）匯出 `HttpHandler[]`：以 orval 產的 `getXMockHandler(overrideFn)` 包住，override 讀寫本 module 的記憶體 seed（R5，PoC a1 實測 create 後 list 讀得到）；**需要非 200 回應（404 / 422 等）的 operation 由 module 手寫 `http.*` handler，排在該 operation 的 orval handler 之前**（orval handler status 寫死 200，§11.1） |
-| seed | `modules/<id>/mocks/seed.ts`；collection 由 `shared/api/mock-db` 的 `createCollection(name, seed)` 建立（承接 `handlers.ts:73-105` 的 `resource()` CRUD helper）；**module 不讀其他 module 的 collection**（consumers 自帶 transaction seed、team-members 自帶 staff seed、customers 自帶 customer seed） |
+| seed | `modules/<id>/mocks/seed.ts`；collection 由 `shared/api/mock-db` 的 `createCollection(seed, idKey, { searchField? })` 建立（承接 `handlers.ts:73-105` 的 `resource()` CRUD helper）；**module 不讀其他 module 的 collection**（consumers 自帶 transaction seed、team-members 自帶 staff seed、customers 自帶 customer seed） |
 | guard | kernel 最前面掛 guard（§6.5，a3 規則，R22）：只讀 `app/operations.gen.ts` 的 `{ routes, permissions }`，**必填 `apiBaseUrl`**；MSW 層仍以 `http.all('*')` 註冊（R11），但判定只在 `apiBaseUrl` 範圍內生效——範圍外放行、範圍內對不到 route 回 404，不 fall through 到任何手寫 handler |
 | 執行環境 | dev：`VITE_API_MOCK=true` 時 `setupWorker(...registry.mockHandlers).start()`（`public/mockServiceWorker.js` 由 `msw init` 產生並進 git；browser worker 待 M2 驗證）；test：`src/test/setup.ts` 以 `setupServer` 掛同一組 handler，選項用 msw 3 的 `onUnhandledFrame`（非 `onUnhandledRequest`）；接真後端 = 關 `VITE_API_MOCK`，client 不改 |
 
@@ -530,36 +532,38 @@ export const ordersMockHandlers: HttpHandler[] = [
 | `router/routes.tsx` | 拆入各 `modules/<id>/model/routes.ts`（路徑 / permission / routeId，不 import ui）+ `modules/<id>/index.ts`（route composition：注入 ui 頁面）+ `app/router/{auth,protected,index-redirect}.tsx` | login / protected 守衛 → `app/router`；有畫面的 route 一律 `ctx.page`（routeId 必填） |
 | `router/index.ts` | `app/kernel/build.ts` | 見 §4.6 |
 | `components/ui/*` | `shared/ui/*` | shadcn，`components.json` alias 同步 |
-| `components/shared/{Card,Paper,TextInputs,LoadingPage,EditActions}.tsx` | `shared/ui/` | `EditActions` 加 permission 宣告（§6.4） |
-| `components/shared/DataTable.tsx`、`table/**` | `shared/ui/data-table/` | 加 `rowActions` / `toolbarActions`（§6.4） |
-| `components/shared/dialog/ImageUploadDialog.tsx`、`hooks/use-img-upload.ts` | `shared/ui/image-upload/` + `shared/api/upload.ts` | 上傳 API 是通用能力（`/admin/images`）；其 MSW handler 屬 core handler |
+| `components/shared/{Paper,TextInputs,LoadingPage,EditActions}.tsx` | `shared/ui/{paper,text-inputs,loading-page,edit-actions}.tsx`（kebab-case） | `EditActions` 加 permission 宣告（§6.4） |
+| `components/shared/Card.tsx` | `modules/product/ui/components/Card.tsx` | 只有 product 使用，M6 歸入 product（不進 shared） |
+| `components/shared/DataTable.tsx`、`table/**` | `shared/ui/data-table/`（主檔 `data-table.tsx`） | 加 `rowActions` / `toolbarActions`（§6.4） |
+| `components/shared/dialog/ImageUploadDialog.tsx`、`hooks/use-img-upload.ts` | `shared/ui/image-upload/image-upload-dialog.tsx` + `shared/api/upload.ts` | 上傳 hook 只落 `shared/api/upload.ts`（`image-upload/` 不另拆 hook）；上傳 API 是通用能力（`/admin/images`）；其 MSW handler 屬 core handler |
 | `components/shared/Tags.tsx` | `shared/ui/tag.tsx`（改 `tone` prop）+ `modules/orders/ui/order-status-tag.tsx` | 移除 `EOrderStatus` 依賴（`Tags.tsx:4`） |
 | `components/shared/UnauthorizedPage.tsx` | `shells/default/forbidden.tsx`（= `TShell.Forbidden`） | R10：內容區渲染，`h-screen` 改 `h-full`（`UnauthorizedPage.tsx:15`） |
-| `components/shared/{AppSidebar,Navbar,Breadcrumb}.tsx` | `shells/default/` | Sidebar 讀 `useVisibleNav()`；語系清單讀 `shared/config/locales` |
+| `components/shared/AppSidebar.tsx` | `shells/default/app-sidebar.tsx` | Sidebar 讀 `useVisibleNav()` |
+| `components/shared/{Navbar,Breadcrumb}.tsx` | `shared/ui/navbar/{navbar,breadcrumb}.tsx` | M6 由 `shells/default/` 移入 shared；語系清單讀 `shared/config/locales` |
 | `components/layouts/ProtectedAppLayout.tsx` | `shells/default/protected-layout.tsx` | 移除 `useUserPermissions`；`app:access` 改由 protected route 判斷（§6.2） |
 | `components/layouts/AuthLayout.tsx` | `shells/default/auth-layout.tsx`（外框）+ `modules/auth/{model,ui}`（登入表單與 mutation） | 拆 layout 與登入邏輯 |
 | `constants/sidebar.tsx` | 刪除 → 各 module `defineModule({ nav })` | |
 | `constants/locales.ts` | `shared/config/locales.ts` + `shared/i18n/types.ts` | `TransKey` 改宣告合併（§5.4） |
-| `hooks/use-breadcrumb.ts` | `shells/default/use-breadcrumb.ts` | `switch` 改讀 route `staticData.breadcrumb`（i18n key） |
+| `hooks/use-breadcrumb.ts` | `shared/ui/navbar/use-breadcrumb.ts` | `switch` 改讀 route `staticData.breadcrumb`（i18n key） |
 | `hooks/{use-toast.ts,use-mobile.tsx,use-multi-select.ts}` | `shared/lib/` | |
 | `lib/utils.ts`、`lib/gen-validate-message.ts`、`utils/array-helpers.ts` | `shared/lib/` | |
-| `locales/{en,zh}.json` | `shared/i18n/locales/` 只留 core key；domain key 搬到 `modules/<id>/locales/` | |
+| `locales/{en,zh}.json` | `shared/i18n/locales/` + `modules/<id>/locales/` | 現況只搬了全域 key 已在 `<id>.` 之下的部分（`modules/users/locales/en.json` 的 `users.*`）；其餘 domain key 仍在 core 字典（搬要改 key 名，與 M6 AC-6「字典 key→value 不變」衝突）。已知限制，見 refactor-specs README |
 | `locales/i18n.ts`、`types.ts`、`types/i18next.d.ts` | `shared/i18n/` | |
-| `services/api-client.ts` | `shared/api/fetcher.ts`（orval mutator，unwrap envelope）+ `shared/api/session.ts` + `shared/api/types.ts`（手寫 `ApiEnvelope<T>` / `ErrorBody`，R15） | `TAuthUser.role` 改 `string`，session 增 `grants: TGrant[]` |
-| `services/mock/handlers.ts` | 過渡：`app/mock/legacy-adapter.ts`（M2–M6）→ 終態：各 `modules/<id>/mocks/handlers.ts`（手寫，包 `<id>.msw.ts` 產物）+ `shared/api/mock-db` | `mockFetch` 刪除；`METHOD path` → operationId 對照先手寫於 `app/operations.gen.ts`（M4） |
+| `services/api-client.ts` | `shared/api/fetcher.ts`（orval mutator，回 HTTP body、不剝 `ApiEnvelope.data`，§4.5；M5–M6 為 `apiFetch` 形狀，M7 改 mutator、`apiFetch` 移至 `src/test/api-fetch.ts`）+ `shared/api/session.ts` + `shared/api/types.ts`（手寫 `ApiEnvelope<T>` / `ErrorBody`，R15） | `TAuthUser.role` 改 `string`，session 增 `grants: TGrant[]` |
+| `services/mock/handlers.ts` | 過渡：`app/mock/legacy-adapter.ts`（M2–M5）→ `shared/api/mock/legacy-adapter.ts`（M6 拆到各 module 後移入 shared，module 不可 import app；M7 刪除）→ 終態：各 `modules/<id>/mocks/handlers.ts`（手寫，包 `<id>.msw.ts` 產物）+ `shared/api/mock-db` | `mockFetch` 刪除；`METHOD path` → operationId 對照先手寫於 `app/operations.gen.ts`（M4） |
 | `services/mock/data.ts` | 各 `modules/<id>/mocks/seed.ts`；`placeholderImage` → `shared/api/mock-db`；`DEMO_ACCOUNT` → `modules/auth/mocks/` | R5 自帶 seed |
 | `services/types/schema.ts` | `shared/api/schema.ts`（pagination / lang / image）+ `shared/api/types.ts`（envelope）；契約面併入 repo 根 `openapi.yaml` 的 `components` | |
 | `plugins/image-validation/{base-rules,manager.ts,types.ts,schemas.ts,utils,constants,presets/general.preset.ts}` | `shared/lib/image-validation/` | |
 | `plugins/image-validation/presets/banner/**` | `modules/banners/model/image-validation/` | `validation.image.banner.*` → `banners.*` |
 | `types/{index.d.ts,table.d.ts}`、`vite-env.d.ts` | `shared/types/` | |
 | `styles/global.css` | `app/styles/` | |
-| `test/setup*.ts` | 保留 `src/test/`（加 MSW `setupServer`；lint ignore） | |
+| `test/setup*.ts` | 保留 `src/test/`（加 MSW `setupServer`；lint ignore） | `jsdom-node-abort.env.ts` 已刪（Vitest 5 不需要） |
 
 ### 5.2 Modules（逐目錄）
 
 | 現有 | module | `model/`（手寫 headless） | `ui/`（預設；以 route id 覆寫，id 格式依 R23） | `requires` |
 |------|--------|-----------------------|--------------------------------|-----------|
-| `components/layouts/AuthLayout.tsx` 內登入表單、mock `POST /api/auth/login` | `auth` (generic) | `use-login`、`use-logout`、session 寫入 | `auth.login` | — |
+| `components/layouts/AuthLayout.tsx` 內登入表單、mock `POST /api/auth/login` | `auth` (generic) | `use-login`、`use-logout`、session 寫入 | `auth.login` | `users`（mock login 經 `@/modules/users` 查帳號） |
 | `pages/users/**`、`services/schemas/user.ts` | `users` (generic) | `use-user-list`、`use-user-profile`、`use-update-user-role`、user columns、form schema | `users.list`、`users.edit`、`EditUserRoleDialog` | — |
 | `pages/team-members/**`、`services/schemas/staff.ts` | `team-members` (generic) | staff hooks、form schema | `team-members.list`、`StaffFormDialog` | — |
 | `pages/orders/**`、`services/schemas/orders.ts` | `orders` | `use-orders`、order status 文字/tone、copy-order、columns | `orders.list`、`orders.details`、`OrderStatusTag`、`OrderCard` | — |
@@ -769,7 +773,7 @@ export const createPermissionGuard = (opts: TOperationTable & {
   - client 端同樣以這些相對路徑經 `new URL(path, baseUrl)` 組 URL（`api-client.ts:54`），只換 base、不改 path。
 - **fail-closed 三層**（R13 / OQ-14 / R21 / R27）：(1) 產生期——extract 斷言每個 operation 有格式正確的 `x-permission`、public 必帶 `security: []`、非 public 不得寫 `security: []`；(2) 啟動期——`build()` 驗證 1.5.1 對未宣告者 throw、1.5.3 對不在權限目錄的 `resource:action` throw（M4–M6 手寫期的主要防線）；(3) runtime——guard 的 404 / 403，正常不會因宣告缺漏觸發。
 - guard 在 `registry.mockHandlers` 第一位；`getGrants` 由 `Authorization: Bearer <token>` → mock session → role → 矩陣展開；無 token / 查無 session → `[]`。
-- 前端 fetcher 收到 403 統一 toast（`shared/api/fetcher.ts`），各 hook 不重複處理。
+- 前端 fetcher 收到非 2xx（含 403）throw `ApiError`，由各 hook 以 `.catch(nullOnApiError)` 沿用原本的 toast / 回 null 路徑；fetcher 不做統一 toast（§4.5 fetcher 列）。
 
 ### 6.6 不做
 
@@ -827,7 +831,7 @@ export const createPermissionGuard = (opts: TOperationTable & {
 
 ### 7.2 規則草案（flat config）
 
-> 下列語法依 jsboundaries.dev v7.4.1 文件撰寫；文件內 options 段寫 `rules`、範例段寫 `policies`，**精確 key 名與 element 比對順序於 M5 第一個 AC 實測**。
+> **M5 AC-1 實測結論（7.4.2）**：key 用 `policies`（`rules` 為 deprecated alias）；`boundaries/elements` 取第一個符合者（具體者在前）、`policies` 由最後一個符合者決定。下列節錄依實作現況（`eslint.config.js`）；`MODULE_TYPES` = `["module-api","module-model","module-ui","module-mocks","module"]`。M5–M6 過渡期 `boundaries/ignore` 另有 `LEGACY_PATHS`，M6 移除。
 
 ```js
 // eslint.config.js（節錄；追加在 deps chain P1 產出的 flat config 陣列中）
@@ -861,7 +865,7 @@ export default [
       "boundaries/no-unknown-files": "error",
       "boundaries/dependencies": ["error", {
         default: "disallow",
-        rules: [
+        policies: [
           // kernel：shared、shells、各 module 的 index.ts
           { from: { element: { type: "app" } },
             allow: { to: [{ element: { type: ["app", "shared", "shell"] } }, MODULE_ENTRY] } },
@@ -869,26 +873,35 @@ export default [
           { from: { element: { type: "shared" } }, allow: { to: { element: { type: "shared" } } } },
           // shell：shared + 他 module 的 index.ts（覆寫頁取 headless API）
           { from: { element: { type: "shell" } }, allow: { to: [{ element: { type: "shared" } }, MODULE_ENTRY] } },
-          // default shell 屬 core：禁 import 任何 module（§4.4 D4 保證）
-          { from: { element: { type: "shell", captured: { shell: "default" } } }, disallow: { to: MODULE_ENTRY } },
+          // default shell 屬 core：禁 import 任何 module element（不只 index.ts；§4.4 D4 保證）
+          { from: { element: { type: "shell", captured: { shell: "default" } } }, disallow: { to: { element: { type: MODULE_TYPES } } } },
           // module 根（index.ts / locales）→ 本 module 各 segment；route composition（ui 頁面注入 model/routes）只能發生在這裡
           { from: { element: { type: "module" } },
             allow: { to: ["module-api", "module-model", "module-ui", "module-mocks"].map(SAME_MODULE) } },
           // module 內單向：ui → model → api；mocks → api（ui 不可直接 import api 型別，R18；model 不可 import ui，故 model/routes 不得引用頁面元件）
           { from: { element: { type: "module-ui" } },    allow: { to: [SAME_MODULE("module-model")] } },
           { from: { element: { type: "module-model" } }, allow: { to: [SAME_MODULE("module-api")] } },
-          { from: { element: { type: "module-mocks" } }, allow: { to: [SAME_MODULE("module-api")] } },
+          // 過渡：mocks 另可讀同 module 的 model（seed 型別取自 model/；原註記 M7 收回，現況未收回）
+          { from: { element: { type: "module-mocks" } }, allow: { to: [SAME_MODULE("module-api"), SAME_MODULE("module-model")] } },
           // 所有 module 內部 → shared、他 module 的 index.ts（requires 由 build() 檢查）
           { from: { element: { type: ["module", "module-api", "module-model", "module-ui", "module-mocks"] } },
             allow: { to: [{ element: { type: "shared" } }, MODULE_ENTRY] } },
         ],
       }],
+    },
+  },
+  {
+    files: ["src/{app,shared,shells,modules}/**/*.{ts,tsx}"],
+    ignores: ["**/__tests__/**"],                         // 測試是白箱，與 boundaries/ignore 一致
+    rules: {
       "no-restricted-imports": ["error", { patterns: [
         { group: ["@/modules/*/*"], message: "跨 module 只能 import `@/modules/<id>`（index.ts）" },
         { group: ["**/use-user-permissions*"], message: "改用宣告式 permission（spec §6.4）" },
       ] }],
     },
   },
+  // orval 產物：只關 import 排序（gen:api 已跑 prettier），其餘規則含 boundaries 照常
+  { files: ["src/modules/*/api/**/*.ts", "src/modules/*/mocks/*.msw.ts"], rules: { "import/order": "off" } },
   {
     files: ["src/modules/**/*.{ts,tsx}", "src/shells/**/*.{ts,tsx}"],
     rules: {
@@ -905,7 +918,7 @@ export default [
 - module 內對自己 `index.ts` 的 import 會形成環，由既有 `import/no-cycle` 擋。
 - `no-restricted-imports` 的 `@/modules/*/*` 只擋**跨 module** 的深 import；同 module 內請用相對路徑（lint 規則訊息寫明）。
 - `module-api` 允許 `shared`（產物 import `shared/api/fetcher.ts` mutator）；PoC a2 實測產物只 import 同目錄 `model`、`@tanstack`、`msw`、`faker`，無跨 module import，規則不需例外。
-- orval 產物（`src/modules/*/api/**`、`src/modules/*/mocks/*.msw.ts`）與 `src/app/operations.gen.ts` 仍受 boundaries 檢查，但從風格類規則 ignore（產物不手改；正確性由 CI 的 `gen:api && git diff --exit-code` 保證）。
+- orval 產物（`src/modules/*/api/**`、`src/modules/*/mocks/*.msw.ts`）仍受 boundaries 與其他規則檢查，只關 `import/order`（`gen:api` 先跑 prettier；產物不手改，正確性由 CI 的 `gen:api && git diff --exit-code` 保證）。
 - `src/modules/*/mocks/` 手寫檔不得命名 `*.msw.ts`（R15）：M7 AC-5 以腳本機械檢查——每個 `src/modules/<id>/mocks/*.msw.ts` 的檔名必須恰為 `<id>.msw.ts`（mode `single` 每 module 只產這一支）。
 
 ---
@@ -930,11 +943,11 @@ export default [
 2. `openapi.yaml`：從 `tags` 刪掉 7 個 domain tag，並刪掉這些 tag 底下的全部 paths（只被它們引用的 `components.schemas` 可留可刪：orval tag filter 會剪掉未被引用的 schema，不會產出殘留）。
 3. `rm -rf src/modules/{orders,product,suppliers,consumers,banners,articles,tags}`。
 4. `pnpm gen:api`（重產 `app/operations.gen.ts`；tag 已刪，orval 不會把已刪的 `modules/<id>/api` 生回來）。
-5. `pnpm build && pnpm exec vitest run` 綠；`pnpm dev` 登入後 sidebar 只含 users / team-members，`/` redirect 到第一個可見 nav。
+5. `pnpm build && pnpm exec vitest run` 綠；`pnpm dev` 登入後 sidebar 只含 team-members（users module 本來就沒有宣告 nav），`/` redirect 到第一個可見 nav（`/team-members`）。
 
-- **漏做的 fail fast**：漏了步驟 2 與 4 → `operations.gen.ts` 仍含 `orders:read` 等 permission，但已無已安裝 module 的權限目錄含該 `resource:action` → `build()` 驗證 1.5.3 throw；漏了步驟 2 但跑了步驟 4 → orval 重產 `modules/orders/api`，tsc / boundaries 因缺 `index.ts` 與 `model/` 報錯。
+- **漏做的 fail fast**：漏了步驟 2 與 4 → `operations.gen.ts` 仍含 `orders:read` 等 permission，但已無已安裝 module 的權限目錄含該 `resource:action` → `build()` 驗證 1.5.3 throw；漏了步驟 2 但跑了步驟 4 → orval 重產 `modules/orders/api`，`operations.gen.ts` 仍含 domain operation。M8 實測 **tsc 不報錯**（重產的 `api/` 沒人 import，可獨立編譯）；fail fast 發生在 vitest：`build()` 驗證 1.5.3 throw，operations-gen 等測試失敗。
 - 新 domain：在 `openapi.yaml` 加 tag + paths（含 `x-permission`）→ 新增 `modules/<new>/{index.ts,model,ui,mocks,locales}` → `app/modules.ts` 加 `.use()` → `pnpm gen:api` 產出 `modules/<new>/api` 與 `mocks/<new>.msw.ts`。
-→ 自動化：M8 的 `scripts/verify-core-only.sh` 在暫存副本執行 1–4 與 build/test。
+→ 自動化：M8 的 `scripts/verify-core-only.sh`（`pnpm verify:core-only`）在暫存 worktree 副本（`git worktree add --detach HEAD`，只含已 commit 內容）執行 1–4 與 build/test。vitest 只跑 core-safe 測試：排除 = grep 命中 domain 引用（`@/modules/<id>` 或 `"<id>.`）的測試檔 ∪ 腳本內明列的 `FULL_INSTALL_TESTS`（斷言完整安裝、無 domain 字面的測試；清單內檔案不存在即 fail）；排除總數須 > 0 且 ≤ 一半。排除的測試檔先從副本刪除再 build（`tsconfig.app.json` 含測試檔）。
 
 ---
 
@@ -1155,9 +1168,9 @@ expected: exit 0
 **User Story**：As an admin of a specific role, I want routes, menu, actions and API to consistently reflect my grants, and to see a 403 inside the app shell without losing my URL, so that permission behavior is declared once per module.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: `support` session 無 `users:read` → 進 `/users` 時 URL 不變、shell（sidebar）仍渲染、內容區為 `shell.Forbidden`；sidebar 無 users 項
+- [x] AC-1 `[cmd]`: `support` session 無 `users:read` → 進 `/users` 時 URL 不變、shell（sidebar）仍渲染、內容區為 `shell.Forbidden`；sidebar 無 users 項
   - 驗證：`pnpm exec vitest run src/app/router src/shared/module`
-- [ ] AC-2 `[cmd]`: MSW guard 依 R22（a3）判定，`setupServer` 實發 request 驗證下列情況：
+- [x] AC-2 `[cmd]`: MSW guard 依 R22（a3）判定，`setupServer` 實發 request 驗證下列情況：
   1. **非 API 放行**：`apiBaseUrl` 外的 request（例 `http://cdn.test/x`）guard 回 `undefined`（不攔截）
   2. **base URL 邊界**：`apiBaseUrl = http://api.test` 時 `http://api.testing/admin/users` 視為非 API 放行（前綴補 `/`）；`apiBaseUrl` 帶不帶結尾 `/` 結果相同
   3. **unknown route 404**：`apiBaseUrl` 內對不到 operation 的 `GET /admin/nope` 回 404，且即使存在同路徑的手寫 `http.get` handler 也不會被執行
@@ -1166,15 +1179,15 @@ expected: exit 0
   6. **無權限 403**：缺 `users:update-role` 的 token 打 `updateUserRole` → 403；未帶 token 打非 public operation → 403（R25，不是 401）
   7. **有權限放行**：fall through 到 module handler 回 200；含 path 參數的 operation（`/admin/users/:id`）能被對到（a3 未驗證 3，§11.1）
   - 驗證：`pnpm exec vitest run src/shared/api src/app/mock`
-- [ ] AC-3 `[cmd]`: 以實際的手寫 `src/app/operations.gen.ts` 建 app 時 `build()` 不 throw（現行 `handlers.ts` 每個 `METHOD path` 都有 operationId 與 permission 或 `"public"`）；刪掉其中一個 key 後 `build()` throw
+- [x] AC-3 `[cmd]`: 以實際的手寫 `src/app/operations.gen.ts` 建 app 時 `build()` 不 throw（現行 `handlers.ts` 每個 `METHOD path` 都有 operationId 與 permission 或 `"public"`）；刪掉其中一個 key 後 `build()` throw
   - 驗證：`pnpm exec vitest run src/app/kernel`
-- [ ] AC-7 `[cmd]`: `shared/permission` 不 import `app` / `shells`（`ForbiddenBoundary` 住 `app/router`，C2）
+- [x] AC-7 `[cmd]`: `shared/permission` 不 import `app` / `shells`（`ForbiddenBoundary` 住 `app/router`，C2）
   - 驗證：`! grep -rnE "from \"@/(app|shells)/" src/shared/permission`
-- [ ] AC-4 `[cmd]`: DataTable `rowActions` 無權限項預設不渲染、`denied:"disable"` 渲染為 disabled；`FormSubmit` 無權限 disabled
+- [x] AC-4 `[cmd]`: DataTable `rowActions` 無權限項預設不渲染、`denied:"disable"` 渲染為 disabled；`FormSubmit` 無權限 disabled
   - 驗證：`pnpm exec vitest run src/components/shared src/shared/ui`
-- [ ] AC-5 `[cmd]`: 結構性測試：protected 子樹每個 route 都有 `staticData.permission`；`useUserPermissions` 已無引用
+- [x] AC-5 `[cmd]`: 結構性測試：protected 子樹每個 route 都有 `staticData.permission`；`useUserPermissions` 已無引用
   - 驗證：`pnpm exec vitest run src/app && ! grep -rn "useUserPermissions" src`
-- [ ] AC-6 `[manual]`: superadmin demo 帳號所有頁面與操作仍可見可用
+- [x] AC-6 `[manual]`: superadmin demo 帳號所有頁面與操作仍可見可用（s29 行為層，owner 未親驗）
 
 **Touches**：`src/shared/permission/**`、`src/shared/api/**`、`src/shared/module/**`、`src/services/api-client.ts`、`src/services/mock/**`、`src/components/shared/{DataTable,EditActions,UnauthorizedPage}.tsx`、`src/components/shared/table/**`、`src/shells/default/**`、`src/pages/users/**`、`src/modules/**`、`src/app/**`（含新增手寫 `src/app/operations.gen.ts`，檔頭註明 hand-maintained until M7）；例外（main 06:4x 代 owner 核准）：`src/shared/ui/**`（`FormSubmit`）、`src/services/__tests__/api-client.test.ts`、`CLAUDE.md`（M4 狀態、權限描述與舊 session 重新登入說明）
 **Must-Not-Touch**：其他 `src/pages/**` 業務邏輯（只改 action 宣告處）；行為紅線：superadmin 可見範圍不縮減；不新增 `/403` route；login 回應新增 `grants` 為 §6.1 指定例外；既有欄位不變
@@ -1192,13 +1205,13 @@ expected: exit 0
 **User Story**：As a maintainer, I want kernel and shared code in `app/` + `shared/` + `shells/default` with lint-enforced boundaries, so that core stays domain-free by construction rather than by review.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: boundaries 在 flat config 下載入並報違規（spike：暫時 fixture `src/shared/__boundary_fixture__.ts` import `@/modules/orders` 被擋，確認後刪除；結果與 `rules`/`policies` key 實測結論記於 PR）
+- [x] AC-1 `[cmd]`: boundaries 在 flat config 下載入並報違規（spike：暫時 fixture `src/shared/__boundary_fixture__.ts` import `@/modules/orders` 被擋，確認後刪除；結果與 `rules`/`policies` key 實測結論記於 PR）
   - 驗證：`pnpm exec eslint src/shared/__boundary_fixture__.ts; test $? -eq 1`（fixture 期間）
-- [ ] AC-2 `[cmd]`: `src/shared/**` 無任何對 `app` / `shells` / `modules` 的 import，無 domain 型別（`EOrderStatus` 等）
+- [x] AC-2 `[cmd]`: `src/shared/**` 無任何對 `app` / `shells` / `modules` 的 import，無 domain 型別（`EOrderStatus` 等）
   - 驗證：`! grep -rnE "@/(app|shells|modules)/|EOrderStatus" src/shared`
-- [ ] AC-3 `[cmd]`: `components/ui`、`lib`、`hooks`、`utils`、`constants`、`plugins` 目錄已移除（domain 殘留列於 PR）
+- [x] AC-3 `[cmd]`: `components/ui`、`lib`、`hooks`、`utils`、`constants`、`plugins` 目錄已移除（domain 殘留列於 PR）
   - 驗證：`test ! -d src/components/ui && test ! -d src/lib && test ! -d src/plugins && test ! -d src/hooks`
-- [ ] AC-4 `[cmd]`: lint 無 error
+- [x] AC-4 `[cmd]`: lint 無 error
   - 驗證：`pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"`
 
 **Touches**：`src/components/**`、`src/lib/**`、`src/hooks/**`、`src/utils/**`、`src/constants/**`、`src/plugins/**`、`src/types/**`、`src/styles/**`、`src/services/{api-client.ts,types/**}`、`src/locales/**`、`src/shared/**`、`src/shells/**`、`src/app/**`、`eslint.config.js`、`package.json`、`pnpm-lock.yaml`、`components.json`、`tsconfig.app.json`
@@ -1217,19 +1230,19 @@ expected: exit 0
 **User Story**：As a maintainer, I want each module's pages, hooks, schemas, mock seed and i18n living inside `modules/<id>/`, so that a module is one self-contained directory that can be deleted or replaced.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: `src/pages/`、`src/services/` 不存在；每個 module 有 `index.ts`
+- [x] AC-1 `[cmd]`: `src/pages/`、`src/services/` 不存在；每個 module 有 `index.ts`
   - 驗證：`test ! -d src/pages && test ! -d src/services && for d in src/modules/*/; do test -f "$d/index.ts" || exit 1; done`
-- [ ] AC-2 `[cmd]`: 沒有 module 讀其他 module 的 seed（R5）；跨 module import 只到 `index.ts`
+- [x] AC-2 `[cmd]`: 沒有 module 讀其他 module 的 seed（R5）；跨 module import 只到 `index.ts`
   - 驗證：`! grep -rnE "@/modules/[^/\"']+/" src/modules`
-- [ ] AC-3 `[cmd]`: core 字典頂層 key 不含任何 module id；各 `modules/<id>/locales/*.json` 為裸字典（頂層不含 `<id>`，§5.4），以實際 10 個 module 跑 `build()` 不 throw
+- [x] AC-3 `[cmd]`: core 字典頂層 key 不含任何 module id；各 `modules/<id>/locales/*.json` 為裸字典（頂層不含 `<id>`，§5.4），以實際 10 個 module 跑 `build()` 不 throw
   - 驗證：`pnpm exec vitest run src/shared/i18n src/app/kernel`
-- [ ] AC-4 `[cmd]`: boundaries ignore 清單已移除，lint 全綠
+- [x] AC-4 `[cmd]`: boundaries ignore 清單已移除，lint 全綠
   - 驗證：`pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"`
-- [ ] AC-5 `[cmd]`: 既有 14 個測試檔（搬遷後路徑）全綠
+- [x] AC-5 `[cmd]`: 既有測試檔（搬遷後路徑）全綠（base 實際 33 檔，原文「14 個」過時）
   - 驗證：`pnpm exec vitest run`
-- [ ] AC-6 `[manual]`: 兩種語系下各頁文字與重構前一致
+- [x] AC-6 `[manual]`: 兩種語系下各頁文字與重構前一致（s29 行為層，owner 未親驗）
 
-**Touches**：`src/pages/**`、`src/services/**`、`src/modules/**`、`src/shared/i18n/locales/**`、`src/app/mock/**`、`eslint.config.js`
+**Touches**：`src/pages/**`、`src/services/**`、`src/modules/**`、`src/shared/i18n/locales/**`、`src/app/mock/**`、`eslint.config.js`；實際另動（見 M6 報告例外）：`src/shared/api/**`（`mock-db.ts`、`mock/session-store.ts`、legacy adapter 由 app 移入）、`src/shells/**`（Navbar / Breadcrumb 移至 `src/shared/ui/navbar/`）、`src/app/kernel/create-app.tsx`（只補 `mount` 的字典寫入）、`CLAUDE.md`
 **Must-Not-Touch**：`src/app/kernel/**` 契約（需改 → 回報）；`src/shells/**`；行為紅線：URL、mock API 路徑、使用者可見文字不變
 
 **Done Command**
@@ -1245,19 +1258,19 @@ expected: exit 0
 **User Story**：As a maintainer, I want the whole API defined by one hand-written `openapi.yaml` with orval generating each module's client and MSW handlers and an extract script generating the kernel's operation table, so that the mock backend, client types and permission table derive from one source of truth.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: repo 根有單一 `openapi.yaml`（R14）；`pnpm gen:api` 後產物無 diff（產物已進 git 且與契約一致）
+- [x] AC-1 `[cmd]`: repo 根有單一 `openapi.yaml`（R14）；`pnpm gen:api` 後產物無 diff（產物已進 git 且與契約一致）
   - 驗證：`pnpm gen:api && git diff --exit-code -- src/modules src/app/operations.gen.ts`
-- [ ] AC-2 `[cmd]`: extract 斷言：fixture YAML 中某 operation 有 0 個或 2 個 tag、tag 不在 `tags` 清單、`operationId` 重複、缺 `x-permission`、`x-permission` 格式不是 `resource:action` / `public`（例 `orders`、`orders:*`）、**`x-permission: public` 但缺 `security: []`**（R21）、**`x-permission` 非 public 卻寫了 `security: []`**（R27 負例，例 `x-permission: orders:read` + `security: []`）時 `extract-operations.ts` 皆 exit 1 並指名 operation；extract 不做權限目錄比對（R27：目錄比對屬 build 期，見 AC-3）
+- [x] AC-2 `[cmd]`: extract 斷言：fixture YAML 中某 operation 有 0 個或 2 個 tag、tag 不在 `tags` 清單、`operationId` 重複、缺 `x-permission`、`x-permission` 格式不是 `resource:action` / `public`（例 `orders`、`orders:*`）、**`x-permission: public` 但缺 `security: []`**（R21）、**`x-permission` 非 public 卻寫了 `security: []`**（R27 負例，例 `x-permission: orders:read` + `security: []`）時 `extract-operations.ts` 皆 exit 1 並指名 operation；extract 不做權限目錄比對（R27：目錄比對屬 build 期，見 AC-3）
   - 驗證：`pnpm exec vitest run scripts`
-- [ ] AC-3 `[cmd]`: 以產生的 `operations.gen.ts` + 實際 10 個 module 建 app，`build()` 不 throw（每個 operation 都有 permission 或 `"public"`，每個非 public 值都是某 module 權限目錄中完整的 `resource:action`，R21）；把 fixture YAML 的一個 `x-permission` 改成 `orders:typo` 重新 extract 後 `build()` throw 並指名該 operation
+- [x] AC-3 `[cmd]`: 以產生的 `operations.gen.ts` + 實際 10 個 module 建 app，`build()` 不 throw（每個 operation 都有 permission 或 `"public"`，每個非 public 值都是某 module 權限目錄中完整的 `resource:action`，R21）；把 fixture YAML 的一個 `x-permission` 改成 `orders:typo` 重新 extract 後 `build()` throw 並指名該 operation
   - 驗證：`pnpm exec vitest run src/app/kernel`
-- [ ] AC-4 `[cmd]`: fetcher mutator：orval client 經 mutator 回傳 body（非 `{ data, status, headers }`），非 2xx throw；queryKey 為相對 path（不含 baseUrl）——PoC 未驗 mutator，本 AC 首次驗證
+- [x] AC-4 `[cmd]`: fetcher mutator：orval client 經 mutator 回傳 body（非 `{ data, status, headers }`），非 2xx throw；queryKey 為相對 path（不含 baseUrl）——PoC 未驗 mutator，本 AC 首次驗證
   - 驗證：`pnpm exec vitest run src/shared/api`
-- [ ] AC-5 `[cmd]`: `api/` 只含產物、`mocks/` 的 `*.msw.ts` 只有 `<id>.msw.ts`（R15）；M2 adapter 與手寫 `apiFetch` hooks 已刪
+- [x] AC-5 `[cmd]`: `api/` 只含產物、`mocks/` 的 `*.msw.ts` 只有 `<id>.msw.ts`（R15）；M2 adapter 與手寫 `apiFetch` hooks 已刪
   - 驗證：`for f in src/modules/*/mocks/*.msw.ts; do id=$(basename "$(dirname "$(dirname "$f")")"); test "$(basename "$f")" = "$id.msw.ts" || exit 1; done && test ! -e src/app/mock/legacy-adapter.ts && ! grep -rn "apiFetch" src/modules`
-- [ ] AC-6 `[cmd]`: create 後 list 讀得到（seed 記憶體狀態經 orval handler override 生效）；手寫的非 200 handler（例：PUT 不存在的 id → 404）排在 orval handler 前且生效；代表性 module 各一條
+- [x] AC-6 `[cmd]`: create 後 list 讀得到（seed 記憶體狀態經 orval handler override 生效）；手寫的非 200 handler（例：PUT 不存在的 id → 404）排在 orval handler 前且生效；代表性 module 各一條
   - 驗證：`pnpm exec vitest run src/modules`
-- [ ] AC-7 `[manual]`: `VITE_API_MOCK=true pnpm dev` 各頁 CRUD 與 M6 一致
+- [ ] AC-7 `[manual]`: `VITE_API_MOCK=true pnpm dev` 各頁 CRUD 與 M6 一致（待驗；node `setupServer` 已驗）
 
 **Touches**：`package.json`（`gen:api` script、orval / yaml devDeps）、`pnpm-lock.yaml`、`openapi.yaml`（新）、`orval.config.ts`（新）、`scripts/extract-operations.ts`（新）、`scripts/__tests__/**`（新）、`src/app/operations.gen.ts`（改為產物）、`src/shared/api/{fetcher.ts,types.ts,mock-db/**}`、`src/modules/*/{api,model,mocks}/**`、`src/app/mock/**`
 **Must-Not-Touch**：`src/modules/*/ui/**`（除 hook 名稱改動外）；`src/shells/**`；行為紅線：mock API 路徑與回應形狀不變
@@ -1275,13 +1288,13 @@ expected: exit 0
 **User Story**：As the owner, I want repeatable checks that the app runs with only generic modules and that a page can be swapped by id, so that the domain-swappable (D4) and UI-swappable (D1) promises are verified, not assumed.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: `scripts/verify-core-only.sh` 在暫存副本依 §8.2 刪除 7 個 domain module（`.use()` 行 + `openapi.yaml` 中 7 個 tag 與其 paths + `modules/<id>/`）並 `pnpm gen:api` 後，`pnpm build && pnpm exec vitest run` exit 0，輸出 `core-only build: OK`
+- [x] AC-1 `[cmd]`: `scripts/verify-core-only.sh` 在暫存副本依 §8.2 刪除 7 個 domain module（`.use()` 行 + `openapi.yaml` 中 7 個 tag 與其 paths + `modules/<id>/`）並 `pnpm gen:api` 後，`pnpm build && pnpm exec vitest run` exit 0，輸出 `core-only build: OK`
   - 驗證：`bash scripts/verify-core-only.sh`
-- [ ] AC-2 `[cmd]`: 整合測試：fixture shell 以 `pages["orders.list"]`（R23 格式）覆寫，渲染覆寫頁且資料來自 orders headless model（與預設頁同一 query key）
+- [x] AC-2 `[cmd]`: 整合測試：fixture shell 以 `pages["orders.list"]`（R23 格式）覆寫，渲染覆寫頁且資料來自 orders headless model（與預設頁同一 query key）；現況覆寫頁直接 import `@/modules/orders/model/use-order`（§4.4）
   - 驗證：`pnpm exec vitest run src/app/__tests__/override.integration.test.tsx`
-- [ ] AC-3 `[cmd]`: 刪 `suppliers` 但保留 `product` 時 `build()` throw 並指名 `product`；只刪 module 目錄與 `.use()`、未刪 YAML tag 也未重 gen 時 `build()` 以驗證 1.5.3 throw（§8.2 漏做的 fail fast）
+- [x] AC-3 `[cmd]`: 刪 `suppliers` 但保留 `product` 時 `build()` throw 並指名 `product`；只刪 module 目錄與 `.use()`、未刪 YAML tag 也未重 gen 時 `build()` 以驗證 1.5.3 throw（§8.2 漏做的 fail fast）
   - 驗證：`pnpm exec vitest run src/app/kernel`
-- [ ] AC-4 `[manual]`: core-only 副本 `pnpm dev`，登入後 sidebar 只有 users / team-members，`/` redirect 正常
+- [ ] AC-4 `[manual]`: core-only 副本 `pnpm dev`，登入後 sidebar 只有 team-members（users 本無 nav），`/` redirect 到 `/team-members`（待驗；`src/app/__tests__/core-only.test.tsx` 為自動佐證）
 
 **Touches**：`scripts/verify-core-only.sh`（新）、`src/app/__tests__/**`、`package.json`（scripts）
 **Must-Not-Touch**：`src/modules/**`、`src/shells/default/**`、`openapi.yaml`；行為紅線：腳本不得修改工作目錄（只在暫存副本操作）
