@@ -1,11 +1,11 @@
 # 硬寫中文 UI 字串 i18n 化 Spec
 
-狀態：**草稿，待 owner 裁決 OD-HZ-1～4**。實作依賴 I1（`docs/specs/i18n-scope-migration.spec.md`，branch `feat/i18n-scope-migration`）先合併到 master。
+狀態：**OD-HZ-1～4 已裁決（皆 A，main 代裁 2026-11-11，owner 可覆核），可交實作棒**。實作依賴 I1（`docs/specs/i18n-scope-migration.spec.md`，branch `feat/i18n-scope-migration`）先合併到 master。
 
 - 需求來源：I1 spec §1.4 與 OD-I18N-6 第三子題（owner 2026-11-11 裁決 A：硬寫中文不在 I1，另案處理）。本 spec 就是那個另案。
 - 上位規則：key 命名沿用 OD-I18N-2 A（去掉 domain 段、放進 module 字典，全域 key 為 `<id>.*`）；放 core 還是 module 沿用 OD-I18N-3 A（只被一個 module 引用 → 該 module 字典；被 core 引用或被 ≥2 個 module 引用 → core 字典）。
 - **盤點基準**：master `67a8aee`（I1 尚未合併）。I1 會改掉所有 key 名與字典位置，所以本文 §1 的「建議 key」是**依 I1 規則推算的 I1 落地後名稱**；實作棒第一步要在 I1 合併後的 master 上重新盤點（AC-0），以重盤結果為準。
-- 盤點腳本放 session scratchpad，不進 repo；數字可用 §1.1 的定義重現。
+- 起草時的盤點腳本放在 session scratchpad，沒有進 repo。實作棒要把 §1.1 的定義做成 repo 內的盤點腳本 `scripts/zh-inventory.ts`（規格見 §1.5），AC-0 用它重跑並比對 fixture。
 
 ## 1. 現況盤點（master `67a8aee`）
 
@@ -23,7 +23,7 @@
 
 ### 1.2 逐處清單（不含 seed）
 
-欄位說明：**處理**＝`key`（新增 key）、`reuse`（改用既有 key）、`刪 fallback`（OD-HZ-1 A：刪掉沒傳 `t` 時的中文 fallback 分支，該分支在 app 內不會被執行）、`英文字面值`（不顯示在 UI 的開發者訊息）、`保留`（白名單）。**位置**依 OD-I18N-3 A 判定。**建議 key** 為 I1 落地後的名稱，與同 module 既有 key 的路徑形狀對齊（例：`toast.article.get.listError` 經 I1 → `articles.toast.get.listError`）；I1 實際落地的同類 key 形狀不同時，以 I1 為準調整。**en 來源**：`既有:<key>` 表示沿用該 key 的現有 en 值；`new` 表示本 spec 起草的新譯文。
+欄位說明：**處理**＝`key`（新增 key）、`reuse`（改用既有 key）、`刪 fallback`（OD-HZ-1 A：刪掉沒傳 `t` 時的中文 fallback 分支，該分支在 app 內不會被執行）、`英文字面值`（不顯示在 UI 的開發者訊息）、`保留`（白名單）。**位置**依 OD-I18N-3 A 判定。**建議 key** 為 I1 落地後的名稱，與同 module 既有 key 的路徑形狀對齊（例：`toast.article.get.listError` 經 I1 → `articles.toast.get.listError`）；I1 實際落地的同類 key 形狀不同時，以 I1 為準調整。**en 來源**：`既有:<key>` 表示沿用該 key 的現有 en 值；`new` 表示本 spec 起草的新譯文。依 OD-HZ-4 A，en 以本表為準；`new` 的 22 個譯文標為**待 review**（owner 可在實作 PR 審閱時改字，改字不影響本 spec 的其他 AC，只需同步 AC-2 fixture）。
 
 | 檔:行 | 字串 | 處理 | 位置 | 建議 key | en（來源） |
 |---|---|---|---|---|---|
@@ -64,7 +64,7 @@
 | `shells/default/app-sidebar.tsx:62` | 中文（語言切換選單的自稱名，與同陣列的 `"English"` 成對） | 保留（OD-HZ-3 A） | — | — | — |
 | `app-sidebar.tsx:146` | 語言（`i18n.language` 不在清單時的按鈕文字） | key | core | `lng.label` | Language（new） |
 
-### 1.3 小計（依 OD-HZ-1～4 建議方案）
+### 1.3 小計（依 OD-HZ-1～4 裁決：皆 A）
 
 | 處理 | 處 | 說明 |
 |---|---|---|
@@ -75,7 +75,7 @@
 | 保留（白名單） | 1 處 | `app-sidebar.tsx:62` |
 | 合計 | 56 處（其中 manager.ts:142 一處計入「新增 key」） | |
 
-26 個新 key 中 en 譯文：沿用既有 en 值 4 個（`users.roles.agent` / `cservice` / `admin` / `superadmin`），新撰 22 個。
+26 個新 key 中 en 譯文：沿用既有 en 值 4 個（`users.roles.agent` / `cservice` / `admin` / `superadmin`），新撰 22 個（待 review，見 OD-HZ-4）。
 
 ### 1.4 現況機制（影響設計的事實）
 
@@ -84,6 +84,16 @@
 - **use-staff 的錯誤訊息走 `error.message`**：`mutationFn` 內 `throw new Error("創建員工失敗")`，`onError` 顯示 `error.message || "創建員工失敗"`，所以 throw 的字串本身就是 UI 文案。
 - **mock seed 已是雙語資料**：`product/mocks/seed.ts:21-47` 以 `[en, zh]` 配對，經 `lang(en, zh)` 產生商品的多語欄位；這是 API 回應內容，不是 UI 文案。
 - **語言切換自稱名**：`app-sidebar.tsx:61-64` 的 `languages` 陣列是 `中文` / `English`，兩個語系下都顯示各語言自己的名字。core 字典另有 `lng.zh`（zh 中文 / en Chinese），sidebar 目前沒用它。
+
+### 1.5 盤點腳本 `scripts/zh-inventory.ts`（AC-0，實作棒建立）
+
+- **位置與執行**：`scripts/zh-inventory.ts`，以 `pnpm exec tsx scripts/zh-inventory.ts [--ref <git-ref>] [--check <fixture>]` 執行（與 `scripts/extract-operations.ts` 同樣用 tsx 跑）。只用已安裝的 `typescript`，不加新依賴。
+- **掃描範圍與判準**：§1.1 的定義（`src/**/*.{ts,tsx}`，排除 `__tests__/` 與 `*.test.ts(x)`、`src/test/**`；四種節點；CJK 範圍）。判準寫成純函式 `findZhNodes(fileName: string, sourceText: string): { line: number; kind: string; text: string }[]`，放在 `src/test/zh-scan.ts`（測試基礎設施目錄：tsconfig.app 已涵蓋、boundaries lint 已 ignore、不在 AC-1 掃描範圍內；不 import node 模組）。`scripts/zh-inventory.ts` 與 AC-1 測試都 import 它，確保盤點與防回歸用同一份定義。不把函式放在 `scripts/` 讓 `src/` 測試反向 import，避免把 node 專用程式拉進 `tsconfig.app.json` 的型別檢查。
+- **讀檔來源**：沒給 `--ref` 時讀工作目錄；給 `--ref <ref>` 時以 `git ls-tree -r --name-only <ref> -- src` 列檔、`git show <ref>:<path>` 讀內容，不需切換 branch，任何時候都能重現某個 commit 的盤點。
+- **輸出格式**（沒給 `--check`）：stdout 印一個 JSON 陣列，依 `site` 排序（檔名字典序，再依行號數值），每個元素 `{ "site": "src/<path>:<line>", "kind": "StringLiteral" | "NoSubstitutionTemplateLiteral" | "TemplateExpression" | "JsxText", "text": "<節點原文，JsxText 去頭尾空白>" }`；exit 0。
+- **比對**（給 `--check <fixture>`）：fixture 是同形狀的 JSON 陣列，每個元素另帶 `disposition`（`key` / `reuse` / `delete-fallback` / `english-literal` / `keep` / `seed`，對應 §1.2 的「處理」欄與 seed）。以 `(site, text)` 為鍵比對掃描結果與 fixture：兩邊集合相同 → 印 `INVENTORY_MATCH <n>`（n 為元素數）、exit 0；不同 → 每筆差異印一行（`+ <site> <text>` 只在掃描結果、`- <site> <text>` 只在 fixture），最後印 `INVENTORY_MISMATCH <差異數>`、exit 1。另外檢查每個元素都有合法 `disposition`，缺漏或不合法也算 mismatch。
+- **fixture**：`src/shared/i18n/__tests__/fixtures/hardcoded-zh-inventory.json`，內容 = I1 合併後 master（實作 branch 的 merge-base）的盤點結果，加上逐筆 `disposition`；seed 的每處標 `seed`。它是 §1.2 在 I1 落地後的機器可讀版本。
+- **單元測試**：`scripts/__tests__/zh-inventory.test.ts`，至少涵蓋：四種節點各一例會命中、註解與純英文不命中、`--check` 的比對函式在相同 / 多一筆 / 少一筆 / disposition 不合法時的結果。
 
 ## 2. 設計原則
 
@@ -103,17 +113,17 @@
 
 H1 步驟：
 
-1. **重新盤點**（AC-0）：在 I1 合併後的 master 上以 §1.1 的定義重跑盤點，對照 §1.2；新增或消失的位置、I1 落地後實際的同類 key 名稱，寫進交付報告的差異表，並依 §2 原則處理新增的位置。
-2. 圖片驗證：依 OD-HZ-1 處理 `t` 與 fallback；`manager.ts` 的規則失敗訊息改用 `t`；`image-metadata.ts` 改英文字面值；更新 §1.4 列的 3 個測試。
+1. **重新盤點**（AC-0）：建立 `scripts/zh-inventory.ts` 與其單元測試（§1.5），以 `--ref $(git merge-base HEAD origin/master)` 對 I1 合併後的 master 重跑盤點，產生 `hardcoded-zh-inventory.json` 並逐筆標 `disposition`；對照 §1.2，新增或消失的位置、I1 落地後實際的同類 key 名稱，寫進交付報告的差異表，並依 §2 原則處理新增的位置。
+2. 圖片驗證：依 OD-HZ-1 A 把 `t` 改必填、刪 fallback；`manager.ts` 的規則失敗訊息改用 `t`；`image-metadata.ts` 改英文字面值；更新 §1.4 列的 3 個測試。
 3. 依 §1.2 新增 key（en / zh 兩邊）並改呼叫端。`use-staff.ts` 的 throw 改成 `throw new Error(t("team-members.toast.create.error"))` 這類形式，`onError` 的 fallback 也改用同一個 key，保持「顯示 `error.message`」的行為。
 4. 新增 fixture 與測試（AC-1、AC-2、AC-4、AC-5）。
 5. 更新 `docs/specs/refactor/README.md`：I1 新增的「硬寫中文另案」follow-up 列，標記由本 spec 處理並附 PR 號。
 
 ### Acceptance Criteria
 
-- [ ] AC-0 [cmd] 重盤點的前置：實作 branch 已包含 I1（I1 的 fixture 存在）。`test -f src/shared/i18n/__tests__/fixtures/scope-keymap.json && echo I1_MERGED` 印出 `I1_MERGED`；交付報告附 §1.2 對照重盤結果的差異表（沒有差異也要寫「無差異」）。
-- [ ] AC-1 [cmd] 無硬寫中文：新增 `src/shared/i18n/__tests__/no-hardcoded-zh.test.ts`，以 `import.meta.glob("/src/**/*.{ts,tsx}", { query: "?raw", import: "default" })` 讀檔（排除 `__tests__/`、`*.test.ts(x)`、`src/test/**`），用 `typescript` 的 `createSourceFile` 依 §1.1 定義找出含中文的節點；斷言結果只剩白名單：(a) 路徑符合 `/mocks/seed.ts$` 的檔案（OD-HZ-2 A），(b) `src/shells/default/app-sidebar.tsx` 的字面值 `"中文"` 恰 1 處（OD-HZ-3 A）。白名單以「路徑 pattern + 字面值 + 處數」寫在測試內，不寫死 module id（core-only 副本刪掉 module 後仍通過）。`pnpm exec vitest run src/shared/i18n/__tests__/no-hardcoded-zh.test.ts` exit 0。
-- [ ] AC-2 [cmd] 字典值對照：新增 fixture `src/shared/i18n/__tests__/fixtures/hardcoded-zh-keymap.json`，每列 `{ key, zh, en, enSource, sites }`（`enSource` 為 `"new"` 或 `"existing:<key>"`，`sites` 為 `檔:行` 陣列），內容等於 AC-0 重盤後的 §1.2「新增 key」列；新增測試 `src/shared/i18n/__tests__/hardcoded-zh-keymap.test.ts`，以 `makeApp().build().registry.i18n`（`src/app/__tests__/fixture.tsx`，與 I1 `scope-migration.test.ts` 同一取法）斷言每列 `zh[key] === zh`、`en[key] === en`、`en !== zh`，且 `enSource: "existing:<k>"` 的列 `en` 等於該既有 key 目前的 en 值。此測試讀 module 字典，列入 `scripts/verify-core-only.sh` 的 `FULL_INSTALL_TESTS`。`pnpm exec vitest run src/shared/i18n/__tests__/hardcoded-zh-keymap.test.ts` exit 0。
+- [ ] AC-0 [cmd] 可重現的重盤點與比對（§1.5）：(1) 前置：實作 branch 的 merge-base 已包含 I1，`git cat-file -e $(git merge-base HEAD origin/master):src/shared/i18n/__tests__/fixtures/scope-keymap.json && echo I1_MERGED` 印出 `I1_MERGED`；(2) 盤點對得上 fixture：`pnpm exec tsx scripts/zh-inventory.ts --ref $(git merge-base HEAD origin/master) --check src/shared/i18n/__tests__/fixtures/hardcoded-zh-inventory.json` exit 0 且最後一行為 `INVENTORY_MATCH <n>`；(3) 腳本單元測試：`pnpm exec vitest run scripts/__tests__/zh-inventory.test.ts` exit 0；(4) fixture 與 AC-2 一致：`disposition: "key"` 的每筆 `site` 都出現在 `hardcoded-zh-keymap.json` 某列的 `sites`，且 keymap 的每個 `sites` 項都對應一筆 `disposition: "key"`（寫在 AC-2 的 `hardcoded-zh-keymap.test.ts` 內）。交付報告附 §1.2 對照 fixture 的差異表（沒有差異也要寫「無差異」）。
+- [ ] AC-1 [cmd] 無硬寫中文：新增 `src/shared/i18n/__tests__/no-hardcoded-zh.test.ts`，以 `import.meta.glob("/src/**/*.{ts,tsx}", { query: "?raw", import: "default" })` 讀檔（排除 `__tests__/`、`*.test.ts(x)`、`src/test/**`），以 `src/test/zh-scan.ts` 的 `findZhNodes`（§1.5，與盤點腳本同一份 §1.1 定義）找出含中文的節點；斷言結果只剩白名單：(a) 路徑符合 `/mocks/seed.ts$` 的檔案（OD-HZ-2 A），(b) `src/shells/default/app-sidebar.tsx` 的字面值 `"中文"` 恰 1 處（OD-HZ-3 A）。白名單以「路徑 pattern + 字面值 + 處數」寫在測試內，不寫死 module id（core-only 副本刪掉 module 後仍通過）。`pnpm exec vitest run src/shared/i18n/__tests__/no-hardcoded-zh.test.ts` exit 0。
+- [ ] AC-2 [cmd] 字典值對照：新增 fixture `src/shared/i18n/__tests__/fixtures/hardcoded-zh-keymap.json`，每列 `{ key, zh, en, enSource, sites }`（`enSource` 為 `"new"` 或 `"existing:<key>"`，`sites` 為 `檔:行` 陣列），內容等於 AC-0 重盤後的 §1.2「新增 key」列；新增測試 `src/shared/i18n/__tests__/hardcoded-zh-keymap.test.ts`，以 `makeApp().build().registry.i18n`（`src/app/__tests__/fixture.tsx`，與 I1 `scope-migration.test.ts` 同一取法）斷言每列 `zh[key] === zh`、`en[key] === en`、`en !== zh`，且 `enSource: "existing:<k>"` 的列 `en` 等於該既有 key 目前的 en 值；同一支測試也做 AC-0 (4) 的 `sites` ↔ `hardcoded-zh-inventory.json` 雙向比對。此測試讀 module 字典，列入 `scripts/verify-core-only.sh` 的 `FULL_INSTALL_TESTS`。`pnpm exec vitest run src/shared/i18n/__tests__/hardcoded-zh-keymap.test.ts` exit 0。
 - [ ] AC-3 [cmd] 歸屬：I1 的 `src/shared/i18n/__tests__/key-ownership.test.ts` 不改判準、不加白名單即通過（新 key 的位置符合 OD-I18N-3 A）。`pnpm exec vitest run src/shared/i18n/__tests__/key-ownership.test.ts` exit 0。
 - [ ] AC-4 [cmd] 圖片驗證（OD-HZ-1 A）：`validateImage(file, options)` 的 `options` 與 `options.t` 為必填（`schemas.ts` 的 `t` 去掉 `.optional()`）；`src/shared/lib/image-validation/**`、`src/modules/banners/model/image-validation/**` 不再有 `t ?` 三元 fallback；§1.4 列的 3 個測試改為傳入 `t`（`i18n-integration.test.ts` 的 fallback 案例改成斷言 `manager.ts` 規則失敗時回傳 `t("validation.image.ruleFailed", …)` 的結果）；另加一個型別案例斷言不傳 `t` 時 `tsc` 報錯（`// @ts-expect-error` 寫成一行放得下的形狀，見 `docs/TRAPS.md`「`@ts-expect-error` 被 prettier 換行後失效」）。`pnpm exec vitest run src/shared/lib/image-validation src/modules/banners/model/image-validation && pnpm exec tsc -b tsconfig.app.json` exit 0。
 - [ ] AC-5 [cmd] en 畫面行為：新增 `src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx`，切到 en 後渲染 `EditUserRoleDialogContent`，斷言標題 `Edit User Role` 與 7 個角色 label 都是 en 字典的值、容器文字不含中文；新增 `src/modules/team-members/model/__tests__/use-staff-i18n.test.tsx`，en 下以 MSW 讓建立員工回非 2xx，斷言 toast description 為 `Staff creation failed`（覆蓋 throw → `error.message` 路徑）。兩個測試在 zh 下各加一個案例，斷言文字與 §1.2 的 zh 原文逐字相同。`pnpm exec vitest run src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx src/modules/team-members/model/__tests__/use-staff-i18n.test.tsx` exit 0。
@@ -134,6 +144,7 @@ H1 步驟：
 - `src/shells/default/app-sidebar.tsx`
 - 字典：`src/shared/i18n/locales/{en,zh}.json`；`src/modules/{team-members,articles,consumers,product,users,banners}/locales/{en,zh}.json`
 - 測試：`src/shared/lib/image-validation/__tests__/{i18n-integration,basic-usage}.test.ts`、`src/shared/lib/image-validation/presets/__tests__/general.preset.test.ts`、`src/modules/banners/model/image-validation/__tests__/banner-preset.test.ts`（若不傳 `t`）；新增 `src/shared/i18n/__tests__/{no-hardcoded-zh,hardcoded-zh-keymap}.test.ts`、`fixtures/hardcoded-zh-keymap.json`、`src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx`、`src/modules/team-members/model/__tests__/use-staff-i18n.test.tsx`
+- 盤點腳本（AC-0，§1.5）：新增 `src/test/zh-scan.ts`、`scripts/zh-inventory.ts`、`scripts/__tests__/zh-inventory.test.ts`、`src/shared/i18n/__tests__/fixtures/hardcoded-zh-inventory.json`
 - `scripts/verify-core-only.sh` 的 `FULL_INSTALL_TESTS` 清單（加入 AC-2 測試）
 - `docs/specs/refactor/README.md`（AC-6）
 
@@ -165,7 +176,7 @@ expected: exit 0，最後輸出含 `core-only build: OK`
 | B 保留選填，fallback 改英文 | 三元保留，fallback 文字改成英文 | 不改介面；但 fallback 文字與 key 的值仍是兩份，zh 使用者若走到 fallback 會看到英文 |
 | C 保留中文 fallback，列白名單 | 不動程式碼，AC-1 白名單加 19 處 | 零改動；白名單變大、未來 fallback 與字典文字持續漂移（banners 現在就不一致） |
 
-**建議：A**。fallback 是沒有實際呼叫端的死路徑，而且文字跟字典已經不同步；改必填後由 `tsc` 保證所有呼叫端都會翻譯。
+**已裁決：A（main 代裁 2026-11-11，owner 可覆核）**。理由：fallback 是沒有實際呼叫端的死路徑，而且文字跟字典已經不同步；改必填後由 `tsc` 保證所有呼叫端都會翻譯。對應 AC-4。
 
 #### OD-HZ-2 mock seed 的 20 處中文是否納入
 
@@ -174,7 +185,7 @@ expected: exit 0，最後輸出含 `core-only build: OK`
 | A 不納入，白名單 `mocks/seed.ts` | seed 保持現狀 | seed 已是 `lang(en, zh)` 雙語資料，畫面依語系選欄位；它是 API 回應內容，不屬 UI 字典 |
 | B 納入 | 把商品名搬進字典 | 等於把資料翻譯塞進 UI 字典，與「資料多語由 API 欄位提供」的模型衝突；mock 換真 API 時要再拆 |
 
-**建議：A**。
+**已裁決：A（main 代裁 2026-11-11，owner 可覆核）**。seed 列入 AC-1 白名單（路徑 `/mocks/seed.ts$`），`seed.ts` 列在 Must-Not-Touch；AC-0 fixture 中 seed 各處標 `disposition: "seed"`。
 
 #### OD-HZ-3 語言切換選單的「中文」
 
@@ -183,7 +194,7 @@ expected: exit 0，最後輸出含 `core-only build: OK`
 | A 保留自稱名，列白名單 | `中文` / `English` 維持在程式碼中 | 符合常見慣例（每個語言用自己的文字顯示，使用者不懂目前語系也找得到）；AC-1 白名單 1 處 |
 | B 改用 `lng.*` key | 改用 core 既有的 `lng.zh` / `lng.en` | en 下會顯示 `Chinese`，zh 下顯示 `英文`；切錯語系的使用者較難找回 |
 
-**建議：A**。`語言`（`app-sidebar.tsx:146`）不屬自稱名，照 §1.2 新增 `lng.label`。
+**已裁決：A（main 代裁 2026-11-11，owner 可覆核）**。`中文` 列入 AC-1 白名單（`app-sidebar.tsx` 的 `"中文"` 恰 1 處）；`語言`（`app-sidebar.tsx:146`）不屬自稱名，照 §1.2 新增 core key `lng.label`。
 
 #### OD-HZ-4 新 key 的 en 譯文來源
 
@@ -194,4 +205,4 @@ expected: exit 0，最後輸出含 `core-only build: OK`
 | A 以本 spec §1.2 的 en 為準 | 實作棒照表寫入，fixture `enSource` 標 `new` / `existing:<key>`；AC-0 重盤若有新增位置，實作棒依同類 key 句型撰寫並在交付報告列出 | 審 spec 時就審譯文，與 OD-I18N-6 的做法一致 |
 | B owner 另行提供 | 實作棒先放 placeholder | 多一輪往返；placeholder 會讓 AC-2 的 `en !== zh` 斷言難以定義 |
 
-**建議：A**。
+**已裁決：A（main 代裁 2026-11-11，owner 可覆核）**。實作棒照 §1.2 寫入 en；22 個新撰譯文（`enSource: "new"`）標為**待 review**，實作 PR 描述要列出這 22 個 key 與譯文供 owner 審閱。owner 改字只需同步字典與 AC-2 fixture，不需改 spec。
