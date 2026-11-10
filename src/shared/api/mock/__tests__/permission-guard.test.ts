@@ -8,10 +8,11 @@ import type { TGrant } from "@/shared/permission";
 
 /** AC-2（R22 / a3）：以 setupServer 實發 fetch 驗證 guard 判定；guard 以 server.use 排在所有 handler 之前 */
 const BASE = "http://api.test";
-const TOKEN_GRANTS: Record<string, TGrant[]> = {
+// typed-contracts T1：domain 權限在 core-only 不在 registry → 以 string 宣告再 cast（執行期行為不變）
+const TOKEN_GRANTS = {
   "t-admin": ["users:*"],
   "t-support": ["orders:*"],
-};
+} as Record<string, string[]> as Record<string, TGrant[]>;
 
 const guard = (apiBaseUrl = BASE) =>
   createPermissionGuard({

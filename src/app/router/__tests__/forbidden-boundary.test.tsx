@@ -25,11 +25,6 @@ afterEach(() => clearAuth());
 
 /** 真實 default shell + 預設 createCore()：grants 走 setAuth → session.grants → core.getGrants */
 const renderAt = async (url: string, grants: TGrant[]) => {
-  setAuth({
-    token: "t",
-    user: { user_id: "user-3", email: "c", name: "c", role: "support" },
-    grants,
-  });
   const app = installModules(
     createApp({
       shell: defaultShell,
@@ -38,7 +33,14 @@ const renderAt = async (url: string, grants: TGrant[]) => {
       core: createCore(),
     })
   );
-  const router = createAppRouter(app.build().routeTree);
+  // 先 build()：grants 邊界 schema 依已 .use() 的 module 注入（typed-contracts T1 AC-5），與 app 啟動順序一致
+  const { routeTree } = app.build();
+  setAuth({
+    token: "t",
+    user: { user_id: "user-3", email: "c", name: "c", role: "support" },
+    grants,
+  });
+  const router = createAppRouter(routeTree);
   router.update({ history: createMemoryHistory({ initialEntries: [url] }) });
   render(<RouterProvider router={router} />);
   const forbidden = await screen.findByText("unauthorized.accessDenied.title");

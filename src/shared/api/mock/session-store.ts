@@ -5,7 +5,7 @@
  * - kernel（app/mock）以 `setMockGrantMatrix` 提供角色 → grants 矩陣（core + 已安裝 module 的 mockGrants）
  * - auth module 的 login handler 以 `issueMockToken` 簽發、`mockGrantsOfRole` 展開 grants
  */
-import type { TGrant, TGrantMatrix } from "@/shared/permission";
+import type { TGrant } from "@/shared/permission";
 
 /**
  * 已簽發 session 表（token → user_id）。存 localStorage（與 client session `auth` 同一 storage），
@@ -17,7 +17,7 @@ const TOKEN_RE = /^[0-9a-f]{32}$/;
 let memorySessions = new Map<string, string>();
 
 // ponytail: 模組層級狀態（最後一次 build() 的矩陣、users module 註冊的查詢）；M7b 換 orval handler 時一併檢討
-let grantMatrix: TGrantMatrix = {};
+let grantMatrix: Readonly<Record<string, readonly TGrant[]>> = {};
 let roleOfUser: (userId: string) => string | undefined = () => undefined;
 
 /** 讀回時逐條驗格式（32 位小寫 hex → string user_id），壞條目丟棄 */
@@ -71,7 +71,9 @@ export const mockRoleOf = (authorization?: string | null) => {
   return userId ? roleOfUser(userId) : undefined;
 };
 
-export const setMockGrantMatrix = (matrix: TGrantMatrix) => {
+export const setMockGrantMatrix = (
+  matrix: Readonly<Record<string, readonly TGrant[]>>
+) => {
   grantMatrix = matrix;
 };
 

@@ -37,6 +37,27 @@
 - **禁令**：M8 驗收完成前凍結新增 module（owner 裁決，spec 的「恰好 10 個」不改）；新 module 需求排到 M8 之後。
 - **來源**：arch chain inbox「2026-11-09 owner 裁決：重構期間凍結新增 module（main 轉達）」。
 
+### 測試裡 `setAuth` 存進去的 grants 少了 domain 權限（typed-contracts T1 起）
+
+- **症狀**：測試先 `setAuth({ grants: ["orders:*", …] })` 再 `build()`，`getAuth()` 只剩 `app:access`、`*`，domain 權限消失，nav 全空或內容區 403。
+- **真因**：`session.grants` 進出 localStorage 時以 grant schema 逐筆 `safeParse`；schema 由 `build()` 依已 `.use()` 的 module 注入，注入前只認 core 目錄（`app:*`、`*`）。
+- **禁令**：測試一律先 `build()` 再 `setAuth`（與 app 啟動順序一致）；禁止為此放寬 grant schema 或繞過 `setAuth` 直接寫 localStorage。
+- **來源**：`src/shared/api/session.ts`（`setGrantSchema`）、`src/app/kernel/build.ts`；`src/app/router/__tests__/forbidden-boundary.test.tsx` 實際踩到。
+
+### 測試 fixture 的非法權限字串 `tsc` 報錯（typed-contracts T1 起）
+
+- **症狀**：測試寫 `permission: "x:read"`、`grants: ["reports:read"]` 這類刻意不存在的權限，`pnpm build` 失敗（TS2322）；或完整安裝下通過、`pnpm verify:core-only` 才失敗（domain 權限在 core-only 不在 registry）。
+- **真因**：`TPermission` / `TGrant` 由 `TPermissionRegistry` 推導，只含 program 內 module 宣告的權限；core-only 副本刪掉 domain module 後，`orders:*` 等字面值也不合法。
+- **禁令**：會留在 core-only 的測試（`src/shared/**`、`src/app/**` 非 FULL_INSTALL 檔）引用目錄外或 domain 權限時，以 `string` 宣告、在注入點 cast（`p as TPermission`）；禁止為此放寬 `TPermission` 或加 `` `${string}:${string}` `` 回退。
+- **來源**：`src/shared/permission/__tests__/can.test.ts`、`src/app/kernel/__tests__/build.test.ts`。
+
+### 型別測試的 `// @ts-expect-error` 被 prettier 換行後失效（typed-contracts T1 起）
+
+- **症狀**：`@ts-expect-error` 標的那行被 prettier（lint-staged / `eslint --fix`）折成多行後，`tsc` 報 TS2578（指令未觸發）加上原本的錯誤。
+- **真因**：指令只壓「下一行」的錯誤；物件字面值折行後，型別錯誤的位置移到內層屬性那一行。
+- **禁令**：錯誤案例寫成一行放得下的形狀（抽出型別別名或短變數），或把指令放在報錯的那一行正上方；改完一律重跑 `pnpm exec tsc -b tsconfig.app.json`。
+- **來源**：`src/modules/tags/__tests__/permission-types.test.ts`。
+
 ## B. spec / PoC 預警，待對應 milestone 驗證
 
 ### orval 產的 MSW handler 回不了 404 / 422（M7 起）

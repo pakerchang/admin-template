@@ -1,4 +1,7 @@
+import { corePermissions, grantSchema, parseGrants } from "@/shared/permission";
+
 import type { TGrant } from "@/shared/permission";
+import type { z } from "zod";
 
 const AUTH_STORAGE_KEY = "auth";
 
@@ -17,16 +20,34 @@ export type TAuthSession = {
   grants?: TGrant[];
 };
 
+/**
+ * grants 邊界 schema（typed-contracts T1 AC-5）：由 kernel build() 依已 .use() 的 module 注入（shared 不 import app）；
+ * 注入前只認 core 目錄。
+ */
+let grantsSchema: z.ZodType<TGrant> = grantSchema([corePermissions.catalog]);
+export const setGrantSchema = (schema: z.ZodType<TGrant>) => {
+  grantsSchema = schema;
+};
+
+/** 不合法 grant 丟棄；沒有 grants 欄（M4 前的舊 session）維持 undefined */
+const withValidGrants = (session: TAuthSession): TAuthSession =>
+  session.grants === undefined
+    ? session
+    : { ...session, grants: parseGrants(grantsSchema, session.grants) };
+
 export const getAuth = (): TAuthSession | null => {
   try {
     const raw = localStorage.getItem(AUTH_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as TAuthSession) : null;
+    return raw ? withValidGrants(JSON.parse(raw) as TAuthSession) : null;
   } catch {
     return null;
   }
 };
 
 export const setAuth = (session: TAuthSession) =>
-  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+  localStorage.setItem(
+    AUTH_STORAGE_KEY,
+    JSON.stringify(withValidGrants(session))
+  );
 
 export const clearAuth = () => localStorage.removeItem(AUTH_STORAGE_KEY);

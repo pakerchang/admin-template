@@ -6,8 +6,12 @@ import { guardedRoute } from "../guarded-route";
 
 import type { TGrant, TPermission } from "../types";
 
+/** typed-contracts T1：fixture 刻意含 registry 外 / core-only 不存在的權限字串 → 以 string 宣告、在注入點 cast（執行期行為不變） */
+const perm = (p: string) => p as TPermission;
+const grants = (g: string[]) => g as TGrant[];
+
 describe("can()", () => {
-  it.each<[TGrant[], TPermission, boolean]>([
+  it.each<[string[], string, boolean]>([
     [["*"], "orders:read", true],
     [["orders:*"], "orders:export", true],
     [["orders:read"], "orders:read", true],
@@ -23,10 +27,10 @@ describe("can()", () => {
     [[" orders:read"], "orders:read", false],
     [["orders:read "], "orders:read", false],
     // grants 來自 login response JSON，執行期可能不符型別
-    [["orders" as TGrant], "orders:read", false],
+    [["orders"], "orders:read", false],
     [["orders:"], "orders:read", false],
-  ])("can(%j, %s) === %s", (grants, p, expected) =>
-    expect(can(grants, p)).toBe(expected)
+  ])("can(%j, %s) === %s", (g, p, expected) =>
+    expect(can(grants(g), perm(p))).toBe(expected)
   );
 });
 
@@ -36,7 +40,7 @@ describe("guardedRoute()", () => {
 
   it("throws ForbiddenError when the grant is missing", () => {
     const route = guardedRoute(
-      { path: "orders", permission: "orders:read" },
+      { path: "orders", permission: perm("orders:read") },
       () => []
     );
     expect(() => runBeforeLoad(route)).toThrow(ForbiddenError);
@@ -47,8 +51,8 @@ describe("guardedRoute()", () => {
 
   it("passes when granted, and 'authenticated' needs no grant", () => {
     const granted = guardedRoute(
-      { path: "orders", permission: "orders:read" },
-      () => ["orders:*"]
+      { path: "orders", permission: perm("orders:read") },
+      () => grants(["orders:*"])
     );
     const authed = guardedRoute(
       { path: "me", permission: "authenticated" },
@@ -61,8 +65,8 @@ describe("guardedRoute()", () => {
   it("keeps the original beforeLoad: called with ctx when allowed, return value preserved", () => {
     const original = vi.fn(() => ({ extra: 1 }));
     const route = guardedRoute(
-      { path: "orders", permission: "orders:read", beforeLoad: original },
-      () => ["orders:read"]
+      { path: "orders", permission: perm("orders:read"), beforeLoad: original },
+      () => grants(["orders:read"])
     );
     const ctx = { marker: "ctx" };
     expect(runBeforeLoad(route, ctx)).toEqual({ extra: 1 });
@@ -72,7 +76,7 @@ describe("guardedRoute()", () => {
   it("does not call the original beforeLoad when denied", () => {
     const original = vi.fn();
     const route = guardedRoute(
-      { path: "orders", permission: "orders:read", beforeLoad: original },
+      { path: "orders", permission: perm("orders:read"), beforeLoad: original },
       () => []
     );
     expect(() => runBeforeLoad(route)).toThrow(ForbiddenError);

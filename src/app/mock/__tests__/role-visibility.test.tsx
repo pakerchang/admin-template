@@ -12,11 +12,10 @@ import { server } from "@/test/setup";
 
 import type { TAuthSession } from "@/shared/api/session";
 import type { TNavItem } from "@/shared/module";
-import type { TGrantMatrix } from "@/shared/permission";
 import type { ReactNode } from "react";
 
 const { registry } = makeApp().build();
-const matrix: TGrantMatrix = mergeGrants(
+const matrix = mergeGrants(
   coreGrants,
   ...registry.modules.flatMap((m) =>
     m.permissions?.mockGrants ? [m.permissions.mockGrants] : []

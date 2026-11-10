@@ -2,6 +2,7 @@ import { createRootRoute } from "@tanstack/react-router";
 import { render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { describe, expect, it, vi } from "vitest";
+import { z } from "zod";
 
 import { defineModule } from "@/shared/module";
 import { ForbiddenError } from "@/shared/permission";
@@ -20,8 +21,32 @@ import type { ComponentType } from "react";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const mod = (id: string, extra: Partial<TModule> = {}) =>
-  defineModule({ id, kind: "domain", ...extra });
+/**
+ * typed-contracts T1：fixture 刻意用 registry 外的權限字串（`x:read`、`a:typo`…）測 build() 執行期檢查 →
+ * 以寬型別入口宣告，catalog 由 resources 補齊；執行期行為不變。
+ */
+type TLooseModule = Omit<Partial<TModule>, "nav" | "permissions"> & {
+  nav?: { id: string; label: string; to: string; permission: string }[] | any[];
+  permissions?: {
+    resources: Record<string, string[]>;
+    mockGrants?: Record<string, readonly string[]>;
+  };
+};
+const mod = (id: string, { permissions, ...extra }: TLooseModule = {}) =>
+  defineModule({
+    id,
+    kind: "domain",
+    ...extra,
+    ...(permissions && {
+      permissions: {
+        ...permissions,
+        catalog: Object.fromEntries(
+          Object.entries(permissions.resources).map(([r, a]) => [r, z.enum(a)])
+        ),
+      },
+    }),
+  } as TModule);
+const looseOps = (p: Record<string, string>) => p as OperationPermissions;
 
 const rid = (id: string) => id as TRouteId;
 const page = (testId: string): ComponentType =>
@@ -174,12 +199,12 @@ describe("build() validation", () => {
 });
 
 describe("operation table (fail-closed)", () => {
-  const ops = (permissions: OperationPermissions): TOperationTable => ({
+  const ops = (permissions: Record<string, string>): TOperationTable => ({
     routes: [
       { method: "GET", path: "/a", operationId: "listA" },
       { method: "POST", path: "/login", operationId: "login" },
     ],
-    permissions,
+    permissions: looseOps(permissions),
   });
   const a = mod("a", { permissions: { resources: { a: ["read"] } } });
   it("throws on an operation without declared permission", () => {
@@ -213,11 +238,11 @@ describe("operation table (fail-closed)", () => {
     const orders = mod("orders", {
       permissions: { resources: { orders: ["read", "update", "export"] } },
     });
-    const table = (p: OperationPermissions): TOperationTable => ({
+    const table = (p: Record<string, string>): TOperationTable => ({
       routes: [
         { method: "GET", path: "/admin/orders", operationId: "listOrders" },
       ],
-      permissions: p,
+      permissions: looseOps(p),
     });
     expect(() =>
       build(ctx([orders], table({ listOrders: "orders:typo" })))
@@ -229,7 +254,7 @@ describe("operation table (fail-closed)", () => {
   it("throws on wildcard operation permission", () => {
     const table: TOperationTable = {
       routes: [{ method: "GET", path: "/a", operationId: "listA" }],
-      permissions: { listA: "a:*" },
+      permissions: looseOps({ listA: "a:*" }),
     };
     expect(() => build(ctx([a], table))).toThrow(/"listA".*wildcard/);
   });
@@ -453,7 +478,10 @@ describe("permission catalog", () => {
         { method: "GET", path: "/orders", operationId: "listOrders" },
         { method: "POST", path: "/orders/export", operationId: "exportOrders" },
       ],
-      permissions: { listOrders: "orders:read", exportOrders: "orders:export" },
+      permissions: looseOps({
+        listOrders: "orders:read",
+        exportOrders: "orders:export",
+      }),
     };
     const { registry } = build(ctx([a, b], ops));
     expect(registry.permissions.orders).toEqual(["read", "update", "export"]);

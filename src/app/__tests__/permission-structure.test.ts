@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { ForbiddenError } from "@/shared/permission";
+import { corePermissions, ForbiddenError } from "@/shared/permission";
 
 import { makeApp, routerAt } from "./fixture";
 
@@ -81,5 +81,28 @@ describe("superadmin grants keep every page reachable (AC-6 automated part)", ()
       );
       expect([path, forbidden]).toEqual([path, !reachable]);
     }
+  });
+});
+
+describe("permission catalog single source (T1 AC-10)", () => {
+  it("each installed module's permissions.resources equals its Zod catalog", () => {
+    const modules = makeApp()
+      .build()
+      .registry.modules.filter((m) => m.permissions);
+    expect(modules.length).toBeGreaterThan(0);
+    for (const m of modules) {
+      const { resources, catalog } = m.permissions!;
+      expect([m.id, resources]).toEqual([
+        m.id,
+        Object.fromEntries(
+          Object.entries(catalog).map(([r, actions]) => [r, actions.options])
+        ),
+      ]);
+    }
+  });
+
+  it("core catalog carries app:access", () => {
+    expect(corePermissions.catalog.app.options).toEqual(["access"]);
+    expect(corePermissions.resources).toEqual({ app: ["access"] });
   });
 });

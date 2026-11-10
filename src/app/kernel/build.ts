@@ -4,8 +4,14 @@ import { createElement } from "react";
 
 import { createForbiddenBoundary } from "@/app/router/forbidden-boundary";
 import { createIndexRedirect } from "@/app/router/index-redirect";
+import { setGrantSchema } from "@/shared/api/session";
 import { NavContext } from "@/shared/module";
-import { GrantsContext, guardedRoute } from "@/shared/permission";
+import {
+  corePermissions,
+  GrantsContext,
+  grantSchema,
+  guardedRoute,
+} from "@/shared/permission";
 
 import type {
   TLocale,
@@ -230,6 +236,13 @@ export function build({
   const catalogue = catalog(modules);
   assertNavPermissions(modules, catalogue);
   assertOperations(operations, catalogue);
+  // T1 AC-5：session.grants 邊界 schema 依已 .use() 的 module 組出
+  setGrantSchema(
+    grantSchema([
+      corePermissions.catalog,
+      ...modules.flatMap((m) => (m.permissions ? [m.permissions.catalog] : [])),
+    ])
+  );
 
   // Array#sort 是穩定排序（ES2019）
   const nav = modules

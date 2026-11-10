@@ -62,7 +62,7 @@ describe("extract-operations AC-2 斷言（exit 1 + 指名 operation，不寫檔
     expect(stderr).toBe("");
     expect(status).toBe(0);
     const text = readFileSync(out, "utf8");
-    expect(text).toContain("export const operations: TOperationTable");
+    expect(text).toContain("as const satisfies TOperationTable;");
     expect(text).toContain('path: "/admin/orders/:id"');
     expect(text).toContain('login: "public"');
   });
