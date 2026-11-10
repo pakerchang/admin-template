@@ -104,14 +104,17 @@ for (const [path, text] of Object.entries(sources)) {
     if (KEY_LIKE.test(s) && tops.has(s.split(".")[0])) addKeyLike(owner, s);
   }
   for (const p of prefixes) {
+    // 首段是字典頂層 key 或 module id 即視為 key 前綴，不論字典裡有沒有對應 key（抓不存在 / 打錯的動態 key）
+    if (!p.includes(".") || !tops.has(p.split(".")[0])) continue;
     const covered = allKeys.filter((k) => k.startsWith(p));
-    if (!p.includes(".") || !covered.length) continue;
     const own = owner !== "core" && p.startsWith(`${owner}.`);
     const entry = own ? `module:${p.slice(owner.length + 1)}` : `core:${p}`;
     usedDynamic.add(entry);
     const listed = own
       ? MODULE_DYNAMIC.includes(p.slice(owner.length + 1))
-      : CORE_DYNAMIC.includes(p) && covered.every((k) => coreSet.has(k));
+      : CORE_DYNAMIC.includes(p) &&
+        covered.length > 0 &&
+        covered.every((k) => coreSet.has(k));
     if (listed) for (const k of covered) refs.get(k)!.add(owner);
     // 動態引用別的 module 的 key：交給 (a) 判定為跨 module 引用
     else if (!own && owner !== "core") addKeyLike(owner, `${p}\${…}`);
