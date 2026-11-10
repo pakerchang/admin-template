@@ -71,6 +71,14 @@
 - **禁令**：mock 模式 `VITE_API_BASE_URL` 必須是專用的絕對 origin（例 `http://mock-api.local`）；禁止 fallback 到 `window.location.origin`；禁止為此改動既有 API 路徑前綴。
 - **來源**：`src/services/api-client.ts:44`、`:54`；spec L77（R24）、L745。
 
+### 重新整理 `/users` 拿到 mock JSON、繞過 guard（M7 起）
+
+- **驗證**：`docs/specs/msw-origin-anchor.spec.md` AC-1／AC-2（`src/app/mock/__tests__/origin-anchor.test.ts`）。
+- **症狀**：mock 模式直接載入或重新整理與 API 同名的頁面（`/users`），畫面是 mock API 的 JSON；該 document request 沒帶 token 也拿到 200。
+- **真因**：orval 產物與手寫 `mocks/handlers.ts` 以萬用 origin 註冊（`"*/users"`），會比對 app 自己的 origin；guard 只判 `apiBaseUrl` origin，範圍外放行後 fall through 到 module handler。
+- **禁令**：module handler（產物 / 手寫）不得依賴自身 path 劃界；origin 錨定只靠 kernel `createMockHandlers` 的圍欄（guard 後第二位，非 `apiBaseUrl` origin → `passthrough()`），禁止移除或把 module handler 排到它前面；禁止用 orval `mock.baseUrl` 把 origin 寫死進產物。
+- **來源**：s1 瀏覽器驗收 F1；`src/modules/users/mocks/users.msw.ts:124`。
+
 ### module route 的 `navigate({ to })` 失去型別檢查（M3 起）
 
 - **驗證**：M3 落地時首次可觀察；spec 沒有專屬 AC（R4 已接受寬化，§4.6 L507–513）。

@@ -1,4 +1,4 @@
-import { delay, http } from "msw";
+import { delay, http, passthrough } from "msw";
 
 import { coreMockHandlers } from "@/app/mock/core-handlers";
 import { coreGrants, mergeGrants } from "@/app/mock/permission-matrix";
@@ -28,6 +28,7 @@ export const createMockHandlers = ({
 }) => {
   const matrix = mergeGrants(coreGrants, ...mockGrants);
   setMockGrantMatrix(matrix);
+  const apiOrigin = new URL(opts.apiBaseUrl).origin;
   return [
     createPermissionGuard({
       ...opts,
@@ -36,6 +37,11 @@ export const createMockHandlers = ({
         return (role && matrix[role]) || [];
       },
     }),
+    // origin 圍欄（msw-origin-anchor spec）：module handler 是 "*/path" 萬用 origin，非 apiBaseUrl origin 一律交給網路，
+    // 否則重新整理 /users 這類與 API 同名的頁面會拿到 mock JSON 並繞過 guard
+    http.all("*", ({ request }) =>
+      new URL(request.url).origin === apiOrigin ? undefined : passthrough()
+    ),
     // 模擬網路延遲：guard 放行後、任何 handler 之前（module handler 是 orval 產物，不各自 delay）
     http.all(new URL("*", opts.apiBaseUrl).href, () => delay(DELAY_MS)),
     ...coreMockHandlers(opts.apiBaseUrl),

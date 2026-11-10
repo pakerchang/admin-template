@@ -75,6 +75,7 @@
 | M7b | `docs/TRAPS.md` B 區 M7 相關條目（K1 / K3 / K4）已驗證但未移到 A 區或刪除 | api chain `reviews/m7b-impl-report.md` |
 | M7b | AC-7 瀏覽器 `setupWorker` 下 orval handler 與 hooks 未實測（只在 node `setupServer` 驗過，對應 K6 / K8）；codex 唯讀 sandbox 下 vitest 因 EPERM 未執行，測試數由實作棒、lead 與併入棒三方重跑佐證 | api chain `reviews/m7b-impl-report.md`、`reviews/api-m7b-codex-verdict.md` |
 | M7b | orval 對空字串 / null query 的序列化與舊 helper 不同，現行 hook 的參數整理下未見可觸發問題 | api chain `reviews/api-m7b-codex-verdict.md` |
+| M7b | **regression**：module handler 為萬用 origin（`"*/users"`），mock 模式重新整理 `/users` 拿到 mock JSON 且繞過 guard。修正：kernel origin 圍欄，branch `fix/msw-origin-anchor`；瀏覽器重新整理驗收待 owner | `docs/specs/msw-origin-anchor.spec.md`；s1 瀏覽器驗收 F1 |
 
 ## 依賴升級（deps chain）
 
