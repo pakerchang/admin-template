@@ -1,6 +1,6 @@
 # User form Spec
 
-> 狀態：**DECIDED — 選項 A**（owner 2026-11-11）。本棒只做編輯；新增使用者列為後續項。
+> 狀態：**已合併**（PR #24，merge `58d7492`，2026-11-10）。DECIDED — 選項 A（owner 2026-11-11）。本棒只做編輯；新增使用者列為後續項。
 
 讓 users 的新增／編輯頁（`src/modules/users/ui/UserForm.tsx`，目前是空殼：`isLoading = false`、`userData = null`、`onSubmit` 空函式）成為可用表單。
 
@@ -31,12 +31,14 @@
 
 ### Acceptance Criteria
 
-- [ ] AC-1：`/users/edit/$id` 載入時以 `getUser` 讀取該使用者並填入表單（行為測試：元件經 MSW）
-- [ ] AC-2：送出合法資料 → `updateUser` PUT `/users/{id}` → 成功 toast → 導回 `/users`，`["users"]` query invalidated；mock 寫入後 `listUsers` 可見（行為測試）
-- [ ] AC-3：id 不存在 → `getUser` / `updateUser` mock 回 404，表單頁顯示錯誤 toast（行為測試：handler + hook）
-- [ ] AC-4：送出鈕為 `FormSubmit permission="users:update"`；無權限 → disabled（沿用既有元件行為：`src/shared/ui/form-submit.tsx` 不隱藏）；guard 依 `x-permission` 擋 `users:read` / `users:update`
-- [ ] AC-5：新增的 i18n key zh / en 兩邊補齊（若無新增 key 則免）
-- [ ] AC-6：Done Command exit 0
+- [x] AC-1：`/users/edit/$id` 載入時以 `getUser` 讀取該使用者並填入表單（行為測試：元件經 MSW）（證據：PR #24，merge `58d7492`）
+- [x] AC-2：送出合法資料 → `updateUser` PUT `/users/{id}` → 成功 toast → 導回 `/users`，`["users"]` query invalidated；mock 寫入後 `listUsers` 可見（行為測試）（證據：PR #24，merge `58d7492`）
+- [x] AC-3：id 不存在 → `getUser` / `updateUser` mock 回 404，表單頁顯示錯誤 toast（行為測試：handler + hook）（證據：PR #24，merge `58d7492`）
+- [x] AC-4：送出鈕為 `FormSubmit permission="users:update"`；無權限 → disabled（沿用既有元件行為：`src/shared/ui/form-submit.tsx` 不隱藏）；guard 依 `x-permission` 擋 `users:read` / `users:update`（證據：PR #24，merge `58d7492`）
+- [x] AC-5：新增的 i18n key zh / en 兩邊補齊（若無新增 key 則免）（證據：PR #24，merge `58d7492`）
+- [x] AC-6：Done Command exit 0（證據：PR #24，merge `58d7492`）
+
+勾選證據（AC-1～6）：PR #24「feat(users): 補完 users 編輯頁（GET/PUT /users/{id}）」，commit `307a7ad`、`eba34ab`、`e9936e2`（rebase 後 tip），merge commit `58d7492`（2026-11-10 合入 master，`gh pr view 24` state=MERGED）；Done Command exit 0。
 
 ### Touches
 
