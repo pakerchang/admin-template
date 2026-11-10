@@ -180,14 +180,14 @@ const OrderListPage = () => {
       },
     },
     {
-      accessorKey: "agent_id",
+      accessorKey: "vendor_id",
       enableHiding: true,
       meta: {
         displayName: t("table.headers.order.agentId"),
       },
       header: () => <h4 className="">{t("table.headers.order.agentId")}</h4>,
       cell: ({ row }) => {
-        return <p className="text-center">{row.getValue("agent_id")}</p>;
+        return <p className="text-center">{row.getValue("vendor_id")}</p>;
       },
     },
     {
