@@ -19,7 +19,24 @@
     "password": "密碼",
     "submit": "登入",
     "error": "電子郵件或密碼錯誤",
-    "hint": "展示帳號：admin@example.com / admin123"
+    "hint": "展示帳號：admin@example.com / admin123",
+    "demo": {
+      "title": "展示帳號（點選帶入，密碼皆為 admin123）",
+      "roles": {
+        "superadmin": "超級管理員",
+        "admin": "管理員",
+        "support": "客服",
+        "partner": "合作夥伴",
+        "premium": "一般會員"
+      },
+      "descriptions": {
+        "superadmin": "全部權限",
+        "admin": "除了使用者的編輯與角色變更，其餘都能讀寫",
+        "support": "訂單可讀寫，多數資料唯讀；看不到商品、使用者",
+        "partner": "商品可讀寫，多數資料唯讀；看不到訂單、使用者",
+        "premium": "沒有後台權限，登入後顯示 403"
+      }
+    }
   },
   "logout": {
     "title": "登出",
