@@ -213,7 +213,7 @@
   },
 
   "dashboard": {
-    "title": "DAMA 後台",
+    "title": "後台管理範本",
     "menu": {
       "users": {
         "title": "使用者管理",
