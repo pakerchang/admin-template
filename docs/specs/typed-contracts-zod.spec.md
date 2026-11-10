@@ -66,7 +66,7 @@ owner 2026-11-10 原話要點：「填寫時要有 type hint suggest。這關乎
 | module id、`requires` | module id registry | T2 |
 | route id（`staticData.routeId`） | `TRouteIdRegistry`（既有） | T2 |
 | nav `to` | `TRoutePathRegistry` | T2 |
-| nav label | module 自己字典 `nav` 段的局部 key（`defineModule` 從 `i18n` 推導；kernel 組 `${id}.nav.${key}`） | i18n scope 搬遷（owner 2026-11-11 補裁 2，見 `docs/specs/i18n-scope-migration.spec.md` OD-I18N-7）；不屬 T1 / T2 / T3 |
+| nav label、route 標題（`routeTitles`） | module 自己字典 `nav` 段的局部 key（`defineModule` 從 `i18n` 推導；kernel 組 `${id}.nav.${key}`，shell 只收已翻譯 string） | i18n scope 搬遷（owner 2026-11-11 補裁 2～4，見 `docs/specs/i18n-scope-migration.spec.md` OD-I18N-7、補裁 3／4）；不屬 T1 / T2 / T3 |
 | i18n key（`t()`） | `TransKey` + `TranslationResources` augmentation（架構 spec §5.4） | i18n scope 搬遷（owner 2026-11-11 裁決 OD-I18N-1 = A）；不屬 T1 / T2 / T3 |
 
 T2 / T3 列在此表僅記錄原則的適用範圍與歸屬，驗收由各自後續 spec 定義。
