@@ -66,7 +66,7 @@ owner 2026-11-10 原話要點：「填寫時要有 type hint suggest。這關乎
 | module id、`requires` | module id registry | T2 |
 | route id（`staticData.routeId`） | `TRouteIdRegistry`（既有） | T2 |
 | nav `to` | `TRoutePathRegistry` | T2 |
-| nav label / i18n key | `TransKey` + `TranslationResources` augmentation（架構 spec §5.4） | T2（`<id>.*` 前綴強制屬 i18n scope 搬遷） |
+| nav label / i18n key | `TransKey` + `TranslationResources` augmentation（架構 spec §5.4） | T2 只負責 `TNavItem.label: TransKey`；augmentation 與 `<id>.*` 前綴強制屬 i18n scope 搬遷（owner 2026-11-11 裁決 OD-I18N-1 = A，見 `docs/specs/i18n-scope-migration.spec.md`） |
 
 T2 / T3 列在此表僅記錄原則的適用範圍與歸屬，驗收由各自後續 spec 定義。
 
@@ -92,7 +92,7 @@ T2 / T3 列在此表僅記錄原則的適用範圍與歸屬，驗收由各自後
 
 以下只記錄 owner 已裁決的範圍與歸屬。**各自派工前另起 spec，AC 寫到測試路徑**；本 spec 不為它們定義 AC、Touches 或 Done Command。
 
-- **T2 module 契約**：module id registry（`id` / `requires` 收窄）；`staticData.routeId` 收窄為 `TRouteId`；**nav `to` path registry**（`TRoutePathRegistry`，owner 裁決納入 T2，R4 處理見 §3）；nav label 必須是合法 i18n key（`TNavItem.label: TransKey`、有補全、寫錯 `tsc` 失敗，去掉 shell 的 `as TransKey` 強轉）與 `i18n` 字典 `TranslationResources` augmentation（架構 spec §5.4 落地）。
+- **T2 module 契約**：module id registry（`id` / `requires` 收窄）；`staticData.routeId` 收窄為 `TRouteId`；**nav `to` path registry**（`TRoutePathRegistry`，owner 裁決納入 T2，R4 處理見 §3）；nav label 必須是合法 i18n key（`TNavItem.label: TransKey`、有補全、寫錯 `tsc` 失敗，去掉 shell 的 `as TransKey` 強轉）。`i18n` 字典 `TranslationResources` augmentation（架構 spec §5.4 落地）移出 T2，改由 i18n scope 搬遷那一棒負責（owner 2026-11-11 裁決 OD-I18N-1 = A，見 `docs/specs/i18n-scope-migration.spec.md`）。
 - **T3 domain 型別錨定**：OD-TYPE-3 C——`model/schema.ts` 加 `satisfies z.ZodType<產物型別>`（或等價雙向相容斷言），mock seed `satisfies 產物型別[]`、`createCollection` 帶泛型；users schema / YAML `UserRole` 與 `coreRoles` 的一致性錨定（OD-TYPE-6 後果欄）。orval 產 Zod（OD-TYPE-3 B）列為之後評估。
 
 明確排除（不屬 T1 / T2 / T3）：
