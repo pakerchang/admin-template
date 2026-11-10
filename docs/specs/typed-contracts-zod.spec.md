@@ -46,7 +46,7 @@
 
 - **R4（接受 typed route 寬化）vs nav `to` 型別化**：owner 裁決**納入 T2**。處理方式：`to` 以 path registry（`TRoutePathRegistry`，與 `TRouteIdRegistry` 同手法）收窄；route **樹**型別寬化（R4 字面）不動，`router/index.ts` 的 `Register`、module 內以 route 物件導航（§4.6）維持原狀。此為 owner 裁決**部分收回 R4 的取捨**（只收回「跨 module 導航字串無型別」這一塊），R4 本體不改。
 - **架構 spec §4.5「zod 產物不在 M7 範圍（form schema 維持手寫）」**：不受影響（OD-TYPE-3 選 C，orval 不產 Zod）。
-- **架構 spec §4.1 註解「label 以 `${moduleId}.` 開頭」vs 現況全用 `dashboard.menu.*`**：owner 2026-11-10 裁決——前綴強制（module `<id>` 的 label 只能是 `<id>.*`）歸「i18n scope 搬遷」那項工作（`docs/specs/refactor/README.md` M6 follow-up：domain key 與 nav label 改成 `<id>.` scope），**不屬本 spec 任何棒次**。T2 只負責「label 必須是合法 i18n key」（見「後續棒次」）。
+- **架構 spec §4.1 註解「label 以 `${moduleId}.` 開頭」vs 現況全用 `dashboard.menu.*`**：owner 2026-11-10 裁決前綴強制歸「i18n scope 搬遷」；**owner 2026-11-11 補裁 2 改採頂層控管模型**——module 的 nav label 只寫局部 key（module 字典 `nav` 段的 key），kernel `build()` 組 `${id}.nav.${key}`、翻譯後注入 shell 與 breadcrumb，型別由 `defineModule` 從 `i18n` 欄位推導。nav label 的型別、執行期驗證與 shell 強轉移除**整條歸 i18n scope 搬遷**（`docs/specs/i18n-scope-migration.spec.md` OD-I18N-7、補裁 1／2），**不屬本 spec 任何棒次**；原「T2 負責 `TNavItem.label: TransKey`」一項已刪除。
 
 ### 設計原則
 
@@ -66,7 +66,8 @@ owner 2026-11-10 原話要點：「填寫時要有 type hint suggest。這關乎
 | module id、`requires` | module id registry | T2 |
 | route id（`staticData.routeId`） | `TRouteIdRegistry`（既有） | T2 |
 | nav `to` | `TRoutePathRegistry` | T2 |
-| nav label / i18n key | `TransKey` + `TranslationResources` augmentation（架構 spec §5.4） | T2 只負責 `TNavItem.label: TransKey`；augmentation 與 `<id>.*` 前綴強制屬 i18n scope 搬遷（owner 2026-11-11 裁決 OD-I18N-1 = A，見 `docs/specs/i18n-scope-migration.spec.md`） |
+| nav label | module 自己字典 `nav` 段的局部 key（`defineModule` 從 `i18n` 推導；kernel 組 `${id}.nav.${key}`） | i18n scope 搬遷（owner 2026-11-11 補裁 2，見 `docs/specs/i18n-scope-migration.spec.md` OD-I18N-7）；不屬 T1 / T2 / T3 |
+| i18n key（`t()`） | `TransKey` + `TranslationResources` augmentation（架構 spec §5.4） | i18n scope 搬遷（owner 2026-11-11 裁決 OD-I18N-1 = A）；不屬 T1 / T2 / T3 |
 
 T2 / T3 列在此表僅記錄原則的適用範圍與歸屬，驗收由各自後續 spec 定義。
 
@@ -92,12 +93,13 @@ T2 / T3 列在此表僅記錄原則的適用範圍與歸屬，驗收由各自後
 
 以下只記錄 owner 已裁決的範圍與歸屬。**各自派工前另起 spec，AC 寫到測試路徑**；本 spec 不為它們定義 AC、Touches 或 Done Command。
 
-- **T2 module 契約**：module id registry（`id` / `requires` 收窄）；`staticData.routeId` 收窄為 `TRouteId`；**nav `to` path registry**（`TRoutePathRegistry`，owner 裁決納入 T2，R4 處理見 §3）；nav label 必須是合法 i18n key（`TNavItem.label: TransKey`、有補全、寫錯 `tsc` 失敗，去掉 shell 的 `as TransKey` 強轉）。`i18n` 字典 `TranslationResources` augmentation（架構 spec §5.4 落地）移出 T2，改由 i18n scope 搬遷那一棒負責（owner 2026-11-11 裁決 OD-I18N-1 = A，見 `docs/specs/i18n-scope-migration.spec.md`）。
+- **T2 module 契約**：module id registry（`id` / `requires` 收窄）；`staticData.routeId` 收窄為 `TRouteId`；**nav `to` path registry**（`TRoutePathRegistry`，owner 裁決納入 T2，R4 處理見 §3）。T2 只含這三項（module id registry、routeId、nav `to`）。原列的「nav label 必須是合法 `TransKey`、去掉 shell 的 `as TransKey` 強轉」已刪除——由 i18n scope 搬遷的頂層控管模型取代（owner 2026-11-11 補裁 2）；`i18n` 字典 `TranslationResources` augmentation 亦移出 T2（owner 2026-11-11 裁決 OD-I18N-1 = A）。兩者見 `docs/specs/i18n-scope-migration.spec.md`。
 - **T3 domain 型別錨定**：OD-TYPE-3 C——`model/schema.ts` 加 `satisfies z.ZodType<產物型別>`（或等價雙向相容斷言），mock seed `satisfies 產物型別[]`、`createCollection` 帶泛型；users schema / YAML `UserRole` 與 `coreRoles` 的一致性錨定（OD-TYPE-6 後果欄）。orval 產 Zod（OD-TYPE-3 B）列為之後評估。
 
 明確排除（不屬 T1 / T2 / T3）：
 
-- **nav label 的 i18n key 前綴強制**（module `<id>` 的 label 只能是 `<id>.*`）：owner 2026-11-10 裁決歸「i18n scope 搬遷」（`docs/specs/refactor/README.md` M6 follow-up：domain key 與 nav label 改成 `<id>.` scope，需改 key 名 + codemod，另案）。
+- **nav label 的一切約束**（型別、執行期驗證、shell `as TransKey` 強轉移除）：owner 2026-11-11 補裁 2 改採頂層控管模型（module 只寫局部 key、kernel 組 `${id}.nav.${key}`、`defineModule` 從 `i18n` 推導），整條歸「i18n scope 搬遷」（`docs/specs/i18n-scope-migration.spec.md` OD-I18N-7）。T2 不做 nav label 的 module id 泛型前綴收窄，也不做全域 `TransKey` 前綴檢查（補裁 2 明確不需要）。取代 owner 2026-11-10「前綴強制歸 i18n 搬遷、`label: TransKey` 歸 T2」的切分。
+- **`TranslationResources` augmentation**：歸 i18n scope 搬遷（owner 2026-11-11 OD-I18N-1 = A）。
 
 ### Acceptance Criteria
 
@@ -148,7 +150,7 @@ T1 範圍：
 - `openapi.yaml`、`orval.config.ts`；orval 產物（`src/modules/*/api/**`、`*.msw.ts`）不手改
 - 角色 grants 矩陣內容（OD-GRANT-1 已定案）：只收窄型別，不增減任何 grant；`coreRoles` 清單照架構 spec §6.1
 - 不新增 module；`app/modules.ts` 的 `.use(` 數量不變
-- T2 / T3 範圍（module id、route id、nav `to` / label、i18n、domain schema 錨定）
+- T2 / T3 範圍（module id、route id、nav `to`、domain schema 錨定）；nav label 與 i18n 屬 i18n scope 搬遷
 
 ### Done Command
 
