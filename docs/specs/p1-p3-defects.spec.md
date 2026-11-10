@@ -8,13 +8,13 @@
 
 ### Acceptance Criteria
 
-- [ ] (a) 訂單列表「代理商編號」欄顯示契約欄位 `vendor_id` 的 seed 值（RTL + MSW）。`src/modules/orders/ui/__tests__/order-list-vendor-id.test.tsx`
-- [ ] (b) banner 列表按刪除 → 出現確認 dialog → 確認後打 `DELETE /admin/banners`（帶該筆 `banner_id`），列表移除該筆（RTL + MSW）。`src/modules/banners/ui/__tests__/banner-list-delete.test.tsx`
-- [ ] (b2) banner 刪除 API 回非 2xx：只顯示錯誤 toast、不顯示成功 toast，dialog 保留、列表仍有該筆（同上測試檔；codex review 第 1 輪）
-- [ ] (c) 新增文章：上傳封面後送出，打 `POST /admin/articles` 且 body 的 `image_url` 等於上傳結果（`file_name` + `/admin/images` 回傳的 `file_url`）（RTL + MSW）。`src/modules/articles/ui/__tests__/article-form-submit.test.tsx`
-- [ ] (d) 編輯既有文章（不換封面）送出，打 `PUT /admin/articles` 且 `image_url` 保持原值（同上測試檔）
-- [ ] (e) 既有測試全綠、build 通過、lint 無違規（Done Command）
-- [x] (f) `[manual]` 瀏覽器 mock 模式各點一次：訂單列表代理商編號、banner 刪除、文章新增。**agent 已驗（chrome-devtools，2026-11-10），owner 未親驗**；owner 2026-11-10 裁決接受 agent 代驗（同 M2 / M3 AC-5 標註）。證據：代理商編號欄顯示 seed `supplier-N`；`DELETE /admin/banners` 200 後列表移除該筆；`POST /admin/articles` 200 且 body `image_url` = `/admin/images` 上傳結果
+- [x] (a) 訂單列表「代理商編號」欄顯示契約欄位 `vendor_id` 的 seed 值（RTL + MSW）。`src/modules/orders/ui/__tests__/order-list-vendor-id.test.tsx`（證據：`src/modules/orders/ui/__tests__/order-list-vendor-id.test.tsx`，2026-11-10 exit 0）
+- [x] (b) banner 列表按刪除 → 出現確認 dialog → 確認後打 `DELETE /admin/banners`（帶該筆 `banner_id`），列表移除該筆（RTL + MSW）。`src/modules/banners/ui/__tests__/banner-list-delete.test.tsx`（證據：`src/modules/banners/ui/__tests__/banner-list-delete.test.tsx`，2026-11-10 exit 0）
+- [x] (b2) banner 刪除 API 回非 2xx：只顯示錯誤 toast、不顯示成功 toast，dialog 保留、列表仍有該筆（同上測試檔；codex review 第 1 輪）（證據：`banner-list-delete.test.tsx`「DELETE 失敗：只報錯、不報成功…」，2026-11-10 exit 0）
+- [x] (c) 新增文章：上傳封面後送出，打 `POST /admin/articles` 且 body 的 `image_url` 等於上傳結果（`file_name` + `/admin/images` 回傳的 `file_url`）（RTL + MSW）。`src/modules/articles/ui/__tests__/article-form-submit.test.tsx`（證據：`src/modules/articles/ui/__tests__/article-form-submit.test.tsx`「新增」，2026-11-10 exit 0）
+- [x] (d) 編輯既有文章（不換封面）送出，打 `PUT /admin/articles` 且 `image_url` 保持原值（同上測試檔）（證據：`article-form-submit.test.tsx`「編輯」，2026-11-10 exit 0）
+- [x] (e) 既有測試全綠、build 通過、lint 無違規（Done Command）（證據：done command（build + `pnpm exec vitest run` + eslint，48 files / 405 tests），2026-11-10 exit 0）
+- [ ] (f) `[manual]` 瀏覽器 mock 模式各點一次：訂單列表代理商編號、banner 刪除、文章新增。**agent 已驗（chrome-devtools，2026-11-10），owner 未親驗**；owner 2026-11-10 裁決接受 agent 代驗（同 M2 / M3 AC-5 標註）。證據：代理商編號欄顯示 seed `supplier-N`；`DELETE /admin/banners` 200 後列表移除該筆；`POST /admin/articles` 200 且 body `image_url` = `/admin/images` 上傳結果（owner 親驗 pending：owner 2026-11-10 裁決先註記、不阻擋交付；agent 已驗，證據見本行 chrome-devtools 紀錄）
 
 ### Touches
 

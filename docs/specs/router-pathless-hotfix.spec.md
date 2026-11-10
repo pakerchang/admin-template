@@ -8,11 +8,11 @@ master `0efda06` 把 `@tanstack/react-router` 升到 1.170.46 後，`protectedRo
 
 ### Acceptance Criteria
 
-- [ ] AC-1：`protectedRoute` 改為 pathless（`id: "/"`），子 route id 維持 `/orders/$id` 形狀，`useParams({ from: "/orders/$id" })` 不受影響。
-- [ ] AC-2：`/` 仍比對到空 main 的 index（以 pathless `id: "_index"` 包一層，避免 Duplicate id）。
-- [ ] AC-3：回歸測試 `src/router/__tests__/routes.test.ts` 以 `createRouter` + `createMemoryHistory` + `router.matchRoutes()` 斷言 `/users`、`/orders/9`、`/tags`、`/products` 比對到 leaf route（非只有 `__root__`）、`/orders/9` 的 `params.id === "9"`、`/` 比對到 index。
-- [ ] AC-4：破壞性驗證——把 `id: "/"` 改回 `path: "/"` 時 AC-3 測試失敗，還原後檔案與 commit 版本一致。
-- [ ] AC-5：未登入開 `/users` 仍導回 `/login`（標驗證層級）。
+- [x] AC-1：`protectedRoute` 改為 pathless（`id: "/"`），子 route id 維持 `/orders/$id` 形狀，`useParams({ from: "/orders/$id" })` 不受影響。（證據：`src/app/__tests__/router-matching.test.ts`（`/` 為 pathless protected layout、`/orders/9` → `/orders/$id` 且 `params.id === "9"`；hotfix 原測試於 `edfd74d` 移植至此，router 現位於 `src/app/kernel/build.ts`），2026-11-10 exit 0）
+- [x] AC-2：`/` 仍比對到空 main 的 index（以 pathless `id: "_index"` 包一層，避免 Duplicate id）。（證據：`src/app/__tests__/router-matching.test.ts`（`/` → `/_index/`），2026-11-10 exit 0）
+- [ ] AC-3：回歸測試 `src/router/__tests__/routes.test.ts` 以 `createRouter` + `createMemoryHistory` + `router.matchRoutes()` 斷言 `/users`、`/orders/9`、`/tags`、`/products` 比對到 leaf route（非只有 `__root__`）、`/orders/9` 的 `params.id === "9"`、`/` 比對到 index。（未勾：AC 指名的 `src/router/__tests__/routes.test.ts` 已於 `edfd74d` 移植為 `src/app/__tests__/router-matching.test.ts`，斷言相同路徑集合，2026-11-10 exit 0；AC 指名檔不存在，是否視為等價待 owner 裁決）
+- [ ] AC-4：破壞性驗證——把 `id: "/"` 改回 `path: "/"` 時 AC-3 測試失敗，還原後檔案與 commit 版本一致。（未勾：找不到破壞性驗證紀錄，本棒不改 `src/**` 未重做）
+- [x] AC-5：未登入開 `/users` 仍導回 `/login`（標驗證層級）。（證據：`src/app/__tests__/router-matching.test.ts`「redirects unauthenticated /users to /login」；驗證層級：行為（單元，memory router），非瀏覽器，2026-11-10 exit 0）
 
 ### Touches
 

@@ -10,11 +10,11 @@ M4 後 support / partner 可以進後台（OD-GRANT-1，owner 2026-11-10 接受�
 
 ### Acceptance Criteria
 
-- [ ] AC-1：以 support、partner 的 grants（`permission-matrix` + module `mockGrants` 展開）渲染 tags、suppliers、team-members、banners、articles 列表頁，新增 / 編輯 / 刪除入口不渲染；banners 的上下架按鈕與拖曳排序也不出現。admin 都看得到。product 以合成 grants `["app:access", "product:read"]` 驗同一件事（含「複製為新商品」入口，因為它進 draft 表單建立新商品）。測試：`src/app/__tests__/write-entry-permissions.test.tsx`。
-- [ ] AC-2：partner 直接進 `/articles/create`、`/banners/edit/$id`，合成 `product:read` 進 `/products/create`、`/products/edit/$id`、`/products/draft/$id`，內容區顯示 `shell.Forbidden`，URL 不變；admin 進同樣網址不顯示 Forbidden。測試：同上檔。
-- [ ] AC-3：結構性測試：routeId 結尾為 `.create` / `.edit` / `.draft` 的 route，`staticData.permission` 不是 `:read`。例外：`users.edit` 維持 `users:read`（D2：owner 已接受「admin 可開表單、送出鈕 disabled」，且該表單是 stub、無對應 API；改成 `users:update` 會讓 admin 從 disabled 表單變成 403，屬另一個行為變更）。測試：`src/app/__tests__/permission-structure.test.ts`。
-- [ ] AC-4：`src/app/mock/__tests__/role-visibility.test.tsx` 的 nav 期望值與 `EXPECTED_GRANTS` 不變（只改註解字樣），測試通過。
-- [ ] AC-5 `[manual]`（留給 owner）：瀏覽器以 carol@example.com（support）/ david@example.com（partner），密碼 admin123 登入，逐頁確認看不到寫入入口、直接開 create / edit 網址看到 403。
+- [x] AC-1：以 support、partner 的 grants（`permission-matrix` + module `mockGrants` 展開）渲染 tags、suppliers、team-members、banners、articles 列表頁，新增 / 編輯 / 刪除入口不渲染；banners 的上下架按鈕與拖曳排序也不出現。admin 都看得到。product 以合成 grants `["app:access", "product:read"]` 驗同一件事（含「複製為新商品」入口，因為它進 draft 表單建立新商品）。測試：`src/app/__tests__/write-entry-permissions.test.tsx`。（證據：`src/app/__tests__/write-entry-permissions.test.tsx`，2026-11-10 exit 0）
+- [x] AC-2：partner 直接進 `/articles/create`、`/banners/edit/$id`，合成 `product:read` 進 `/products/create`、`/products/edit/$id`、`/products/draft/$id`，內容區顯示 `shell.Forbidden`，URL 不變；admin 進同樣網址不顯示 Forbidden。測試：同上檔。（證據：`src/app/__tests__/write-entry-permissions.test.tsx`，2026-11-10 exit 0）
+- [x] AC-3：結構性測試：routeId 結尾為 `.create` / `.edit` / `.draft` 的 route，`staticData.permission` 不是 `:read`。例外：`users.edit` 維持 `users:read`（D2：owner 已接受「admin 可開表單、送出鈕 disabled」，且該表單是 stub、無對應 API；改成 `users:update` 會讓 admin 從 disabled 表單變成 403，屬另一個行為變更）。測試：`src/app/__tests__/permission-structure.test.ts`。（證據：`src/app/__tests__/permission-structure.test.ts`，2026-11-10 exit 0）
+- [x] AC-4：`src/app/mock/__tests__/role-visibility.test.tsx` 的 nav 期望值與 `EXPECTED_GRANTS` 不變（只改註解字樣），測試通過。（證據：`src/app/mock/__tests__/role-visibility.test.tsx`，2026-11-10 exit 0）
+- [ ] AC-5 `[manual]`（留給 owner）：瀏覽器以 carol@example.com（support）/ david@example.com（partner），密碼 admin123 登入，逐頁確認看不到寫入入口、直接開 create / edit 網址看到 403。（owner 親驗 pending：owner 2026-11-10 裁決先註記、不阻擋交付）
 
 ### 做法（§6.4）
 
