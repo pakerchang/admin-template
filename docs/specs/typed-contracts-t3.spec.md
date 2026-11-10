@@ -1,6 +1,6 @@
 # T3 domain 型別錨定 Spec
 
-狀態：**草稿，待 owner 裁決 OD-T3-1～7**。下方 AC / Touches / Done Command 依各 OD 的「建議」選項撰寫；owner 選了其他選項時，實作棒開工前先依該 OD 的「後果」欄修改對應 AC。
+狀態：**已裁決，可開實作棒**。OD-T3-1～7 全部已裁決（main 代裁 2026-11-11，owner 授權，owner 可覆核）：1=B、2=A、3=A、4=A（附 i18n 對齊補充）、5=A、6=A、7=A。上一輪 Codex 審查的兩點（AC-1 對數、`created_at` 缺值顯示）已一併回填到 AC-1 / AC-3。owner 覆核改選其他選項時，實作棒開工前先依該 OD 的「後果」欄修改對應 AC。
 
 - 上位 spec：`docs/specs/typed-contracts-zod.spec.md`（以下稱「T1 spec」），本棒是其中「後續棒次」的 **T3 domain 型別錨定**，依據 OD-TYPE-3 = C（手寫 Zod 保留，在編譯期錨定到 orval 產物型別），以及 OD-TYPE-6 後果欄（users schema 與 YAML `UserRole` 要跟 `coreRoles` 保持一致）。
 - 契約真相：repo 根目錄的 `openapi.yaml`（CLAUDE.md「API（M7 起）」）。本棒**不改 YAML 與 orval 產物**，只讓手寫層（`model/schema.ts`、mock seed、`createCollection`、users 角色 UI）在編譯期對齊產物。
@@ -37,7 +37,7 @@
 | users | `userSchema` | `User` | 相等 |
 | users | `userRoleEnum` | `UserRole` | 相等 |
 
-小計：22 對中 **18 對相等、4 對有落差，歸成 3 個根因（G1～G3）**。auth module 沒有 `model/schema.ts`（只有產物 `LoginRequest` / `LoginResponse` / `UserRole`）。`updateTagSchema` 的形狀等於 `Tag`，沒有對應的產物 body 型別，所以沒有列入探針。
+小計：22 對中 **18 對相等、4 對有落差，歸成 3 個根因（G1～G3）**。依 OD-T3-2 A，G2 的 `orderStatusEnum` 會被刪除，所以實作後要錨定的是**其餘 21 對**（清單見 AC-1）。auth module 沒有 `model/schema.ts`（只有產物 `LoginRequest` / `LoginResponse` / `UserRole`）。`updateTagSchema` 的形狀等於 `Tag`，沒有對應的產物 body 型別，所以沒有列入探針。
 
 落差明細：
 
@@ -84,14 +84,18 @@
 
 **建議：B**。OD-TYPE-3 C 的原文允許「或等價雙向相容斷言」。B 比 A 嚴格，只用一套機制，改動也最少。
 
+**已裁決：B**（main 代裁 2026-11-11，owner 可覆核）。雙向型別測試，檔名 `schema-anchor.test.ts`。對應 AC-1、AC-2。
+
 #### OD-T3-2 落差 G1 / G2 / 1.2 response schema 以哪一邊為準
 
 | 選項 | 內容 | 後果 |
 |---|---|---|
-| A 以 YAML 為準，改手寫 schema | G1：`transactionHistoryOrderSchema` 改成跟 consumers `Order` 相等（`order_status` 用 consumers 自己產物的 `OrderStatus`，`created_at` / `updated_at` 選填，`remark` 必填），`transactions` seed 跟著改；G2：刪掉沒人用的 `orderStatusEnum` / `TOrderStatus`；1.2：刪掉 `transactionHistoryResponseSchema` / `TTransactionHistoryResponse`，`use-consumer.ts:103` 的 cast 拿掉，直接用產物回傳型別 | 符合「契約真相是 `openapi.yaml`」；`OrderCard.tsx:38` 的 `dayjs(order.created_at)` 會碰到選填欄位，要處理 `undefined`（實作棒決定怎麼顯示，但不能用 `!` 硬壓） |
+| A 以 YAML 為準，改手寫 schema | G1：`transactionHistoryOrderSchema` 改成跟 consumers `Order` 相等（`order_status` 用 consumers 自己產物的 `OrderStatus`，`created_at` / `updated_at` 選填，`remark` 必填），`transactions` seed 跟著改；G2：刪掉沒人用的 `orderStatusEnum` / `TOrderStatus`；1.2：刪掉 `transactionHistoryResponseSchema` / `TTransactionHistoryResponse`，`use-consumer.ts:103` 的 cast 拿掉，直接用產物回傳型別 | 符合「契約真相是 `openapi.yaml`」；`OrderCard.tsx:38` 的 `dayjs(order.created_at)` 會碰到選填欄位，要處理 `undefined`：顯示 `—`（U+2014），不能用 `!` 硬壓（見 AC-3） |
 | B 以手寫 schema 為準，改 YAML | 改 `openapi.yaml` 再重跑 `gen:api` | 會動到契約與產物，超出 T3「只錨定、不改契約」的範圍；mock handler 也要跟著改 |
 
 **建議：A**。
+
+**已裁決：A**（main 代裁 2026-11-11，owner 可覆核）。以 YAML 為準；刪除沒人用的 `orderStatusEnum`（含 `TOrderStatus`）與 `transactionHistoryResponseSchema`（含 `TTransactionHistoryResponse`）。`created_at` 為 `undefined` 時顯示 `—`（Codex b）。對應 AC-1、AC-3。
 
 #### OD-T3-3 orders `EOrderStatus`（G3）
 
@@ -103,15 +107,27 @@
 
 **建議：A**。
 
+**已裁決：A**（main 代裁 2026-11-11，owner 可覆核）。保留 TS enum，`orderStatusSchema` 改從產物 `OrderStatus` 取值，另加 `` `${EOrderStatus}` `` ≡ YAML `OrderStatus` 的斷言。對應 AC-3。
+
 #### OD-T3-4 `EditUserRoleDialogContent` 選項不一致（§1.4）
 
 | 選項 | 內容 | 後果 |
 |---|---|---|
-| A 在 T3 修，選項從 `userRoleEnum` 推導 | 選項改由 `userRoleEnum.options` 產生；標籤用 `Record<TUserRole, string>` 型別化對照表（少任何一個角色 tsc 就報錯），標籤文字沿用寫死的中文（i18n 歸 i18n scope 搬遷，本棒不動字典）；`onValueChange` 移除 `as TUserRole`，改用 `userRoleEnum.safeParse` 篩掉不合法的值；新增行為測試 | 角色清單變成單一來源，跟 §1.4 的錨定一起完成；改動限縮在一個元件加一個測試 |
+| A 在 T3 修，選項從 `userRoleEnum` 推導 | 選項改由 `userRoleEnum.options` 產生；標籤用 `Record<TUserRole, TransKey>` 型別化的 key 對照表（少任何一個角色 tsc 就報錯），不得新增寫死的中文（見下方裁決補充）；`onValueChange` 移除 `as TUserRole`，改用 `userRoleEnum.safeParse` 篩掉不合法的值；新增行為測試 | 角色清單變成單一來源，跟 §1.4 的錨定一起完成；改動限縮在一個元件加一個測試 |
 | B 另開 bug 修正 spec | T3 只記錄問題 | 現況的功能錯誤（4 個角色選不到、可以寫入不合法的角色）繼續留著，等下一棒處理 |
 | C 只改 4 個值 | 把字串改成合法值，cast 保留 | 修好現況，但以後再出現同樣的不一致仍然不會被擋 |
 
 **建議：A**（OD-TYPE-6 後果欄點名的「角色列舉一致性錨定」，UI 是最後一個沒有錨定的地方）。
+
+**已裁決：A**（main 代裁 2026-11-11，owner 可覆核）。在 T3 修：選項由 `userRoleEnum` 推導、移除 cast、補行為測試。理由：這是 demo 看得到的缺陷，依審查分流屬可修範圍。對應 AC-7。
+
+**裁決補充：與 i18n 硬編碼 spec 對齊**。`docs/specs/i18n-hardcoded-strings.spec.md`（branch `docs/spec-i18n-hardcoded`，PR #29）也改這個元件（§1.2 表、其 AC-5），也新增同一個測試檔 `edit-user-role-dialog.test.tsx`。規則如下：
+
+- 角色標籤**不得再新增寫死的中文**。
+- **先合併的一方定 key，後合併的一方沿用。**
+- **T3 先實作時**，標籤走 users module 字典的 key：`users.roles.<role>`，`<role>` 為 `userRoleEnum` 的 7 個值（`guest`、`user`、`premium`、`partner`、`support`、`admin`、`superadmin`），寫在 `src/modules/users/locales/{en,zh}.json` 的 `roles.*`（kernel 會 scope 成 `users.roles.*`）。zh 值：合法角色沿用現有中文（`user` 一般使用者、`admin` 管理員、`superadmin` 超級管理員）；其餘 4 個新撰（`guest` 訪客、`premium` 進階會員、`partner` 合作夥伴、`support` 客服）。en 值：`admin` / `superadmin` 沿用 `staff.roles.*` 既有 en 值，其餘新撰。i18n 棒之後沿用這 7 個 key，並把它 §1.2 表中 `users.roles.{new,vip,agent,cservice}` 四列改成對應的合法角色 key。
+- **i18n 先合併時**，T3 沿用 i18n 已建立的 `users.roles.*` key 名稱慣例，只把 key 集合對齊到 `userRoleEnum` 的 7 個值（不合法的 4 個 key 刪掉，缺的 4 個補上）。
+- 測試檔 `src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx` 由先合併的一方建立，後合併的一方在同檔追加案例，不另開檔。
 
 #### OD-T3-5 mock `updateUserRole` 要不要驗證 role
 
@@ -122,6 +138,8 @@
 
 **建議：A**（YAGNI；之後要讓 mock 全面驗證 body 時再一起做）。
 
+**已裁決：A**（main 代裁 2026-11-11，owner 可覆核）。不驗證 role；B 列入 §4 follow-up。對應 Must-Not-Touch。
+
 #### OD-T3-6 orval 產 Zod（OD-TYPE-3 B）
 
 | 選項 | 內容 | 後果 |
@@ -130,6 +148,8 @@
 | B 在 T3 內評估 | 本棒加一個 PoC | 擴大範圍；評估結論已經在 T1 spec P3 |
 
 **建議：A**。
+
+**已裁決：A**（main 代裁 2026-11-11，owner 可覆核）。orval 產 Zod 列為 §4 follow-up。
 
 #### OD-T3-7 錨定範圍
 
@@ -141,6 +161,8 @@
 
 **建議：A**，B 列為 follow-up。
 
+**已裁決：A**（main 代裁 2026-11-11，owner 可覆核）。只錨定 entity / body / enum，以及 seed、collection、角色；query schema（B）列為 §4 follow-up。對應 AC-1、AC-4～AC-6、Must-Not-Touch。
+
 ## 3. 規格
 
 ### User Story
@@ -151,19 +173,30 @@
 
 型別測試沿用 T1 慣例：寫在 vitest `.test.ts` 裡，用 `expectTypeOf`；錯誤案例一律用 `// @ts-expect-error` 標記，若指令沒有觸發錯誤會得到 TS2578，tsc 就失敗，所以錯誤案例不可能空跑通過。一行放不下時，抽出型別別名，避免 prettier 折行後指令失效（TRAPS「`@ts-expect-error` 被 prettier 換行後失效」）。產物型別一律先用 `Flat` 攤平再比（T3-K1）。
 
-- [ ] AC-1 [cmd] 雙向錨定（OD-T3-1 B）：9 個有 `model/schema.ts` 的 module 各新增 `src/modules/<id>/__tests__/schema-anchor.test.ts`，對 §1.1 表中屬於該 module 的每一對做 `expectTypeOf<z.output<typeof S>>().toEqualTypeOf<Flat<P>>()`，22 對全部要寫；`Flat` 定義在 `src/test/type-utils.ts`。驗收：`pnpm exec tsc -b tsconfig.app.json` exit 0，且 `ls src/modules/*/__tests__/schema-anchor.test.ts | wc -l` 輸出 `9`。
+- [ ] AC-1 [cmd] 雙向錨定（OD-T3-1 B）：9 個有 `model/schema.ts` 的 module 各新增 `src/modules/<id>/__tests__/schema-anchor.test.ts`，對下列 **21 對**逐一做 `expectTypeOf<z.output<typeof S>>().toEqualTypeOf<Flat<P>>()`（§1.1 的 22 對扣掉 OD-T3-2 A 刪除的 consumers `orderStatusEnum` ↔ `OrderStatus`，不另找替代）；`Flat` 定義在 `src/test/type-utils.ts`。
+  - articles（1）：`articleSchema` ↔ `Article`
+  - banners（1）：`bannerSchema` ↔ `Banner`
+  - consumers（3）：`customerSchema` ↔ `Customer`、`orderDetailItemSchema` ↔ `OrderItem`、`transactionHistoryOrderSchema` ↔ `Order`
+  - orders（4）：`orderItemSchema` ↔ `OrderItem`、`contactInfoSchema` ↔ `ContactInfo`、`baseOrderSchema` ↔ `Order`、`orderStatusSchema` ↔ `OrderStatus`
+  - product（2）：`productSchema` ↔ `Product`、`productTypeEnums` ↔ `ProductType`
+  - suppliers（3）：`supplierSchema` ↔ `Supplier`、`createSupplierSchema` ↔ `SupplierInput`、`updateSupplierSchema` ↔ `UpdateSupplierBody`
+  - tags（3）：`tagSchema` ↔ `Tag`、`createTagSchema` ↔ `CreateTagBody`、`deleteTagSchema` ↔ `DeleteTagBody`
+  - team-members（2）：`staffUserSchema` ↔ `Staff`、`createStaffUserSchema` ↔ `StaffCreate`
+  - users（2）：`userSchema` ↔ `User`、`userRoleEnum` ↔ `UserRole`
+
+  產物型別一律從同一 module 的 `../api/model` import（consumers 與 orders 各有自己的 `Order` / `OrderItem`）。驗收：`pnpm exec tsc -b tsconfig.app.json` exit 0，且 `ls src/modules/*/__tests__/schema-anchor.test.ts | wc -l` 輸出 `9`。
 - [ ] AC-2 [cmd] 錨定不會空跑：`src/modules/tags/__tests__/schema-anchor.test.ts` 另外放 3 個 `@ts-expect-error` 反例，對象是 `Flat<Tag>`：(a) `tagSchema.extend({ extra: z.string() })`（schema 多欄位）、(b) `tagSchema.partial()`（必填變選填）、(c) 一個本地 TS enum 的 `z.enum` 與等值字面值 union 比較（G3 型態）。驗收：`pnpm exec tsc -b tsconfig.app.json` exit 0。
 - [ ] AC-3 [cmd] 落差修正（OD-T3-2 A、OD-T3-3 A）：
-  - G1：consumers `transactionHistoryOrderSchema` 等於 consumers `Order`，由 AC-1 的測試涵蓋；`ui/components/OrderCard.tsx` 處理 `created_at` 為 `undefined` 的情況，不可用 non-null assertion。
+  - G1：consumers `transactionHistoryOrderSchema` 等於 consumers `Order`，由 AC-1 的測試涵蓋；`ui/components/OrderCard.tsx` 在 `created_at` 為 `undefined` 時，日期位置顯示 `—`（U+2014），有值時維持 `YYYY-MM-DD HH:mm`，不可用 non-null assertion。新增元件測試 `src/modules/consumers/ui/components/__tests__/order-card.test.tsx`，兩個案例：(a) `created_at` 省略 → 畫面含 `—`，且不含 `Invalid Date`；(b) `created_at` 有值 → 顯示格式化後的日期。
   - G2：`orderStatusEnum` / `TOrderStatus` 從 consumers `schema.ts` 移除。
   - 1.2：`transactionHistoryResponseSchema` / `TTransactionHistoryResponse` 移除，`use-consumer.ts` 不再強轉。
   - G3：`orders/model/schema.ts` 的 `orderStatusSchema` 改從產物 `OrderStatus` 取值；`src/modules/orders/__tests__/schema-anchor.test.ts` 加上 `` expectTypeOf<`${EOrderStatus}`>().toEqualTypeOf<OrderStatus>() ``。
   
-  驗收：`pnpm exec tsc -b tsconfig.app.json` exit 0，且 `! grep -rnE "TTransactionHistoryResponse|transactionHistoryResponseSchema|orderStatusEnum" src/modules/consumers` exit 0。
+  驗收：`pnpm exec tsc -b tsconfig.app.json` exit 0、`pnpm exec vitest run src/modules/consumers/ui/components/__tests__/order-card.test.tsx` exit 0、`! grep -nE "created_at!|as string" src/modules/consumers/ui/components/OrderCard.tsx` exit 0，且 `! grep -rnE "TTransactionHistoryResponse|transactionHistoryResponseSchema|orderStatusEnum" src/modules/consumers` exit 0。
 - [ ] AC-4 [cmd] seed 錨定：10 個 seed 陣列都以 `satisfies <產物型別>[]` 收尾，產物型別從本 module 的 `../api/model` import；users seed 移除 `as TUser["role"]`，改成讓角色字面值保持字面型別（例如 tuple 加 `as const`），角色 typo 要能被 tsc 擋下。驗收：`grep -rhoE "satisfies [A-Za-z]+\[\]" src/modules/*/mocks/seed.ts | wc -l` 輸出 `10`、`! grep -n 'as TUser\["role"\]' src/modules/users/mocks/seed.ts` exit 0、`pnpm exec tsc -b tsconfig.app.json` exit 0。
 - [ ] AC-5 [cmd] `createCollection` 泛型：簽章改成 `createCollection<T extends object>(seed: readonly T[], idKey: keyof T & string, opts?: { searchField?: keyof T & string })`，`all()` 回傳 `T[]`；執行期行為不變。型別測試寫在 `src/shared/api/__tests__/mock-db-types.test.ts`，只用本地型別，屬 core-safe。內容：`expectTypeOf(c.all()).toEqualTypeOf<T[]>()`；`@ts-expect-error` 反例有 idKey typo、searchField typo、seed 元素不符合顯式泛型 T 三種。10 個呼叫點都帶顯式產物型別泛型；users handlers 以 `all()` / `byId()` 的型別取代 `:33`、`:87` 的 `as`，body 欄位寫入時要先收窄。驗收：`grep -rhoE "createCollection<[A-Za-z]+>" src/modules/*/mocks/handlers.ts | wc -l` 輸出 `10`、`pnpm exec tsc -b tsconfig.app.json` exit 0、`pnpm exec vitest run src/shared/api src/modules/tags/mocks src/modules/users/mocks src/modules/orders/mocks src/modules/auth/mocks` exit 0。
 - [ ] AC-6 [cmd] 角色一致性：`src/modules/users/__tests__/schema-anchor.test.ts` 斷言 `TUserRole`、`TRole`（`@/shared/permission`）、users 產物 `UserRole` 三者兩兩相等；新增 `src/modules/auth/__tests__/role-anchor.test.ts`，斷言 auth 產物 `UserRole` 等於 `TRole`。驗收：`pnpm exec tsc -b tsconfig.app.json` exit 0。
-- [ ] AC-7 [test] 角色對話框（OD-T3-4 A）：新增 `src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx`，檢查三件事：(a) radio 值的集合等於 `userRoleEnum.options`（7 個）；(b) `defaultRole="support"` 時，該項處於選取狀態；(c) 改選 `partner` 後送出，`onSubmit` 收到 `"partner"`。驗收：`pnpm exec vitest run src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx` exit 0，且 `! grep -n "as TUserRole" src/modules/users/ui/components/EditUserRoleDialogContent.tsx` exit 0。
+- [ ] AC-7 [test] 角色對話框（OD-T3-4 A）：新增 `src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx`，檢查四件事：(a) radio 值的集合等於 `userRoleEnum.options`（7 個）；(b) `defaultRole="support"` 時，該項處於選取狀態；(c) 改選 `partner` 後送出，`onSubmit` 收到 `"partner"`；(d) 在 en 下渲染，7 個標籤等於 en 字典 `users.roles.<role>` 的值。標籤 key 依 OD-T3-4 裁決補充（若 i18n spec PR #29 已先合併，本測試檔已存在，則在同檔追加案例）。驗收：`pnpm exec vitest run src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx` exit 0、`! grep -n "as TUserRole" src/modules/users/ui/components/EditUserRoleDialogContent.tsx` exit 0，且 `! grep -nE "新使用者|一般使用者|VIP會員|代理商|客服|管理員" src/modules/users/ui/components/EditUserRoleDialogContent.tsx` exit 0（角色標籤不留寫死中文；標題與說明兩行歸 i18n spec，不在此檢查）。
 - [ ] AC-8 [cmd] 契約與產物不動：`git diff --exit-code $(git merge-base HEAD origin/master) -- openapi.yaml orval.config.ts src/app/operations.gen.ts src/app/mock/permission-matrix.ts 'src/modules/*/api' 'src/modules/*/mocks/*.msw.ts'` exit 0。
 - [ ] AC-9 [cmd] 基線：`pnpm build && pnpm exec vitest run && pnpm verify:core-only` exit 0，且輸出含 `core-only build: OK`；`pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"` exit 0（boundaries：model → api、mocks → api 都是允許方向，不得新增 module → app 的 import）。
 
@@ -171,12 +204,13 @@
 
 - `src/test/type-utils.ts`（新增，放 `Flat`）
 - `src/modules/{articles,banners,consumers,orders,product,suppliers,tags,team-members,users}/__tests__/schema-anchor.test.ts`（新增 9 檔）、`src/modules/auth/__tests__/role-anchor.test.ts`（新增）
-- `src/modules/consumers/model/schema.ts`、`src/modules/consumers/model/use-consumer.ts`、`src/modules/consumers/ui/components/OrderCard.tsx`（G1 / G2 / 1.2）
+- `src/modules/consumers/model/schema.ts`、`src/modules/consumers/model/use-consumer.ts`、`src/modules/consumers/ui/components/OrderCard.tsx`、`src/modules/consumers/ui/components/__tests__/order-card.test.tsx`（新增）（G1 / G2 / 1.2）
 - `src/modules/orders/model/schema.ts`（G3）
 - `src/modules/*/mocks/seed.ts`（9 檔，10 個陣列）
 - `src/modules/*/mocks/handlers.ts`（10 個 `createCollection` 呼叫點；users 移除 `as`）
 - `src/shared/api/mock-db.ts`、`src/shared/api/__tests__/mock-db-types.test.ts`（新增）
-- `src/modules/users/ui/components/EditUserRoleDialogContent.tsx`、`src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx`（新增）
+- `src/modules/users/ui/components/EditUserRoleDialogContent.tsx`、`src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx`（新增；i18n 先合併時改為追加）
+- `src/modules/users/locales/{en,zh}.json`：只新增或對齊 `roles.*` 這 7 個 key（OD-T3-4 裁決補充）；`zh.json` 目前不存在，T3 先實作時新增
 - 其他 module 的 `model/schema.ts`：只有在 AC-1 實測出新落差時才改，並要在 PR 說明逐項列出
 - `docs/specs/typed-contracts-t3.spec.md`（狀態、AC 勾選）
 
@@ -184,7 +218,7 @@
 
 - `openapi.yaml`、`orval.config.ts`、`src/modules/*/api/**`、`src/modules/*/mocks/*.msw.ts`、`src/app/operations.gen.ts`：契約與產物；本棒只讓手寫層對齊產物（OD-T3-2 A）
 - `src/app/mock/permission-matrix.ts`（`coreRoles`、`coreGrants`）、`src/shared/permission/**`：T1 定稿，本棒只讀 `TRole`
-- `src/shared/i18n/**`、`src/modules/*/locales/**`：角色標籤的 i18n 歸 i18n scope 搬遷
+- `src/shared/i18n/**`、users 以外 module 的 `locales/**`，以及 users 字典中 `roles.*` 以外的 key：其餘硬編碼字串歸 i18n spec（PR #29）處理
 - `src/modules/*/ui/**` 內的表單 schema（`useCreate*Schema` 等）與各 query schema：OD-T3-7 A 範圍外
 - `eslint.config.js`、`scripts/verify-core-only.sh`：新測試要嘛放在 module 內（core-only 時會跟著 module 一起刪除），要嘛屬 core-safe，不需要改清單
 - users mock handler 的 role 驗證（OD-T3-5 A）
@@ -201,4 +235,4 @@ expected: 最後一行輸出 `T3_DONE_OK`（前面會有 `core-only build: OK`�
 - query schema 單向錨定（OD-T3-7 B）。
 - orval 產 Zod（OD-T3-6 A 的觸發條件成立時再開）。
 - mock body 驗證（OD-T3-5 B，要做就全專案一起做）。
-- 角色標籤 i18n：`EditUserRoleDialogContent` 的寫死中文，歸 i18n scope 搬遷。
+- `EditUserRoleDialogContent` 的標題與說明文字（`編輯使用者角色`、`請選擇新的使用者角色`）：歸 i18n spec（PR #29）；角色標籤本身已在 T3 依 OD-T3-4 裁決補充處理。
