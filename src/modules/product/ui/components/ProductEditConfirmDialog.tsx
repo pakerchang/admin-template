@@ -42,18 +42,18 @@ const ProductEditConfirmDialog = ({
 
   const formatValue = (value: string | null, fieldName: string): string => {
     if (value === null || value === undefined || value === "") {
-      return t("pages.product.productEditConfirm.emptyValue");
+      return t("product.productEditConfirm.emptyValue");
     }
 
     const field = fieldName.split(".")[0];
     if (field === "product_type") {
-      const typeKey = `pages.product.productTypes.${value}`;
+      const typeKey = `product.productTypes.${value}`;
       const translated = t(typeKey);
       return translated !== typeKey ? translated : value;
     }
 
     if (field === "product_status") {
-      const statusKey = `pages.product.productCreate.${value}`;
+      const statusKey = `product.productCreate.${value}`;
       const translated = t(statusKey);
       return translated !== statusKey ? translated : value;
     }
@@ -71,11 +71,11 @@ const ProductEditConfirmDialog = ({
       letter.toUpperCase()
     );
 
-    let createFieldKey = `pages.product.productCreate.${camelCaseKey}`;
+    let createFieldKey = `product.productCreate.${camelCaseKey}`;
     let fieldName = t(createFieldKey);
 
     if (fieldName === createFieldKey) {
-      createFieldKey = `pages.product.productCreate.${fieldKey}`;
+      createFieldKey = `product.productCreate.${fieldKey}`;
       fieldName = t(createFieldKey);
     }
 
@@ -97,23 +97,21 @@ const ProductEditConfirmDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>
-            {t("pages.product.productEditConfirm.title")}
-          </DialogTitle>
+          <DialogTitle>{t("product.productEditConfirm.title")}</DialogTitle>
           <DialogDescription>
-            {t("pages.product.productEditConfirm.description")}
+            {t("product.productEditConfirm.description")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="py-4">
           {changes.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              {t("pages.product.productEditConfirm.noChanges")}
+              {t("product.productEditConfirm.noChanges")}
             </p>
           ) : (
             <div className="space-y-4">
               <h4 className="text-sm font-medium">
-                {t("pages.product.productEditConfirm.changesList")}:
+                {t("product.productEditConfirm.changesList")}:
               </h4>
               <div className="space-y-3">
                 {changes.map((change, index) => (
@@ -127,7 +125,7 @@ const ProductEditConfirmDialog = ({
                     <div className="grid grid-cols-1 gap-2 text-sm">
                       <div className="flex items-center gap-2">
                         <span className="min-w-[40px] text-muted-foreground">
-                          {t("pages.product.productEditConfirm.original")}:
+                          {t("product.productEditConfirm.original")}:
                         </span>
                         <span className="break-all text-red-400/90">
                           {formatValue(change.originalValue, change.fieldName)}
@@ -135,7 +133,7 @@ const ProductEditConfirmDialog = ({
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="min-w-[40px] text-muted-foreground">
-                          {t("pages.product.productEditConfirm.new")}:
+                          {t("product.productEditConfirm.new")}:
                         </span>
                         <span className="break-all text-green-400/90">
                           {formatValue(change.newValue, change.fieldName)}
@@ -163,7 +161,7 @@ const ProductEditConfirmDialog = ({
             onClick={handleConfirm}
             disabled={isSubmitting || changes.length === 0}
           >
-            {t("pages.product.productEditConfirm.confirmSubmit")}
+            {t("product.productEditConfirm.confirmSubmit")}
           </Button>
         </DialogFooter>
       </DialogContent>

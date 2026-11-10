@@ -27,7 +27,7 @@ const OrderItem = (props: IOrderItemProps) => {
       enableHiding: false,
       header: () => (
         <h4 className="text-lg font-bold">
-          {t("pages.order.orderDetails.orderItem.image")}
+          {t("orders.orderDetails.orderItem.image")}
         </h4>
       ),
       cell: ({ row }) => {
@@ -54,7 +54,7 @@ const OrderItem = (props: IOrderItemProps) => {
       enableHiding: false,
       header: () => (
         <h4 className="text-lg font-bold">
-          {t("pages.order.orderDetails.orderItem.productId")}
+          {t("orders.orderDetails.orderItem.productId")}
         </h4>
       ),
       cell: ({ row }) => {
@@ -66,7 +66,7 @@ const OrderItem = (props: IOrderItemProps) => {
       enableHiding: false,
       header: () => (
         <h4 className="text-lg font-bold">
-          {t("pages.order.orderDetails.orderItem.price")}
+          {t("orders.orderDetails.orderItem.price")}
         </h4>
       ),
       cell: ({ row }) => {
@@ -78,7 +78,7 @@ const OrderItem = (props: IOrderItemProps) => {
       enableHiding: false,
       header: () => (
         <h4 className="text-lg font-bold">
-          {t("pages.order.orderDetails.orderItem.size")}
+          {t("orders.orderDetails.orderItem.size")}
         </h4>
       ),
       cell: ({ row }) => {
@@ -90,7 +90,7 @@ const OrderItem = (props: IOrderItemProps) => {
       enableHiding: false,
       header: () => (
         <h4 className="text-lg font-bold">
-          {t("pages.order.orderDetails.orderItem.discountRemark")}
+          {t("orders.orderDetails.orderItem.discountRemark")}
         </h4>
       ),
       cell: ({ row }) => {
@@ -103,12 +103,12 @@ const OrderItem = (props: IOrderItemProps) => {
   return (
     <Paper className="flex h-fit w-full flex-col gap-y-4 p-0">
       <h3 className="text-lg font-medium">
-        {t("pages.order.orderDetails.orderItem.title")}
+        {t("orders.orderDetails.orderItem.title")}
       </h3>
       <DataTable columns={columns} data={data} />
       <div className="flex w-full items-center justify-end gap-x-3">
         <p className="text-lg font-medium text-gray-500">
-          {t("pages.order.orderDetails.orderItem.totalAmount")}:
+          {t("orders.orderDetails.orderItem.totalAmount")}:
         </p>
         <p className="text-lg font-medium">
           {numericFormatter(String(totalAmount), {

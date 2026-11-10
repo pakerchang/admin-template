@@ -2,7 +2,7 @@ import { createRoute, redirect } from "@tanstack/react-router";
 
 import { can } from "@/shared/permission";
 
-import type { TNavItem, TShell } from "@/shared/module";
+import type { TRegistryNavItem, TShell } from "@/shared/module";
 import type { TGrant } from "@/shared/permission";
 import type { AnyRoute, RouteComponent } from "@tanstack/react-router";
 
@@ -12,7 +12,7 @@ import type { AnyRoute, RouteComponent } from "@tanstack/react-router";
  */
 export const createIndexRedirect = (
   parent: AnyRoute,
-  nav: readonly TNavItem[],
+  nav: readonly TRegistryNavItem[],
   getGrants: () => readonly TGrant[],
   Forbidden: TShell["Forbidden"]
 ) => {

@@ -46,15 +46,15 @@ export const ImageCard = ({
   );
 
   const demoteButtonText = useMemo(() => {
-    if (isDemoting || isUpdating) return t("pages.banner.actions.processing");
-    if (isReordering) return t("pages.banner.actions.processing");
-    return t("pages.banner.actions.demoteToInactive");
+    if (isDemoting || isUpdating) return t("banners.actions.processing");
+    if (isReordering) return t("banners.actions.processing");
+    return t("banners.actions.demoteToInactive");
   }, [isDemoting, isUpdating, isReordering, t]);
 
   const promoteButtonText = useMemo(() => {
-    if (isPromoting || isUpdating) return t("pages.banner.actions.processing");
-    if (isReordering) return t("pages.banner.actions.processing");
-    return t("pages.banner.actions.promoteToActive");
+    if (isPromoting || isUpdating) return t("banners.actions.processing");
+    if (isReordering) return t("banners.actions.processing");
+    return t("banners.actions.promoteToActive");
   }, [isPromoting, isUpdating, isReordering, t]);
 
   const isButtonDisabled = useMemo(

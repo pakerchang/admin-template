@@ -116,9 +116,9 @@ const SupplierList = () => {
       accessorKey: "supplier_id",
       enableHiding: false,
       meta: {
-        displayName: t("table.headers.supplier.supplierId"),
+        displayName: t("suppliers.table.headers.supplierId"),
       },
-      header: () => <h4>{t("table.headers.supplier.supplierId")}</h4>,
+      header: () => <h4>{t("suppliers.table.headers.supplierId")}</h4>,
       cell: ({ row }) => {
         const supplierId = row.getValue("supplier_id") as string;
         return (
@@ -133,7 +133,7 @@ const SupplierList = () => {
       enableSorting: true,
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.supplier.supplierName"),
+        displayName: t("suppliers.table.headers.supplierName"),
       },
       header: ({ column }) => (
         <Button
@@ -141,7 +141,7 @@ const SupplierList = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.supplier.supplierName")}
+          {t("suppliers.table.headers.supplierName")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -157,9 +157,9 @@ const SupplierList = () => {
       id: "contact",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.supplier.contact"),
+        displayName: t("suppliers.table.headers.contact"),
       },
-      header: () => <h4>{t("table.headers.supplier.contact")}</h4>,
+      header: () => <h4>{t("suppliers.table.headers.contact")}</h4>,
       cell: ({ row }) => {
         const contact = row.original.contact_info;
         return (
@@ -174,9 +174,9 @@ const SupplierList = () => {
       accessorKey: "contact_info.address",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.supplier.address"),
+        displayName: t("suppliers.table.headers.address"),
       },
-      header: () => <h4>{t("table.headers.supplier.address")}</h4>,
+      header: () => <h4>{t("suppliers.table.headers.address")}</h4>,
       cell: ({ row }) => {
         return (
           <div className="max-w-xs">
@@ -189,9 +189,9 @@ const SupplierList = () => {
       accessorKey: "remark",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.supplier.remark"),
+        displayName: t("suppliers.table.headers.remark"),
       },
-      header: () => <h4>{t("table.headers.supplier.remark")}</h4>,
+      header: () => <h4>{t("suppliers.table.headers.remark")}</h4>,
       cell: ({ row }) => (
         <div className="max-w-xs truncate">{row.original.remark || "-"}</div>
       ),
@@ -280,7 +280,7 @@ const SupplierList = () => {
       <div className="flex h-screen w-full items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <Spinner className="size-8" />
-          <p className="text-gray-500">{t("pages.supplier.loading")}</p>
+          <p className="text-gray-500">{t("suppliers.loading")}</p>
         </div>
       </div>
     );
@@ -294,13 +294,13 @@ const SupplierList = () => {
           <div className="flex items-center space-x-2">
             <Building2 className="size-6" />
             <h2 className="text-2xl font-bold tracking-tight">
-              {t("dashboard.menu.suppliers.title")}
+              {t("suppliers.nav.title")}
             </h2>
           </div>
           <Guarded permission="suppliers:create">
             <Button onClick={handleCreateSupplier}>
               <Plus className="mr-2 size-4" />
-              {t("pages.supplier.addSupplier")}
+              {t("suppliers.addSupplier")}
             </Button>
           </Guarded>
         </div>
@@ -308,7 +308,7 @@ const SupplierList = () => {
         <div className="flex items-center space-x-2">
           <Search className="size-4 text-gray-400" />
           <Input
-            placeholder={t("pages.supplier.search.placeholder")}
+            placeholder={t("suppliers.search.placeholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
@@ -343,9 +343,9 @@ const SupplierList = () => {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("pages.supplier.deleteConfirm")}</DialogTitle>
+            <DialogTitle>{t("suppliers.deleteConfirm")}</DialogTitle>
             <DialogDescription>
-              {t("pages.supplier.deleteDescription", {
+              {t("suppliers.deleteDescription", {
                 name: supplierToDelete?.supplier_name,
               })}
             </DialogDescription>
@@ -366,7 +366,7 @@ const SupplierList = () => {
               {deleteSupplierMutation.isPending && (
                 <Spinner className="mr-2 size-4" />
               )}
-              {t("pages.supplier.confirmDelete")}
+              {t("suppliers.confirmDelete")}
             </Button>
           </DialogFooter>
         </DialogContent>

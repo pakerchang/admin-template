@@ -1,0 +1,2195 @@
+[
+  {
+    "old": "common.insert",
+    "new": "articles.common.insert",
+    "zh": "插入",
+    "en": "Insert"
+  },
+  {
+    "old": "common.createArticle",
+    "new": "articles.common.createArticle",
+    "zh": "創建文章",
+    "en": "Create Article"
+  },
+  {
+    "old": "common.noData",
+    "new": "articles.common.noData",
+    "zh": "暫無資料",
+    "en": "No Data"
+  },
+  {
+    "old": "login.title",
+    "new": "auth.title",
+    "zh": "登入",
+    "en": "Sign in"
+  },
+  {
+    "old": "login.email",
+    "new": "auth.email",
+    "zh": "電子郵件",
+    "en": "Email"
+  },
+  {
+    "old": "login.password",
+    "new": "auth.password",
+    "zh": "密碼",
+    "en": "Password"
+  },
+  {
+    "old": "login.submit",
+    "new": "auth.submit",
+    "zh": "登入",
+    "en": "Sign in"
+  },
+  {
+    "old": "login.error",
+    "new": "auth.error",
+    "zh": "電子郵件或密碼錯誤",
+    "en": "Invalid email or password"
+  },
+  {
+    "old": "login.hint",
+    "new": "auth.hint",
+    "zh": "展示帳號：admin@example.com / admin123",
+    "en": "Demo account: admin@example.com / admin123"
+  },
+  {
+    "old": "login.demo.title",
+    "new": "auth.demo.title",
+    "zh": "展示帳號（點選帶入，密碼皆為 admin123）",
+    "en": "Demo accounts (click to fill; password is admin123)"
+  },
+  {
+    "old": "login.demo.roles.superadmin",
+    "new": "auth.demo.roles.superadmin",
+    "zh": "超級管理員",
+    "en": "Super admin"
+  },
+  {
+    "old": "login.demo.roles.admin",
+    "new": "auth.demo.roles.admin",
+    "zh": "管理員",
+    "en": "Admin"
+  },
+  {
+    "old": "login.demo.roles.support",
+    "new": "auth.demo.roles.support",
+    "zh": "客服",
+    "en": "Support"
+  },
+  {
+    "old": "login.demo.roles.partner",
+    "new": "auth.demo.roles.partner",
+    "zh": "合作夥伴",
+    "en": "Partner"
+  },
+  {
+    "old": "login.demo.roles.premium",
+    "new": "auth.demo.roles.premium",
+    "zh": "一般會員",
+    "en": "Member"
+  },
+  {
+    "old": "login.demo.descriptions.superadmin",
+    "new": "auth.demo.descriptions.superadmin",
+    "zh": "全部權限",
+    "en": "Full access"
+  },
+  {
+    "old": "login.demo.descriptions.admin",
+    "new": "auth.demo.descriptions.admin",
+    "zh": "除了使用者的編輯與角色變更，其餘都能讀寫",
+    "en": "Read/write everything except editing users and changing roles"
+  },
+  {
+    "old": "login.demo.descriptions.support",
+    "new": "auth.demo.descriptions.support",
+    "zh": "訂單可讀寫，多數資料唯讀；看不到商品、使用者",
+    "en": "Orders read/write, most data read-only; no products or users"
+  },
+  {
+    "old": "login.demo.descriptions.partner",
+    "new": "auth.demo.descriptions.partner",
+    "zh": "商品可讀寫，多數資料唯讀；看不到訂單、使用者",
+    "en": "Products read/write, most data read-only; no orders or users"
+  },
+  {
+    "old": "login.demo.descriptions.premium",
+    "new": "auth.demo.descriptions.premium",
+    "zh": "沒有後台權限，登入後顯示 403",
+    "en": "No admin access; sees 403 after signing in"
+  },
+  {
+    "old": "messages.copySuccess",
+    "new": "orders.messages.copySuccess",
+    "zh": "複製成功",
+    "en": "Copy successful"
+  },
+  {
+    "old": "messages.copyFailed",
+    "new": "orders.messages.copyFailed",
+    "zh": "複製失敗",
+    "en": "Copy failed"
+  },
+  {
+    "old": "validation.image.prefix.desktop",
+    "new": "banners.validation.image.prefix.desktop",
+    "zh": "桌面版圖片檔名必須以 d_ 開頭",
+    "en": "Desktop image file name must start with d_"
+  },
+  {
+    "old": "validation.image.prefix.mobile",
+    "new": "banners.validation.image.prefix.mobile",
+    "zh": "手機版圖片檔名必須以 m_ 開頭",
+    "en": "Mobile image file name must start with m_"
+  },
+  {
+    "old": "validation.image.resolution.desktop.tooSmall",
+    "new": "banners.validation.image.resolution.desktop.tooSmall",
+    "zh": "桌面版圖片解析度過小，建議最小 1280x720 像素",
+    "en": "Desktop image resolution is too small, minimum recommended 1280x720 pixels"
+  },
+  {
+    "old": "validation.image.resolution.desktop.tooLarge",
+    "new": "banners.validation.image.resolution.desktop.tooLarge",
+    "zh": "桌面版圖片解析度過大，最大支援 3840x2160 像素",
+    "en": "Desktop image resolution is too large, maximum supported 3840x2160 pixels"
+  },
+  {
+    "old": "validation.image.resolution.desktop.aspectRatio",
+    "new": "banners.validation.image.resolution.desktop.aspectRatio",
+    "zh": "建議使用 16:9 的寬高比以獲得最佳顯示效果",
+    "en": "Recommended to use 16:9 aspect ratio for optimal display"
+  },
+  {
+    "old": "validation.image.resolution.mobile.tooSmall",
+    "new": "banners.validation.image.resolution.mobile.tooSmall",
+    "zh": "手機版圖片解析度過小，建議最小 {{minResolution}} 像素",
+    "en": "Mobile image resolution is too small, minimum recommended {{minResolution}} pixels"
+  },
+  {
+    "old": "validation.image.resolution.mobile.tooLarge",
+    "new": "banners.validation.image.resolution.mobile.tooLarge",
+    "zh": "手機版圖片解析度過大，最大支援 {{maxResolution}} 像素",
+    "en": "Mobile image resolution is too large, maximum supported {{maxResolution}} pixels"
+  },
+  {
+    "old": "validation.image.resolution.mobile.aspectRatio",
+    "new": "banners.validation.image.resolution.mobile.aspectRatio",
+    "zh": "手機版建議使用 16:9 的寬高比",
+    "en": "For mobile, recommended to use 16:9 aspect ratio"
+  },
+  {
+    "old": "validation.password.minLength",
+    "new": "team-members.validation.password.minLength",
+    "zh": "密碼至少需要8個字符",
+    "en": "Password must be at least 8 characters long"
+  },
+  {
+    "old": "validation.password.complexity",
+    "new": "team-members.validation.password.complexity",
+    "zh": "密碼必須符合以下條件：至少8個字符，且包含以下至少3種類型的字符：大寫字母、小寫字母、數字、特殊符號(!@#$%^&*()等)",
+    "en": "Password must meet the following requirements: at least 8 characters and contain at least 3 of the following character types: uppercase letters, lowercase letters, numbers, special symbols (!@#$%^&*(), etc.)"
+  },
+  {
+    "old": "validation.article.content.required",
+    "new": "articles.validation.content.required",
+    "zh": "請輸入文章內容",
+    "en": "Please enter article content"
+  },
+  {
+    "old": "validation.editor.toolbar.bold",
+    "new": "articles.validation.editor.toolbar.bold",
+    "zh": "粗體",
+    "en": "Bold"
+  },
+  {
+    "old": "validation.editor.toolbar.italic",
+    "new": "articles.validation.editor.toolbar.italic",
+    "zh": "斜體",
+    "en": "Italic"
+  },
+  {
+    "old": "validation.editor.toolbar.heading1",
+    "new": "articles.validation.editor.toolbar.heading1",
+    "zh": "標題 1",
+    "en": "Heading 1"
+  },
+  {
+    "old": "validation.editor.toolbar.heading2",
+    "new": "articles.validation.editor.toolbar.heading2",
+    "zh": "標題 2",
+    "en": "Heading 2"
+  },
+  {
+    "old": "validation.editor.toolbar.heading3",
+    "new": "articles.validation.editor.toolbar.heading3",
+    "zh": "標題 3",
+    "en": "Heading 3"
+  },
+  {
+    "old": "validation.editor.toolbar.paragraph",
+    "new": "articles.validation.editor.toolbar.paragraph",
+    "zh": "段落",
+    "en": "Paragraph"
+  },
+  {
+    "old": "validation.editor.toolbar.bulletList",
+    "new": "articles.validation.editor.toolbar.bulletList",
+    "zh": "無序列表",
+    "en": "Bullet List"
+  },
+  {
+    "old": "validation.editor.toolbar.orderedList",
+    "new": "articles.validation.editor.toolbar.orderedList",
+    "zh": "有序列表",
+    "en": "Ordered List"
+  },
+  {
+    "old": "validation.editor.toolbar.blockquote",
+    "new": "articles.validation.editor.toolbar.blockquote",
+    "zh": "引用",
+    "en": "Blockquote"
+  },
+  {
+    "old": "validation.editor.toolbar.link",
+    "new": "articles.validation.editor.toolbar.link",
+    "zh": "插入鏈接",
+    "en": "Insert Link"
+  },
+  {
+    "old": "validation.editor.toolbar.image",
+    "new": "articles.validation.editor.toolbar.image",
+    "zh": "插入圖片",
+    "en": "Insert Image"
+  },
+  {
+    "old": "validation.editor.toolbar.undo",
+    "new": "articles.validation.editor.toolbar.undo",
+    "zh": "復原",
+    "en": "Undo"
+  },
+  {
+    "old": "validation.editor.toolbar.redo",
+    "new": "articles.validation.editor.toolbar.redo",
+    "zh": "重做",
+    "en": "Redo"
+  },
+  {
+    "old": "validation.editor.placeholder",
+    "new": "articles.validation.editor.placeholder",
+    "zh": "開始撰寫文章內容...",
+    "en": "Start writing article content..."
+  },
+  {
+    "old": "validation.editor.link.url",
+    "new": "articles.validation.editor.link.url",
+    "zh": "鏈接地址",
+    "en": "Link URL"
+  },
+  {
+    "old": "validation.editor.link.text",
+    "new": "articles.validation.editor.link.text",
+    "zh": "鏈接文字",
+    "en": "Link Text"
+  },
+  {
+    "old": "validation.editor.link.urlPlaceholder",
+    "new": "articles.validation.editor.link.urlPlaceholder",
+    "zh": "請輸入鏈接地址",
+    "en": "Enter link URL"
+  },
+  {
+    "old": "validation.editor.link.textPlaceholder",
+    "new": "articles.validation.editor.link.textPlaceholder",
+    "zh": "請輸入鏈接文字",
+    "en": "Enter link text"
+  },
+  {
+    "old": "validation.editor.link.edit",
+    "new": "articles.validation.editor.link.edit",
+    "zh": "編輯鏈接",
+    "en": "Edit Link"
+  },
+  {
+    "old": "validation.editor.link.remove",
+    "new": "articles.validation.editor.link.remove",
+    "zh": "移除鏈接",
+    "en": "Remove Link"
+  },
+  {
+    "old": "validation.editor.link.invalid",
+    "new": "articles.validation.editor.link.invalid",
+    "zh": "請輸入有效的鏈接地址",
+    "en": "Please enter a valid URL"
+  },
+  {
+    "old": "validation.editor.link.helpText",
+    "new": "articles.validation.editor.link.helpText",
+    "zh": "如果留空，將使用選中的文字或鏈接地址",
+    "en": "If left empty, will use selected text or link URL"
+  },
+  {
+    "old": "validation.editor.image.upload",
+    "new": "articles.validation.editor.image.upload",
+    "zh": "上傳圖片",
+    "en": "Upload Image"
+  },
+  {
+    "old": "validation.editor.image.url",
+    "new": "articles.validation.editor.image.url",
+    "zh": "圖片地址",
+    "en": "Image URL"
+  },
+  {
+    "old": "validation.editor.image.alt",
+    "new": "articles.validation.editor.image.alt",
+    "zh": "圖片描述",
+    "en": "Alt Text"
+  },
+  {
+    "old": "validation.editor.image.urlPlaceholder",
+    "new": "articles.validation.editor.image.urlPlaceholder",
+    "zh": "請輸入圖片地址",
+    "en": "Enter image URL"
+  },
+  {
+    "old": "validation.editor.image.altPlaceholder",
+    "new": "articles.validation.editor.image.altPlaceholder",
+    "zh": "請輸入圖片描述",
+    "en": "Enter image description"
+  },
+  {
+    "old": "validation.editor.image.uploadText",
+    "new": "articles.validation.editor.image.uploadText",
+    "zh": "點擊上傳或拖拽圖片到此處",
+    "en": "Click to upload or drag image here"
+  },
+  {
+    "old": "validation.editor.image.uploadHint",
+    "new": "articles.validation.editor.image.uploadHint",
+    "zh": "PNG, JPG, GIF (最大 10MB)",
+    "en": "PNG, JPG, GIF (max 10MB)"
+  },
+  {
+    "old": "validation.editor.image.uploaded",
+    "new": "articles.validation.editor.image.uploaded",
+    "zh": "已上傳的圖片",
+    "en": "Uploaded Images"
+  },
+  {
+    "old": "validation.editor.image.use",
+    "new": "articles.validation.editor.image.use",
+    "zh": "使用",
+    "en": "Use"
+  },
+  {
+    "old": "validation.url.https",
+    "new": "banners.validation.url.https",
+    "zh": "網址必須以 https:// 開頭",
+    "en": "URL must start with https://"
+  },
+  {
+    "old": "order.agent",
+    "new": "consumers.order.agent",
+    "zh": "代理商",
+    "en": "Agent"
+  },
+  {
+    "old": "order.contactInfo",
+    "new": "orders.contactInfo",
+    "zh": "聯絡資訊",
+    "en": "Contact Information"
+  },
+  {
+    "old": "order.createdAt",
+    "new": "orders.createdAt",
+    "zh": "建立時間",
+    "en": "Created At"
+  },
+  {
+    "old": "order.updatedAt",
+    "new": "orders.updatedAt",
+    "zh": "更新時間",
+    "en": "Updated At"
+  },
+  {
+    "old": "order.orderDetails",
+    "new": "orders.order.orderDetails",
+    "zh": "訂單明細",
+    "en": "Order Details"
+  },
+  {
+    "old": "order.item",
+    "new": "orders.item",
+    "zh": "品項",
+    "en": "Item"
+  },
+  {
+    "old": "order.price",
+    "new": "orders.price",
+    "zh": "價格",
+    "en": "Price"
+  },
+  {
+    "old": "order.discountRemark",
+    "new": "orders.discountRemark",
+    "zh": "折扣備註",
+    "en": "Discount Remark"
+  },
+  {
+    "old": "order.email",
+    "new": "consumers.order.email",
+    "zh": "Email",
+    "en": "Email"
+  },
+  {
+    "old": "order.contactInfoTitle",
+    "new": "consumers.order.contactInfoTitle",
+    "zh": "聯絡資訊",
+    "en": "Contact Information"
+  },
+  {
+    "old": "action.remove",
+    "new": "articles.action.remove",
+    "zh": "移除",
+    "en": "Remove"
+  },
+  {
+    "old": "dashboard.menu.users.title",
+    "new": "users.nav.title",
+    "zh": "使用者管理",
+    "en": "User Management"
+  },
+  {
+    "old": "dashboard.menu.products.title",
+    "new": "product.nav.title",
+    "zh": "商品管理",
+    "en": "Product Management"
+  },
+  {
+    "old": "dashboard.menu.orders.title",
+    "new": "orders.nav.title",
+    "zh": "訂單管理",
+    "en": "Orders Management"
+  },
+  {
+    "old": "dashboard.menu.orders.sub.orderList",
+    "new": "orders.nav.orderList",
+    "zh": "訂單列表",
+    "en": "Order List"
+  },
+  {
+    "old": "dashboard.menu.banners.title",
+    "new": "banners.nav.title",
+    "zh": "Banner 管理",
+    "en": "Banners Management"
+  },
+  {
+    "old": "dashboard.menu.articles.title",
+    "new": "articles.nav.title",
+    "zh": "文章管理",
+    "en": "Articles Management"
+  },
+  {
+    "old": "dashboard.menu.customers.title",
+    "new": "consumers.nav.title",
+    "zh": "客戶管理",
+    "en": "Customer Management"
+  },
+  {
+    "old": "dashboard.menu.teamMembers.title",
+    "new": "team-members.nav.title",
+    "zh": "團隊成員管理",
+    "en": "Team Management"
+  },
+  {
+    "old": "dashboard.menu.suppliers.title",
+    "new": "suppliers.nav.title",
+    "zh": "代理商管理",
+    "en": "Supplier Management"
+  },
+  {
+    "old": "dashboard.menu.tags.title",
+    "new": "tags.nav.title",
+    "zh": "標籤管理",
+    "en": "Tag Management"
+  },
+  {
+    "old": "pages.supplier.addSupplier",
+    "new": "suppliers.addSupplier",
+    "zh": "新增代理商",
+    "en": "Add Supplier"
+  },
+  {
+    "old": "pages.supplier.editSupplier",
+    "new": "suppliers.editSupplier",
+    "zh": "編輯代理商",
+    "en": "Edit Supplier"
+  },
+  {
+    "old": "pages.supplier.deleteConfirm",
+    "new": "suppliers.deleteConfirm",
+    "zh": "確認刪除",
+    "en": "Confirm Delete"
+  },
+  {
+    "old": "pages.supplier.deleteDescription",
+    "new": "suppliers.deleteDescription",
+    "zh": "您確定要刪除代理商「{{name}}」嗎？此操作無法復原。",
+    "en": "Are you sure you want to delete supplier \"{{name}}\"? This action cannot be undone."
+  },
+  {
+    "old": "pages.supplier.confirmDelete",
+    "new": "suppliers.confirmDelete",
+    "zh": "確認刪除",
+    "en": "Confirm Delete"
+  },
+  {
+    "old": "pages.supplier.loading",
+    "new": "suppliers.loading",
+    "zh": "載入代理商列表中...",
+    "en": "Loading supplier list..."
+  },
+  {
+    "old": "pages.supplier.supplierName",
+    "new": "suppliers.supplierName",
+    "zh": "代理商名稱",
+    "en": "Supplier Name"
+  },
+  {
+    "old": "pages.supplier.phone",
+    "new": "suppliers.phone",
+    "zh": "聯絡電話",
+    "en": "Contact Phone"
+  },
+  {
+    "old": "pages.supplier.email",
+    "new": "suppliers.email",
+    "zh": "電子郵件",
+    "en": "Email"
+  },
+  {
+    "old": "pages.supplier.address",
+    "new": "suppliers.address",
+    "zh": "地址",
+    "en": "Address"
+  },
+  {
+    "old": "pages.supplier.remark",
+    "new": "suppliers.remark",
+    "zh": "備註",
+    "en": "Remark"
+  },
+  {
+    "old": "pages.supplier.search.placeholder",
+    "new": "suppliers.search.placeholder",
+    "zh": "搜索代理商編號或代理商名稱...",
+    "en": "Search supplier ID or supplier name..."
+  },
+  {
+    "old": "pages.supplier.messages.fetchListFailed",
+    "new": "suppliers.messages.fetchListFailed",
+    "zh": "獲取代理商列表失敗",
+    "en": "Failed to fetch supplier list"
+  },
+  {
+    "old": "pages.supplier.messages.createSuccess",
+    "new": "suppliers.messages.createSuccess",
+    "zh": "代理商創建成功",
+    "en": "Supplier created successfully"
+  },
+  {
+    "old": "pages.supplier.messages.createFailed",
+    "new": "suppliers.messages.createFailed",
+    "zh": "創建代理商失敗",
+    "en": "Failed to create supplier"
+  },
+  {
+    "old": "pages.supplier.messages.updateSuccess",
+    "new": "suppliers.messages.updateSuccess",
+    "zh": "代理商資料更新成功",
+    "en": "Supplier updated successfully"
+  },
+  {
+    "old": "pages.supplier.messages.updateFailed",
+    "new": "suppliers.messages.updateFailed",
+    "zh": "更新代理商失敗",
+    "en": "Failed to update supplier"
+  },
+  {
+    "old": "pages.supplier.messages.deleteSuccess",
+    "new": "suppliers.messages.deleteSuccess",
+    "zh": "代理商刪除成功",
+    "en": "Supplier deleted successfully"
+  },
+  {
+    "old": "pages.supplier.messages.deleteFailed",
+    "new": "suppliers.messages.deleteFailed",
+    "zh": "刪除代理商失敗",
+    "en": "Failed to delete supplier"
+  },
+  {
+    "old": "pages.tag.addTag",
+    "new": "tags.addTag",
+    "zh": "新增標籤",
+    "en": "Add Tag"
+  },
+  {
+    "old": "pages.tag.editTag",
+    "new": "tags.editTag",
+    "zh": "編輯標籤",
+    "en": "Edit Tag"
+  },
+  {
+    "old": "pages.tag.deleteConfirm",
+    "new": "tags.deleteConfirm",
+    "zh": "確認刪除",
+    "en": "Confirm Delete"
+  },
+  {
+    "old": "pages.tag.deleteDescription",
+    "new": "tags.deleteDescription",
+    "zh": "您確定要刪除標籤「{{name}}」嗎？此操作無法復原。",
+    "en": "Are you sure you want to delete tag \"{{name}}\"? This action cannot be undone."
+  },
+  {
+    "old": "pages.tag.confirmDelete",
+    "new": "tags.confirmDelete",
+    "zh": "確認刪除",
+    "en": "Confirm Delete"
+  },
+  {
+    "old": "pages.tag.loading",
+    "new": "tags.loading",
+    "zh": "載入標籤列表中...",
+    "en": "Loading tag list..."
+  },
+  {
+    "old": "pages.tag.tagName",
+    "new": "tags.tagName",
+    "zh": "標籤名稱",
+    "en": "Tag Name"
+  },
+  {
+    "old": "pages.tag.tagNamePlaceholder",
+    "new": "tags.tagNamePlaceholder",
+    "zh": "請輸入標籤名稱",
+    "en": "Please enter tag name"
+  },
+  {
+    "old": "pages.tag.search.placeholder",
+    "new": "tags.search.placeholder",
+    "zh": "搜索標籤編號或標籤名稱...",
+    "en": "Search tag ID or tag name..."
+  },
+  {
+    "old": "pages.tag.messages.fetchListFailed",
+    "new": "tags.messages.fetchListFailed",
+    "zh": "獲取標籤列表失敗",
+    "en": "Failed to fetch tag list"
+  },
+  {
+    "old": "pages.tag.messages.createSuccess",
+    "new": "tags.messages.createSuccess",
+    "zh": "標籤創建成功",
+    "en": "Tag created successfully"
+  },
+  {
+    "old": "pages.tag.messages.createFailed",
+    "new": "tags.messages.createFailed",
+    "zh": "創建標籤失敗",
+    "en": "Failed to create tag"
+  },
+  {
+    "old": "pages.tag.messages.updateSuccess",
+    "new": "tags.messages.updateSuccess",
+    "zh": "標籤資料更新成功",
+    "en": "Tag updated successfully"
+  },
+  {
+    "old": "pages.tag.messages.updateFailed",
+    "new": "tags.messages.updateFailed",
+    "zh": "更新標籤失敗",
+    "en": "Failed to update tag"
+  },
+  {
+    "old": "pages.tag.messages.deleteSuccess",
+    "new": "tags.messages.deleteSuccess",
+    "zh": "標籤刪除成功",
+    "en": "Tag deleted successfully"
+  },
+  {
+    "old": "pages.tag.messages.deleteFailed",
+    "new": "tags.messages.deleteFailed",
+    "zh": "刪除標籤失敗",
+    "en": "Failed to delete tag"
+  },
+  {
+    "old": "pages.article.basicInfo",
+    "new": "articles.basicInfo",
+    "zh": "基本資訊",
+    "en": "Basic Information"
+  },
+  {
+    "old": "pages.article.title",
+    "new": "articles.title",
+    "zh": "標題",
+    "en": "Title"
+  },
+  {
+    "old": "pages.article.titlePlaceholder",
+    "new": "articles.titlePlaceholder",
+    "zh": "請輸入文章標題",
+    "en": "Please enter article title"
+  },
+  {
+    "old": "pages.article.description",
+    "new": "articles.description",
+    "zh": "摘要",
+    "en": "Description"
+  },
+  {
+    "old": "pages.article.descriptionPlaceholder",
+    "new": "articles.descriptionPlaceholder",
+    "zh": "請輸入文章摘要（可選）",
+    "en": "Please enter article description (optional)"
+  },
+  {
+    "old": "pages.article.coverImage",
+    "new": "articles.coverImage",
+    "zh": "封面圖片",
+    "en": "Cover Image"
+  },
+  {
+    "old": "pages.article.tags",
+    "new": "articles.tags",
+    "zh": "標籤",
+    "en": "Tags"
+  },
+  {
+    "old": "pages.article.tagsPlaceholder",
+    "new": "articles.tagsPlaceholder",
+    "zh": "請輸入標籤",
+    "en": "Enter tag"
+  },
+  {
+    "old": "pages.article.tagInput",
+    "new": "articles.tagInput",
+    "zh": "標籤 {{index}}",
+    "en": "Tag {{index}}"
+  },
+  {
+    "old": "pages.article.currentTags",
+    "new": "articles.currentTags",
+    "zh": "當前標籤",
+    "en": "Current Tags"
+  },
+  {
+    "old": "pages.article.content",
+    "new": "articles.content",
+    "zh": "文章內容",
+    "en": "Article Content"
+  },
+  {
+    "old": "pages.article.contentPlaceholder",
+    "new": "articles.contentPlaceholder",
+    "zh": "開始撰寫文章內容...",
+    "en": "Start writing article content..."
+  },
+  {
+    "old": "pages.order.title",
+    "new": "orders.title",
+    "zh": "訂單管理",
+    "en": "Order Management"
+  },
+  {
+    "old": "pages.order.search.placeholder",
+    "new": "orders.search.placeholder",
+    "zh": "搜尋訂單編號 (例如: ORD20241221001)",
+    "en": "Search order ID (e.g. ORD20241221001)"
+  },
+  {
+    "old": "pages.order.search.searching",
+    "new": "orders.search.searching",
+    "zh": "搜尋中...",
+    "en": "Searching..."
+  },
+  {
+    "old": "pages.order.search.results",
+    "new": "orders.search.results",
+    "zh": "搜尋 \"{{searchTerm}}\" 找到 {{count}} 筆結果",
+    "en": "Search \"{{searchTerm}}\" found {{count}} results"
+  },
+  {
+    "old": "pages.order.search.noResults",
+    "new": "orders.search.noResults",
+    "zh": "找不到相關訂單",
+    "en": "No related orders found"
+  },
+  {
+    "old": "pages.order.search.noResultsHint",
+    "new": "orders.search.noResultsHint",
+    "zh": "請嘗試其他關鍵字或",
+    "en": "Try other keywords or"
+  },
+  {
+    "old": "pages.order.search.clearSearch",
+    "new": "orders.search.clearSearch",
+    "zh": "清除搜尋",
+    "en": "clear search"
+  },
+  {
+    "old": "pages.order.filter.allStatus",
+    "new": "orders.filter.allStatus",
+    "zh": "全部狀態",
+    "en": "All Status"
+  },
+  {
+    "old": "pages.order.orderDetails.notFound",
+    "new": "orders.orderDetails.notFound",
+    "zh": "找不到訂單",
+    "en": "Order not found"
+  },
+  {
+    "old": "pages.order.orderDetails.orderStatus.title",
+    "new": "orders.orderDetails.orderStatus.title",
+    "zh": "訂單狀態",
+    "en": "Order Status"
+  },
+  {
+    "old": "pages.order.orderDetails.orderStatus.orderCreateAt",
+    "new": "orders.orderDetails.orderStatus.orderCreateAt",
+    "zh": "訂單建立時間",
+    "en": "Order Created At"
+  },
+  {
+    "old": "pages.order.orderDetails.orderStatus.lastUpdatedAt",
+    "new": "orders.orderDetails.orderStatus.lastUpdatedAt",
+    "zh": "最後更新時間",
+    "en": "Last Updated At"
+  },
+  {
+    "old": "pages.order.orderDetails.shipping.title",
+    "new": "orders.orderDetails.shipping.title",
+    "zh": "運送資訊",
+    "en": "Shipping Info"
+  },
+  {
+    "old": "pages.order.orderDetails.shipping.shippingFee",
+    "new": "orders.orderDetails.shipping.shippingFee",
+    "zh": "運費",
+    "en": "Shipping Fee"
+  },
+  {
+    "old": "pages.order.orderDetails.shipping.shippingAddress",
+    "new": "orders.orderDetails.shipping.shippingAddress",
+    "zh": "配送地址",
+    "en": "Shipping Address"
+  },
+  {
+    "old": "pages.order.orderDetails.shipping.shippingTime",
+    "new": "orders.orderDetails.shipping.shippingTime",
+    "zh": "配送時間",
+    "en": "Shipping Time"
+  },
+  {
+    "old": "pages.order.orderDetails.shipping.shippingRemark",
+    "new": "orders.orderDetails.shipping.shippingRemark",
+    "zh": "配送備註",
+    "en": "Shipping Remark"
+  },
+  {
+    "old": "pages.order.orderDetails.orderItem.title",
+    "new": "orders.orderDetails.orderItem.title",
+    "zh": "訂單明細",
+    "en": "Order Details"
+  },
+  {
+    "old": "pages.order.orderDetails.orderItem.image",
+    "new": "orders.orderDetails.orderItem.image",
+    "zh": "商品圖片",
+    "en": "Product Image"
+  },
+  {
+    "old": "pages.order.orderDetails.orderItem.productId",
+    "new": "orders.orderDetails.orderItem.productId",
+    "zh": "商品編號",
+    "en": "Product ID"
+  },
+  {
+    "old": "pages.order.orderDetails.orderItem.price",
+    "new": "orders.orderDetails.orderItem.price",
+    "zh": "單價",
+    "en": "Unit Price"
+  },
+  {
+    "old": "pages.order.orderDetails.orderItem.size",
+    "new": "orders.orderDetails.orderItem.size",
+    "zh": "數量",
+    "en": "Quantity"
+  },
+  {
+    "old": "pages.order.orderDetails.orderItem.discountRemark",
+    "new": "orders.orderDetails.orderItem.discountRemark",
+    "zh": "折扣備註",
+    "en": "Discount Remark"
+  },
+  {
+    "old": "pages.order.orderDetails.orderItem.totalAmount",
+    "new": "orders.orderDetails.orderItem.totalAmount",
+    "zh": "小計",
+    "en": "Total Amount"
+  },
+  {
+    "old": "pages.order.orderDetails.customer.title",
+    "new": "orders.orderDetails.customer.title",
+    "zh": "客戶資訊",
+    "en": "Customer Info"
+  },
+  {
+    "old": "pages.order.orderDetails.customer.phone",
+    "new": "orders.orderDetails.customer.phone",
+    "zh": "電話",
+    "en": "Phone"
+  },
+  {
+    "old": "pages.order.orderDetails.customer.email",
+    "new": "orders.orderDetails.customer.email",
+    "zh": "電子郵件",
+    "en": "Email"
+  },
+  {
+    "old": "pages.product.filter.allStatus",
+    "new": "product.filter.allStatus",
+    "zh": "全部",
+    "en": "All"
+  },
+  {
+    "old": "pages.product.status.active",
+    "new": "product.status.active",
+    "zh": "上架中",
+    "en": "Active"
+  },
+  {
+    "old": "pages.product.status.inactive",
+    "new": "product.status.inactive",
+    "zh": "下架中",
+    "en": "Inactive"
+  },
+  {
+    "old": "pages.product.productCreate.addProduct",
+    "new": "product.productCreate.addProduct",
+    "zh": "新增商品",
+    "en": "Add Product"
+  },
+  {
+    "old": "pages.product.productCreate.title",
+    "new": "product.productCreate.title",
+    "zh": "商品資訊",
+    "en": "Product Info"
+  },
+  {
+    "old": "pages.product.productCreate.productName",
+    "new": "product.productCreate.productName",
+    "zh": "商品名稱",
+    "en": "Product Name"
+  },
+  {
+    "old": "pages.product.productCreate.productType",
+    "new": "product.productCreate.productType",
+    "zh": "商品類型",
+    "en": "Product Type"
+  },
+  {
+    "old": "pages.product.productCreate.productTypePlaceholder",
+    "new": "product.productCreate.productTypePlaceholder",
+    "zh": "請選擇商品類型",
+    "en": "Please select product type"
+  },
+  {
+    "old": "pages.product.productCreate.productTag",
+    "new": "product.productCreate.productTag",
+    "zh": "商品標籤",
+    "en": "Product Tag"
+  },
+  {
+    "old": "pages.product.productCreate.productTagInput",
+    "new": "product.productCreate.productTagInput",
+    "zh": "商品標籤{{index}}",
+    "en": "Product Tag {{index}}"
+  },
+  {
+    "old": "pages.product.productCreate.productDescription",
+    "new": "product.productCreate.productDescription",
+    "zh": "商品描述",
+    "en": "Product Description"
+  },
+  {
+    "old": "pages.product.productCreate.shortTitle",
+    "new": "product.productCreate.shortTitle",
+    "zh": "商品簡稱",
+    "en": "Short Title"
+  },
+  {
+    "old": "pages.product.productCreate.price",
+    "new": "product.productCreate.price",
+    "zh": "商品價格",
+    "en": "Price"
+  },
+  {
+    "old": "pages.product.productCreate.productSize",
+    "new": "product.productCreate.productSize",
+    "zh": "商品庫存",
+    "en": "Stock"
+  },
+  {
+    "old": "pages.product.productCreate.productImages",
+    "new": "product.productCreate.productImages",
+    "zh": "商品圖片",
+    "en": "Product Images"
+  },
+  {
+    "old": "pages.product.productCreate.ingredients",
+    "new": "product.productCreate.ingredients",
+    "zh": "商品成分",
+    "en": "Ingredients"
+  },
+  {
+    "old": "pages.product.productCreate.introduction",
+    "new": "product.productCreate.introduction",
+    "zh": "商品介紹",
+    "en": "Introduction"
+  },
+  {
+    "old": "pages.product.productCreate.precautions",
+    "new": "product.productCreate.precautions",
+    "zh": "商品注意事項",
+    "en": "Precautions"
+  },
+  {
+    "old": "pages.product.productCreate.shelfLife",
+    "new": "product.productCreate.shelfLife",
+    "zh": "商品保存期限",
+    "en": "Shelf Life"
+  },
+  {
+    "old": "pages.product.productCreate.origin",
+    "new": "product.productCreate.origin",
+    "zh": "商品產地",
+    "en": "Origin"
+  },
+  {
+    "old": "pages.product.productCreate.aromaLevel",
+    "new": "product.productCreate.aromaLevel",
+    "zh": "香氣等級",
+    "en": "Aroma Level"
+  },
+  {
+    "old": "pages.product.productCreate.flavor",
+    "new": "product.productCreate.flavor",
+    "zh": "口味",
+    "en": "Flavor"
+  },
+  {
+    "old": "pages.product.productCreate.appearance",
+    "new": "product.productCreate.appearance",
+    "zh": "外觀",
+    "en": "Appearance"
+  },
+  {
+    "old": "pages.product.productCreate.bestOccasion",
+    "new": "product.productCreate.bestOccasion",
+    "zh": "最佳場合",
+    "en": "Best Occasion"
+  },
+  {
+    "old": "pages.product.productCreate.sceneMatching",
+    "new": "product.productCreate.sceneMatching",
+    "zh": "場景搭配",
+    "en": "Scene Matching"
+  },
+  {
+    "old": "pages.product.productCreate.foodPairing",
+    "new": "product.productCreate.foodPairing",
+    "zh": "食物搭配",
+    "en": "Food Pairing"
+  },
+  {
+    "old": "pages.product.productCreate.submitting",
+    "new": "product.productCreate.submitting",
+    "zh": "提交中",
+    "en": "Submitting"
+  },
+  {
+    "old": "pages.product.productCreate.active",
+    "new": "product.productCreate.active",
+    "zh": "上架",
+    "en": "Active"
+  },
+  {
+    "old": "pages.product.productCreate.inactive",
+    "new": "product.productCreate.inactive",
+    "zh": "下架",
+    "en": "Inactive"
+  },
+  {
+    "old": "pages.product.productCreate.productStatus",
+    "new": "product.productCreate.productStatus",
+    "zh": "商品狀態",
+    "en": "Product Status"
+  },
+  {
+    "old": "pages.product.productCreate.productStatusPlaceholder",
+    "new": "product.productCreate.productStatusPlaceholder",
+    "zh": "請選擇商品上架狀態",
+    "en": "Please select product status"
+  },
+  {
+    "old": "pages.product.productCreate.supplier",
+    "new": "product.productCreate.supplier",
+    "zh": "供應商",
+    "en": "Supplier"
+  },
+  {
+    "old": "pages.product.productCreate.supplierPlaceholder",
+    "new": "product.productCreate.supplierPlaceholder",
+    "zh": "請選擇供應商",
+    "en": "Please select supplier"
+  },
+  {
+    "old": "pages.product.productCreate.tags",
+    "new": "product.productCreate.tags",
+    "zh": "商品標籤",
+    "en": "Product Tags"
+  },
+  {
+    "old": "pages.product.productCreate.addTag",
+    "new": "product.productCreate.addTag",
+    "zh": "新增標籤",
+    "en": "Add Tag"
+  },
+  {
+    "old": "pages.product.productCreate.selectTag",
+    "new": "product.productCreate.selectTag",
+    "zh": "選擇標籤",
+    "en": "Select Tag"
+  },
+  {
+    "old": "pages.product.productCreate.selectedTags",
+    "new": "product.productCreate.selectedTags",
+    "zh": "已選擇的標籤",
+    "en": "Selected Tags"
+  },
+  {
+    "old": "pages.product.productDraft.title",
+    "new": "product.productDraft.title",
+    "zh": "複製商品 - {{productName}}",
+    "en": "Copy Product - {{productName}}"
+  },
+  {
+    "old": "pages.product.productDraft.description",
+    "new": "product.productDraft.description",
+    "zh": "基於現有商品建立副本，可修改後建立為新商品",
+    "en": "Create a copy based on existing product, modify and create as new product"
+  },
+  {
+    "old": "pages.product.productDraft.copyToCreate",
+    "new": "product.productDraft.copyToCreate",
+    "zh": "複製建立",
+    "en": "Copy to Create"
+  },
+  {
+    "old": "pages.product.productEditConfirm.title",
+    "new": "product.productEditConfirm.title",
+    "zh": "確認編輯內容",
+    "en": "Confirm Edit Content"
+  },
+  {
+    "old": "pages.product.productEditConfirm.description",
+    "new": "product.productEditConfirm.description",
+    "zh": "以下是您要修改的內容，請確認後提交",
+    "en": "Please review the changes below and confirm to submit"
+  },
+  {
+    "old": "pages.product.productEditConfirm.noChanges",
+    "new": "product.productEditConfirm.noChanges",
+    "zh": "沒有檢測到變更",
+    "en": "No changes detected"
+  },
+  {
+    "old": "pages.product.productEditConfirm.changesList",
+    "new": "product.productEditConfirm.changesList",
+    "zh": "變更清單",
+    "en": "Changes List"
+  },
+  {
+    "old": "pages.product.productEditConfirm.original",
+    "new": "product.productEditConfirm.original",
+    "zh": "原始資料",
+    "en": "Original Data"
+  },
+  {
+    "old": "pages.product.productEditConfirm.new",
+    "new": "product.productEditConfirm.new",
+    "zh": "變更資料",
+    "en": "Changed Data"
+  },
+  {
+    "old": "pages.product.productEditConfirm.emptyValue",
+    "new": "product.productEditConfirm.emptyValue",
+    "zh": "(空白)",
+    "en": "(Empty)"
+  },
+  {
+    "old": "pages.product.productEditConfirm.confirmSubmit",
+    "new": "product.productEditConfirm.confirmSubmit",
+    "zh": "確認提交",
+    "en": "Confirm Submit"
+  },
+  {
+    "old": "pages.product.productTypes.ELECTRONICS",
+    "new": "product.productTypes.ELECTRONICS",
+    "zh": "電子產品",
+    "en": "Electronics"
+  },
+  {
+    "old": "pages.product.productTypes.ACCESSORIES",
+    "new": "product.productTypes.ACCESSORIES",
+    "zh": "配件",
+    "en": "Accessories"
+  },
+  {
+    "old": "pages.product.productTypes.CONSUMABLES",
+    "new": "product.productTypes.CONSUMABLES",
+    "zh": "耗材",
+    "en": "Consumables"
+  },
+  {
+    "old": "pages.product.productTypes.DEVICES",
+    "new": "product.productTypes.DEVICES",
+    "zh": "設備",
+    "en": "Devices"
+  },
+  {
+    "old": "pages.product.productTypes.MATERIALS",
+    "new": "product.productTypes.MATERIALS",
+    "zh": "材料",
+    "en": "Materials"
+  },
+  {
+    "old": "pages.product.productTypes.FOOD",
+    "new": "product.productTypes.FOOD",
+    "zh": "食品",
+    "en": "Food"
+  },
+  {
+    "old": "pages.product.productTypes.CLOTHING",
+    "new": "product.productTypes.CLOTHING",
+    "zh": "服飾",
+    "en": "Clothing"
+  },
+  {
+    "old": "pages.product.productTypes.OTHER",
+    "new": "product.productTypes.OTHER",
+    "zh": "其他",
+    "en": "Other"
+  },
+  {
+    "old": "pages.product.productTypes.NO_TYPE",
+    "new": "product.productTypes.NO_TYPE",
+    "zh": "未分類",
+    "en": "Uncategorized"
+  },
+  {
+    "old": "pages.banner.addBanner",
+    "new": "banners.addBanner",
+    "zh": "新增 Banner",
+    "en": "Add Banner"
+  },
+  {
+    "old": "pages.banner.deleteConfirm",
+    "new": "banners.deleteConfirm",
+    "zh": "確認刪除",
+    "en": "Are you sure you want to delete this banner?",
+    "enSource": "new"
+  },
+  {
+    "old": "pages.banner.deleteDescription",
+    "new": "banners.deleteDescription",
+    "zh": "您確定要刪除 Banner「{{name}}」嗎？此操作無法復原。",
+    "en": "This action cannot be undone. The banner will be permanently deleted.",
+    "enSource": "new"
+  },
+  {
+    "old": "pages.banner.confirmDelete",
+    "new": "banners.confirmDelete",
+    "zh": "確認刪除",
+    "en": "Confirm Delete",
+    "enSource": "new"
+  },
+  {
+    "old": "pages.banner.activeTitle",
+    "new": "banners.activeTitle",
+    "zh": "已啟用 Banner 列表",
+    "en": "Active Banner List"
+  },
+  {
+    "old": "pages.banner.inactiveTitle",
+    "new": "banners.inactiveTitle",
+    "zh": "Banner 列表",
+    "en": "Banner List"
+  },
+  {
+    "old": "pages.banner.emptyState.noActiveBanner",
+    "new": "banners.emptyState.noActiveBanner",
+    "zh": "尚無啟用 Banner",
+    "en": "No Enabled Banner"
+  },
+  {
+    "old": "pages.banner.emptyState.promoteBannerHint",
+    "new": "banners.emptyState.promoteBannerHint",
+    "zh": "從下方 Banner 列表提升至此處",
+    "en": "Promote from the banner list below"
+  },
+  {
+    "old": "pages.banner.actions.promoteToActive",
+    "new": "banners.actions.promoteToActive",
+    "zh": "設為啟用",
+    "en": "Enable"
+  },
+  {
+    "old": "pages.banner.actions.demoteToInactive",
+    "new": "banners.actions.demoteToInactive",
+    "zh": "取消啟用",
+    "en": "Disable"
+  },
+  {
+    "old": "pages.banner.actions.processing",
+    "new": "banners.actions.processing",
+    "zh": "處理中...",
+    "en": "Processing..."
+  },
+  {
+    "old": "pages.banner.bannerCreate.title",
+    "new": "banners.bannerCreate.title",
+    "zh": "橫幅資訊",
+    "en": "Banner Info"
+  },
+  {
+    "old": "pages.banner.bannerCreate.redirectUrl",
+    "new": "banners.bannerCreate.redirectUrl",
+    "zh": "跳轉連結",
+    "en": "Redirect URL"
+  },
+  {
+    "old": "pages.banner.bannerCreate.images",
+    "new": "banners.bannerCreate.images",
+    "zh": "圖片上傳",
+    "en": "Image Upload"
+  },
+  {
+    "old": "pages.banner.bannerCreate.desktopImage",
+    "new": "banners.bannerCreate.desktopImage",
+    "zh": "桌面版圖片",
+    "en": "Desktop Image"
+  },
+  {
+    "old": "pages.banner.bannerCreate.mobileImage",
+    "new": "banners.bannerCreate.mobileImage",
+    "zh": "手機版圖片",
+    "en": "Mobile Image"
+  },
+  {
+    "old": "pages.banner.bannerCreate.submitting",
+    "new": "banners.bannerCreate.submitting",
+    "zh": "提交中",
+    "en": "Submitting"
+  },
+  {
+    "old": "pages.users.userForm.title",
+    "new": "users.userForm.title",
+    "zh": "編輯使用者資訊",
+    "en": "Edit User Profile"
+  },
+  {
+    "old": "pages.users.userForm.firstName",
+    "new": "users.userForm.firstName",
+    "zh": "使用者名字",
+    "en": "First Name"
+  },
+  {
+    "old": "pages.users.userForm.lastName",
+    "new": "users.userForm.lastName",
+    "zh": "使用者姓氏",
+    "en": "Last Name"
+  },
+  {
+    "old": "pages.users.userForm.email",
+    "new": "users.userForm.email",
+    "zh": "電子郵件信箱",
+    "en": "Email Address"
+  },
+  {
+    "old": "pages.users.userForm.phoneNumber",
+    "new": "users.userForm.phoneNumber",
+    "zh": "聯絡電話",
+    "en": "Contact Number"
+  },
+  {
+    "old": "pages.users.userForm.address",
+    "new": "users.userForm.address",
+    "zh": "聯絡地址",
+    "en": "Contact Address"
+  },
+  {
+    "old": "pages.users.userForm.remark",
+    "new": "users.userForm.remark",
+    "zh": "備註說明",
+    "en": "Additional Notes"
+  },
+  {
+    "old": "table.headers.article.articleId",
+    "new": "articles.table.headers.articleId",
+    "zh": "文章編號",
+    "en": "Article ID"
+  },
+  {
+    "old": "table.headers.article.title",
+    "new": "articles.table.headers.title",
+    "zh": "文章標題",
+    "en": "Article Title"
+  },
+  {
+    "old": "table.headers.article.description",
+    "new": "articles.table.headers.description",
+    "zh": "文章摘要",
+    "en": "Article Description"
+  },
+  {
+    "old": "table.headers.article.tags",
+    "new": "articles.table.headers.tags",
+    "zh": "文章標籤",
+    "en": "Article Tags"
+  },
+  {
+    "old": "table.headers.article.author",
+    "new": "articles.table.headers.author",
+    "zh": "作者",
+    "en": "Author"
+  },
+  {
+    "old": "table.headers.article.actions",
+    "new": "articles.table.headers.actions",
+    "zh": "操作",
+    "en": "Actions"
+  },
+  {
+    "old": "table.headers.user.userId",
+    "new": "users.table.headers.userId",
+    "zh": "使用者編號",
+    "en": "User ID"
+  },
+  {
+    "old": "table.headers.user.email",
+    "new": "users.table.headers.email",
+    "zh": "電子郵件",
+    "en": "Email"
+  },
+  {
+    "old": "table.headers.user.name",
+    "new": "users.table.headers.name",
+    "zh": "姓名",
+    "en": "Name"
+  },
+  {
+    "old": "table.headers.user.phoneNumber",
+    "new": "users.table.headers.phoneNumber",
+    "zh": "電話號碼",
+    "en": "Phone Number"
+  },
+  {
+    "old": "table.headers.user.role",
+    "new": "users.table.headers.role",
+    "zh": "權限群組",
+    "en": "Permission Group"
+  },
+  {
+    "old": "table.headers.product.thumbnail",
+    "new": "product.table.headers.thumbnail",
+    "zh": "商品圖片",
+    "en": "Product Image"
+  },
+  {
+    "old": "table.headers.product.productName",
+    "new": "product.table.headers.productName",
+    "zh": "商品名稱",
+    "en": "Product Name"
+  },
+  {
+    "old": "table.headers.product.productType",
+    "new": "product.table.headers.productType",
+    "zh": "商品類型",
+    "en": "Product Type"
+  },
+  {
+    "old": "table.headers.product.productStock",
+    "new": "product.table.headers.productStock",
+    "zh": "商品庫存",
+    "en": "Product Stock"
+  },
+  {
+    "old": "table.headers.product.productStatus",
+    "new": "product.table.headers.productStatus",
+    "zh": "商品狀態",
+    "en": "Product Status"
+  },
+  {
+    "old": "table.headers.product.productCode",
+    "new": "product.table.headers.productCode",
+    "zh": "商品編號",
+    "en": "Product ID"
+  },
+  {
+    "old": "table.headers.product.price",
+    "new": "product.table.headers.price",
+    "zh": "售價",
+    "en": "Price"
+  },
+  {
+    "old": "table.headers.product.actions",
+    "new": "product.table.headers.actions",
+    "zh": "操作",
+    "en": "Actions"
+  },
+  {
+    "old": "table.headers.order.agentId",
+    "new": "orders.table.headers.agentId",
+    "zh": "代理商編號",
+    "en": "Agent ID"
+  },
+  {
+    "old": "table.headers.order.orderId",
+    "new": "orders.table.headers.orderId",
+    "zh": "訂單編號",
+    "en": "Order ID"
+  },
+  {
+    "old": "table.headers.order.remark",
+    "new": "orders.table.headers.remark",
+    "zh": "備註",
+    "en": "Remark"
+  },
+  {
+    "old": "table.headers.order.status",
+    "new": "orders.table.headers.status",
+    "zh": "狀態",
+    "en": "Status"
+  },
+  {
+    "old": "table.headers.supplier.supplierId",
+    "new": "suppliers.table.headers.supplierId",
+    "zh": "代理商編號",
+    "en": "Supplier ID"
+  },
+  {
+    "old": "table.headers.supplier.supplierName",
+    "new": "suppliers.table.headers.supplierName",
+    "zh": "代理商名稱",
+    "en": "Supplier Name"
+  },
+  {
+    "old": "table.headers.supplier.contact",
+    "new": "suppliers.table.headers.contact",
+    "zh": "聯絡資訊",
+    "en": "Contact Info"
+  },
+  {
+    "old": "table.headers.supplier.address",
+    "new": "suppliers.table.headers.address",
+    "zh": "地址",
+    "en": "Address"
+  },
+  {
+    "old": "table.headers.supplier.remark",
+    "new": "suppliers.table.headers.remark",
+    "zh": "備註",
+    "en": "Remark"
+  },
+  {
+    "old": "table.headers.tag.tagId",
+    "new": "tags.table.headers.tagId",
+    "zh": "標籤編號",
+    "en": "Tag ID"
+  },
+  {
+    "old": "table.headers.tag.tagName",
+    "new": "tags.table.headers.tagName",
+    "zh": "標籤名稱",
+    "en": "Tag Name"
+  },
+  {
+    "old": "table.headers.publishedAt",
+    "new": "articles.table.headers.publishedAt",
+    "zh": "發布時間",
+    "en": "Published At"
+  },
+  {
+    "old": "dialog.order.title",
+    "new": "orders.dialog.title",
+    "zh": "更新訂單狀態",
+    "en": "Update Order Status"
+  },
+  {
+    "old": "dialog.order.description",
+    "new": "orders.dialog.description",
+    "zh": "請選擇訂單狀態",
+    "en": "Please select the order status"
+  },
+  {
+    "old": "dialog.order.status.submit",
+    "new": "orders.dialog.status.submit",
+    "zh": "確認",
+    "en": "Submit"
+  },
+  {
+    "old": "toast.product.get.error",
+    "new": "product.toast.get.error",
+    "zh": "商品資訊取得失敗",
+    "en": "Product info retrieval failed"
+  },
+  {
+    "old": "toast.product.create.success",
+    "new": "product.toast.create.success",
+    "zh": "商品新增成功",
+    "en": "Product created successfully"
+  },
+  {
+    "old": "toast.product.create.error",
+    "new": "product.toast.create.error",
+    "zh": "商品新增失敗",
+    "en": "Product creation failed"
+  },
+  {
+    "old": "toast.product.update.success",
+    "new": "product.toast.update.success",
+    "zh": "商品更新成功",
+    "en": "Product updated successfully"
+  },
+  {
+    "old": "toast.product.update.error",
+    "new": "product.toast.update.error",
+    "zh": "商品更新失敗",
+    "en": "Product update failed"
+  },
+  {
+    "old": "toast.product.delete.success",
+    "new": "product.toast.delete.success",
+    "zh": "商品刪除成功",
+    "en": "Product deleted successfully"
+  },
+  {
+    "old": "toast.product.delete.error",
+    "new": "product.toast.delete.error",
+    "zh": "商品刪除失敗",
+    "en": "Product deletion failed"
+  },
+  {
+    "old": "toast.order.get.error",
+    "new": "orders.toast.get.error",
+    "zh": "訂單資訊取得失敗",
+    "en": "Order info retrieval failed"
+  },
+  {
+    "old": "toast.order.update.success",
+    "new": "orders.toast.update.success",
+    "zh": "訂單更新成功",
+    "en": "Order updated successfully"
+  },
+  {
+    "old": "toast.order.update.error",
+    "new": "orders.toast.update.error",
+    "zh": "訂單更新失敗",
+    "en": "Order update failed"
+  },
+  {
+    "old": "toast.banner.get.error",
+    "new": "banners.toast.get.error",
+    "zh": "Banner資訊取得失敗",
+    "en": "Banner info retrieval failed"
+  },
+  {
+    "old": "toast.banner.create.success",
+    "new": "banners.toast.create.success",
+    "zh": "Banner新增成功",
+    "en": "Banner created successfully"
+  },
+  {
+    "old": "toast.banner.create.error",
+    "new": "banners.toast.create.error",
+    "zh": "Banner新增失敗",
+    "en": "Banner creation failed"
+  },
+  {
+    "old": "toast.banner.update.success",
+    "new": "banners.toast.update.success",
+    "zh": "Banner更新成功",
+    "en": "Banner updated successfully"
+  },
+  {
+    "old": "toast.banner.update.error",
+    "new": "banners.toast.update.error",
+    "zh": "Banner更新失敗",
+    "en": "Banner update failed"
+  },
+  {
+    "old": "toast.banner.delete.success",
+    "new": "banners.toast.delete.success",
+    "zh": "Banner刪除成功",
+    "en": "Banner deleted successfully"
+  },
+  {
+    "old": "toast.banner.delete.error",
+    "new": "banners.toast.delete.error",
+    "zh": "Banner刪除失敗",
+    "en": "Banner deletion failed"
+  },
+  {
+    "old": "toast.banner.promoteToActive.success",
+    "new": "banners.toast.promoteToActive.success",
+    "zh": "Banner啟用成功",
+    "en": "Banner enabled successfully"
+  },
+  {
+    "old": "toast.banner.promoteToActive.error",
+    "new": "banners.toast.promoteToActive.error",
+    "zh": "Banner啟用失敗",
+    "en": "Banner enable failed"
+  },
+  {
+    "old": "toast.banner.promoteToActive.errorDescription",
+    "new": "banners.toast.promoteToActive.errorDescription",
+    "zh": "最多只能啟用 {{limit}} 個 Banner",
+    "en": "You can only enable up to {{limit}} banners"
+  },
+  {
+    "old": "toast.banner.reorder.success",
+    "new": "banners.toast.reorder.success",
+    "zh": "Banner排序更新成功",
+    "en": "Banner order updated successfully"
+  },
+  {
+    "old": "toast.banner.reorder.error",
+    "new": "banners.toast.reorder.error",
+    "zh": "Banner排序更新失敗",
+    "en": "Banner reorder failed"
+  },
+  {
+    "old": "toast.banner.reorder.errorDescription",
+    "new": "banners.toast.reorder.errorDescription",
+    "zh": "請重試或刷新頁面",
+    "en": "Please retry or refresh the page"
+  },
+  {
+    "old": "toast.banner.operationConflict.title",
+    "new": "banners.toast.operationConflict.title",
+    "zh": "操作衝突",
+    "en": "Operation Conflict"
+  },
+  {
+    "old": "toast.banner.operationConflict.promoteDescription",
+    "new": "banners.toast.operationConflict.promoteDescription",
+    "zh": "請等待目前操作完成後再進行提升操作",
+    "en": "Please wait for current operation to complete before promoting"
+  },
+  {
+    "old": "toast.banner.operationConflict.demoteDescription",
+    "new": "banners.toast.operationConflict.demoteDescription",
+    "zh": "請等待目前操作完成後再進行降級操作",
+    "en": "Please wait for current operation to complete before demoting"
+  },
+  {
+    "old": "toast.banner.operationConflict.generalDescription",
+    "new": "banners.toast.operationConflict.generalDescription",
+    "zh": "請等待目前操作完成後再進行此操作",
+    "en": "Please wait for current operation to complete"
+  },
+  {
+    "old": "toast.banner.removeFromActive.success",
+    "new": "banners.toast.removeFromActive.success",
+    "zh": "Banner停用成功",
+    "en": "Banner disabled successfully"
+  },
+  {
+    "old": "toast.banner.removeFromActive.error",
+    "new": "banners.toast.removeFromActive.error",
+    "zh": "Banner停用失敗",
+    "en": "Banner disable failed"
+  },
+  {
+    "old": "toast.user.get.error",
+    "new": "users.toast.get.error",
+    "zh": "取得使用者資料失敗",
+    "en": "Failed to get user data"
+  },
+  {
+    "old": "toast.user.update.success",
+    "new": "users.toast.update.success",
+    "zh": "更新使用者資料成功",
+    "en": "User data updated successfully"
+  },
+  {
+    "old": "toast.user.update.error",
+    "new": "users.toast.update.error",
+    "zh": "更新使用者資料失敗",
+    "en": "Failed to update user data"
+  },
+  {
+    "old": "toast.article.get.error",
+    "new": "articles.toast.get.error",
+    "zh": "獲取文章失敗",
+    "en": "Failed to get article"
+  },
+  {
+    "old": "toast.article.get.listError",
+    "new": "articles.toast.get.listError",
+    "zh": "獲取文章列表失敗",
+    "en": "Failed to get article list"
+  },
+  {
+    "old": "toast.article.create.success",
+    "new": "articles.toast.create.success",
+    "zh": "文章創建成功",
+    "en": "Article created successfully"
+  },
+  {
+    "old": "toast.article.create.error",
+    "new": "articles.toast.create.error",
+    "zh": "創建文章失敗",
+    "en": "Article creation failed"
+  },
+  {
+    "old": "toast.article.update.success",
+    "new": "articles.toast.update.success",
+    "zh": "文章更新成功",
+    "en": "Article updated successfully"
+  },
+  {
+    "old": "toast.article.update.error",
+    "new": "articles.toast.update.error",
+    "zh": "更新文章失敗",
+    "en": "Article update failed"
+  },
+  {
+    "old": "toast.article.delete.success",
+    "new": "articles.toast.delete.success",
+    "zh": "文章刪除成功",
+    "en": "Article deleted successfully"
+  },
+  {
+    "old": "toast.article.delete.error",
+    "new": "articles.toast.delete.error",
+    "zh": "刪除文章失敗",
+    "en": "Article deletion failed"
+  },
+  {
+    "old": "consumer.consumerId",
+    "new": "consumers.consumerId",
+    "zh": "消費者ID",
+    "en": "Consumer ID"
+  },
+  {
+    "old": "consumer.name",
+    "new": "consumers.name",
+    "zh": "姓名",
+    "en": "Name"
+  },
+  {
+    "old": "consumer.email",
+    "new": "consumers.email",
+    "zh": "電子郵件",
+    "en": "Email"
+  },
+  {
+    "old": "consumer.phoneNumber",
+    "new": "consumers.phoneNumber",
+    "zh": "電話號碼",
+    "en": "Phone Number"
+  },
+  {
+    "old": "consumer.totalSpent",
+    "new": "consumers.totalSpent",
+    "zh": "總消費金額",
+    "en": "Total Spent"
+  },
+  {
+    "old": "consumer.orderCount",
+    "new": "consumers.orderCount",
+    "zh": "訂單數量",
+    "en": "Order Count"
+  },
+  {
+    "old": "consumer.orders",
+    "new": "consumers.orders",
+    "zh": "筆",
+    "en": "orders"
+  },
+  {
+    "old": "consumer.lastOrderDate",
+    "new": "consumers.lastOrderDate",
+    "zh": "最後訂單日期",
+    "en": "Last Order Date"
+  },
+  {
+    "old": "consumer.noOrderRecord",
+    "new": "consumers.noOrderRecord",
+    "zh": "無訂單記錄",
+    "en": "No order record"
+  },
+  {
+    "old": "consumer.registrationDate",
+    "new": "consumers.registrationDate",
+    "zh": "註冊日期",
+    "en": "Registration Date"
+  },
+  {
+    "old": "consumer.loadingConsumerList",
+    "new": "consumers.loadingConsumerList",
+    "zh": "載入消費者列表中...",
+    "en": "Loading consumer list..."
+  },
+  {
+    "old": "consumer.consumerList",
+    "new": "consumers.consumerList",
+    "zh": "消費者列表",
+    "en": "Consumer List"
+  },
+  {
+    "old": "consumer.searchPlaceholder",
+    "new": "consumers.searchPlaceholder",
+    "zh": "搜索消費者ID、姓名、電子郵件或電話...",
+    "en": "Search consumer ID, name, email or phone..."
+  },
+  {
+    "old": "consumer.purchaseHistory",
+    "new": "consumers.purchaseHistory",
+    "zh": "查詢購買記錄",
+    "en": "Purchase History"
+  },
+  {
+    "old": "consumer.viewPurchaseHistory",
+    "new": "consumers.viewPurchaseHistory",
+    "zh": "查詢記錄",
+    "en": "View History"
+  },
+  {
+    "old": "consumer.purchaseHistoryTitle",
+    "new": "consumers.purchaseHistoryTitle",
+    "zh": "{{name}} 的購買記錄",
+    "en": "{{name}}'s Purchase History"
+  },
+  {
+    "old": "consumer.loadingPurchaseHistory",
+    "new": "consumers.loadingPurchaseHistory",
+    "zh": "載入購買記錄中...",
+    "en": "Loading purchase history..."
+  },
+  {
+    "old": "consumer.noPurchaseHistory",
+    "new": "consumers.noPurchaseHistory",
+    "zh": "暫無購買記錄",
+    "en": "No purchase history"
+  },
+  {
+    "old": "consumer.noOrdersFound",
+    "new": "consumers.noOrdersFound",
+    "zh": "該用戶尚未購買任何商品",
+    "en": "This user has not purchased any products yet"
+  },
+  {
+    "old": "consumer.noMatchingOrders",
+    "new": "consumers.noMatchingOrders",
+    "zh": "無符合條件的訂單",
+    "en": "No matching orders"
+  },
+  {
+    "old": "consumer.noOrdersWithStatus",
+    "new": "consumers.noOrdersWithStatus",
+    "zh": "該用戶沒有「{{status}}」狀態的訂單",
+    "en": "This user has no orders with \"{{status}}\" status"
+  },
+  {
+    "old": "consumer.pageInfo",
+    "new": "consumers.pageInfo",
+    "zh": "第 {{current}} 頁，共 {{total}} 頁（總計 {{count}} 筆記錄）",
+    "en": "Page {{current}} of {{total}} ({{count}} records total)"
+  },
+  {
+    "old": "consumer.filterCondition",
+    "new": "consumers.filterCondition",
+    "zh": "篩選條件：{{status}}",
+    "en": "Filter: {{status}}"
+  },
+  {
+    "old": "consumer.orderStatus.all",
+    "new": "consumers.orderStatus.all",
+    "zh": "全部",
+    "en": "All"
+  },
+  {
+    "old": "consumer.orderStatus.pending",
+    "new": "consumers.orderStatus.pending",
+    "zh": "處理中",
+    "en": "Pending"
+  },
+  {
+    "old": "consumer.orderStatus.completed",
+    "new": "consumers.orderStatus.completed",
+    "zh": "已完成",
+    "en": "Completed"
+  },
+  {
+    "old": "consumer.orderStatus.cancelled",
+    "new": "consumers.orderStatus.cancelled",
+    "zh": "已取消",
+    "en": "Cancelled"
+  },
+  {
+    "old": "staff.staffId",
+    "new": "team-members.staffId",
+    "zh": "員工ID",
+    "en": "Staff ID"
+  },
+  {
+    "old": "staff.account",
+    "new": "team-members.account",
+    "zh": "帳號",
+    "en": "Account"
+  },
+  {
+    "old": "staff.email",
+    "new": "team-members.email",
+    "zh": "電子郵件",
+    "en": "Email"
+  },
+  {
+    "old": "staff.firstName",
+    "new": "team-members.firstName",
+    "zh": "名字",
+    "en": "First Name"
+  },
+  {
+    "old": "staff.lastName",
+    "new": "team-members.lastName",
+    "zh": "姓氏",
+    "en": "Last Name"
+  },
+  {
+    "old": "staff.role",
+    "new": "team-members.role",
+    "zh": "角色",
+    "en": "Role"
+  },
+  {
+    "old": "staff.createdAt",
+    "new": "team-members.createdAt",
+    "zh": "創建時間",
+    "en": "Created At"
+  },
+  {
+    "old": "staff.updatedAt",
+    "new": "team-members.updatedAt",
+    "zh": "更新時間",
+    "en": "Updated At"
+  },
+  {
+    "old": "staff.editStaff",
+    "new": "team-members.editStaff",
+    "zh": "編輯員工",
+    "en": "Edit Staff"
+  },
+  {
+    "old": "staff.createStaff",
+    "new": "team-members.createStaff",
+    "zh": "新增員工",
+    "en": "Add Staff"
+  },
+  {
+    "old": "staff.password",
+    "new": "team-members.password",
+    "zh": "密碼",
+    "en": "Password"
+  },
+  {
+    "old": "staff.selectRole",
+    "new": "team-members.selectRole",
+    "zh": "請選擇角色",
+    "en": "Select role"
+  },
+  {
+    "old": "staff.searchPlaceholder",
+    "new": "team-members.searchPlaceholder",
+    "zh": "搜索員工ID、帳號、姓名或角色...",
+    "en": "Search staff ID, account, name or role..."
+  },
+  {
+    "old": "staff.name",
+    "new": "team-members.name",
+    "zh": "姓名",
+    "en": "Name"
+  },
+  {
+    "old": "staff.actions",
+    "new": "team-members.actions",
+    "zh": "操作",
+    "en": "Actions"
+  },
+  {
+    "old": "staff.loadingStaffList",
+    "new": "team-members.loadingStaffList",
+    "zh": "載入員工列表中...",
+    "en": "Loading staff list..."
+  },
+  {
+    "old": "staff.staffManagement",
+    "new": "team-members.staffManagement",
+    "zh": "員工管理",
+    "en": "Staff Management"
+  },
+  {
+    "old": "staff.confirmDelete",
+    "new": "team-members.confirmDelete",
+    "zh": "確認刪除",
+    "en": "Confirm Delete"
+  },
+  {
+    "old": "staff.deleteConfirmMessage",
+    "new": "team-members.deleteConfirmMessage",
+    "zh": "您確定要刪除員工「{{name}}」嗎？此操作無法復原。",
+    "en": "Are you sure you want to delete staff \"{{name}}\"? This action cannot be undone."
+  },
+  {
+    "old": "staff.editNotice",
+    "new": "team-members.editNotice",
+    "zh": "PS : 編輯不可修改 Email",
+    "en": "PS: Email cannot be modified when editing"
+  },
+  {
+    "old": "staff.roles.superadmin",
+    "new": "team-members.roles.superadmin",
+    "zh": "超級管理員",
+    "en": "Super Admin"
+  },
+  {
+    "old": "staff.roles.admin",
+    "new": "team-members.roles.admin",
+    "zh": "管理員",
+    "en": "Admin"
+  },
+  {
+    "old": "staff.roles.cservice",
+    "new": "team-members.roles.cservice",
+    "zh": "客服",
+    "en": "Customer Service"
+  }
+]

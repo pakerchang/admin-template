@@ -60,7 +60,7 @@ export const useGetArticleList = (params: Partial<TArticleListParams>) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.article.get.listError"),
+          description: t("articles.toast.get.listError"),
           variant: "destructive",
         });
         return undefined;
@@ -94,7 +94,7 @@ export const useGetArticle = (id: string) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.article.get.error"),
+          description: t("articles.toast.get.error"),
           variant: "destructive",
         });
         return undefined;
@@ -147,7 +147,7 @@ export const useCreateArticle = () => {
         if (!(error instanceof ApiError)) throw error;
         toast({
           title: t("common.error"),
-          description: t("toast.article.create.error"),
+          description: t("articles.toast.create.error"),
           variant: "destructive",
         });
         throw new Error(`Create article failed: ${error.status}`);
@@ -159,7 +159,7 @@ export const useCreateArticle = () => {
       await queryClient.invalidateQueries({ queryKey: ["articleList"] });
       toast({
         title: t("common.success"),
-        description: t("toast.article.create.success"),
+        description: t("articles.toast.create.success"),
         variant: "success",
       });
       navigate({
@@ -170,7 +170,7 @@ export const useCreateArticle = () => {
       if (error) {
         toast({
           title: t("common.error"),
-          description: t("toast.article.create.error"),
+          description: t("articles.toast.create.error"),
           variant: "destructive",
         });
       }
@@ -219,7 +219,7 @@ export const useUpdateArticle = () => {
         if (!(error instanceof ApiError)) throw error;
         toast({
           title: t("common.error"),
-          description: t("toast.article.update.error"),
+          description: t("articles.toast.update.error"),
           variant: "destructive",
         });
         throw new Error(`Update article failed: ${error.status}`);
@@ -233,7 +233,7 @@ export const useUpdateArticle = () => {
 
       toast({
         title: t("common.success"),
-        description: t("toast.article.update.success"),
+        description: t("articles.toast.update.success"),
         variant: "success",
       });
       navigate({
@@ -264,7 +264,7 @@ export const useDeleteArticle = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.article.delete.error"),
+          description: t("articles.toast.delete.error"),
           variant: "destructive",
         });
         return undefined;
@@ -276,7 +276,7 @@ export const useDeleteArticle = () => {
       queryClient.invalidateQueries({ queryKey: ["articleList"] });
       toast({
         title: t("common.success"),
-        description: t("toast.article.delete.success"),
+        description: t("articles.toast.delete.success"),
         variant: "success",
       });
     },
@@ -293,7 +293,7 @@ export const useCreateArticleSchema = () => {
     })
     .extend({
       title: z.string().min(1, {
-        message: validationMessage.getRequiredMessage("pages.article.title"),
+        message: validationMessage.getRequiredMessage("articles.title"),
       }),
       image_url: z
         .object({
@@ -302,9 +302,7 @@ export const useCreateArticleSchema = () => {
         })
         .optional()
         .refine((data) => data && data.file_name && data.file_url, {
-          message: validationMessage.getRequiredMessage(
-            "pages.article.coverImage"
-          ),
+          message: validationMessage.getRequiredMessage("articles.coverImage"),
         }),
       // content_html 不在這裡驗證，在提交時手動驗證
       content_html: z.string().optional(),

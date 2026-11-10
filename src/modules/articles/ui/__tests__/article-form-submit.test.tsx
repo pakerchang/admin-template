@@ -107,7 +107,7 @@ describe("ArticleForm 送出（P3）", () => {
   it("新增：上傳封面後可送出，POST body 帶上傳的 image_url", async () => {
     renderForm();
 
-    fireEvent.change(screen.getByLabelText("pages.article.title"), {
+    fireEvent.change(screen.getByLabelText("articles.title"), {
       target: { value: "P3 new article" },
     });
     fireEvent.change(screen.getByLabelText("content"), {
@@ -133,7 +133,7 @@ describe("ArticleForm 送出（P3）", () => {
     renderForm();
 
     await screen.findByDisplayValue(target.title);
-    fireEvent.change(screen.getByLabelText("pages.article.title"), {
+    fireEvent.change(screen.getByLabelText("articles.title"), {
       target: { value: `${target.title} edited` },
     });
     fireEvent.change(screen.getByLabelText("content"), {

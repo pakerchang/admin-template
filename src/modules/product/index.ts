@@ -4,6 +4,8 @@ import { z } from "zod";
 import { defineModule } from "@/shared/module";
 import { definePermissions } from "@/shared/permission";
 
+import en from "./locales/en.json";
+import zh from "./locales/zh.json";
 import { productMockHandlers } from "./mocks/handlers";
 import { productRoutes } from "./model/routes";
 import ProductCreateFormPage from "./ui/ProductCreateForm";
@@ -23,9 +25,16 @@ declare module "@/shared/permission" {
   > {}
 }
 
+declare module "@/shared/i18n/types" {
+  interface TranslationResources {
+    product: typeof zh;
+  }
+}
+
 export default defineModule({
   id: "product",
   kind: "domain",
+  i18n: { en, zh },
   mockHandlers: productMockHandlers,
   // 表單用 suppliers / tags 的 hooks（spec §5.2）
   requires: ["suppliers", "tags"],
@@ -39,7 +48,7 @@ export default defineModule({
   nav: [
     {
       id: "product",
-      label: "dashboard.menu.products.title",
+      label: "title",
       to: "/products",
       icon: Package,
       permission: "product:read",

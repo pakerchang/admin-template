@@ -67,9 +67,9 @@ describe("content-area 403 (AC-1, R10)", () => {
     // shell 仍在：sidebar 渲染，且只有 support 可見的項目
     expect(document.querySelector('[data-sidebar="sidebar"]')).not.toBeNull();
     const labels = sidebarLabels();
-    expect(labels).toContain("dashboard.menu.orders.title");
+    expect(labels).toContain("orders.nav.title");
     expect(labels.some((l) => l?.includes("users"))).toBe(false);
-    expect(labels).not.toContain("dashboard.menu.products.title");
+    expect(labels).not.toContain("product.nav.title");
   });
 
   it("nested layout guard (/users/edit/1) also renders inside the shell", async () => {

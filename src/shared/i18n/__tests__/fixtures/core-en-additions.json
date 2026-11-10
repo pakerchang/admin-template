@@ -1,0 +1,8 @@
+[
+  {
+    "key": "validation.email.invalid",
+    "zh": "請輸入有效的電子郵件地址",
+    "en": "Please enter a valid email address",
+    "enSource": "new"
+  }
+]

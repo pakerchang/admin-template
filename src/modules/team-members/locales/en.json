@@ -1,0 +1,36 @@
+{
+  "validation": {
+    "password": {
+      "minLength": "Password must be at least 8 characters long",
+      "complexity": "Password must meet the following requirements: at least 8 characters and contain at least 3 of the following character types: uppercase letters, lowercase letters, numbers, special symbols (!@#$%^&*(), etc.)"
+    }
+  },
+  "nav": {
+    "title": "Team Management"
+  },
+  "staffId": "Staff ID",
+  "account": "Account",
+  "email": "Email",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "role": "Role",
+  "createdAt": "Created At",
+  "updatedAt": "Updated At",
+  "editStaff": "Edit Staff",
+  "createStaff": "Add Staff",
+  "password": "Password",
+  "selectRole": "Select role",
+  "searchPlaceholder": "Search staff ID, account, name or role...",
+  "name": "Name",
+  "actions": "Actions",
+  "loadingStaffList": "Loading staff list...",
+  "staffManagement": "Staff Management",
+  "confirmDelete": "Confirm Delete",
+  "deleteConfirmMessage": "Are you sure you want to delete staff \"{{name}}\"? This action cannot be undone.",
+  "editNotice": "PS: Email cannot be modified when editing",
+  "roles": {
+    "superadmin": "Super Admin",
+    "admin": "Admin",
+    "cservice": "Customer Service"
+  }
+}

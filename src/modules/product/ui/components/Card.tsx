@@ -51,15 +51,15 @@ const Card = (props: ICardProps) => {
         <CardDescription className="line-clamp-2">{desc}</CardDescription>
         <div className="flex flex-col justify-around">
           <div className="flex items-center gap-x-2">
-            <Label>{t("table.headers.product.productStatus")}:</Label>
+            <Label>{t("product.table.headers.productStatus")}:</Label>
             <p className="text-sm text-gray-500">{status}</p>
           </div>
           <div className="flex items-center gap-x-2">
-            <Label>{t("table.headers.product.productStock")}:</Label>
+            <Label>{t("product.table.headers.productStock")}:</Label>
             <p className="text-sm text-gray-500">{stock}</p>
           </div>
           <div className="flex items-center gap-x-2">
-            <Label>{t("table.headers.product.price")}:</Label>
+            <Label>{t("product.table.headers.price")}:</Label>
             <p className="text-sm text-gray-500">{price}</p>
           </div>
         </div>

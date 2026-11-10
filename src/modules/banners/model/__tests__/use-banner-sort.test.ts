@@ -333,8 +333,8 @@ describe("useBannerSort", () => {
       });
 
       expect(mockToast).toHaveBeenCalledWith({
-        title: "toast.banner.promoteToActive.success",
-        description: "toast.banner.promoteToActive.success",
+        title: "banners.toast.promoteToActive.success",
+        description: "banners.toast.promoteToActive.success",
         variant: "success",
       });
     });
@@ -380,8 +380,8 @@ describe("useBannerSort", () => {
       });
 
       expect(mockToast).toHaveBeenCalledWith({
-        title: "toast.banner.promoteToActive.error",
-        description: "toast.banner.promoteToActive.error",
+        title: "banners.toast.promoteToActive.error",
+        description: "banners.toast.promoteToActive.error",
         variant: "destructive",
       });
     });
@@ -405,8 +405,8 @@ describe("useBannerSort", () => {
       });
 
       expect(mockToast).toHaveBeenCalledWith({
-        title: "toast.banner.operationConflict.title",
-        description: "toast.banner.operationConflict.promoteDescription",
+        title: "banners.toast.operationConflict.title",
+        description: "banners.toast.operationConflict.promoteDescription",
         variant: "destructive",
       });
     });
@@ -481,8 +481,8 @@ describe("useBannerSort", () => {
       });
 
       expect(mockToast).toHaveBeenCalledWith({
-        title: "toast.banner.removeFromActive.error",
-        description: "toast.banner.removeFromActive.error",
+        title: "banners.toast.removeFromActive.error",
+        description: "banners.toast.removeFromActive.error",
         variant: "destructive",
       });
 
@@ -516,8 +516,8 @@ describe("useBannerSort", () => {
 
       await waitFor(() => {
         expect(mockToast).toHaveBeenCalledWith({
-          title: "toast.banner.reorder.error",
-          description: "toast.banner.reorder.errorDescription",
+          title: "banners.toast.reorder.error",
+          description: "banners.toast.reorder.errorDescription",
           variant: "destructive",
         });
       });

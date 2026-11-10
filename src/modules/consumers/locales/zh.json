@@ -1,0 +1,39 @@
+{
+  "order": {
+    "agent": "代理商",
+    "email": "Email",
+    "contactInfoTitle": "聯絡資訊"
+  },
+  "nav": {
+    "title": "客戶管理"
+  },
+  "consumerId": "消費者ID",
+  "name": "姓名",
+  "email": "電子郵件",
+  "phoneNumber": "電話號碼",
+  "totalSpent": "總消費金額",
+  "orderCount": "訂單數量",
+  "orders": "筆",
+  "lastOrderDate": "最後訂單日期",
+  "noOrderRecord": "無訂單記錄",
+  "registrationDate": "註冊日期",
+  "loadingConsumerList": "載入消費者列表中...",
+  "consumerList": "消費者列表",
+  "searchPlaceholder": "搜索消費者ID、姓名、電子郵件或電話...",
+  "purchaseHistory": "查詢購買記錄",
+  "viewPurchaseHistory": "查詢記錄",
+  "purchaseHistoryTitle": "{{name}} 的購買記錄",
+  "loadingPurchaseHistory": "載入購買記錄中...",
+  "noPurchaseHistory": "暫無購買記錄",
+  "noOrdersFound": "該用戶尚未購買任何商品",
+  "noMatchingOrders": "無符合條件的訂單",
+  "noOrdersWithStatus": "該用戶沒有「{{status}}」狀態的訂單",
+  "pageInfo": "第 {{current}} 頁，共 {{total}} 頁（總計 {{count}} 筆記錄）",
+  "filterCondition": "篩選條件：{{status}}",
+  "orderStatus": {
+    "all": "全部",
+    "pending": "處理中",
+    "completed": "已完成",
+    "cancelled": "已取消"
+  }
+}

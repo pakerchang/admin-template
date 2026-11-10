@@ -4,6 +4,8 @@ import { z } from "zod";
 import { defineModule } from "@/shared/module";
 import { definePermissions } from "@/shared/permission";
 
+import en from "./locales/en.json";
+import zh from "./locales/zh.json";
 import { tagsMockHandlers } from "./mocks/handlers";
 import { tagsRoutes } from "./model/routes";
 import TagListPage from "./ui/TagList";
@@ -20,15 +22,22 @@ declare module "@/shared/permission" {
   > {}
 }
 
+declare module "@/shared/i18n/types" {
+  interface TranslationResources {
+    tags: typeof zh;
+  }
+}
+
 export default defineModule({
   id: "tags",
   kind: "domain",
+  i18n: { en, zh },
   mockHandlers: tagsMockHandlers,
   routes: (ctx) => tagsRoutes(ctx, { list: TagListPage }),
   nav: [
     {
       id: "tags",
-      label: "dashboard.menu.tags.title",
+      label: "title",
       to: "/tags",
       icon: Tags,
       permission: "tags:read",

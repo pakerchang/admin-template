@@ -1,0 +1,37 @@
+{
+  "nav": {
+    "title": "代理商管理"
+  },
+  "addSupplier": "新增代理商",
+  "editSupplier": "編輯代理商",
+  "deleteConfirm": "確認刪除",
+  "deleteDescription": "您確定要刪除代理商「{{name}}」嗎？此操作無法復原。",
+  "confirmDelete": "確認刪除",
+  "loading": "載入代理商列表中...",
+  "supplierName": "代理商名稱",
+  "phone": "聯絡電話",
+  "email": "電子郵件",
+  "address": "地址",
+  "remark": "備註",
+  "search": {
+    "placeholder": "搜索代理商編號或代理商名稱..."
+  },
+  "messages": {
+    "fetchListFailed": "獲取代理商列表失敗",
+    "createSuccess": "代理商創建成功",
+    "createFailed": "創建代理商失敗",
+    "updateSuccess": "代理商資料更新成功",
+    "updateFailed": "更新代理商失敗",
+    "deleteSuccess": "代理商刪除成功",
+    "deleteFailed": "刪除代理商失敗"
+  },
+  "table": {
+    "headers": {
+      "supplierId": "代理商編號",
+      "supplierName": "代理商名稱",
+      "contact": "聯絡資訊",
+      "address": "地址",
+      "remark": "備註"
+    }
+  }
+}

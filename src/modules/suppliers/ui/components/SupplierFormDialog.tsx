@@ -113,8 +113,8 @@ const SupplierFormDialog = ({
       toast({
         title: t("common.error"),
         description: isEditing
-          ? t("pages.supplier.messages.updateFailed")
-          : t("pages.supplier.messages.createFailed"),
+          ? t("suppliers.messages.updateFailed")
+          : t("suppliers.messages.createFailed"),
         variant: "destructive",
       });
     }
@@ -130,38 +130,38 @@ const SupplierFormDialog = ({
         <DialogHeader className="mb-6">
           <DialogTitle>
             {isEditing
-              ? t("pages.supplier.editSupplier")
-              : t("pages.supplier.addSupplier")}
+              ? t("suppliers.editSupplier")
+              : t("suppliers.addSupplier")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <TextInput
-            label={t("pages.supplier.supplierName")}
+            label={t("suppliers.supplierName")}
             {...register("supplier_name")}
             error={errors.supplier_name}
           />
 
           <TextInput
-            label={t("pages.supplier.phone")}
+            label={t("suppliers.phone")}
             {...register("contact_info.phone")}
             error={errors.contact_info?.phone}
           />
 
           <TextInput
-            label={t("pages.supplier.email")}
+            label={t("suppliers.email")}
             type="email"
             {...register("contact_info.email")}
             error={errors.contact_info?.email}
           />
 
           <TextInput
-            label={t("pages.supplier.address")}
+            label={t("suppliers.address")}
             {...register("contact_info.address")}
             error={errors.contact_info?.address}
           />
 
           <TextInput
-            label={t("pages.supplier.remark")}
+            label={t("suppliers.remark")}
             {...register("remark")}
             error={errors.remark}
           />

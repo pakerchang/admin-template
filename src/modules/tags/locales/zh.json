@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "title": "標籤管理"
+  },
+  "addTag": "新增標籤",
+  "editTag": "編輯標籤",
+  "deleteConfirm": "確認刪除",
+  "deleteDescription": "您確定要刪除標籤「{{name}}」嗎？此操作無法復原。",
+  "confirmDelete": "確認刪除",
+  "loading": "載入標籤列表中...",
+  "tagName": "標籤名稱",
+  "tagNamePlaceholder": "請輸入標籤名稱",
+  "search": {
+    "placeholder": "搜索標籤編號或標籤名稱..."
+  },
+  "messages": {
+    "fetchListFailed": "獲取標籤列表失敗",
+    "createSuccess": "標籤創建成功",
+    "createFailed": "創建標籤失敗",
+    "updateSuccess": "標籤資料更新成功",
+    "updateFailed": "更新標籤失敗",
+    "deleteSuccess": "標籤刪除成功",
+    "deleteFailed": "刪除標籤失敗"
+  },
+  "table": {
+    "headers": {
+      "tagId": "標籤編號",
+      "tagName": "標籤名稱"
+    }
+  }
+}

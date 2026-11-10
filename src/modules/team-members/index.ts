@@ -4,6 +4,8 @@ import { z } from "zod";
 import { defineModule } from "@/shared/module";
 import { definePermissions } from "@/shared/permission";
 
+import en from "./locales/en.json";
+import zh from "./locales/zh.json";
 import { teamMembersMockHandlers } from "./mocks/handlers";
 import { teamMembersRoutes } from "./model/routes";
 import TeamMemberListPage from "./ui/TeamMemberList";
@@ -20,15 +22,22 @@ declare module "@/shared/permission" {
   > {}
 }
 
+declare module "@/shared/i18n/types" {
+  interface TranslationResources {
+    "team-members": typeof zh;
+  }
+}
+
 export default defineModule({
   id: "team-members",
   kind: "generic",
+  i18n: { en, zh },
   mockHandlers: teamMembersMockHandlers,
   routes: (ctx) => teamMembersRoutes(ctx, { list: TeamMemberListPage }),
   nav: [
     {
       id: "team-members",
-      label: "dashboard.menu.teamMembers.title",
+      label: "title",
       to: "/team-members",
       icon: UserCog,
       permission: "team-members:read",

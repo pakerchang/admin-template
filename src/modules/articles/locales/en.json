@@ -1,0 +1,98 @@
+{
+  "common": {
+    "insert": "Insert",
+    "createArticle": "Create Article",
+    "noData": "No Data"
+  },
+  "validation": {
+    "content": {
+      "required": "Please enter article content"
+    },
+    "editor": {
+      "toolbar": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "heading1": "Heading 1",
+        "heading2": "Heading 2",
+        "heading3": "Heading 3",
+        "paragraph": "Paragraph",
+        "bulletList": "Bullet List",
+        "orderedList": "Ordered List",
+        "blockquote": "Blockquote",
+        "link": "Insert Link",
+        "image": "Insert Image",
+        "undo": "Undo",
+        "redo": "Redo"
+      },
+      "placeholder": "Start writing article content...",
+      "link": {
+        "url": "Link URL",
+        "text": "Link Text",
+        "urlPlaceholder": "Enter link URL",
+        "textPlaceholder": "Enter link text",
+        "edit": "Edit Link",
+        "remove": "Remove Link",
+        "invalid": "Please enter a valid URL",
+        "helpText": "If left empty, will use selected text or link URL"
+      },
+      "image": {
+        "upload": "Upload Image",
+        "url": "Image URL",
+        "alt": "Alt Text",
+        "urlPlaceholder": "Enter image URL",
+        "altPlaceholder": "Enter image description",
+        "uploadText": "Click to upload or drag image here",
+        "uploadHint": "PNG, JPG, GIF (max 10MB)",
+        "uploaded": "Uploaded Images",
+        "use": "Use"
+      }
+    }
+  },
+  "action": {
+    "remove": "Remove"
+  },
+  "nav": {
+    "title": "Articles Management"
+  },
+  "basicInfo": "Basic Information",
+  "title": "Title",
+  "titlePlaceholder": "Please enter article title",
+  "description": "Description",
+  "descriptionPlaceholder": "Please enter article description (optional)",
+  "coverImage": "Cover Image",
+  "tags": "Tags",
+  "tagsPlaceholder": "Enter tag",
+  "tagInput": "Tag {{index}}",
+  "currentTags": "Current Tags",
+  "content": "Article Content",
+  "contentPlaceholder": "Start writing article content...",
+  "table": {
+    "headers": {
+      "articleId": "Article ID",
+      "title": "Article Title",
+      "description": "Article Description",
+      "tags": "Article Tags",
+      "author": "Author",
+      "actions": "Actions",
+      "publishedAt": "Published At"
+    }
+  },
+  "toast": {
+    "get": {
+      "error": "Failed to get article",
+      "listError": "Failed to get article list"
+    },
+    "create": {
+      "success": "Article created successfully",
+      "error": "Article creation failed"
+    },
+    "update": {
+      "success": "Article updated successfully",
+      "error": "Article update failed"
+    },
+    "delete": {
+      "success": "Article deleted successfully",
+      "error": "Article deletion failed"
+    }
+  }
+}

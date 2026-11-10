@@ -36,7 +36,7 @@ const InfoCard = (props: IInfoCardProps) => {
     <div className="flex h-fit w-full items-center gap-4">
       <Paper className="flex size-full flex-col gap-4 border border-gray-500">
         <h3 className="text-lg font-medium">
-          {t("pages.order.orderDetails.orderStatus.title")}
+          {t("orders.orderDetails.orderStatus.title")}
         </h3>
 
         <div className="flex items-center justify-between gap-x-2">
@@ -49,7 +49,7 @@ const InfoCard = (props: IInfoCardProps) => {
         <div className="flex items-center justify-between gap-x-2">
           <div className="flex items-center gap-x-1">
             <p className="text-gray-400">
-              {t("pages.order.orderDetails.orderStatus.lastUpdatedAt")}
+              {t("orders.orderDetails.orderStatus.lastUpdatedAt")}
             </p>
           </div>
           <p>{dayjs(updated_at).format("YYYY-MM-DD HH:mm")}</p>
@@ -58,7 +58,7 @@ const InfoCard = (props: IInfoCardProps) => {
         <div className="flex items-center justify-between gap-x-2">
           <div className="flex items-center gap-x-1">
             <p className="text-gray-400">
-              {t("pages.order.orderDetails.orderStatus.orderCreateAt")}
+              {t("orders.orderDetails.orderStatus.orderCreateAt")}
             </p>
           </div>
 
@@ -68,12 +68,12 @@ const InfoCard = (props: IInfoCardProps) => {
 
       <Paper className="flex size-full flex-col gap-y-4 border border-gray-500">
         <h3 className="text-lg font-medium">
-          {t("pages.order.orderDetails.shipping.title")}
+          {t("orders.orderDetails.shipping.title")}
         </h3>
 
         <div className="flex flex-1 items-center justify-between">
           <p className="text-gray-400">
-            {t("pages.order.orderDetails.shipping.shippingFee")}
+            {t("orders.orderDetails.shipping.shippingFee")}
           </p>
           <p className="text-end">
             {numericFormatter(String(delivery_fee), {
@@ -86,14 +86,14 @@ const InfoCard = (props: IInfoCardProps) => {
 
         <div className="flex flex-1 items-center justify-between">
           <p className="text-gray-400">
-            {t("pages.order.orderDetails.shipping.shippingAddress")}
+            {t("orders.orderDetails.shipping.shippingAddress")}
           </p>
           <p className="text-end">{contact_info.address}</p>
         </div>
 
         <div className="flex flex-1 items-center justify-between">
           <p className="text-gray-400">
-            {t("pages.order.orderDetails.shipping.shippingTime")}
+            {t("orders.orderDetails.shipping.shippingTime")}
           </p>
           <p className="text-end">
             {dayjs(delivery_time).format("YYYY-MM-DD HH:mm") || "-"}
@@ -102,7 +102,7 @@ const InfoCard = (props: IInfoCardProps) => {
 
         <div className="flex flex-1 items-center justify-between">
           <p className="text-gray-400">
-            {t("pages.order.orderDetails.shipping.shippingRemark")}
+            {t("orders.orderDetails.shipping.shippingRemark")}
           </p>
           <p className="text-end">{delivery_note || "-"}</p>
         </div>
@@ -110,19 +110,19 @@ const InfoCard = (props: IInfoCardProps) => {
 
       <Paper className="flex size-full flex-col gap-y-4 border border-gray-500">
         <h3 className="text-lg font-medium">
-          {t("pages.order.orderDetails.customer.title")}
+          {t("orders.orderDetails.customer.title")}
         </h3>
 
         <div className="flex flex-1 items-center justify-between">
           <p className="text-gray-400">
-            {t("pages.order.orderDetails.customer.email")}
+            {t("orders.orderDetails.customer.email")}
           </p>
           <p className="text-end">{contact_info.email}</p>
         </div>
 
         <div className="flex flex-1 items-center justify-between">
           <p className="text-gray-400">
-            {t("pages.order.orderDetails.customer.phone")}
+            {t("orders.orderDetails.customer.phone")}
           </p>
           <p className="text-end">{contact_info.phone}</p>
         </div>

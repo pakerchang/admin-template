@@ -137,48 +137,48 @@ const TeamMembersFormDialog = ({
       <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader className="mb-6">
-            <DialogTitle>{t("staff.editStaff")}</DialogTitle>
+            <DialogTitle>{t("team-members.editStaff")}</DialogTitle>
           </DialogHeader>
           <form
             onSubmit={updateForm.handleSubmit(onUpdateSubmit)}
             className="space-y-6"
           >
             <TextInput
-              label={t("staff.account")}
+              label={t("team-members.account")}
               {...updateForm.register("account")}
               error={updateForm.formState.errors.account}
             />
 
             <TextInput
-              label={t("staff.firstName")}
+              label={t("team-members.firstName")}
               {...updateForm.register("first_name")}
               error={updateForm.formState.errors.first_name}
             />
 
             <TextInput
-              label={t("staff.lastName")}
+              label={t("team-members.lastName")}
               {...updateForm.register("last_name")}
               error={updateForm.formState.errors.last_name}
             />
 
             <div className="space-y-2">
-              <Label>{t("staff.role")}</Label>
+              <Label>{t("team-members.role")}</Label>
               <Select
                 value={updateForm.watch("role")}
                 onValueChange={(value) => updateForm.setValue("role", value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t("staff.selectRole")} />
+                  <SelectValue placeholder={t("team-members.selectRole")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="superadmin">
-                    {t("staff.roles.superadmin")}
+                    {t("team-members.roles.superadmin")}
                   </SelectItem>
                   <SelectItem value="admin">
-                    {t("staff.roles.admin")}
+                    {t("team-members.roles.admin")}
                   </SelectItem>
                   <SelectItem value="cservice">
-                    {t("staff.roles.cservice")}
+                    {t("team-members.roles.cservice")}
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -187,7 +187,9 @@ const TeamMembersFormDialog = ({
                   {updateForm.formState.errors.role.message}
                 </p>
               )}
-              <p className="text-sm text-gray-400">{t("staff.editNotice")}</p>
+              <p className="text-sm text-gray-400">
+                {t("team-members.editNotice")}
+              </p>
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
@@ -214,60 +216,62 @@ const TeamMembersFormDialog = ({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader className="mb-6">
-          <DialogTitle>{t("staff.createStaff")}</DialogTitle>
+          <DialogTitle>{t("team-members.createStaff")}</DialogTitle>
         </DialogHeader>
         <form
           onSubmit={createForm.handleSubmit(onCreateSubmit)}
           className="space-y-6"
         >
           <TextInput
-            label={t("staff.account")}
+            label={t("team-members.account")}
             {...createForm.register("account")}
             error={createForm.formState.errors.account}
           />
 
           <TextInput
-            label={t("staff.email")}
+            label={t("team-members.email")}
             type="email"
             {...createForm.register("email")}
             error={createForm.formState.errors.email}
           />
 
           <TextInput
-            label={t("staff.password")}
+            label={t("team-members.password")}
             type="password"
             {...createForm.register("password")}
             error={createForm.formState.errors.password}
           />
 
           <TextInput
-            label={t("staff.firstName")}
+            label={t("team-members.firstName")}
             {...createForm.register("first_name")}
             error={createForm.formState.errors.first_name}
           />
 
           <TextInput
-            label={t("staff.lastName")}
+            label={t("team-members.lastName")}
             {...createForm.register("last_name")}
             error={createForm.formState.errors.last_name}
           />
 
           <div className="space-y-2">
-            <Label>{t("staff.role")}</Label>
+            <Label>{t("team-members.role")}</Label>
             <Select
               value={createForm.watch("role")}
               onValueChange={(value) => createForm.setValue("role", value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder={t("staff.selectRole")} />
+                <SelectValue placeholder={t("team-members.selectRole")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="superadmin">
-                  {t("staff.roles.superadmin")}
+                  {t("team-members.roles.superadmin")}
                 </SelectItem>
-                <SelectItem value="admin">{t("staff.roles.admin")}</SelectItem>
+                <SelectItem value="admin">
+                  {t("team-members.roles.admin")}
+                </SelectItem>
                 <SelectItem value="cservice">
-                  {t("staff.roles.cservice")}
+                  {t("team-members.roles.cservice")}
                 </SelectItem>
               </SelectContent>
             </Select>

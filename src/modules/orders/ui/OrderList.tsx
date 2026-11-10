@@ -156,12 +156,12 @@ const OrderListPage = () => {
 
     if (success) {
       toast({
-        title: t("messages.copySuccess"),
+        title: t("orders.messages.copySuccess"),
         variant: "success",
       });
     } else {
       toast({
-        title: t("messages.copyFailed"),
+        title: t("orders.messages.copyFailed"),
         variant: "destructive",
       });
     }
@@ -172,9 +172,9 @@ const OrderListPage = () => {
       accessorKey: "order_id",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.order.orderId"),
+        displayName: t("orders.table.headers.orderId"),
       },
-      header: () => <h4 className="">{t("table.headers.order.orderId")}</h4>,
+      header: () => <h4 className="">{t("orders.table.headers.orderId")}</h4>,
       cell: ({ row }) => {
         return <p className="text-center">{row.getValue("order_id")}</p>;
       },
@@ -183,9 +183,9 @@ const OrderListPage = () => {
       accessorKey: "vendor_id",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.order.agentId"),
+        displayName: t("orders.table.headers.agentId"),
       },
-      header: () => <h4 className="">{t("table.headers.order.agentId")}</h4>,
+      header: () => <h4 className="">{t("orders.table.headers.agentId")}</h4>,
       cell: ({ row }) => {
         return <p className="text-center">{row.getValue("vendor_id")}</p>;
       },
@@ -194,9 +194,9 @@ const OrderListPage = () => {
       accessorKey: "remark",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.order.remark"),
+        displayName: t("orders.table.headers.remark"),
       },
-      header: () => <h4 className="">{t("table.headers.order.remark")}</h4>,
+      header: () => <h4 className="">{t("orders.table.headers.remark")}</h4>,
       cell: ({ row }) => {
         return <p className="text-center">{row.getValue("remark")}</p>;
       },
@@ -206,7 +206,7 @@ const OrderListPage = () => {
       enableHiding: true,
       enableColumnFilter: true,
       meta: {
-        displayName: t("table.headers.order.status"),
+        displayName: t("orders.table.headers.status"),
       },
       header: ({ column }) => <StatusColumnFilter column={column} />,
       cell: ({ row }) => {
@@ -308,14 +308,14 @@ const OrderListPage = () => {
         <div className="mb-6 flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-white">
-              {t("pages.order.title")}
+              {t("orders.title")}
             </h1>
           </div>
 
           <div className="relative max-w-lg">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
             <Input
-              placeholder={t("pages.order.search.placeholder")}
+              placeholder={t("orders.search.placeholder")}
               value={searchTerm}
               onChange={handleSearchChange}
               className="px-10"
@@ -335,13 +335,13 @@ const OrderListPage = () => {
           {isLoading && debouncedSearchTerm && (
             <div className="flex items-center text-sm text-gray-400">
               <Spinner className="mr-2 size-4" />
-              {t("pages.order.search.searching")}
+              {t("orders.search.searching")}
             </div>
           )}
 
           {debouncedSearchTerm && !isLoading && (
             <div className="text-sm text-gray-300">
-              {t("pages.order.search.results", {
+              {t("orders.search.results", {
                 searchTerm: debouncedSearchTerm,
                 count: totalCount,
               })}
@@ -353,15 +353,15 @@ const OrderListPage = () => {
           <div className="py-8 text-center">
             <Search className="mx-auto mb-4 size-12 text-gray-400" />
             <h3 className="mb-2 text-lg font-medium text-white">
-              {t("pages.order.search.noResults")}
+              {t("orders.search.noResults")}
             </h3>
             <p className="text-gray-400">
-              {t("pages.order.search.noResultsHint")}
+              {t("orders.search.noResultsHint")}
               <button
                 onClick={clearSearch}
                 className="text-blue-400 underline hover:text-blue-300"
               >
-                {t("pages.order.search.clearSearch")}
+                {t("orders.search.clearSearch")}
               </button>
             </p>
           </div>

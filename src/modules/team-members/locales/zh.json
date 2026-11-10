@@ -1,0 +1,36 @@
+{
+  "validation": {
+    "password": {
+      "minLength": "密碼至少需要8個字符",
+      "complexity": "密碼必須符合以下條件：至少8個字符，且包含以下至少3種類型的字符：大寫字母、小寫字母、數字、特殊符號(!@#$%^&*()等)"
+    }
+  },
+  "nav": {
+    "title": "團隊成員管理"
+  },
+  "staffId": "員工ID",
+  "account": "帳號",
+  "email": "電子郵件",
+  "firstName": "名字",
+  "lastName": "姓氏",
+  "role": "角色",
+  "createdAt": "創建時間",
+  "updatedAt": "更新時間",
+  "editStaff": "編輯員工",
+  "createStaff": "新增員工",
+  "password": "密碼",
+  "selectRole": "請選擇角色",
+  "searchPlaceholder": "搜索員工ID、帳號、姓名或角色...",
+  "name": "姓名",
+  "actions": "操作",
+  "loadingStaffList": "載入員工列表中...",
+  "staffManagement": "員工管理",
+  "confirmDelete": "確認刪除",
+  "deleteConfirmMessage": "您確定要刪除員工「{{name}}」嗎？此操作無法復原。",
+  "editNotice": "PS : 編輯不可修改 Email",
+  "roles": {
+    "superadmin": "超級管理員",
+    "admin": "管理員",
+    "cservice": "客服"
+  }
+}

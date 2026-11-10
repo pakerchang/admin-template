@@ -36,8 +36,8 @@ const LinkDialog = ({
   const linkSchema = z.object({
     url: z
       .string()
-      .min(1, { message: t("validation.editor.link.invalid") })
-      .url({ message: t("validation.editor.link.invalid") }),
+      .min(1, { message: t("articles.validation.editor.link.invalid") })
+      .url({ message: t("articles.validation.editor.link.invalid") }),
     text: z.string().optional(),
   });
 
@@ -68,17 +68,19 @@ const LinkDialog = ({
         <DialogHeader>
           <DialogTitle>
             {isEditing
-              ? t("validation.editor.link.edit")
-              : t("validation.editor.toolbar.link")}
+              ? t("articles.validation.editor.link.edit")
+              : t("articles.validation.editor.toolbar.link")}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="url">{t("validation.editor.link.url")}</Label>
+            <Label htmlFor="url">
+              {t("articles.validation.editor.link.url")}
+            </Label>
             <Input
               id="url"
-              placeholder={t("validation.editor.link.urlPlaceholder")}
+              placeholder={t("articles.validation.editor.link.urlPlaceholder")}
               {...form.register("url")}
               className={form.formState.errors.url ? "border-destructive" : ""}
             />
@@ -90,14 +92,16 @@ const LinkDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="text">{t("validation.editor.link.text")}</Label>
+            <Label htmlFor="text">
+              {t("articles.validation.editor.link.text")}
+            </Label>
             <Input
               id="text"
-              placeholder={t("validation.editor.link.textPlaceholder")}
+              placeholder={t("articles.validation.editor.link.textPlaceholder")}
               {...form.register("text")}
             />
             <p className="text-sm text-muted-foreground">
-              {t("validation.editor.link.helpText")}
+              {t("articles.validation.editor.link.helpText")}
             </p>
           </div>
 

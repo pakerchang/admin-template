@@ -46,8 +46,8 @@ const EditDialogContent = ({
   return (
     <DialogContent className="w-[400px] shadow-[0_0_10px_2px_rgba(168,85,247,0.8)] transition duration-300 hover:shadow-[0_0_20px_4px_rgba(192,132,252,1)]">
       <DialogHeader>
-        <DialogTitle>{t("dialog.order.title")}</DialogTitle>
-        <DialogDescription>{t("dialog.order.description")}</DialogDescription>
+        <DialogTitle>{t("orders.dialog.title")}</DialogTitle>
+        <DialogDescription>{t("orders.dialog.description")}</DialogDescription>
       </DialogHeader>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-1 flex-col">
@@ -71,7 +71,7 @@ const EditDialogContent = ({
           </RadioGroup>
         </div>
         <DialogFooter className="mt-4">
-          <Button type="submit">{t("dialog.order.status.submit")}</Button>
+          <Button type="submit">{t("orders.dialog.status.submit")}</Button>
         </DialogFooter>
       </form>
     </DialogContent>

@@ -5,7 +5,7 @@ import { createElement } from "react";
 import { createForbiddenBoundary } from "@/app/router/forbidden-boundary";
 import { createIndexRedirect } from "@/app/router/index-redirect";
 import { setGrantSchema } from "@/shared/api/session";
-import { NavContext } from "@/shared/module";
+import { NavContext, RouteTitlesContext } from "@/shared/module";
 import {
   corePermissions,
   GrantsContext,
@@ -16,8 +16,8 @@ import {
 import type {
   TLocale,
   TModule,
-  TNavItem,
   TPublicRouteContext,
+  TRegistryNavItem,
   TRouteContext,
   TRouteId,
   TShell,
@@ -64,8 +64,10 @@ export type TBuildInput = {
 
 export type TRegistry = {
   modules: readonly TModule[];
-  /** 依 order 排序、未過濾 */
-  nav: TNavItem[];
+  /** 依 order 排序、未過濾；label 已換成組好的全域 key（`labelKey`） */
+  nav: TRegistryNavItem[];
+  /** route 標題：`to` → 全域 key（nav、children 與 routeTitles；i18n-scope-migration 補裁 4） */
+  titles: ReadonlyMap<string, string>;
   permissions: TPermissionCatalog;
   operations: TOperationTable;
   routeIds: ReadonlySet<TRouteId>;
@@ -181,6 +183,50 @@ const assertOperations = (
   }
 };
 
+const navKey = (moduleId: string, label: string) => `${moduleId}.nav.${label}`;
+
+/**
+ * i18n-scope-migration AC-3（nav label 第二道防線）：nav（含 children）與 routeTitles 的局部 key 組成
+ * `${id}.nav.${label}`，必須在合併後的 zh / en 字典都解析為字串；同一個 `to` 不得重複宣告標題。回傳 `to` → 全域 key
+ */
+const resolveTitles = (modules: readonly TModule[], i18n: TI18n) => {
+  const lookup = (dict: Record<string, unknown>, key: string) =>
+    key
+      .split(".")
+      .reduce<unknown>(
+        (o, k) =>
+          isPlainDict(o) && Object.prototype.hasOwnProperty.call(o, k)
+            ? o[k]
+            : undefined,
+        dict
+      );
+  const titles = new Map<string, string>();
+  const owner = new Map<string, string>();
+  for (const m of modules)
+    for (const { to, label } of [
+      ...(m.nav ?? []).flatMap((n) => [n, ...(n.children ?? [])]),
+      ...(m.routeTitles ?? []),
+    ]) {
+      const key = navKey(m.id, label);
+      if (label.includes(".") || !label)
+        throw new Error(
+          `module "${m.id}": nav label "${label}" must be a local key of the module's i18n "nav" section (kernel builds "${m.id}.nav.<key>")`
+        );
+      for (const lng of Object.keys(i18n) as TLocale[])
+        if (typeof lookup(i18n[lng], key) !== "string")
+          throw new Error(
+            `module "${m.id}": nav label "${label}" is not a string at "${key}" in i18n.${lng}`
+          );
+      if (owner.has(to))
+        throw new Error(
+          `route title "${to}" declared twice (modules "${owner.get(to)}" and "${m.id}")`
+        );
+      owner.set(to, m.id);
+      titles.set(to, key);
+    }
+  return titles;
+};
+
 /** 只有 plain object 會被遞迴；Date / class instance / 陣列 / 函式 / null 皆為 leaf */
 const isPlainDict = (v: unknown): v is Record<string, unknown> => {
   if (typeof v !== "object" || v === null) return false;
@@ -244,9 +290,23 @@ export function build({
     ])
   );
 
-  // Array#sort 是穩定排序（ES2019）
-  const nav = modules
-    .flatMap((m) => m.nav ?? [])
+  const i18n = scopeAndMerge(core.i18n, modules);
+  const titles = resolveTitles(modules, i18n);
+
+  // Array#sort 是穩定排序（ES2019）；label（局部 key）換成全域 key，shell 只拿翻譯後文字（補裁 3）
+  const nav: TRegistryNavItem[] = modules
+    .flatMap((m) =>
+      (m.nav ?? []).map(({ label, children, ...item }) => ({
+        ...item,
+        labelKey: navKey(m.id, label),
+        ...(children && {
+          children: children.map(({ label: l, ...c }) => ({
+            ...c,
+            labelKey: navKey(m.id, l),
+          })),
+        }),
+      }))
+    )
     .sort((a, b) => (a.order ?? 100) - (b.order ?? 100));
 
   // 內部用 string：TRouteId 在無 module augment 時為 never
@@ -311,7 +371,11 @@ export function build({
       createElement(
         NavContext.Provider,
         { value: nav },
-        createElement(shell.ProtectedLayout)
+        createElement(
+          RouteTitlesContext.Provider,
+          { value: titles },
+          createElement(shell.ProtectedLayout)
+        )
       )
     );
 
@@ -369,10 +433,11 @@ export function build({
   const registry: TRegistry = {
     modules,
     nav,
+    titles,
     operations,
     routeIds: routeIds as unknown as ReadonlySet<TRouteId>,
     permissions: catalogue,
-    i18n: scopeAndMerge(core.i18n, modules),
+    i18n,
     mockHandlers: [
       ...core.mock({
         ...operations,

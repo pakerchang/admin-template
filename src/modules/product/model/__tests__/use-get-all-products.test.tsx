@@ -72,7 +72,7 @@ describe("useGetAllProducts", () => {
     expect(result.current.data).toBeUndefined();
     expect(mockToast).toHaveBeenCalledWith({
       title: "common.error",
-      description: "toast.product.get.error",
+      description: "product.toast.get.error",
       variant: "destructive",
     });
   });

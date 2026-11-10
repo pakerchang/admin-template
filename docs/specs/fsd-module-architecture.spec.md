@@ -249,7 +249,7 @@ export type TRouteId = Extract<keyof TRouteIdRegistry, string>;   // 命名格�
 
 export type TNavItem = {
   id: string;
-  label: string;              // i18n key，目標為以 `${moduleId}.` 開頭；現況 nav label 仍是 `dashboard.menu.*`（M6 未搬，已知限制，見 refactor-specs README）
+  label: string;              // module 字典 `nav` 段的局部 key（例 "title"）；kernel 組 `${moduleId}.nav.${label}`，翻譯後注入 shell（owner 2026-11-11 補裁 2、3，見 i18n-scope-migration spec）；defineModule 由 i18n 推導收窄
   to: string;                 // 絕對路徑（跨 module 導航只經 nav 字串）
   icon?: ComponentType<{ className?: string }>;
   permission: TPermission;    // 必填，nav 過濾依據（§6.3）
@@ -290,6 +290,7 @@ export type TModule = {
   routes?: (ctx: TRouteContext) => AnyRoute[];       // 掛在 protected 下的子樹；在 index.ts 組裝（model/routes 的 defineRoutes + ui 頁面，§4.4）
   publicRoutes?: (ctx: TPublicRouteContext) => AnyRoute[];  // 例：/login（page route，routeId 必填）
   nav?: TNavItem[];
+  routeTitles?: readonly { to: string; label: string }[];  // 沒有 nav 的 route 宣告 breadcrumb 標題（label 同 nav 局部 key，不進 sidebar；owner 2026-11-11 補裁 4）
   i18n?: Record<TLocale, Record<string, unknown>>;   // ★ 裸字典（不含 module id 頂層）；kernel 以 { [id]: dict } scope（§4.3、§5.4）
   mockHandlers?: HttpHandler[];                      // ★ R11：MSW handler（orval 產物 + override 接 seed），§4.5
   permissions?: TModulePermissions;                  // R21：權限目錄 resources + 角色預設 grant mockGrants（+ ABAC conditions，§6A），§6.1；operation→permission 不在 module，只在 YAML x-permission（§6.5）
@@ -544,7 +545,7 @@ export const ordersMockHandlers: HttpHandler[] = [
 | `components/layouts/AuthLayout.tsx` | `shells/default/auth-layout.tsx`（外框）+ `modules/auth/{model,ui}`（登入表單與 mutation） | 拆 layout 與登入邏輯 |
 | `constants/sidebar.tsx` | 刪除 → 各 module `defineModule({ nav })` | |
 | `constants/locales.ts` | `shared/config/locales.ts` + `shared/i18n/types.ts` | `TransKey` 改宣告合併（§5.4） |
-| `hooks/use-breadcrumb.ts` | `shared/ui/navbar/use-breadcrumb.ts` | `switch` 改讀 route `staticData.breadcrumb`（i18n key） |
+| `hooks/use-breadcrumb.ts` | `shared/ui/navbar/use-breadcrumb.ts` | `switch` 改讀 nav registry（`useRouteTitleResolver()` 注入已翻譯標題，取代 `staticData.breadcrumb` 方案；owner 2026-11-11 補裁 1 = C，見 i18n-scope-migration spec） |
 | `hooks/{use-toast.ts,use-mobile.tsx,use-multi-select.ts}` | `shared/lib/` | |
 | `lib/utils.ts`、`lib/gen-validate-message.ts`、`utils/array-helpers.ts` | `shared/lib/` | |
 | `locales/{en,zh}.json` | `shared/i18n/locales/` + `modules/<id>/locales/` | 現況只搬了全域 key 已在 `<id>.` 之下的部分（`modules/users/locales/en.json` 的 `users.*`）；其餘 domain key 仍在 core 字典（搬要改 key 名，與 M6 AC-6「字典 key→value 不變」衝突）。已知限制，見 refactor-specs README |
@@ -587,7 +588,8 @@ export const ordersMockHandlers: HttpHandler[] = [
 ```ts
 // shared/i18n/types.ts
 import type coreZh from "./locales/zh.json";
-export interface TranslationResources extends Record<string, unknown> {}   // module 擴充點
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface TranslationResources {}   // module 擴充點；不得帶 index signature（`extends Record<string, unknown>` 會讓 TransKey 撐寬成 string，owner 2026-11-11，見 i18n-scope-migration spec I1 步驟 1）
 export type TransKey = RecursiveKeyOf<typeof coreZh & TranslationResources>;
 
 // modules/orders/locales/augment.d.ts

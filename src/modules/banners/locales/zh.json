@@ -1,0 +1,88 @@
+{
+  "validation": {
+    "image": {
+      "prefix": {
+        "desktop": "桌面版圖片檔名必須以 d_ 開頭",
+        "mobile": "手機版圖片檔名必須以 m_ 開頭"
+      },
+      "resolution": {
+        "desktop": {
+          "tooSmall": "桌面版圖片解析度過小，建議最小 1280x720 像素",
+          "tooLarge": "桌面版圖片解析度過大，最大支援 3840x2160 像素",
+          "aspectRatio": "建議使用 16:9 的寬高比以獲得最佳顯示效果"
+        },
+        "mobile": {
+          "tooSmall": "手機版圖片解析度過小，建議最小 {{minResolution}} 像素",
+          "tooLarge": "手機版圖片解析度過大，最大支援 {{maxResolution}} 像素",
+          "aspectRatio": "手機版建議使用 16:9 的寬高比"
+        }
+      }
+    },
+    "url": {
+      "https": "網址必須以 https:// 開頭"
+    }
+  },
+  "nav": {
+    "title": "Banner 管理"
+  },
+  "addBanner": "新增 Banner",
+  "deleteConfirm": "確認刪除",
+  "deleteDescription": "您確定要刪除 Banner「{{name}}」嗎？此操作無法復原。",
+  "confirmDelete": "確認刪除",
+  "activeTitle": "已啟用 Banner 列表",
+  "inactiveTitle": "Banner 列表",
+  "emptyState": {
+    "noActiveBanner": "尚無啟用 Banner",
+    "promoteBannerHint": "從下方 Banner 列表提升至此處"
+  },
+  "actions": {
+    "promoteToActive": "設為啟用",
+    "demoteToInactive": "取消啟用",
+    "processing": "處理中..."
+  },
+  "bannerCreate": {
+    "title": "橫幅資訊",
+    "redirectUrl": "跳轉連結",
+    "images": "圖片上傳",
+    "desktopImage": "桌面版圖片",
+    "mobileImage": "手機版圖片",
+    "submitting": "提交中"
+  },
+  "toast": {
+    "get": {
+      "error": "Banner資訊取得失敗"
+    },
+    "create": {
+      "success": "Banner新增成功",
+      "error": "Banner新增失敗"
+    },
+    "update": {
+      "success": "Banner更新成功",
+      "error": "Banner更新失敗"
+    },
+    "delete": {
+      "success": "Banner刪除成功",
+      "error": "Banner刪除失敗"
+    },
+    "promoteToActive": {
+      "success": "Banner啟用成功",
+      "error": "Banner啟用失敗",
+      "errorDescription": "最多只能啟用 {{limit}} 個 Banner"
+    },
+    "reorder": {
+      "success": "Banner排序更新成功",
+      "error": "Banner排序更新失敗",
+      "errorDescription": "請重試或刷新頁面"
+    },
+    "operationConflict": {
+      "title": "操作衝突",
+      "promoteDescription": "請等待目前操作完成後再進行提升操作",
+      "demoteDescription": "請等待目前操作完成後再進行降級操作",
+      "generalDescription": "請等待目前操作完成後再進行此操作"
+    },
+    "removeFromActive": {
+      "success": "Banner停用成功",
+      "error": "Banner停用失敗"
+    }
+  }
+}

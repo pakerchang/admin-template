@@ -41,7 +41,7 @@ export const useGetUserList = (pagination: Partial<TPagination>) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.user.get.error"),
+          description: t("users.toast.get.error"),
           variant: "destructive",
         });
         return undefined;
@@ -70,7 +70,7 @@ export const useGetUser = (id: TUser["user_id"]) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.user.get.error"),
+          description: t("users.toast.get.error"),
           variant: "destructive",
         });
         return null;
@@ -98,7 +98,7 @@ export const useUpdateUser = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.user.update.error"),
+          description: t("users.toast.update.error"),
           variant: "destructive",
         });
         return undefined;
@@ -107,7 +107,7 @@ export const useUpdateUser = () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast({
         title: t("common.success"),
-        description: t("toast.user.update.success"),
+        description: t("users.toast.update.success"),
         variant: "success",
       });
       return response.data;
@@ -127,7 +127,7 @@ export const useGetUserProfile = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.user.get.error"),
+          description: t("users.toast.get.error"),
           variant: "destructive",
         });
         return undefined;
@@ -149,7 +149,7 @@ export const useUpdateUserProfile = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.user.update.error"),
+          description: t("users.toast.update.error"),
           variant: "destructive",
         });
         return undefined;
@@ -175,7 +175,7 @@ export const useUpdateUserRole = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.user.update.error"),
+          description: t("users.toast.update.error"),
           variant: "destructive",
         });
         return undefined;
@@ -187,7 +187,7 @@ export const useUpdateUserRole = () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast({
         title: t("common.success"),
-        description: t("toast.user.update.success"),
+        description: t("users.toast.update.success"),
         variant: "success",
       });
     },

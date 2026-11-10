@@ -18,18 +18,18 @@ describe("LoginPage demo account picker", () => {
   it("AC-a：五個快選，點擊帶入帳密但不送出", () => {
     render(<LoginPage demoAccounts={DEMO_ACCOUNTS} />);
     const buttons = screen.getAllByRole("button", {
-      name: /login\.demo\.roles/,
+      name: /auth\.demo\.roles/,
     });
     expect(buttons).toHaveLength(5);
 
     fireEvent.click(screen.getByRole("button", { name: /bob@example\.com/ }));
-    expect(screen.getByLabelText("login.email")).toHaveValue("bob@example.com");
-    expect(screen.getByLabelText("login.password")).toHaveValue("admin123");
+    expect(screen.getByLabelText("auth.email")).toHaveValue("bob@example.com");
+    expect(screen.getByLabelText("auth.password")).toHaveValue("admin123");
     expect(mutate).not.toHaveBeenCalled();
   });
 
   it.each([undefined, []])("AC-b：無清單（%s）不渲染快選", (demoAccounts) => {
     render(<LoginPage demoAccounts={demoAccounts} />);
-    expect(screen.queryByText("login.demo.title")).toBeNull();
+    expect(screen.queryByText("auth.demo.title")).toBeNull();
   });
 });

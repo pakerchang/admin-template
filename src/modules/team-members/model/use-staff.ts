@@ -36,23 +36,35 @@ export const useCreateStaffSchema = () => {
   const staffFormSchema = z.object({
     account: z
       .string()
-      .min(1, t("validation.required.field", { field: t("staff.account") })),
+      .min(
+        1,
+        t("validation.required.field", { field: t("team-members.account") })
+      ),
     email: z.string().email(t("validation.email.invalid")),
     password: z
       .string()
-      .min(8, t("validation.password.minLength"))
+      .min(8, t("team-members.validation.password.minLength"))
       .refine(validatePasswordComplexity, {
-        message: t("validation.password.complexity"),
+        message: t("team-members.validation.password.complexity"),
       }),
     first_name: z
       .string()
-      .min(1, t("validation.required.field", { field: t("staff.firstName") })),
+      .min(
+        1,
+        t("validation.required.field", { field: t("team-members.firstName") })
+      ),
     last_name: z
       .string()
-      .min(1, t("validation.required.field", { field: t("staff.lastName") })),
+      .min(
+        1,
+        t("validation.required.field", { field: t("team-members.lastName") })
+      ),
     role: z
       .string()
-      .min(1, t("validation.required.field", { field: t("staff.role") })),
+      .min(
+        1,
+        t("validation.required.field", { field: t("team-members.role") })
+      ),
   });
 
   return staffFormSchema;
@@ -64,16 +76,28 @@ export const useUpdateStaffSchema = () => {
   const updateStaffFormSchema = z.object({
     account: z
       .string()
-      .min(1, t("validation.required.field", { field: t("staff.account") })),
+      .min(
+        1,
+        t("validation.required.field", { field: t("team-members.account") })
+      ),
     first_name: z
       .string()
-      .min(1, t("validation.required.field", { field: t("staff.firstName") })),
+      .min(
+        1,
+        t("validation.required.field", { field: t("team-members.firstName") })
+      ),
     last_name: z
       .string()
-      .min(1, t("validation.required.field", { field: t("staff.lastName") })),
+      .min(
+        1,
+        t("validation.required.field", { field: t("team-members.lastName") })
+      ),
     role: z
       .string()
-      .min(1, t("validation.required.field", { field: t("staff.role") })),
+      .min(
+        1,
+        t("validation.required.field", { field: t("team-members.role") })
+      ),
   });
 
   return updateStaffFormSchema;

@@ -25,7 +25,7 @@ const OrderDetailsPage = () => {
   if (!order) {
     return (
       <div className="flex size-full items-center justify-center">
-        <p>{t("pages.order.orderDetails.notFound")}</p>
+        <p>{t("orders.orderDetails.notFound")}</p>
       </div>
     );
   }

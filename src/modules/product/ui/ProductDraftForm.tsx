@@ -190,7 +190,7 @@ const ProductDraftForm = () => {
         disabled={isSubmitDisabled}
       >
         {isCreateUploading
-          ? t("pages.product.productCreate.submitting")
+          ? t("product.productCreate.submitting")
           : t("common.submit")}
       </FormSubmit>
     </div>
@@ -207,23 +207,23 @@ const ProductDraftForm = () => {
         <Paper className="flex w-full flex-col gap-4">
           <div className="flex flex-col gap-2">
             <h3 className="text-3xl font-bold">
-              {t("pages.product.productDraft.title", {
+              {t("product.productDraft.title", {
                 productName: sourceProductName,
               })}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {t("pages.product.productDraft.description")}
+              {t("product.productDraft.description")}
             </p>
           </div>
           <TextInput
             className="flex-1"
-            label={t("pages.product.productCreate.productName")}
+            label={t("product.productCreate.productName")}
             {...form.register("product_name")}
             error={form.formState.errors.product_name}
           />
           <TextInput
             className="flex-1"
-            label={t("pages.product.productCreate.price")}
+            label={t("product.productCreate.price")}
             type="number"
             {...form.register("product_price", {
               valueAsNumber: true,
@@ -232,7 +232,7 @@ const ProductDraftForm = () => {
           />
           <TextInput
             className="flex-1"
-            label={t("pages.product.productCreate.productSize")}
+            label={t("product.productCreate.productSize")}
             type="number"
             {...form.register("product_size", {
               valueAsNumber: true,
@@ -240,7 +240,7 @@ const ProductDraftForm = () => {
             error={form.formState.errors.product_size}
           />
           <Label className="text-sm font-medium">
-            {t("pages.product.productCreate.productType")}
+            {t("product.productCreate.productType")}
           </Label>
           <Select
             value={form.watch("product_type") || productTypeEnums.enum.NO_TYPE}
@@ -260,15 +260,13 @@ const ProductDraftForm = () => {
           >
             <SelectTrigger>
               <SelectValue
-                placeholder={t(
-                  "pages.product.productCreate.productTypePlaceholder"
-                )}
+                placeholder={t("product.productCreate.productTypePlaceholder")}
               />
             </SelectTrigger>
             <SelectContent>
               {Object.values(productTypeEnums.enum).map((type) => (
                 <SelectItem key={type} value={type}>
-                  {t(`pages.product.productTypes.${type}` as TransKey)}
+                  {t(`product.productTypes.${type}` as TransKey)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -281,8 +279,8 @@ const ProductDraftForm = () => {
           <MultiSelectField
             fieldName="vendor_id"
             form={form}
-            label={t("pages.product.productCreate.supplier")}
-            placeholder={t("pages.product.productCreate.supplierPlaceholder")}
+            label={t("product.productCreate.supplier")}
+            placeholder={t("product.productCreate.supplierPlaceholder")}
             options={
               suppliersData?.data?.map((supplier) => ({
                 value: supplier.supplier_id,
@@ -295,8 +293,8 @@ const ProductDraftForm = () => {
           <MultiSelectField
             fieldName="tag_id"
             form={form}
-            label={t("pages.product.productCreate.tags")}
-            placeholder={t("pages.product.productCreate.selectTag")}
+            label={t("product.productCreate.tags")}
+            placeholder={t("product.productCreate.selectTag")}
             options={
               tagsData?.data?.map((tag) => ({
                 value: tag.tag_id,
@@ -307,7 +305,7 @@ const ProductDraftForm = () => {
           />
 
           <Label className="text-sm font-medium">
-            {t("pages.product.productCreate.productStatus")}
+            {t("product.productCreate.productStatus")}
           </Label>
           <Select
             value={
@@ -330,7 +328,7 @@ const ProductDraftForm = () => {
             <SelectTrigger>
               <SelectValue
                 placeholder={t(
-                  "pages.product.productCreate.productStatusPlaceholder"
+                  "product.productCreate.productStatusPlaceholder"
                 )}
               />
             </SelectTrigger>
@@ -338,7 +336,7 @@ const ProductDraftForm = () => {
               {Object.values(activeStatusEnums.enum).map((status) => {
                 return (
                   <SelectItem key={status} value={status}>
-                    {t(`pages.product.productCreate.${status}`)}
+                    {t(`product.productCreate.${status}`)}
                   </SelectItem>
                 );
               })}
@@ -353,7 +351,7 @@ const ProductDraftForm = () => {
 
         <Paper className="flex w-full flex-col gap-4">
           <h3 className="text-3xl font-bold">
-            {t("pages.product.productCreate.productImages")}
+            {t("product.productCreate.productImages")}
           </h3>
           <div className="flex flex-wrap gap-4">
             {isUploading && (
@@ -398,7 +396,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.shortTitle")}
+              label={t("product.productCreate.shortTitle")}
               zh={form.register("product_detail.short_title.zh")}
               en={form.register("product_detail.short_title.en")}
               th={form.register("product_detail.short_title.th")}
@@ -415,7 +413,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.introduction")}
+              label={t("product.productCreate.introduction")}
               zh={form.register("product_detail.introduction.zh")}
               en={form.register("product_detail.introduction.en")}
               th={form.register("product_detail.introduction.th")}
@@ -429,7 +427,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.productDescription")}
+              label={t("product.productCreate.productDescription")}
               zh={form.register("product_detail.product_description.zh")}
               en={form.register("product_detail.product_description.en")}
               th={form.register("product_detail.product_description.th")}
@@ -446,7 +444,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.ingredients")}
+              label={t("product.productCreate.ingredients")}
               zh={form.register("product_detail.ingredients.zh")}
               en={form.register("product_detail.ingredients.en")}
               th={form.register("product_detail.ingredients.th")}
@@ -460,7 +458,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.precautions")}
+              label={t("product.productCreate.precautions")}
               zh={form.register("product_detail.precautions.zh")}
               en={form.register("product_detail.precautions.en")}
               th={form.register("product_detail.precautions.th")}
@@ -477,7 +475,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.origin")}
+              label={t("product.productCreate.origin")}
               zh={form.register("product_detail.origin.zh")}
               en={form.register("product_detail.origin.en")}
               th={form.register("product_detail.origin.th")}
@@ -491,7 +489,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.appearance")}
+              label={t("product.productCreate.appearance")}
               zh={form.register("product_detail.appearance.zh")}
               en={form.register("product_detail.appearance.en")}
               th={form.register("product_detail.appearance.th")}
@@ -508,7 +506,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.foodPairing")}
+              label={t("product.productCreate.foodPairing")}
               zh={form.register("product_detail.food_pairing.zh")}
               en={form.register("product_detail.food_pairing.en")}
               th={form.register("product_detail.food_pairing.th")}
@@ -522,7 +520,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.flavor")}
+              label={t("product.productCreate.flavor")}
               zh={form.register("product_detail.flavor.zh")}
               en={form.register("product_detail.flavor.en")}
               th={form.register("product_detail.flavor.th")}
@@ -539,7 +537,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.bestOccasion")}
+              label={t("product.productCreate.bestOccasion")}
               zh={form.register("product_detail.best_occasion.zh")}
               en={form.register("product_detail.best_occasion.en")}
               th={form.register("product_detail.best_occasion.th")}
@@ -553,7 +551,7 @@ const ProductDraftForm = () => {
           <Paper className="flex flex-1 gap-4">
             <LangFormInput
               className="flex-1"
-              label={t("pages.product.productCreate.sceneMatching")}
+              label={t("product.productCreate.sceneMatching")}
               zh={form.register("product_detail.scene_matching.zh")}
               en={form.register("product_detail.scene_matching.en")}
               th={form.register("product_detail.scene_matching.th")}
@@ -569,13 +567,13 @@ const ProductDraftForm = () => {
         <Paper className="flex w-full gap-4">
           <TextInput
             className="flex-1"
-            label={t("pages.product.productCreate.shelfLife")}
+            label={t("product.productCreate.shelfLife")}
             {...form.register("product_detail.shelf_life")}
             error={form.formState.errors.product_detail?.shelf_life}
           />
           <TextInput
             className="flex-1"
-            label={t("pages.product.productCreate.aromaLevel")}
+            label={t("product.productCreate.aromaLevel")}
             {...form.register("product_detail.aroma_level")}
             error={form.formState.errors.product_detail?.aroma_level}
           />

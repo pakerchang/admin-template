@@ -48,7 +48,7 @@ spec 只定義「搬遷既有程式碼」的落點，沒有針對過渡期「新
    ├── model/        # 手寫 headless：query hooks、form schema、columns、routes.ts、型別轉出
    ├── ui/           # 預設頁面與元件
    ├── mocks/        # <id>.msw.ts（產物）+ 手寫 handlers.ts / seed.ts
-   └── locales/{en,zh}.json + augment.d.ts
+   └── locales/{en,zh}.json   # 型別擴充寫在 index.ts
    ```
    - 檢查點：`mocks/` 下手寫檔**不得**命名 `*.msw.ts`（§3、§7.2，M7 AC-5 機械檢查）。
 
@@ -72,12 +72,15 @@ spec 只定義「搬遷既有程式碼」的落點，沒有針對過渡期「新
    - `requires`：列出所有會 import 的其他 module id（§0.3 R8）；缺依賴或成環 → `build()` fail fast（§4.3 驗證 1.2）。
 
 6. **nav**（§4.1、§6.3）
-   - `TNavItem.permission` 必填；`label` 是 i18n key，必須以 `${moduleId}.` 開頭；`to` 為絕對路徑；`order` 預設 100。
+   - `TNavItem.permission` 必填；`label` 是本 module 字典 `nav` 段的**局部 key**（例 `"title"`，不寫 `<id>.` 前綴、不含 `.`），kernel 組 `${id}.nav.${label}` 並翻譯後注入 shell；`to` 為絕對路徑；`order` 預設 100。
+   - 寫錯 key 在 `tsc` 失敗（`defineModule` 由 `i18n` 推導 en / zh `nav` 段共同的 key）；`build()` 另驗 zh / en 都能解析，同一個 `to` 不得重複宣告標題。
+   - 沒有 sidebar 項目、但 breadcrumb 需要標題的 route：宣告 `routeTitles: [{ to, label }]`（label 同上，只供 breadcrumb）。
    - permission 必須是某個已安裝 module `permissions.resources` 裡**完整的** `resource:action`；resource 存在但 action 不在陣列（例 `orders:typo`）也會讓 `build()` throw（§4.3 驗證 1.4）。
 
 7. **i18n：裸字典**（§4.3 步驟 4、§5.4）
    - `locales/*.json` 頂層**不含** module id（`{ "list": { "title": "訂單" } }`）；kernel 會自動 scope 成 `<id>.list.title`。頂層 key 等於 `id` → `build()` throw（§4.3 驗證 1.3）。
-   - `augment.d.ts` 以 `interface TranslationResources { <id>: typeof zh }` 擴充型別（§5.4）。
+   - 在 `index.ts` 以 `declare module "@/shared/i18n/types" { interface TranslationResources { <id>: typeof zh } }` 擴充型別（§5.4；與權限的 `TPermissionRegistry` 擴充同寫法）。
+   - en / zh 兩個檔都要有、leaf key 集合相同；只被本 module 引用的文案放這裡，core 字典只留 core 引用或 ≥2 個 module 共用的 key；不留無引用的 key（`src/shared/i18n/__tests__/key-ownership.test.ts` 檢查）。程式碼用全域 key `t("<id>.…")`。
 
 8. **mocks**（§4.5）
    - `mocks/handlers.ts` 匯出 `HttpHandler[]`：用 orval 的 `get<OperationId>MockHandler(overrideFn)` 包住，override 讀寫本 module 的 seed。

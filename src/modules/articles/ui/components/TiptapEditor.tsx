@@ -45,7 +45,8 @@ const TiptapEditor = ({
   className,
 }: TiptapEditorProps) => {
   const { t } = useTranslation();
-  const defaultPlaceholder = placeholder || t("validation.editor.placeholder");
+  const defaultPlaceholder =
+    placeholder || t("articles.validation.editor.placeholder");
 
   const [linkDialog, setLinkDialog] = useState({
     isOpen: false,
@@ -268,7 +269,7 @@ const TiptapEditor = ({
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive("bold")}
-          title={t("validation.editor.toolbar.bold")}
+          title={t("articles.validation.editor.toolbar.bold")}
         >
           <Bold className="size-4" />
         </ToolbarButton>
@@ -276,7 +277,7 @@ const TiptapEditor = ({
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           isActive={editor.isActive("italic")}
-          title={t("validation.editor.toolbar.italic")}
+          title={t("articles.validation.editor.toolbar.italic")}
         >
           <Italic className="size-4" />
         </ToolbarButton>
@@ -288,7 +289,7 @@ const TiptapEditor = ({
             editor.chain().focus().toggleHeading({ level: 1 }).run()
           }
           isActive={editor.isActive("heading", { level: 1 })}
-          title={t("validation.editor.toolbar.heading1")}
+          title={t("articles.validation.editor.toolbar.heading1")}
         >
           <Heading1 className="size-4" />
         </ToolbarButton>
@@ -298,7 +299,7 @@ const TiptapEditor = ({
             editor.chain().focus().toggleHeading({ level: 2 }).run()
           }
           isActive={editor.isActive("heading", { level: 2 })}
-          title={t("validation.editor.toolbar.heading2")}
+          title={t("articles.validation.editor.toolbar.heading2")}
         >
           <Heading2 className="size-4" />
         </ToolbarButton>
@@ -308,7 +309,7 @@ const TiptapEditor = ({
             editor.chain().focus().toggleHeading({ level: 3 }).run()
           }
           isActive={editor.isActive("heading", { level: 3 })}
-          title={t("validation.editor.toolbar.heading3")}
+          title={t("articles.validation.editor.toolbar.heading3")}
         >
           <Heading3 className="size-4" />
         </ToolbarButton>
@@ -316,7 +317,7 @@ const TiptapEditor = ({
         <ToolbarButton
           onClick={() => editor.chain().focus().setParagraph().run()}
           isActive={editor.isActive("paragraph")}
-          title={t("validation.editor.toolbar.paragraph")}
+          title={t("articles.validation.editor.toolbar.paragraph")}
         >
           <Type className="size-4" />
         </ToolbarButton>
@@ -326,7 +327,7 @@ const TiptapEditor = ({
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           isActive={editor.isActive("bulletList")}
-          title={t("validation.editor.toolbar.bulletList")}
+          title={t("articles.validation.editor.toolbar.bulletList")}
         >
           <List className="size-4" />
         </ToolbarButton>
@@ -334,7 +335,7 @@ const TiptapEditor = ({
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           isActive={editor.isActive("orderedList")}
-          title={t("validation.editor.toolbar.orderedList")}
+          title={t("articles.validation.editor.toolbar.orderedList")}
         >
           <ListOrdered className="size-4" />
         </ToolbarButton>
@@ -342,7 +343,7 @@ const TiptapEditor = ({
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           isActive={editor.isActive("blockquote")}
-          title={t("validation.editor.toolbar.blockquote")}
+          title={t("articles.validation.editor.toolbar.blockquote")}
         >
           <Quote className="size-4" />
         </ToolbarButton>
@@ -358,7 +359,7 @@ const TiptapEditor = ({
             }
           }}
           isActive={editor.isActive("link")}
-          title={t("validation.editor.toolbar.link")}
+          title={t("articles.validation.editor.toolbar.link")}
         >
           <LinkIcon className="size-4" />
         </ToolbarButton>
@@ -366,7 +367,7 @@ const TiptapEditor = ({
         {editor.isActive("link") && (
           <ToolbarButton
             onClick={handleLinkRemove}
-            title={t("validation.editor.link.remove")}
+            title={t("articles.validation.editor.link.remove")}
           >
             <span className="text-xs">✕</span>
           </ToolbarButton>
@@ -374,7 +375,7 @@ const TiptapEditor = ({
 
         <ToolbarButton
           onClick={handleImageInsert}
-          title={t("validation.editor.toolbar.image")}
+          title={t("articles.validation.editor.toolbar.image")}
         >
           <ImageIcon className="size-4" />
         </ToolbarButton>
@@ -383,14 +384,14 @@ const TiptapEditor = ({
 
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}
-          title={t("validation.editor.toolbar.undo")}
+          title={t("articles.validation.editor.toolbar.undo")}
         >
           <Undo className="size-4" />
         </ToolbarButton>
 
         <ToolbarButton
           onClick={() => editor.chain().focus().redo().run()}
-          title={t("validation.editor.toolbar.redo")}
+          title={t("articles.validation.editor.toolbar.redo")}
         >
           <Redo className="size-4" />
         </ToolbarButton>

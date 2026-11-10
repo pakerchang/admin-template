@@ -1,0 +1,98 @@
+{
+  "common": {
+    "insert": "插入",
+    "createArticle": "創建文章",
+    "noData": "暫無資料"
+  },
+  "validation": {
+    "content": {
+      "required": "請輸入文章內容"
+    },
+    "editor": {
+      "toolbar": {
+        "bold": "粗體",
+        "italic": "斜體",
+        "heading1": "標題 1",
+        "heading2": "標題 2",
+        "heading3": "標題 3",
+        "paragraph": "段落",
+        "bulletList": "無序列表",
+        "orderedList": "有序列表",
+        "blockquote": "引用",
+        "link": "插入鏈接",
+        "image": "插入圖片",
+        "undo": "復原",
+        "redo": "重做"
+      },
+      "placeholder": "開始撰寫文章內容...",
+      "link": {
+        "url": "鏈接地址",
+        "text": "鏈接文字",
+        "urlPlaceholder": "請輸入鏈接地址",
+        "textPlaceholder": "請輸入鏈接文字",
+        "edit": "編輯鏈接",
+        "remove": "移除鏈接",
+        "invalid": "請輸入有效的鏈接地址",
+        "helpText": "如果留空，將使用選中的文字或鏈接地址"
+      },
+      "image": {
+        "upload": "上傳圖片",
+        "url": "圖片地址",
+        "alt": "圖片描述",
+        "urlPlaceholder": "請輸入圖片地址",
+        "altPlaceholder": "請輸入圖片描述",
+        "uploadText": "點擊上傳或拖拽圖片到此處",
+        "uploadHint": "PNG, JPG, GIF (最大 10MB)",
+        "uploaded": "已上傳的圖片",
+        "use": "使用"
+      }
+    }
+  },
+  "action": {
+    "remove": "移除"
+  },
+  "nav": {
+    "title": "文章管理"
+  },
+  "basicInfo": "基本資訊",
+  "title": "標題",
+  "titlePlaceholder": "請輸入文章標題",
+  "description": "摘要",
+  "descriptionPlaceholder": "請輸入文章摘要（可選）",
+  "coverImage": "封面圖片",
+  "tags": "標籤",
+  "tagsPlaceholder": "請輸入標籤",
+  "tagInput": "標籤 {{index}}",
+  "currentTags": "當前標籤",
+  "content": "文章內容",
+  "contentPlaceholder": "開始撰寫文章內容...",
+  "table": {
+    "headers": {
+      "articleId": "文章編號",
+      "title": "文章標題",
+      "description": "文章摘要",
+      "tags": "文章標籤",
+      "author": "作者",
+      "actions": "操作",
+      "publishedAt": "發布時間"
+    }
+  },
+  "toast": {
+    "get": {
+      "error": "獲取文章失敗",
+      "listError": "獲取文章列表失敗"
+    },
+    "create": {
+      "success": "文章創建成功",
+      "error": "創建文章失敗"
+    },
+    "update": {
+      "success": "文章更新成功",
+      "error": "更新文章失敗"
+    },
+    "delete": {
+      "success": "文章刪除成功",
+      "error": "刪除文章失敗"
+    }
+  }
+}

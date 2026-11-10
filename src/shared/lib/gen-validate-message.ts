@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import type { TransKey } from "@/shared/i18n/types";
 import type { TFunction } from "i18next";
 
-type TFieldPath = Extract<TransKey, `pages.${string}`>;
+/** 欄位名稱的 i18n key（module 字典 key 已 scope 成 `<id>.*`，i18n-scope-migration） */
+type TFieldPath = TransKey;
 
 type TValidationMessage = {
   getRequiredMessage: (fieldPath: TFieldPath) => string;

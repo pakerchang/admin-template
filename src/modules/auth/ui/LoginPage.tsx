@@ -52,9 +52,9 @@ const LoginPage = ({
       onSubmit={handleSubmit}
       className="flex w-full max-w-sm flex-col gap-4 rounded-lg bg-background p-8 shadow-[0_0_10px_2px_rgba(168,85,247,0.8)] transition duration-300 hover:shadow-[0_0_20px_4px_rgba(192,132,252,1)]"
     >
-      <h1 className="text-2xl font-semibold">{t("login.title")}</h1>
+      <h1 className="text-2xl font-semibold">{t("auth.title")}</h1>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">{t("login.email")}</Label>
+        <Label htmlFor="email">{t("auth.email")}</Label>
         <Input
           id="email"
           name="email"
@@ -65,7 +65,7 @@ const LoginPage = ({
         />
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="password">{t("login.password")}</Label>
+        <Label htmlFor="password">{t("auth.password")}</Label>
         <Input
           id="password"
           name="password"
@@ -81,12 +81,12 @@ const LoginPage = ({
         </p>
       )}
       <Button type="submit" disabled={login.isPending}>
-        {t("login.submit")}
+        {t("auth.submit")}
       </Button>
-      <p className="text-xs text-muted-foreground">{t("login.hint")}</p>
+      <p className="text-xs text-muted-foreground">{t("auth.hint")}</p>
       {demoAccounts.length > 0 && (
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium">{t("login.demo.title")}</p>
+          <p className="text-sm font-medium">{t("auth.demo.title")}</p>
           {demoAccounts.map((account) => (
             <Button
               key={account.email}
@@ -96,10 +96,10 @@ const LoginPage = ({
               onClick={fillForm(account)}
             >
               <span className="font-medium">
-                {t(`login.demo.roles.${account.role}`)} · {account.email}
+                {t(`auth.demo.roles.${account.role}`)} · {account.email}
               </span>
               <span className="text-xs text-muted-foreground">
-                {t(`login.demo.descriptions.${account.role}`)}
+                {t(`auth.demo.descriptions.${account.role}`)}
               </span>
             </Button>
           ))}

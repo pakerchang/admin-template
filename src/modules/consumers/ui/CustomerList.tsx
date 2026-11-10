@@ -98,9 +98,11 @@ const CustomerList = () => {
       accessorKey: "user_id",
       enableHiding: true,
       meta: {
-        displayName: t("consumer.consumerId"),
+        displayName: t("consumers.consumerId"),
       },
-      header: () => <h4 className="text-center">{t("consumer.consumerId")}</h4>,
+      header: () => (
+        <h4 className="text-center">{t("consumers.consumerId")}</h4>
+      ),
       cell: ({ row }) => {
         const userId = row.getValue<string>("user_id");
         const isLongId = userId.length > 15;
@@ -131,9 +133,9 @@ const CustomerList = () => {
       id: "name",
       enableHiding: true,
       meta: {
-        displayName: t("consumer.name"),
+        displayName: t("consumers.name"),
       },
-      header: () => <h4>{t("consumer.name")}</h4>,
+      header: () => <h4>{t("consumers.name")}</h4>,
       cell: ({ row }) => {
         const firstName = row.original.first_name;
         const lastName = row.original.last_name;
@@ -145,9 +147,9 @@ const CustomerList = () => {
       accessorKey: "email",
       enableHiding: true,
       meta: {
-        displayName: t("consumer.email"),
+        displayName: t("consumers.email"),
       },
-      header: () => <h4>{t("consumer.email")}</h4>,
+      header: () => <h4>{t("consumers.email")}</h4>,
       cell: ({ row }) => {
         const email = row.getValue<string>("email");
         return <p className="text-center text-sm">{email || "-"}</p>;
@@ -157,9 +159,9 @@ const CustomerList = () => {
       accessorKey: "phone_number",
       enableHiding: true,
       meta: {
-        displayName: t("consumer.phoneNumber"),
+        displayName: t("consumers.phoneNumber"),
       },
-      header: () => <h4>{t("consumer.phoneNumber")}</h4>,
+      header: () => <h4>{t("consumers.phoneNumber")}</h4>,
       cell: ({ row }) => {
         const phoneNumber = row.getValue<string>("phone_number");
         return <p className="text-center">{phoneNumber || "-"}</p>;
@@ -170,7 +172,7 @@ const CustomerList = () => {
       enableSorting: true,
       enableHiding: true,
       meta: {
-        displayName: t("consumer.totalSpent"),
+        displayName: t("consumers.totalSpent"),
       },
       header: ({ column }) => (
         <Button
@@ -178,7 +180,7 @@ const CustomerList = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("consumer.totalSpent")}
+          {t("consumers.totalSpent")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -196,7 +198,7 @@ const CustomerList = () => {
       enableSorting: true,
       enableHiding: true,
       meta: {
-        displayName: t("consumer.orderCount"),
+        displayName: t("consumers.orderCount"),
       },
       header: ({ column }) => (
         <Button
@@ -204,7 +206,7 @@ const CustomerList = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("consumer.orderCount")}
+          {t("consumers.orderCount")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -214,7 +216,7 @@ const CustomerList = () => {
           <div className="text-center">
             {orderCount != null ? (
               <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                {orderCount} {t("consumer.orders")}
+                {orderCount} {t("consumers.orders")}
               </span>
             ) : (
               <span className="text-gray-500">-</span>
@@ -228,16 +230,16 @@ const CustomerList = () => {
       enableSorting: false,
       enableHiding: true,
       meta: {
-        displayName: t("consumer.lastOrderDate"),
+        displayName: t("consumers.lastOrderDate"),
       },
-      header: () => <h4>{t("consumer.lastOrderDate")}</h4>,
+      header: () => <h4>{t("consumers.lastOrderDate")}</h4>,
       cell: ({ row }) => {
         const date = row.getValue<string | null>("last_order_date");
         return (
           <div className="text-center text-sm">
             {date
               ? dayjs(date).format("YYYY-MM-DD HH:mm")
-              : t("consumer.noOrderRecord")}
+              : t("consumers.noOrderRecord")}
           </div>
         );
       },
@@ -247,9 +249,9 @@ const CustomerList = () => {
       enableSorting: false,
       enableHiding: true,
       meta: {
-        displayName: t("consumer.registrationDate"),
+        displayName: t("consumers.registrationDate"),
       },
-      header: () => <h4>{t("consumer.registrationDate")}</h4>,
+      header: () => <h4>{t("consumers.registrationDate")}</h4>,
       cell: ({ row }) => {
         const createdAt = row.getValue<string>("created_at");
         return (
@@ -264,10 +266,10 @@ const CustomerList = () => {
       enableHiding: true,
       enableSorting: false,
       meta: {
-        displayName: t("consumer.purchaseHistory"),
+        displayName: t("consumers.purchaseHistory"),
       },
       header: () => (
-        <h4 className="text-center">{t("consumer.purchaseHistory")}</h4>
+        <h4 className="text-center">{t("consumers.purchaseHistory")}</h4>
       ),
       cell: ({ row }) => {
         const consumer = row.original;
@@ -280,7 +282,7 @@ const CustomerList = () => {
               className="flex items-center gap-2"
             >
               <ShoppingBag className="size-4" />
-              {t("consumer.viewPurchaseHistory")}
+              {t("consumers.viewPurchaseHistory")}
             </Button>
           </div>
         );
@@ -296,7 +298,7 @@ const CustomerList = () => {
           <div className="flex flex-col items-center gap-4">
             <Spinner size="large" />
             <p className="text-lg text-white">
-              {t("consumer.loadingConsumerList")}
+              {t("consumers.loadingConsumerList")}
             </p>
           </div>
         </div>
@@ -311,14 +313,14 @@ const CustomerList = () => {
         <div className="mb-6 flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-white">
-              {t("consumer.consumerList")}
+              {t("consumers.consumerList")}
             </h1>
           </div>
 
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
             <Input
-              placeholder={t("consumer.searchPlaceholder")}
+              placeholder={t("consumers.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"

@@ -1,0 +1,39 @@
+{
+  "order": {
+    "agent": "Agent",
+    "email": "Email",
+    "contactInfoTitle": "Contact Information"
+  },
+  "nav": {
+    "title": "Customer Management"
+  },
+  "consumerId": "Consumer ID",
+  "name": "Name",
+  "email": "Email",
+  "phoneNumber": "Phone Number",
+  "totalSpent": "Total Spent",
+  "orderCount": "Order Count",
+  "orders": "orders",
+  "lastOrderDate": "Last Order Date",
+  "noOrderRecord": "No order record",
+  "registrationDate": "Registration Date",
+  "loadingConsumerList": "Loading consumer list...",
+  "consumerList": "Consumer List",
+  "searchPlaceholder": "Search consumer ID, name, email or phone...",
+  "purchaseHistory": "Purchase History",
+  "viewPurchaseHistory": "View History",
+  "purchaseHistoryTitle": "{{name}}'s Purchase History",
+  "loadingPurchaseHistory": "Loading purchase history...",
+  "noPurchaseHistory": "No purchase history",
+  "noOrdersFound": "This user has not purchased any products yet",
+  "noMatchingOrders": "No matching orders",
+  "noOrdersWithStatus": "This user has no orders with \"{{status}}\" status",
+  "pageInfo": "Page {{current}} of {{total}} ({{count}} records total)",
+  "filterCondition": "Filter: {{status}}",
+  "orderStatus": {
+    "all": "All",
+    "pending": "Pending",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  }
+}

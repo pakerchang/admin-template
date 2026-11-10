@@ -1,0 +1,25 @@
+{
+  "title": "Sign in",
+  "email": "Email",
+  "password": "Password",
+  "submit": "Sign in",
+  "error": "Invalid email or password",
+  "hint": "Demo account: admin@example.com / admin123",
+  "demo": {
+    "title": "Demo accounts (click to fill; password is admin123)",
+    "roles": {
+      "superadmin": "Super admin",
+      "admin": "Admin",
+      "support": "Support",
+      "partner": "Partner",
+      "premium": "Member"
+    },
+    "descriptions": {
+      "superadmin": "Full access",
+      "admin": "Read/write everything except editing users and changing roles",
+      "support": "Orders read/write, most data read-only; no products or users",
+      "partner": "Products read/write, most data read-only; no orders or users",
+      "premium": "No admin access; sees 403 after signing in"
+    }
+  }
+}

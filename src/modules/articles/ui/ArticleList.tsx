@@ -67,7 +67,7 @@ const ArticleListPage = () => {
       enableHiding: true,
       enableSorting: true,
       meta: {
-        displayName: t("table.headers.article.articleId"),
+        displayName: t("articles.table.headers.articleId"),
       },
       header: ({ column }) => (
         <Button
@@ -75,7 +75,7 @@ const ArticleListPage = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.article.articleId")}
+          {t("articles.table.headers.articleId")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -90,7 +90,7 @@ const ArticleListPage = () => {
       enableHiding: true,
       enableSorting: true,
       meta: {
-        displayName: t("table.headers.article.title"),
+        displayName: t("articles.table.headers.title"),
       },
       header: ({ column }) => (
         <Button
@@ -98,7 +98,7 @@ const ArticleListPage = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.article.title")}
+          {t("articles.table.headers.title")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -112,11 +112,11 @@ const ArticleListPage = () => {
       accessorKey: "describe",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.article.description"),
+        displayName: t("articles.table.headers.description"),
       },
       header: () => (
         <h4 className="text-center">
-          {t("table.headers.article.description")}
+          {t("articles.table.headers.description")}
         </h4>
       ),
       cell: ({ row }) => {
@@ -134,10 +134,10 @@ const ArticleListPage = () => {
       accessorKey: "tags",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.article.tags"),
+        displayName: t("articles.table.headers.tags"),
       },
       header: () => (
-        <h4 className="text-center">{t("table.headers.article.tags")}</h4>
+        <h4 className="text-center">{t("articles.table.headers.tags")}</h4>
       ),
       cell: ({ row }) => {
         const tags = row.getValue("tags") as string[];
@@ -164,7 +164,7 @@ const ArticleListPage = () => {
       enableHiding: true,
       enableSorting: true,
       meta: {
-        displayName: t("table.headers.article.author"),
+        displayName: t("articles.table.headers.author"),
       },
       header: ({ column }) => (
         <Button
@@ -172,7 +172,7 @@ const ArticleListPage = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.article.author")}
+          {t("articles.table.headers.author")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -185,7 +185,7 @@ const ArticleListPage = () => {
       enableHiding: true,
       enableSorting: true,
       meta: {
-        displayName: t("table.headers.publishedAt"),
+        displayName: t("articles.table.headers.publishedAt"),
       },
       header: ({ column }) => (
         <Button
@@ -193,7 +193,7 @@ const ArticleListPage = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.publishedAt")}
+          {t("articles.table.headers.publishedAt")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -236,10 +236,10 @@ const ArticleListPage = () => {
       id: "actions",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.article.actions"),
+        displayName: t("articles.table.headers.actions"),
       },
       header: () => (
-        <h4 className="text-center">{t("table.headers.article.actions")}</h4>
+        <h4 className="text-center">{t("articles.table.headers.actions")}</h4>
       ),
       cell: ({ row }) => {
         const id = row.original.article_id;
@@ -278,7 +278,7 @@ const ArticleListPage = () => {
               }}
             >
               <Plus className="size-4" />
-              {t("common.createArticle")}
+              {t("articles.common.createArticle")}
             </Button>
           </Guarded>
         </div>
@@ -306,7 +306,9 @@ const ArticleListPage = () => {
         </div>
       ) : (
         <div className="flex size-full items-center justify-center">
-          <p className="text-center text-black">{t("common.noData")}</p>
+          <p className="text-center text-black">
+            {t("articles.common.noData")}
+          </p>
         </div>
       )}
     </div>

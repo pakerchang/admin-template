@@ -1,4 +1,7 @@
 {
+  "nav": {
+    "title": "User Management"
+  },
   "userForm": {
     "title": "Edit User Profile",
     "firstName": "First Name",
@@ -7,5 +10,23 @@
     "phoneNumber": "Contact Number",
     "address": "Contact Address",
     "remark": "Additional Notes"
+  },
+  "table": {
+    "headers": {
+      "userId": "User ID",
+      "email": "Email",
+      "name": "Name",
+      "phoneNumber": "Phone Number",
+      "role": "Permission Group"
+    }
+  },
+  "toast": {
+    "get": {
+      "error": "Failed to get user data"
+    },
+    "update": {
+      "success": "User data updated successfully",
+      "error": "Failed to update user data"
+    }
   }
 }

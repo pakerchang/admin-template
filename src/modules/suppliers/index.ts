@@ -4,6 +4,8 @@ import { z } from "zod";
 import { defineModule } from "@/shared/module";
 import { definePermissions } from "@/shared/permission";
 
+import en from "./locales/en.json";
+import zh from "./locales/zh.json";
 import { suppliersMockHandlers } from "./mocks/handlers";
 import { suppliersRoutes } from "./model/routes";
 import SupplierListPage from "./ui/SupplierList";
@@ -20,15 +22,22 @@ declare module "@/shared/permission" {
   > {}
 }
 
+declare module "@/shared/i18n/types" {
+  interface TranslationResources {
+    suppliers: typeof zh;
+  }
+}
+
 export default defineModule({
   id: "suppliers",
   kind: "domain",
+  i18n: { en, zh },
   mockHandlers: suppliersMockHandlers,
   routes: (ctx) => suppliersRoutes(ctx, { list: SupplierListPage }),
   nav: [
     {
       id: "suppliers",
-      label: "dashboard.menu.suppliers.title",
+      label: "title",
       to: "/suppliers",
       icon: Building2,
       permission: "suppliers:read",

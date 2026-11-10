@@ -39,7 +39,7 @@ export const useCreateProduct = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.product.create.error"),
+          description: t("product.toast.create.error"),
           variant: "destructive",
         });
         return undefined;
@@ -51,7 +51,7 @@ export const useCreateProduct = () => {
       queryClient.invalidateQueries({ queryKey: ["productList"] });
       toast({
         title: t("common.success"),
-        description: t("toast.product.create.success"),
+        description: t("product.toast.create.success"),
         variant: "success",
       });
       navigate({ to: "/products" });
@@ -79,7 +79,7 @@ export const useUpdateProduct = () => {
       if (!response) {
         return toast({
           title: t("common.error"),
-          description: t("toast.product.update.error"),
+          description: t("product.toast.update.error"),
           variant: "destructive",
         });
       }
@@ -90,7 +90,7 @@ export const useUpdateProduct = () => {
       queryClient.invalidateQueries({ queryKey: ["productList"] });
       toast({
         title: t("common.success"),
-        description: t("toast.product.update.success"),
+        description: t("product.toast.update.success"),
         variant: "success",
       });
       navigate({ to: "/products" });
@@ -154,7 +154,7 @@ export const useGetProductList = (query: Partial<TProductQuery>) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.product.get.error"),
+          description: t("product.toast.get.error"),
           variant: "destructive",
         });
         return undefined;
@@ -184,7 +184,7 @@ export const useGetProduct = (product_id: string) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.product.get.error"),
+          description: t("product.toast.get.error"),
           variant: "destructive",
         });
         return undefined;
@@ -210,7 +210,7 @@ export const useDeleteProduct = () => {
       if (!response) {
         return toast({
           title: t("common.error"),
-          description: t("toast.product.delete.error"),
+          description: t("product.toast.delete.error"),
           variant: "destructive",
         });
       }
@@ -221,7 +221,7 @@ export const useDeleteProduct = () => {
       queryClient.invalidateQueries({ queryKey: ["productList"] });
       toast({
         title: t("common.success"),
-        description: t("toast.product.delete.success"),
+        description: t("product.toast.delete.success"),
         variant: "success",
       });
     },
@@ -240,7 +240,7 @@ export const useProductSchema = (mode: "create" | "edit" = "create") => {
 
   return useMemo(() => {
     const createLangSchema = (
-      fieldPath: Extract<TransKey, `pages.product.productCreate.${string}`>
+      fieldPath: Extract<TransKey, `product.productCreate.${string}`>
     ) =>
       langSchema.extend({
         zh: z.string().min(1, {
@@ -265,13 +265,13 @@ export const useProductSchema = (mode: "create" | "edit" = "create") => {
     const baseValidation = {
       product_price: z.coerce.number<number>().min(1, {
         message: getMessage.getMinNumberMessage(
-          "pages.product.productCreate.price",
+          "product.productCreate.price",
           0
         ),
       }),
       product_size: z.coerce.number<number>().min(1, {
         message: getMessage.getMinNumberMessage(
-          "pages.product.productCreate.productSize",
+          "product.productCreate.productSize",
           0
         ),
       }),
@@ -285,7 +285,7 @@ export const useProductSchema = (mode: "create" | "edit" = "create") => {
       ...baseValidation,
       product_name: z.string().nonempty({
         message: getMessage.getRequiredMessage(
-          "pages.product.productCreate.productName"
+          "product.productCreate.productName"
         ),
       }),
       product_images: z.array(imageResponseSchema).min(1, {
@@ -293,40 +293,28 @@ export const useProductSchema = (mode: "create" | "edit" = "create") => {
       }),
       product_detail: z.object({
         product_description: createLangSchema(
-          "pages.product.productCreate.productDescription"
+          "product.productCreate.productDescription"
         ),
-        short_title: createLangSchema("pages.product.productCreate.shortTitle"),
-        ingredients: createLangSchema(
-          "pages.product.productCreate.ingredients"
-        ),
-        introduction: createLangSchema(
-          "pages.product.productCreate.introduction"
-        ),
-        precautions: createLangSchema(
-          "pages.product.productCreate.precautions"
-        ),
+        short_title: createLangSchema("product.productCreate.shortTitle"),
+        ingredients: createLangSchema("product.productCreate.ingredients"),
+        introduction: createLangSchema("product.productCreate.introduction"),
+        precautions: createLangSchema("product.productCreate.precautions"),
         shelf_life: z.string().min(1, {
           message: getMessage.getRequiredMessage(
-            "pages.product.productCreate.shelfLife"
+            "product.productCreate.shelfLife"
           ),
         }),
-        origin: createLangSchema("pages.product.productCreate.origin"),
+        origin: createLangSchema("product.productCreate.origin"),
         aroma_level: z.string().min(1, {
           message: getMessage.getRequiredMessage(
-            "pages.product.productCreate.aromaLevel"
+            "product.productCreate.aromaLevel"
           ),
         }),
-        flavor: createLangSchema("pages.product.productCreate.flavor"),
-        appearance: createLangSchema("pages.product.productCreate.appearance"),
-        best_occasion: createLangSchema(
-          "pages.product.productCreate.bestOccasion"
-        ),
-        scene_matching: createLangSchema(
-          "pages.product.productCreate.sceneMatching"
-        ),
-        food_pairing: createLangSchema(
-          "pages.product.productCreate.foodPairing"
-        ),
+        flavor: createLangSchema("product.productCreate.flavor"),
+        appearance: createLangSchema("product.productCreate.appearance"),
+        best_occasion: createLangSchema("product.productCreate.bestOccasion"),
+        scene_matching: createLangSchema("product.productCreate.sceneMatching"),
+        food_pairing: createLangSchema("product.productCreate.foodPairing"),
       }),
     };
 
@@ -426,7 +414,7 @@ export const useGetAllProducts = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.product.get.error"),
+          description: t("product.toast.get.error"),
           variant: "destructive",
         });
         throw new Error("API Error");

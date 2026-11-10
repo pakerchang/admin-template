@@ -162,7 +162,7 @@ const ArticleFormPage = () => {
     if (!editorContent.trim() || editorContent === "<p></p>") {
       form.setError("content_html", {
         type: "required",
-        message: t("validation.article.content.required"),
+        message: t("articles.validation.content.required"),
       });
       return;
     }
@@ -170,9 +170,7 @@ const ArticleFormPage = () => {
     if (!formData.image_url && uploadedImages.length === 0) {
       form.setError("image_url", {
         type: "required",
-        message: validationMessage.getRequiredMessage(
-          "pages.article.coverImage"
-        ),
+        message: validationMessage.getRequiredMessage("articles.coverImage"),
       });
       return;
     }
@@ -184,9 +182,7 @@ const ArticleFormPage = () => {
     } else if (isCurrentImageRemoved) {
       form.setError("image_url", {
         type: "required",
-        message: validationMessage.getRequiredMessage(
-          "pages.article.coverImage"
-        ),
+        message: validationMessage.getRequiredMessage("articles.coverImage"),
       });
       return;
     } else {
@@ -194,9 +190,7 @@ const ArticleFormPage = () => {
       if (!finalImageUrl) {
         form.setError("image_url", {
           type: "required",
-          message: validationMessage.getRequiredMessage(
-            "pages.article.coverImage"
-          ),
+          message: validationMessage.getRequiredMessage("articles.coverImage"),
         });
         return;
       }
@@ -255,14 +249,14 @@ const ArticleFormPage = () => {
         className="flex size-full flex-col gap-4 p-4"
       >
         <Paper className="flex w-full flex-col gap-4">
-          <h3 className="text-2xl font-bold">{t("pages.article.basicInfo")}</h3>
+          <h3 className="text-2xl font-bold">{t("articles.basicInfo")}</h3>
 
           <div className="flex flex-col gap-4">
             <div>
               <TextInput
                 id="title"
-                label={t("pages.article.title")}
-                placeholder={t("pages.article.titlePlaceholder")}
+                label={t("articles.title")}
+                placeholder={t("articles.titlePlaceholder")}
                 {...form.register("title")}
               />
               {form.formState.errors.title && (
@@ -274,33 +268,33 @@ const ArticleFormPage = () => {
 
             <TextInput
               id="describe"
-              label={t("pages.article.description")}
-              placeholder={t("pages.article.descriptionPlaceholder")}
+              label={t("articles.description")}
+              placeholder={t("articles.descriptionPlaceholder")}
               {...form.register("describe")}
             />
           </div>
         </Paper>
 
         <Paper className="flex w-full flex-col gap-4">
-          <h3 className="text-lg font-semibold">{t("pages.article.tags")}</h3>
+          <h3 className="text-lg font-semibold">{t("articles.tags")}</h3>
 
           <div className="space-y-2">
             <div className="grid grid-cols-1 gap-2 lg:grid-cols-3">
               <TextInput
-                label={t("pages.article.tagInput", { index: 1 })}
-                placeholder={t("pages.article.tagsPlaceholder")}
+                label={t("articles.tagInput", { index: 1 })}
+                placeholder={t("articles.tagsPlaceholder")}
                 {...form.register("tagInputs.0")}
                 error={form.formState.errors.tagInputs?.[0]}
               />
               <TextInput
-                label={t("pages.article.tagInput", { index: 2 })}
-                placeholder={t("pages.article.tagsPlaceholder")}
+                label={t("articles.tagInput", { index: 2 })}
+                placeholder={t("articles.tagsPlaceholder")}
                 {...form.register("tagInputs.1")}
                 error={form.formState.errors.tagInputs?.[1]}
               />
               <TextInput
-                label={t("pages.article.tagInput", { index: 3 })}
-                placeholder={t("pages.article.tagsPlaceholder")}
+                label={t("articles.tagInput", { index: 3 })}
+                placeholder={t("articles.tagsPlaceholder")}
                 {...form.register("tagInputs.2")}
                 error={form.formState.errors.tagInputs?.[2]}
               />
@@ -309,7 +303,7 @@ const ArticleFormPage = () => {
             {(form.watch("tags")?.length ?? 0) > 0 && (
               <div>
                 <p className="mb-2 text-sm text-muted-foreground">
-                  {t("pages.article.currentTags")}:
+                  {t("articles.currentTags")}:
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {form.watch("tags")?.map((tag, index) => (
@@ -327,9 +321,7 @@ const ArticleFormPage = () => {
         </Paper>
 
         <Paper className="flex w-full flex-col gap-4">
-          <h3 className="text-lg font-semibold">
-            {t("pages.article.coverImage")}
-          </h3>
+          <h3 className="text-lg font-semibold">{t("articles.coverImage")}</h3>
 
           {uploadedImages.length > 0 ||
           (isEditMode && data.image_url && !isCurrentImageRemoved) ? (
@@ -368,7 +360,7 @@ const ArticleFormPage = () => {
                     );
                   }}
                   type="button"
-                  title={t("action.remove")}
+                  title={t("articles.action.remove")}
                 >
                   <Trash2 className="size-5" />
                 </Button>
@@ -389,15 +381,13 @@ const ArticleFormPage = () => {
         </Paper>
 
         <Paper className="flex w-full flex-1 flex-col gap-4">
-          <h3 className="text-lg font-semibold">
-            {t("pages.article.content")}
-          </h3>
+          <h3 className="text-lg font-semibold">{t("articles.content")}</h3>
 
           <div className="flex-1">
             <TiptapEditor
               content={data.content_html || ""}
               onChange={(content) => (editorContentRef.current = content)}
-              placeholder={t("pages.article.contentPlaceholder")}
+              placeholder={t("articles.contentPlaceholder")}
               className="h-full min-h-[400px]"
             />
             {form.formState.errors.content_html && (

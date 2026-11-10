@@ -4,6 +4,8 @@ import { z } from "zod";
 import { defineModule } from "@/shared/module";
 import { definePermissions } from "@/shared/permission";
 
+import en from "./locales/en.json";
+import zh from "./locales/zh.json";
 import { articlesMockHandlers } from "./mocks/handlers";
 import { articlesRoutes } from "./model/routes";
 import ArticleFormPage from "./ui/ArticleForm";
@@ -21,16 +23,23 @@ declare module "@/shared/permission" {
   > {}
 }
 
+declare module "@/shared/i18n/types" {
+  interface TranslationResources {
+    articles: typeof zh;
+  }
+}
+
 export default defineModule({
   id: "articles",
   kind: "domain",
+  i18n: { en, zh },
   mockHandlers: articlesMockHandlers,
   routes: (ctx) =>
     articlesRoutes(ctx, { list: ArticleListPage, form: ArticleFormPage }),
   nav: [
     {
       id: "articles",
-      label: "dashboard.menu.articles.title",
+      label: "title",
       to: "/articles",
       icon: FileText,
       permission: "articles:read",
