@@ -51,7 +51,7 @@ src/
 | M4 | 權限四強制點 + 內容區 403 | 完成（#11；角色 grants 矩陣 owner 2026-11-10 覆核定案（OD-GRANT-1），寫入入口權限宣告見 `docs/specs/f1-permission-declarations.spec.md`） |
 | M5 | kernel / shared 搬遷 + boundaries lint | 完成（#11） |
 | M6 | module 內嵌搬遷（pages / schemas / seed / i18n） | 完成（#11） |
-| M7 | orval 契約層（單一 `openapi.yaml`） | 完成（#11；AC-7 瀏覽器驗收 agent 已驗（`/users` 重新整理 regression 已由 #17 修正），owner 親驗 pending） |
+| M7 | orval 契約層（單一 `openapi.yaml`） | 完成（#11；AC-7 瀏覽器驗收 agent 驗為部分通過（當時的 `/users` 重新整理 regression 後由 #17、banner 刪除／文章新增缺陷後由 #19 修正；空白新增商品未驗），owner 親驗 pending） |
 | M8 | D1 / D4 驗收自動化與收尾 | 完成（#11；AC-4 瀏覽器驗收 agent 已驗，owner 親驗 pending） |
 
 各 milestone 的證據、review 結果與已知問題 / follow-up：`docs/specs/refactor/README.md`（#12）。
