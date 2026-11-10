@@ -987,7 +987,7 @@ export default [
   - 驗證：同上
 - [x] AC-5 `[cmd]`: operation 表 fail-closed（R13 / OQ-14 / R21）：`routes` 有 operationId 但 `permissions` 無對應 key → throw 且訊息含 operationId 與 `"public"` 提示；`permissions` 有孤兒 key → throw；非 public permission 的 resource 未被已安裝 module 宣告 → throw；**負例 `orders:typo`：已安裝 module 宣告 `resources: { orders: ["read","update","export"] }`，operation 宣告 `orders:typo` → throw，訊息含 operationId 與 `orders:typo`**（resource 存在但 action 不在目錄也必須失敗）；值為 `"public"` 者通過；`orders:read` 通過（證據：src/app/kernel/__tests__/build.test.ts）
   - 驗證：`pnpm exec vitest run src/app/kernel`
-- [ ] AC-6 `[cmd]`: 既有行為不變（既有檔案無任何改動，新碼未被 import）
+- [ ] AC-6 `[cmd]`: 既有行為不變（既有檔案無任何改動，新碼未被 import）（已被取代：M3–M7 依計畫改寫並刪除既有 `src/pages`、`src/services`、`src/components`，對 `fcc673a` 的 diff 必非空；現行涵蓋：無，該不變式只在 M1 PR #8（`46d13b6`）當下成立）
   - 驗證：`pnpm build && pnpm exec vitest run && git diff --quiet fcc673a -- src ':!src/shared' ':!src/app'`
 
 **Pseudo code**
@@ -1109,11 +1109,11 @@ expected: exit 0；`src/shared/permission`、`src/app/kernel` 測試檔出現在
 **User Story**：As a maintainer, I want the mock backend served by MSW at the network layer, so that the client code is identical for mock and real backends and module mock handlers can be plain `HttpHandler[]`.
 
 **Acceptance Criteria**
-- [ ] AC-1 `[cmd]`: `mockFetch` 無任何引用；`apiFetch` 呼叫的是 `fetch`
+- [ ] AC-1 `[cmd]`: `mockFetch` 無任何引用；`apiFetch` 呼叫的是 `fetch`（已被取代：M7 刪除 `src/services/api-client.ts` 與 `apiFetch`，改由 `src/shared/api/fetcher.ts` 呼叫 `fetch`；現行涵蓋：`src/shared/api/__tests__/fetcher.test.ts`）
   - 驗證：`! grep -rn "mockFetch" src && grep -n "await fetch(" src/services/api-client.ts`
-- [ ] AC-2 `[cmd]`: 現行 `handlers` 表的每一個 `METHOD path` 都在 adapter 產出的 `HttpHandler[]` 中（快照測試列出全部）
+- [ ] AC-2 `[cmd]`: 現行 `handlers` 表的每一個 `METHOD path` 都在 adapter 產出的 `HttpHandler[]` 中（快照測試列出全部）（已被取代：M7 刪除 legacy adapter，`handlers` 表改為 orval 產物 + 各 module `mocks/handlers.ts`；現行涵蓋：無，該不變式只在 M2 PR #9（`1ffba81`）當下成立）
   - 驗證：`pnpm exec vitest run src/app/mock`
-- [ ] AC-3 `[cmd]`: `api-client.test.ts` 改走 `setupServer` 後原有案例全綠（登入、帶 token、404 fallback）；`server.listen` 用 msw 3 的 `onUnhandledFrame`（`onUnhandledRequest` 在 msw 3 已改名，PoC a1 實測 TS2353）
+- [ ] AC-3 `[cmd]`: `api-client.test.ts` 改走 `setupServer` 後原有案例全綠（登入、帶 token、404 fallback）；`server.listen` 用 msw 3 的 `onUnhandledFrame`（`onUnhandledRequest` 在 msw 3 已改名，PoC a1 實測 TS2353）（已被取代：M7 移除 `src/services`，`api-client.test.ts` 案例移至 fetcher 測試；`onUnhandledFrame` 仍用於 `src/test/setup.ts:22`、`src/app/mock/browser.ts:6`；現行涵蓋：`src/shared/api/__tests__/fetcher.test.ts`、`src/app/mock/__tests__/mock-handlers.test.ts`）
   - 驗證：`pnpm exec vitest run src/services`
 - [x] AC-4 `[cmd]`: `public/mockServiceWorker.js` 存在且進 git（證據：git ls-files --error-unmatch public/mockServiceWorker.js）
   - 驗證：`git ls-files --error-unmatch public/mockServiceWorker.js`
@@ -1146,9 +1146,9 @@ expected: exit 0
 - [x] AC-4 `[cmd]`: 以 fixture `.override("users.list", Stub)` 建 app，`/users` 渲染 Stub 而非預設頁（`users.list` 為該 route 的 routeId，R19；格式依 R23）（證據：src/app/__tests__/app-wiring.test.tsx）
   - 驗證：`pnpm exec vitest run src/app`
 - 註：M3 尚無正式 operation 表。依 R22，guard 在 `apiBaseUrl` 內對不到 route 一律 404，傳空表會讓所有 API 變 404，因此 M3 由 `app/mock/legacy-adapter.ts` 從現行 `handlers` 表導出 `legacyOperations()`：每個 `METHOD path` 一條 route、permission 一律 `"public"`（**R28 已裁**：M3 過渡期全 public，明確 public，非 fall-through），`build()` 1.5 通過；guard 行為 = 表內放行、表外 404，與現行 `mockFetch` 的 404 fallback（`handlers.ts:209-214`）一致。mock 模式的 `VITE_API_BASE_URL` 同時改為專用絕對 origin（R24，§6.5），API 路徑不變。M4 換成手寫 `app/operations.gen.ts`，自 M4 起 fail-closed（R28）。
-- [ ] AC-6 `[cmd]`: M3 的 guard 掛載行為不變：`apiBaseUrl` 外的 request 放行、表內 operation 放行、表外 path 回 404
+- [ ] AC-6 `[cmd]`: M3 的 guard 掛載行為不變：`apiBaseUrl` 外的 request 放行、表內 operation 放行、表外 path 回 404（已被取代：M4 起 fail-closed（R28），表內 operation 需有 grant 才放行，guard 移至 `src/shared/api/mock/permission-guard.ts`；現行涵蓋：`src/shared/api/mock/__tests__/permission-guard.test.ts`、`src/app/mock/__tests__/mock-handlers.test.ts`）
   - 驗證：`pnpm exec vitest run src/app/mock`
-- [ ] AC-7 `[cmd]`（R24 負例）: mock 模式下 `apiBaseUrl` 未設定、為相對路徑、或與 app 同源（`new URL(apiBaseUrl).origin === location.origin`，含同源根目錄 `location.origin + "/"` 與同源非根路徑 `location.origin + "/api"` 兩個負例）時 `startMockWorker` throw；設為專用絕對 origin 時正常啟動，且 legacy 表的 route 涵蓋 `/api`、`/user`、`/users`、`/admin` 四個前綴（路徑未改）
+- [x] AC-7 `[cmd]`（R24 負例）: mock 模式下 `apiBaseUrl` 未設定、為相對路徑、或與 app 同源（`new URL(apiBaseUrl).origin === location.origin`，含同源根目錄 `location.origin + "/"` 與同源非根路徑 `location.origin + "/api"` 兩個負例）時 `startMockWorker` throw；設為專用絕對 origin 時正常啟動，且 legacy 表的 route 涵蓋 `/api`、`/user`、`/users`、`/admin` 四個前綴（路徑未改）（legacy 表已由 `src/app/operations.gen.ts` 取代（M7）；證據：`src/app/mock/__tests__/start-worker.test.ts`、`mock-handlers.test.ts`）
   - 驗證：`pnpm exec vitest run src/app/mock`
 - [ ] AC-5 `[manual]`: `pnpm dev` 登入後 sidebar 項目、順序、各頁 CRUD 與重構前相同；語系切換正常
 
