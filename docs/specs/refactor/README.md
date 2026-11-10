@@ -10,7 +10,7 @@
 
 | 檔名 | 主題 | 狀態 | 證據 |
 |---|---|---|---|
-| `fsd-module-architecture.m3-revision.spec.md` | Microkernel + Modular Monolith 目標架構（M0–M8），含 M3 W1 獲准修訂的最新版 | M0–M8 全部完成（M8 已併入 `refactor/integration`，tip `343a449`）；待 main 開整體 PR | 見下方 milestone 表 |
+| `fsd-module-architecture.m3-revision.spec.md` | Microkernel + Modular Monolith 目標架構（M0–M8），含 M3 W1 獲准修訂的最新版 | M0–M8 全部完成；收尾 spec 文字同步（`a1ba484`，只改 spec md 與 CLAUDE.md，M4–M8 的「spec 文字差異待 M8 同步」已寫回 integration 的 `docs/specs/fsd-module-architecture.spec.md`）已併入，`refactor/integration` 凍結於 tip `a1ba484`，待 main 開整體 PR | 見下方 milestone 表 |
 
 > master 上的 `docs/specs/fsd-module-architecture.spec.md`（#6 合入）為修訂前版本，不在本目錄更動；本目錄版本取自 `feat/m3-module-wiring:docs/specs/fsd-module-architecture.spec.md`。
 
@@ -63,6 +63,7 @@
 | M8 | override 測試以深 import 取 orders hook（orders `index.ts` 未公開 headless hook），未驗「只用 module index 公開 API 換頁」；AC-4 自動佐證用 fixture shell 與注入認證，未涵蓋實際登入與 default shell sidebar | arch chain `reviews/arch-m8-codex-verdict.md` I |
 | M8 | core-only 畫面殘留 domain 字串（靜態檢視）：en/zh 字典 domain key、`use-breadcrumb.ts` 硬編 case、`table-visibility.ts` 的 `ORDERS_TABLE` 等 storage key、`core-handlers.ts` 註解 | arch chain `reviews/m8-impl-report.md` |
 | M8 | spec 文字差異待同步：AC-4「sidebar 只有 users / team-members」實際只有 team-members（users 本無 nav）；§8.2「漏步驟 2 但跑步驟 4 → tsc 報錯」實測 tsc 不報、由 vitest `build()` 1.5.3 擋；§4.4 覆寫頁「只用 index 公開 API」與現況不符 | arch chain `reviews/m8-impl-report.md`「spec 差異」 |
+| 收尾 | spec 同步只處理差異清單：§4.4 範例 `ordersRoutes.build(ctx, …)`（實作為 `ordersRoutes(ctx, …)`）未改；M1–M3 AC checkbox 未更新；spec md 原本即未通過 prettier --check（未整檔重排） | arch chain `reviews/m8-spec-sync-report.md` |
 | M7a | pnpm-lock 中既有 `unplugin@3.7.0` 的 optional `esbuild` 隨新增 orval 從 0.25.12 解析為 0.28.2（`package.json` 既有版本未變；無故障證據） | api chain `reviews/api-m7a-codex-verdict.md` info 1 |
 | M7a | extract 輸出與現行手寫 `src/app/operations.gen.ts`（`crud()` helper）不逐字相同，M7a 只做資料比對、未覆蓋；產物直接放進 src 後的 eslint 由 M7b `gen:api` 實際驗證 | api chain m7a-impl 交付報告 |
 | M7a | `scripts/**` 與 `orval.config.ts` 不在 `pnpm build` 的 tsc 範圍，也不在 `pnpm lint` 範圍（只用暫時 tsconfig 檢查過一次） | api chain m7a-impl 交付報告 |
