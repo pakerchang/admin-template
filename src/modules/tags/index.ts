@@ -1,10 +1,24 @@
 import { Tags } from "lucide-react";
+import { z } from "zod";
 
 import { defineModule } from "@/shared/module";
+import { definePermissions } from "@/shared/permission";
 
 import { tagsMockHandlers } from "./mocks/handlers";
 import { tagsRoutes } from "./model/routes";
 import TagListPage from "./ui/TagList";
+
+const tagsPermissions = definePermissions({
+  tags: z.enum(["read", "create", "update", "delete"]),
+});
+
+declare module "@/shared/permission" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface TPermissionRegistry extends Record<
+    z.infer<typeof tagsPermissions.schema>,
+    true
+  > {}
+}
 
 export default defineModule({
   id: "tags",
@@ -22,7 +36,7 @@ export default defineModule({
     },
   ],
   permissions: {
-    resources: { tags: ["read", "create", "update", "delete"] },
+    ...tagsPermissions,
     mockGrants: {
       admin: ["tags:*"],
       support: ["tags:read"],

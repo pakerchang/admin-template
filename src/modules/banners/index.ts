@@ -1,11 +1,25 @@
 import { Images } from "lucide-react";
+import { z } from "zod";
 
 import { defineModule } from "@/shared/module";
+import { definePermissions } from "@/shared/permission";
 
 import { bannersMockHandlers } from "./mocks/handlers";
 import { bannersRoutes } from "./model/routes";
 import BannerFormPage from "./ui/BannerForm";
 import BannerListPage from "./ui/BannerList";
+
+const bannersPermissions = definePermissions({
+  banners: z.enum(["read", "create", "update", "delete"]),
+});
+
+declare module "@/shared/permission" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface TPermissionRegistry extends Record<
+    z.infer<typeof bannersPermissions.schema>,
+    true
+  > {}
+}
 
 export default defineModule({
   id: "banners",
@@ -24,7 +38,7 @@ export default defineModule({
     },
   ],
   permissions: {
-    resources: { banners: ["read", "create", "update", "delete"] },
+    ...bannersPermissions,
     mockGrants: {
       admin: ["banners:*"],
       support: ["banners:read"],

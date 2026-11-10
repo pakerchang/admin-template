@@ -5,7 +5,7 @@ import { GrantsContext } from "@/shared/permission";
 import DataTable from "@/shared/ui/data-table/data-table";
 import EditActions from "@/shared/ui/edit-actions";
 
-import type { TGrant } from "@/shared/permission";
+import type { TGrant, TPermission } from "@/shared/permission";
 import type { TRowAction } from "@/shared/ui/data-table/row-actions";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { ReactNode } from "react";
@@ -14,13 +14,17 @@ type TRow = { id: string };
 const rows: TRow[] = [{ id: "r1" }];
 const columns: ColumnDef<TRow>[] = [{ accessorKey: "id", header: "id" }];
 
-const withGrants = (grants: TGrant[], ui: ReactNode) =>
+/** typed-contracts T1：fixture 刻意含 registry 外 / core-only 不存在的權限字串 → 以 string 宣告、在注入點 cast（執行期行為不變） */
+const perm = (p: string) => p as TPermission;
+const withGrants = (grants: string[], ui: ReactNode) =>
   render(
-    <GrantsContext.Provider value={() => grants}>{ui}</GrantsContext.Provider>
+    <GrantsContext.Provider value={() => grants as TGrant[]}>
+      {ui}
+    </GrantsContext.Provider>
   );
 
 const onEdit = vi.fn();
-const actions: TRowAction<TRow>[] = [
+const actions = [
   { id: "edit", label: "edit", permission: "users:update", onSelect: onEdit },
   {
     id: "role",
@@ -37,13 +41,13 @@ const actions: TRowAction<TRow>[] = [
   },
 ];
 
-const table = (grants: TGrant[]) =>
+const table = (grants: string[]) =>
   withGrants(
     grants,
     <DataTable
       data={rows}
       columns={columns}
-      rowActions={actions}
+      rowActions={actions as TRowAction<TRow>[]}
       rowActionsHeader="actions"
     />
   );
@@ -78,9 +82,9 @@ describe("DataTable rowActions (AC-4, §6.4)", () => {
 describe("EditActions permission objects (§6.4)", () => {
   const ui = (
     <EditActions
-      onEdit={{ handler: vi.fn(), permission: "orders:update" }}
-      onView={{ handler: vi.fn(), permission: "orders:read" }}
-      onDelete={{ handler: vi.fn(), permission: "orders:delete" }}
+      onEdit={{ handler: vi.fn(), permission: perm("orders:update") }}
+      onView={{ handler: vi.fn(), permission: perm("orders:read") }}
+      onDelete={{ handler: vi.fn(), permission: perm("orders:delete") }}
     />
   );
 

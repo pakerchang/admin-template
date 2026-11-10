@@ -28,14 +28,36 @@ description: 依 docs/specs/fsd-module-architecture.spec.md 宣告或修改權�
    - 格式需符合 `^[a-z][a-z0-9-]*:[a-z][a-z0-9-]*$`（§4.5 extract 列）。
    - wildcard（`*`、`orders:*`）**只**出現在 grant 資料；`x-permission` 與元件宣告不得用 wildcard（§4.3 驗證 1.5.3、§6.1）。
 
-2. **在 module 宣告權限目錄**（§0.5 R21、§6.1）
+2. **在 module 宣告權限目錄**（§0.5 R21、§6.1；型別化見 `docs/specs/typed-contracts-zod.spec.md` T1）
    ```ts
-   permissions: {
-     resources: { orders: ["read", "update", "export"] },   // 含非 API 操作（orders:export）
-     mockGrants: { support: ["orders:read"] },              // 角色預設 grant，只給 mock 矩陣用
+   import { z } from "zod";
+   import { definePermissions } from "@/shared/permission";
+
+   // Zod 目錄是單一來源：同一物件推出 TPermission（registry）、runtime schema 與 build() 用的 resources
+   const ordersPermissions = definePermissions({
+     orders: z.enum(["read", "update", "export"]),          // 含非 API 操作（orders:export）
+   });
+
+   declare module "@/shared/permission" {
+     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+     interface TPermissionRegistry
+       extends Record<z.infer<typeof ordersPermissions.schema>, true> {}
    }
+
+   export default defineModule({
+     // …
+     permissions: {
+       ...ordersPermissions,                                 // catalog + resources + schema，不另寫 resources
+       mockGrants: { support: ["orders:read"] },             // 角色預設 grant，只給 mock 矩陣用
+     },
+   });
    ```
-   - 每個非 public 的 operation permission、每個 nav `permission` 都必須能在這裡找到**完整的** `resource:action`；只有 resource 對、action 不在陣列（例 `orders:typo`）→ `build()` throw（§4.3 驗證 1.4、1.5.3）。
+   - 宣告與 augment 放在 module 自己的 `index.ts`：刪 module 目錄時權限一併從 `TPermission` 消失，殘留引用 `tsc` 報錯。
+   - route / nav / `rowActions` / `EditActions` / `FormSubmit` / `Guarded` / `mockGrants` / `coreGrants` 的權限字串都由 registry 收窄：有 IDE 補全，寫錯 `tsc` 失敗。
+   - `mockGrants` / `coreGrants` 的 key 只能是 `coreRoles`（`src/app/mock/permission-matrix.ts`，`TRoleRegistry`）；新增角色改 `coreRoles`，module 不得自創角色。
+   - registry 反映「檔案在 program 內」而非「已 `.use()`」，所以 `build()` 執行期比對仍保留：每個非 public 的 operation permission、每個 nav `permission` 都必須能在已安裝 module 的目錄找到**完整的** `resource:action`，否則 `build()` throw（§4.3 驗證 1.4、1.5.3）。
+   - `session.grants` 進前端時（`setAuth` 寫入前、`getAuth()` 讀出後）以已 `.use()` module 組出的 grant schema 逐筆 `safeParse`，不合法者丟棄；schema 由 `build()` 注入，測試要先 `build()` 再 `setAuth`。
+   - 測試要刻意用目錄外的字串（測 `build()` throw、`can()` 負向）時，以 `string` 宣告再於注入點 cast（`p as TPermission`），不要放寬 `TPermission`。
    - core 角色與 grant（`app:access` 等）在 `src/app/mock/permission-matrix.ts`，不在 module（§6.1）。
    - ABAC 條件（`conditions`）不在 M1–M8 範圍，不要加（§0.4 R16、§6A）。
 

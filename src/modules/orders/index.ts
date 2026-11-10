@@ -1,11 +1,25 @@
 import { Receipt } from "lucide-react";
+import { z } from "zod";
 
 import { defineModule } from "@/shared/module";
+import { definePermissions } from "@/shared/permission";
 
 import { ordersMockHandlers } from "./mocks/handlers";
 import { ordersRoutes } from "./model/routes";
 import OrderDetailsPage from "./ui/order-details";
 import OrderListPage from "./ui/OrderList";
+
+const ordersPermissions = definePermissions({
+  orders: z.enum(["read", "update"]),
+});
+
+declare module "@/shared/permission" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface TPermissionRegistry extends Record<
+    z.infer<typeof ordersPermissions.schema>,
+    true
+  > {}
+}
 
 export default defineModule({
   id: "orders",
@@ -32,7 +46,7 @@ export default defineModule({
     },
   ],
   permissions: {
-    resources: { orders: ["read", "update"] },
+    ...ordersPermissions,
     mockGrants: { admin: ["orders:*"], support: ["orders:*"] },
   },
 });

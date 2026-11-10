@@ -46,6 +46,8 @@ GREPPED=$(grep -lE "@/modules/($ALT)([\"'/]|$)|[\"'\`]($ALT)\.[A-Za-z]" $TESTS |
 FULL_INSTALL_TESTS="
 src/app/__tests__/permission-structure.test.ts
 src/app/__tests__/router-matching.test.ts
+src/app/__tests__/write-entry-permissions.test.tsx
+src/app/kernel/__tests__/grant-boundary.test.ts
 src/app/kernel/__tests__/operations-yaml.test.ts
 src/app/mock/__tests__/mock-handlers.test.ts
 src/app/router/__tests__/forbidden-boundary.test.tsx

@@ -8,7 +8,8 @@ import type { TNavItem } from "@/shared/module";
 import type { TGrant } from "@/shared/permission";
 import type { ReactNode } from "react";
 
-const nav: TNavItem[] = [
+/** typed-contracts T1：fixture 刻意含 registry 外 / core-only 不存在的權限字串 → 以 string 宣告、在注入點 cast（執行期行為不變） */
+const nav = [
   { id: "users", label: "users.nav", to: "/users", permission: "users:read" },
   {
     id: "orders",
@@ -46,12 +47,14 @@ const nav: TNavItem[] = [
   },
 ];
 
-const visible = (grants: TGrant[], provideNav = true) =>
+const visible = (grants: string[], provideNav = true) =>
   renderHook(useVisibleNav, {
     wrapper: ({ children }: { children: ReactNode }) => (
-      <GrantsContext.Provider value={() => grants}>
+      <GrantsContext.Provider value={() => grants as TGrant[]}>
         {provideNav ? (
-          <NavContext.Provider value={nav}>{children}</NavContext.Provider>
+          <NavContext.Provider value={nav as TNavItem[]}>
+            {children}
+          </NavContext.Provider>
         ) : (
           children
         )}

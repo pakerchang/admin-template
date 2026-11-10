@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { createCore } from "@/app/core";
 import { createApp } from "@/app/kernel/create-app";
@@ -7,7 +7,7 @@ import { operations } from "@/app/operations.gen";
 import { apiBaseUrl } from "@/shared/api/fetcher";
 import { defaultShell } from "@/shells/default";
 
-import type { TOperationTable } from "@/shared/permission";
+import type { TOperationTable, TPermission } from "@/shared/permission";
 
 const appWith = (ops: TOperationTable) =>
   installModules(
@@ -54,5 +54,23 @@ describe("generated app/operations.gen.ts (AC-3, R13 / R21 fail-closed)", () => 
         .filter(([, p]) => p === "public")
         .map(([id]) => id)
     ).toEqual(["login"]);
+  });
+});
+
+describe("operations.gen.ts permission values are typed (T1 AC-3)", () => {
+  type TOperationPermission = TOperationTable["permissions"][string];
+
+  it('values narrow to TPermission | "public"', () => {
+    expectTypeOf<TOperationPermission>().toEqualTypeOf<
+      TPermission | "public"
+    >();
+    expectTypeOf(operations).toExtend<TOperationTable>();
+    // users 是 generic module（core-only 仍在），故用 users 而非 domain 權限
+    const ok: TOperationPermission = "users:read";
+    // @ts-expect-error resource:action not in the registry
+    const typo: TOperationPermission = "users:raed";
+    // @ts-expect-error resource not in the registry
+    const resource: TOperationPermission = "user:read";
+    expect([ok, typo, resource]).toHaveLength(3);
   });
 });

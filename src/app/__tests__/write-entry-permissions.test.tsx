@@ -70,7 +70,11 @@ const renderAt = async (
 const WAIT = { timeout: 15_000 };
 const TEST_TIMEOUT = 30_000;
 
-const PRODUCT_READ_ONLY: TGrant[] = ["app:access", "product:read"];
+// typed-contracts T1：domain 權限在 core-only 不在 registry → 以 string 宣告再 cast（執行期行為不變）
+const PRODUCT_READ_ONLY = [
+  "app:access",
+  "product:read",
+] as string[] as TGrant[];
 
 const btn = (name: string) => screen.queryAllByRole("button", { name });
 

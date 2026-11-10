@@ -1,10 +1,24 @@
 import { Building2 } from "lucide-react";
+import { z } from "zod";
 
 import { defineModule } from "@/shared/module";
+import { definePermissions } from "@/shared/permission";
 
 import { suppliersMockHandlers } from "./mocks/handlers";
 import { suppliersRoutes } from "./model/routes";
 import SupplierListPage from "./ui/SupplierList";
+
+const suppliersPermissions = definePermissions({
+  suppliers: z.enum(["read", "create", "update", "delete"]),
+});
+
+declare module "@/shared/permission" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface TPermissionRegistry extends Record<
+    z.infer<typeof suppliersPermissions.schema>,
+    true
+  > {}
+}
 
 export default defineModule({
   id: "suppliers",
@@ -22,7 +36,7 @@ export default defineModule({
     },
   ],
   permissions: {
-    resources: { suppliers: ["read", "create", "update", "delete"] },
+    ...suppliersPermissions,
     mockGrants: {
       admin: ["suppliers:*"],
       support: ["suppliers:read"],
