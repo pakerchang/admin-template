@@ -76,6 +76,7 @@
 | M7b | AC-7 瀏覽器 `setupWorker` 下 orval handler 與 hooks 未實測（只在 node `setupServer` 驗過，對應 K6 / K8）；codex 唯讀 sandbox 下 vitest 因 EPERM 未執行，測試數由實作棒、lead 與併入棒三方重跑佐證 | api chain `reviews/m7b-impl-report.md`、`reviews/api-m7b-codex-verdict.md` |
 | M7b | orval 對空字串 / null query 的序列化與舊 helper 不同，現行 hook 的參數整理下未見可觸發問題 | api chain `reviews/api-m7b-codex-verdict.md` |
 | M7b | **regression**：module handler 為萬用 origin（`"*/users"`），mock 模式重新整理 `/users` 拿到 mock JSON 且繞過 guard。修正：kernel origin 圍欄，branch `fix/msw-origin-anchor`；瀏覽器重新整理驗收待 owner | `docs/specs/msw-origin-anchor.spec.md`；s1 瀏覽器驗收 F1 |
+| 全域（owner 2026-11-10 新需求） | **型別宣告改以 Zod 為單一來源**。目標：更好的 type suggest 與型別推導，方便開發。重點在 permission：目前 `` TPermission = `${string}:${string}` ``（`src/shared/permission/types.ts:2`），`TModulePermissions.resources` 為 `Record<string, readonly string[]>`（同檔 :24），route `permission`、`rowActions` / `EditActions` / `FormSubmit` 的 `permission`、`mockGrants`、`openapi.yaml` 的 `x-permission` 全是字串模板，寫錯（例如 `tag:read`、`tags:raed`）型別不會擋，只有 `x-permission`（`src/app/kernel/build.ts:166`）與 nav `permission`（同檔 :138）會在 `build()` 執行期 throw，其餘 UI 端寫錯則靜默變成永遠無權限。要建立 resource × action 的列舉矩陣（例如各 module 以 `z.enum` 或 `as const` 宣告 `resources`，推導出 `TPermission` union），讓 IDE 自動補全並在編譯期糾錯。待設計：module 可拔除，全域 union 由 kernel 組裝型別或由 `pnpm gen:api` codegen 產出；與現行 `defineModule({ permissions.resources })` 的關係；schema 以外其他型別（route id、nav）是否一併納入。尚無 spec。 | owner 2026-11-10 |
 
 ## 依賴升級（deps chain）
 
