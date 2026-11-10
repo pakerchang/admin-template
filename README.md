@@ -1,272 +1,137 @@
-# Admin Dashboard Framework
+# Admin Dashboard Template
 
-一個現代化的通用後台管理系統框架，基於 React 19、TypeScript 和現代化技術棧構建。提供完整的權限管理、國際化支援、響應式設計等企業級功能。
+React 19 + TypeScript 的後台管理範本，**純 UI showcase、沒有真後端**：所有 API 由瀏覽器內的 MSW service worker 依 `openapi.yaml` 契約回應。架構採 **Microkernel + Modular Monolith**——功能以 module 掛上 kernel，可整個拔掉而不影響其餘部分。
 
-## ✨ 特色功能
+## 技術棧
 
-### 🔐 完整權限系統
-- 基於角色的存取控制 (RBAC)
-- 全域權限快取與預載入
-- 細粒度權限檢查
-- 支援多種使用者角色：admin、superadmin、partner、premium、user、guest、support
+| 類別 | 使用 |
+|---|---|
+| 框架 | React 19、TypeScript 6、Vite 6 |
+| 路由 | TanStack Router（code-based，由 module 宣告） |
+| Server state / 表單 | TanStack Query、React Hook Form + Zod 4 |
+| API 契約 / mock | `openapi.yaml` → orval 產生 client、hooks、MSW handlers；MSW 3 |
+| UI | Tailwind CSS 3、Radix UI、shadcn/ui |
+| i18n | react-i18next（繁體中文、英文） |
+| 測試 / 品質 | Vitest 5 + Testing Library、ESLint 9（含 eslint-plugin-boundaries）、Prettier 3 |
 
-### 🌍 國際化支援
-- 支援繁體中文、英文
-- 完整的多語言切換功能
-- 所有 UI 元件都支援國際化
+## 快速開始
 
-### 📱 響應式設計
-- 現代化的 UI/UX 設計
-- 支援桌面端和移動端
-- 暗色模式支援
-- 基於 Tailwind CSS 的設計系統
+需求：Node.js 22+、pnpm。
 
-### 🔧 技術架構
-- **前端框架**: React 19 + TypeScript
-- **路由系統**: TanStack Router 
-- **狀態管理**: TanStack Query + React Hook Form 
-- **驗證系統**: 自製登入頁 + mock 登入 API（純 UI 展示，無真實後端）
-- **UI 框架**: Tailwind CSS + Radix UI + shadcn/ui
-- **測試框架**: Vitest + Testing Library
-- **建置工具**: Vite
-- **套件管理**: pnpm
-
-## 🚀 快速開始
-
-### 環境需求
-- Node.js 22+
-- pnpm 8+
-
-### 安裝依賴
 ```bash
 pnpm install
-```
-
-### 設定環境變數
-```bash
-cp .env.example .env
-```
-
-`.env` 為選用（不建立也能直接 `pnpm dev`）：
-- `VITE_API_BASE_URL`: API 基礎 URL（目前資料由本地 mock 回應，僅接真後端時需要）
-
-展示帳號：`admin@example.com` / `admin123`
-
-### 開發伺服器
-```bash
+cp .env.example .env   # 必要：mock 模式需要 VITE_API_BASE_URL
 pnpm dev
 ```
 
-### 建置專案
-```bash
-pnpm build
-```
+展示帳號：`admin@example.com` / `admin123`（superadmin）
 
-### 執行測試
-```bash
-pnpm test
-```
+### 環境變數
 
-### 程式碼檢查
-```bash
-pnpm lint
-```
+| 變數 | 預設 | 說明 |
+|---|---|---|
+| `VITE_API_MOCK` | `true` | 只有設成 `false` 才關掉 mock，改打真後端 |
+| `VITE_API_BASE_URL` | `http://mock-api.local` | mock 模式下必須是**與 app 不同源的絕對 origin**（網域不需真的存在），未設定或同源會在啟動時報錯；接真後端時改成後端位址 |
 
-## 📂 專案結構
+### Mock 怎麼運作
+
+- 沒有獨立的 mock server。頁面載入時在瀏覽器註冊 MSW service worker（`public/mockServiceWorker.js`），攔截打到 `VITE_API_BASE_URL` 的 request；DevTools Network 面板會顯示由 ServiceWorker 回應。
+- 資料存在記憶體（`src/shared/api/mock-db.ts`），**重新整理就回到 seed**。
+- 已簽發的 session 存 localStorage（`mock-sessions`），重新整理後仍維持登入；要完全重置就清 localStorage。
+
+## 指令
+
+| 指令 | 說明 |
+|---|---|
+| `pnpm dev` / `pnpm build` / `pnpm preview` | 開發 / 建置（`tsc -b` + `vite build`）/ 預覽建置結果 |
+| `pnpm test` | Vitest **watch 模式**；一次性執行用 `pnpm exec vitest run` |
+| `pnpm test:coverage` | 覆蓋率報告 |
+| `pnpm lint` | ESLint **帶 `--fix`，會改檔**；只檢查用 `pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"` |
+| `pnpm prettier` | Prettier `--write src/**` |
+| `pnpm gen:api` | 依 `openapi.yaml` 重新產生 API client、hooks、MSW handlers 與 operation 表 |
+| `pnpm verify:core-only` | 在暫存副本刪掉所有 domain module 後 build + 測試，驗證 kernel 不依賴 domain |
+
+pre-commit 由 husky + lint-staged 跑 `eslint --fix` 與 `prettier --write`。
+
+## 專案結構
 
 ```
 src/
-├── components/           # 可重用 UI 元件
-│   ├── layouts/         # 布局元件
-│   ├── shared/          # 業務共用元件
-│   └── ui/              # 基礎 UI 元件 (shadcn/ui)
-├── pages/               # 功能頁面
-│   ├── banners/         # 橫幅管理
-│   ├── orders/          # 訂單管理
-│   ├── product/         # 商品管理
-│   ├── customers/       # 客戶管理
-│   ├── team-members/    # 團隊成員管理
-│   └── users/           # 使用者管理
-├── services/            # API 層
-│   ├── api-client.ts    # 原生 fetch 封裝（apiFetch），唯一資料存取入口
-│   ├── mock/            # mock 資料與 method+path handler 表
-│   └── schemas/         # zod schema / domain 型別
-├── hooks/               # 自定義 React hooks
-├── utils/               # 工具函數
-├── locales/             # 國際化翻譯檔案
-├── constants/           # 常數定義
-└── types/               # TypeScript 型別定義
+├── app/               # kernel：module 組裝（kernel/）、router、mock guard、modules.ts、operations.gen.ts
+├── shared/            # domain-free：ui/（shadcn + DataTable 等）、api/（fetcher、session、mock-db）、
+│                      #   i18n/、module/（defineModule）、permission/、lib/
+├── shells/default/    # 可替換的版面（sidebar、navbar、403 頁）
+├── modules/<id>/      # 功能 module
+│   ├── index.ts       #   defineModule：routes / nav / permissions / i18n / mockHandlers
+│   ├── api/           #   orval 產物（不手改）
+│   ├── model/         #   hooks、Zod schema、routes
+│   ├── ui/            #   頁面與元件
+│   ├── mocks/         #   seed、handlers.ts（手寫）、<id>.msw.ts（orval 產物）
+│   └── locales/       #   module 自帶字典（掛載時自動 scope 成 <id>.*）
+└── test/              # 測試 setup 與 helper
 ```
 
-## 🔑 核心功能模組
+依賴方向由 ESLint 強制：`shared` 不 import `app` / `shells` / `modules`；跨 module 只能 import 對方的 `index.ts`；module 內 `ui → model → api`。
 
-### 商品管理
-- 商品 CRUD 操作
-- 多語言商品資訊
-- 圖片上傳與管理
-- 商品狀態管理
-- 供應商與標籤關聯
+### Module
 
-### 訂單管理
-- 訂單列表與篩選
-- 訂單詳情檢視
-- 訂單狀態追蹤
-- 批次操作支援
+安裝清單在 `src/app/modules.ts`，共 10 個：
 
-### 客戶管理
-- 客戶資料管理
-- 交易歷史檢視
-- 客戶消費統計
+| 類型 | Module |
+|---|---|
+| generic | `auth`、`users`、`team-members` |
+| domain | `orders`、`product`、`suppliers`、`consumers`、`banners`、`articles`、`tags` |
 
-### 權限管理
-- 使用者角色管理
-- 權限矩陣設定
-- 存取控制驗證
+拿掉一個 domain module = 刪掉 `modules.ts` 的那一行 `.use()` 和該目錄（`pnpm verify:core-only` 驗證全部拿掉後仍可 build）。
 
-### 橫幅管理
-- 輪播圖管理
-- 拖拽排序功能
+## 開發指南
 
-## 🛠️ 開發指南
+### 新增 API
 
-### API 整合
-所有資料存取經 `src/services/api-client.ts` 的 `apiFetch`（原生 fetch 寫法），目前由 `src/services/mock/handlers.ts` 依「method + path」回應本地 mock 資料；接真後端時把 `mockFetch` 換成 `fetch` 即可：
+1. 在根目錄 `openapi.yaml` 寫 operation，`x-permission` 填某個 module 宣告過的 `resource:action`（否則 `build()` 會 throw）。
+2. `pnpm gen:api`，產物進 git，**不要手改**。
+3. 在 module 的 `model/use-*.ts` 呼叫產生的 client 函式；`ui` 不直接 import `api/`。
+4. 需要非 200 回應（404、401…）時，在 `mocks/handlers.ts` 用手寫 `http.*` 排在 orval handler 前面。
 
-```typescript
-// feature hook 內
-const response = await apiFetch<TGetResponseContent<TProduct[]>>(
-  "/admin/products",
-  { query: { page: 1, limit: 10 } }
-)
+### 權限
 
-// 在元件中使用
-const { data: products } = useGetProductList({
-  page: 1,
-  limit: 10,
-})
+登入回傳 `session.grants`（例如 `tags:read`、`tags:*`、`*`），前端只認 grants、不讀 role。權限一律宣告式，**不要在元件裡寫 `canX && <Button/>`**：
+
+```ts
+// route：無權限時內容區顯示 403，URL 不變
+ctx.page({ path: "tags", routeId: "tags.list", permission: "tags:read", component: pages.list })
+
+// 表格操作：無權限的項目預設不渲染
+const rowActions: TRowAction<TUser>[] = [
+  { id: "edit", label: t("common.edit"), icon: Pencil, permission: "users:update", onSelect: ... },
+]
 ```
 
-### 權限檢查
-```typescript
-import { useUserPermissions } from '@/pages/users/hooks/use-user'
+nav 項目以 `permission` 過濾、表單送出用 `FormSubmit`、編輯頁按鈕用 `EditActions`；mock API 端另有 guard 依 operation 表檢查。各角色的預設 grants 在 `src/app/mock/permission-matrix.ts` 與各 module 的 `permissions.mockGrants`。
 
-const MyComponent = () => {
-  const { canManageProducts, isAdmin } = useUserPermissions()
+### 新增 module
 
-  return (
-    <div>
-      {canManageProducts && <ProductActions />}
-      {isAdmin && <AdminPanel />}
-    </div>
-  )
-}
-```
+參考任一 module 的 `index.ts`（例如 `src/modules/tags/index.ts`），以 `defineModule` 宣告 `routes`、`nav`、`permissions`，再到 `src/app/modules.ts` 加一行 `.use()`。完整步驟見 `.claude/skills/add-module`。
 
-### 國際化
-```typescript
-import { useTranslation } from 'react-i18next'
+> 目前架構驗收（M8）尚未全部完成，**暫停新增第 11 個 module**。
 
-const MyComponent = () => {
-  const { t } = useTranslation()
+### i18n
 
-  return <h1>{t('pages.dashboard.title')}</h1>
-}
-```
+全域字典在 `src/shared/i18n/locales/{en,zh}.json`；module 可在 `modules/<id>/locales/*.json` 放自己的字典，掛載時 key 自動加上 `<id>.` 前綴。
 
-### 表單處理
-```typescript
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+### 測試
 
-const MyForm = () => {
-  const form = useForm({
-    resolver: zodResolver(mySchema),
-    defaultValues: {...}
-  })
+測試放在同層 `__tests__/`。打 API 的測試用 `src/test/api-fetch.ts`；需要 module 的 mock API 時以 `server.resetHandlers(...registry.mockHandlers)` 掛上。
 
-  return (
-    <Form {...form}>
-      {/* 表單內容 */}
-    </Form>
-  )
-}
-```
+## 慣例
 
-## 🔧 自定義與擴展
+- 元件 PascalCase（`BannerForm.tsx`），hooks / utils / 測試 kebab-case（`use-banner.ts`）
+- Commit 用 Conventional Commits：`type(scope): description`
+- 主幹 `master`，工作走 feature branch → PR
 
-### 新增頁面模組
-1. 在 `src/pages/` 下建立新模組目錄
-2. 建立對應的 API 合約檔案
-3. 實作 hooks 和元件
-4. 設定路由檔案
-5. 新增翻譯內容
+## 文件
 
-### 自定義主題
-修改 `tailwind.config.js` 來自定義顏色、字型等：
-
-```javascript
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        primary: {...},
-        secondary: {...},
-      }
-    }
-  }
-}
-```
-
-### 新增語言支援
-1. 在 `src/locales/` 新增語言檔案
-2. 更新 `src/constants/locales.ts`
-3. 在 `src/locales/i18n.ts` 註冊新語言
-
-## 🧪 測試策略
-
-- **單元測試**: 元件和工具函數的獨立測試
-- **整合測試**: API hooks 和表單流程測試
-- **E2E 測試**: 完整使用者流程測試
-
-執行測試：
-```bash
-# 執行所有測試
-pnpm test
-
-# 執行覆蓋率報告
-pnpm test:coverage
-
-# 監視模式
-pnpm test:watch
-```
-
-## 📋 最佳實踐
-
-### 程式碼組織
-- 使用功能導向的目錄結構
-- 保持元件的單一職責
-- 適當抽象共用邏輯
-
-### 效能優化
-- 使用 React.memo 避免不必要的重新渲染
-- 實作適當的快取策略
-- 使用 Code Splitting 減少初始載入時間
-
-### 型別安全
-- 充分利用 TypeScript 的型別系統
-- 使用 Zod 進行執行時驗證
-- 避免 `any` 型別的使用
-
-### 提交規範
-使用 Conventional Commits 規範：
-- `feat:` 新功能
-- `fix:` 錯誤修復
-- `docs:` 文檔更新
-- `style:` 程式碼格式調整
-- `refactor:` 重構
-- `test:` 測試相關
-- `chore:` 建置工具、依賴更新等
-
-## 🙋‍♂️ 支援與協助
-- 📖 文檔：查看 `docs/` 目錄下的詳細文檔
-- 💬 討論：歡迎在 GitHub Discussions 中交流
+- `docs/specs/fsd-module-architecture.spec.md`：架構規格（契約、權限、milestones）
+- `docs/specs/refactor/README.md`：重構各階段的證據與已知問題
+- `docs/TRAPS.md`：已知陷阱
+- `CLAUDE.md`：給 AI 協作用的專案事實摘要
