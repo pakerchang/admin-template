@@ -1,11 +1,11 @@
 # 型別契約（Zod / 推導型別）Spec
 
-狀態：**DRAFT（待 owner 裁決 OD-TYPE-*）**
+狀態：**已裁決（owner 2026-11-10），T1 可派工**
 
 - 需求來源：`docs/specs/refactor/README.md`「全域（owner 2026-11-10 新需求）」列。
-- 上位 spec：`docs/specs/fsd-module-architecture.spec.md`（下稱「架構 spec」）。本 spec 不改其 §0 鎖定決策；與鎖定決策有張力處列在 §3，交 owner 裁決。
+- 上位 spec：`docs/specs/fsd-module-architecture.spec.md`（下稱「架構 spec」）。本 spec 不改其 §0 鎖定決策；與鎖定決策的張力與 owner 處理見 §3。
 - 基準：master `5b1ecfd`；PoC 指令、exit code 與原始輸出見調查報告（`~/.claude/plans/admin-template/s12-typed-contracts-report.md`，不進 repo）。
-- 本 spec 只定方向與驗收；OD-TYPE-* 裁決前不得開實作棒。
+- OD-TYPE-1～6 與 nav `to` 已由 owner 2026-11-10 裁決（見 Owner Decisions）。T1 AC 已定稿、可派工；T2 / T3 只有 AC 大綱，派工前細化。
 
 ## 1. 現況盤點（摘要）
 
@@ -41,71 +41,126 @@
 | P4 | Zod 4 `z.enum` / `z.templateLiteral` 在 TS 6 | **可用**：`z.templateLiteral` 存在；非笛卡兒積的 union（每個 resource 自己的 action enum）推導正確；`z.enum(...).options` 回 readonly tuple。IDE 補全（以 TS LanguageService `getCompletionsAtPosition` 量測，即 VS Code 所用 API）：現行 `TPermission` **0 筆**；registry **5 / 7 筆**；Zod union **7 筆** |
 | P5 | YAML 結構抽換時 UI 是否編譯期報錯（owner 附帶效益 a） | 把 `Tag.tag_name` 改名 → `pnpm gen:api` → `tsc` **10 個錯誤**（product 3 個表單、`TagList`、`use-tag.ts`、handlers 測試）。**沒抓到**：`model/schema.ts`、`TagFormDialog`、mock seed 與 `createCollection`（型別為 `TRecord`）。結論：效益 (a) 已部分存在（orval TS interface），缺口在手寫 Zod 與 mock 層沒有錨定到產物型別 |
 
-## 3. 與架構 spec 的張力（surface，未自行擇一）
+## 3. 與架構 spec 的張力（owner 2026-11-10 已處理）
 
-- **R4（接受 typed route 寬化）vs 本需求的 `TNavItem.to` 型別化**：R4 接受的是 route **樹**型別寬化；把 `to` 收窄需另建 path registry（與 `TRouteIdRegistry` 同手法），不違反 R4 字面，但等於部分回收 R4 的取捨。列在 OD-TYPE-4 範圍內由 owner 決定是否納入。
-- **架構 spec §4.5「zod 產物不在 M7 範圍（form schema 維持手寫）」**：OD-TYPE-3 選項 B 會改變此點（該句寫明「日後要用再加」，非 R 編號鎖定）。
-- **架構 spec §4.1 註解「label 以 `${moduleId}.` 開頭」vs 現況全用 `dashboard.menu.*`**：型別強制前綴會讓 10 個 module 全部編譯失敗；必須先做 M6 遺留的 key 搬遷（另案）。
+- **R4（接受 typed route 寬化）vs nav `to` 型別化**：owner 裁決**納入 T2**。處理方式：`to` 以 path registry（`TRoutePathRegistry`，與 `TRouteIdRegistry` 同手法）收窄；route **樹**型別寬化（R4 字面）不動，`router/index.ts` 的 `Register`、module 內以 route 物件導航（§4.6）維持原狀。此為 owner 裁決**部分收回 R4 的取捨**（只收回「跨 module 導航字串無型別」這一塊），R4 本體不改。
+- **架構 spec §4.5「zod 產物不在 M7 範圍（form schema 維持手寫）」**：不受影響（OD-TYPE-3 選 C，orval 不產 Zod）。
+- **架構 spec §4.1 註解「label 以 `${moduleId}.` 開頭」vs 現況全用 `dashboard.menu.*`**：T2 的 nav label key 型別化以 M6 遺留的 key 搬遷為前置（見 Milestones T2）。
+
+### 設計原則
+
+owner 2026-11-10 原話要點：「填寫時要有 type hint suggest。這關乎防呆；後續開發若沒有這一層，底層串接的心智模型會過於散亂、難在脈絡上整合，久而久之無法透過 DX 去提醒關聯性。」
+
+**原則**：每個跨檔串接的契約欄位都必須同時滿足：
+
+1. **填寫時 IDE 有補全**（值域是有限字面值 union，而非 `string` / `` `${string}:${string}` ``）；
+2. **寫錯 `tsc` 失敗**（`pnpm build` 擋下，不靠執行期 throw 或靜默）。
+
+適用欄位與落點：
+
+| 欄位 | 值域來源 | 落點 |
+|---|---|---|
+| 權限（route `staticData.permission`、nav `permission`、`rowActions` / `EditActions` / `FormSubmit` / `Guarded`、`mockGrants` 值、`operations.gen.ts`） | module Zod 權限目錄 → `TPermissionRegistry` | T1 |
+| role（`mockGrants` / `coreGrants` key） | `coreRoles`（`as const`） | T1 |
+| module id、`requires` | module id registry | T2 |
+| route id（`staticData.routeId`） | `TRouteIdRegistry`（既有） | T2 |
+| nav `to` | `TRoutePathRegistry` | T2 |
+| nav label / i18n key | `TransKey` + `TranslationResources` augmentation（架構 spec §5.4） | T2 |
+
+型別是第一道防線，`build()` 的執行期檢查保留為第二道（registry 反映「檔案在 program 內」，不等於「已 `.use()`」，PoC P2）。
 
 ### User Story
 
 身為 admin-template 的開發者，我在 route / nav / 操作元件 / `mockGrants` / `openapi.yaml` 寫權限字串，以及宣告 module 契約時，要有 IDE 補全，且寫錯在 `tsc`（`pnpm build`）就失敗，而不是執行期 throw 或靜默變成「永遠無權限」；當 `openapi.yaml` 結構或整個 module 被抽換時，依賴它的程式在編譯期報錯，作為 TDD 式重構的自動糾錯。
 
-### Acceptance Criteria
-
-（以第一棒「權限」為範圍；第二棒以後的 AC 依 OD-TYPE-4 裁決補寫。）
-
-- [ ] AC-1 [cmd] 型別測試檔以 `@ts-expect-error` 鎖住下列寫錯情形，每處至少一個 action typo（例 `tags:raed`）與一個 resource typo（例 `tag:read`），並各有一個正向案例：route `ctx.page` / `ctx.layout` 的 `permission`、nav `permission`、`rowActions` 項目、`EditActions` 的 `{ handler, permission }`、`FormSubmit` / `Guarded` 的 `permission` prop、`mockGrants` 的 grant 值。驗收：`pnpm exec tsc -b tsconfig.app.json` exit 0（任一 `@ts-expect-error` 未觸發 → TS2578 → 失敗）。
-- [ ] AC-2 [cmd] 非真空檢查：把 AC-1 任一 `@ts-expect-error` 註解移除，`tsc` 必須失敗。以 vitest 跑 `tsc` 於暫存副本或等價腳本自動化（實作棒決定形式，指令寫進 Done Command）。
-- [ ] AC-3 [cmd] `openapi.yaml` 的 `x-permission` 不在已註冊權限中 → `tsc` 失敗（`operations.gen.ts` 的 permissions 值型別為已註冊 `TPermission | "public"`）；`build()` 1.5.3 執行期檢查保留（P2 限制：registry ≠ 已 `.use()`）。
-- [ ] AC-4 [cmd] domain module 的型別測試放在 `src/modules/<id>/__tests__/` 內（隨 module 刪除）；`pnpm verify:core-only` 印 `core-only build: OK`、exit 0。
-- [ ] AC-5 [cmd] 既有測試全綠：`pnpm build && pnpm exec vitest run` exit 0；測試中刻意非法的權限 fixture（`build.test.ts`、`operations-yaml.test.ts`、`use-visible-nav.test.tsx`、`can.test.ts`、`data-table-row-actions.test.tsx`）改以明確的寬型別入口或 cast 表達，且原本斷言的執行期行為不變。
-- [ ] AC-6 [cmd] `pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"` 0 error（boundaries 規則不放寬）。
-- [ ] AC-7 [cmd] 補全可量測：以 TS LanguageService 對 `permission: "` 位置取補全，回傳項目 = 已註冊權限全集（腳本形式由實作棒決定，可沿用 PoC `completions.mjs`）。
-- [ ] AC-8 [manual] owner 在 VS Code 內於 route / nav / `rowActions` 的 `permission: "` 處觸發補全，看到 `resource:action` 清單；寫 `tags:raed` 出現紅線。**owner 親驗 pending，不阻擋交付**。
-
 ### Milestones
 
-依 OD-TYPE-4 建議（裁決後定稿）：
+依 OD-TYPE-4 = A：T1 → T2 → T3，每棒獨立 PR、獨立 merge。每棒 done 基線：`pnpm build && pnpm exec vitest run && pnpm verify:core-only` exit 0。
 
-- **T1 權限（第一棒）**：權限 registry + module 權限目錄單一來源（形式依 OD-TYPE-1）；`TPermission` / `TGrant` 改由 registry 推導；`mockGrants` 型別收窄（grant 值；role id 依 OD-TYPE-6）；`operations.gen.ts` 改輸出 `as const` 並對 registry 型別檢查；型別測試（AC-1–AC-8）。
-- **T2 module 契約**：module id registry（`id` / `requires`）、`staticData.routeId` 收窄為 `TRouteId`、nav `to` path registry（若 owner 納入，見 §3）、nav `label` 改 `TransKey`（前置：M6 key 搬遷另案完成）、`i18n` 字典 augmentation（架構 spec §5.4 落地）。
-- **T3 domain 型別錨定**：依 OD-TYPE-3。
-- 每棒 done 基線：`pnpm build && pnpm exec vitest run && pnpm verify:core-only` exit 0。
+- **T1 權限（可派工）**：
+  - 單一來源（OD-TYPE-1 C）：各 module 以 Zod 宣告權限目錄（每個 resource 一個 `z.enum(actions)`，組成 `z.templateLiteral([z.literal(resource), ":", actions])` 的 union，PoC P2z）；同一物件推導 `TPermission`（`z.infer`）並提供 runtime schema。core 自帶 `app:access` 目錄，拔光 domain module 不會變 `never`。`permissions.resources` 由此目錄推出，不另寫第二份。
+  - 組裝（OD-TYPE-2 B）：`shared/permission` 宣告 `interface TPermissionRegistry {}`，各 module 在自己的檔案 augment；`TPermission` / `TGrant` 改由 registry 推導（`TGrant` = `TPermission | ${resource}:* | "*"`，resource 亦取自 registry）。
+  - 一次切換（OD-TYPE-5 A）：10 個 module 同棒 augment；非測試碼字面值 0 處需改（PoC P1'）；5 個含刻意非法 fixture 的測試檔改以明確寬型別入口或 cast 表達，原斷言的執行期行為不變。
+  - `operations.gen.ts`（OD-TYPE-2 的 C 部分）：`scripts/extract-operations.ts` 改輸出 `as const satisfies TOperationTable`，`TOperationTable.permissions` 值型別收窄為 `TPermission | "public"`（PoC P3b）；不另建權限 codegen。
+  - 邊界 `safeParse`（OD-TYPE-1 C）：`session.grants` 進入前端的入口（login 回應寫入 session 前、`getAuth()` 讀 localStorage 後）以權限目錄組出的 grant schema（含 `resource:*`、`*`）`safeParse` 逐筆驗證；不合法的 grant 丟棄、合法者保留（unknown grant 原本就不授權任何權限，fail-closed 行為不變）。schema 依**已 `.use()` 的 module** 組出（kernel 端），注入 session 讀取路徑的方式由實作棒決定，但須守架構 spec §3.1 依賴方向（`shared` 不 import `app`）。
+  - role 型別化（OD-TYPE-6 A）：落地 `coreRoles = [...] as const`（架構 spec §6.1 的 7 個角色，位置依 §6.1 在 `app/mock/permission-matrix.ts`）；以 `TRoleRegistry` declaration merging 讓 `shared/permission` 的 `TGrantMatrix` key 收窄為 role union（`shared` 不 import `app`）；`coreGrants` 與 module `mockGrants` 的 key 都受此約束。grant 矩陣內容不變（OD-GRANT-1）。
+- **T2 module 契約（AC 大綱，派工前細化）**：module id registry（`id` / `requires` 收窄）；`staticData.routeId` 收窄為 `TRouteId`；**nav `to` path registry**（`TRoutePathRegistry`，R4 處理見 §3）；**nav label key 型別化**（`TNavItem.label: TransKey`，去掉 shell 的 `as TransKey` 強轉）與 `i18n` 字典 augmentation（架構 spec §5.4 落地）。**前置**：強制 label 以 `${moduleId}.` 開頭需先完成 M6 遺留的 key 搬遷（`dashboard.menu.*` → `<id>.*`，另案）；派工前確認搬遷狀態，未完成則 T2 只做 `TransKey` 收窄、前綴強制留待搬遷後。
+- **T3 domain 型別錨定（AC 大綱，派工前細化）**：OD-TYPE-3 C——`model/schema.ts` 加 `satisfies z.ZodType<產物型別>`（或等價雙向相容斷言），mock seed `satisfies 產物型別[]`、`createCollection` 帶泛型。orval 產 Zod（B）列為之後評估，不在本 spec 範圍。
+
+### Acceptance Criteria
+
+#### T1 權限（定稿）
+
+型別測試一律以 `// @ts-expect-error` 標記錯誤案例（指令未觸發錯誤 → TS2578 → `tsc` 失敗，故錯誤案例不會真空通過；`tsconfig.app.json` 的 `include` 為 `src/**/*`，`__tests__/` 在 program 內）。core 型別測試放 `src/shared/permission/__tests__/`；引用 domain 權限的型別測試放該 module 的 `src/modules/<id>/__tests__/`（隨 module 刪除，core-only 不受影響）。
+
+- [ ] AC-1 [cmd] 權限 typo 在下列每一處 `tsc` 失敗，每處至少一個 action typo（例 `tags:raed`）與一個 resource typo（例 `tag:read`）：route `ctx.page` / `ctx.layout` 的 `permission`（即 `staticData.permission`）、nav `permission`、`rowActions` 項目、`EditActions` 的 `{ handler, permission }`、`FormSubmit` 的 `permission` prop、`mockGrants` 的 grant 值（另含 `tag:*` 這類 resource 不存在的 wildcard）。驗收：`pnpm exec tsc -b tsconfig.app.json` exit 0。
+- [ ] AC-2 [cmd] role typo 在 `mockGrants` 與 `coreGrants` 的 key `tsc` 失敗（例 `admn`），`coreRoles` 以外的 key 皆拒。驗收同 AC-1。
+- [ ] AC-3 [cmd] `operations.gen.ts`：permissions 值型別為 `TPermission | "public"`；型別測試以 `@ts-expect-error` 鎖住「不在 registry 的 `resource:action` 指派給 `TOperationTable["permissions"]` 的值」；`pnpm gen:api && git diff --exit-code -- src/app/operations.gen.ts` 確認產物與 extract 腳本一致；`build()` 1.5.3 執行期檢查保留且既有測試照過。
+- [ ] AC-4 [cmd] 合法值通過：AC-1 / AC-2 各處各至少一個合法案例（含 `"authenticated"`、`app:access`、`resource:*`、`*` 於允許之處），不帶 `@ts-expect-error`；`pnpm exec tsc -b tsconfig.app.json` exit 0。
+- [ ] AC-5 [cmd] grants 邊界 `safeParse`：vitest 對入口（login 寫入與 `getAuth()` 讀出）餵 `["orders:read", "orders:raed", "orders:*", "*", "nope", 123]`，結果只保留 `["orders:read", "orders:*", "*"]`；完全合法的 grants 原樣保留；domain module 未 `.use()` 時其權限被丟棄。`pnpm exec vitest run <該測試檔>` exit 0。
+- [ ] AC-6 [cmd] `pnpm verify:core-only` exit 0、輸出含 `core-only build: OK`（core-only 下 `TPermission` 只含 core 權限，非 `never`）；新增的完整安裝型測試若放在 core 目錄，補進腳本 `FULL_INSTALL_TESTS`。
+- [ ] AC-7 [cmd] `pnpm build && pnpm exec vitest run` exit 0；5 個含刻意非法 fixture 的測試檔（`build.test.ts`、`operations-yaml.test.ts`、`use-visible-nav.test.tsx`、`can.test.ts`、`data-table-row-actions.test.tsx`）原斷言的執行期行為不變。
+- [ ] AC-8 [cmd] `pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"` 0 error（boundaries 規則不放寬）。
+- [ ] AC-9 [manual] IDE 補全目視：VS Code 於 route / nav / `rowActions` / `mockGrants` 的 `permission: "` 與 role key 位置觸發補全，看到 registry 全集；寫 `tags:raed` 出現紅線。**owner 親驗 pending，不阻擋交付**。
+
+#### T2 module 契約（大綱，派工前細化）
+
+- [ ] T2-1 module id / `requires` typo → `tsc` 失敗（`@ts-expect-error` 鎖住）；`build()` 的重複 id / 缺依賴執行期檢查保留。
+- [ ] T2-2 `staticData.routeId` 型別為 `TRouteId`，讀端不再寬化為 `string`。
+- [ ] T2-3 nav `to` 不在 `TRoutePathRegistry` → `tsc` 失敗；`build()` 新增執行期檢查：每個 nav `to` 對應到某個已組裝 route 的 fullPath。route 樹型別寬化（R4）不動。
+- [ ] T2-4 nav label 型別為 `TransKey`，shell 移除 `as TransKey` 強轉；module 字典經 `TranslationResources` augmentation 進入 `TransKey`；`${moduleId}.` 前綴強制視 M6 key 搬遷狀態（前置）。
+- [ ] T2-5 `pnpm verify:core-only` OK；`pnpm build && pnpm exec vitest run` exit 0。
+
+#### T3 domain 型別錨定（大綱，派工前細化）
+
+- [ ] T3-1 各 module `model/schema.ts` 與 orval 產物型別有雙向相容斷言；改 `openapi.yaml` 欄位名後 `tsc` 抓到 schema（PoC P5 的缺口）。
+- [ ] T3-2 mock seed `satisfies 產物型別[]`、`createCollection` 帶泛型；欄位改名時 seed / collection `tsc` 失敗。
+- [ ] T3-3 users schema / YAML `UserRole` 與 `coreRoles` 的一致性錨定。
+- [ ] T3-4 `orval.config.ts` 不變；`pnpm build && pnpm exec vitest run && pnpm verify:core-only` exit 0。
 
 ### Touches
 
-T1 預計（OD 裁決後確認）：
+T1 範圍：
 
-- `src/shared/permission/types.ts`、`src/shared/permission/index.ts`（registry、推導型別、helper）
-- `src/shared/module/types.ts`（`TModulePermissions` 引用處；`defineModule` 簽名依 OD-TYPE-5）
-- `src/modules/<id>/index.ts` 或新增 `src/modules/<id>/model/permissions.ts`（目錄宣告 + augmentation）
-- `src/app/mock/permission-matrix.ts`、`src/app/kernel/build.ts`（只動型別；執行期檢查保留）
-- `scripts/extract-operations.ts` 與其產物 `src/app/operations.gen.ts`
-- 上列 5 個測試檔；新增型別測試檔（`src/modules/<id>/__tests__/`、core 用 `src/shared/permission/__tests__/`）
+- `src/shared/permission/types.ts`、`src/shared/permission/index.ts`（`TPermissionRegistry`、`TRoleRegistry`、推導型別、目錄 → Zod schema helper、grant schema）
+- `src/shared/permission/__tests__/`（core 型別測試、grant `safeParse` 測試）
+- `src/shared/module/types.ts`（`TModulePermissions` / `TNavItem.permission` / `TGuard` 引用處）
+- `src/shared/api/session.ts`（grants 讀入邊界）；login 寫入 session 處（`src/modules/auth/**` 內呼叫 `setAuth` 的 model 檔）
+- `src/modules/<id>/index.ts` 或新增 `src/modules/<id>/model/permissions.ts`（Zod 目錄 + augmentation），10 個 module；`src/modules/<id>/__tests__/`（domain 型別測試）
+- `src/app/mock/permission-matrix.ts`（`coreRoles`、`TRoleRegistry` augment、`coreGrants` 收窄）、`src/app/kernel/build.ts`（型別；組 grant schema；執行期檢查保留）、app 組裝處（注入 grant schema，若需要）
+- `scripts/extract-operations.ts` 與產物 `src/app/operations.gen.ts`（由 `pnpm gen:api` 重產，不手改）
+- AC-7 列名的 5 個測試檔
 - `scripts/verify-core-only.sh`（僅當新增測試需列入 `FULL_INSTALL_TESTS`）
 - `.claude/skills/declare-permission/`、`docs/TRAPS.md`（宣告方式改變時同步）
 
 ### Must-Not-Touch
 
-- 架構 spec §0 的鎖定決策（R1–R29、D1–D5）；權限字串格式維持 `resource:action`（R17）、operation → permission 只在 YAML `x-permission`（R21）
-- `build()` 的執行期驗證（R13 / R21 / R23 / R8）不得移除——型別只是前移的第一道防線
-- 不新增 module（M8 凍結）；`app/modules.ts` 的 `.use(` 數量不變
-- 角色 grants 矩陣內容（OD-GRANT-1 已定案）：本 spec 只收窄型別，不改任何 grant
-- orval 產物（`src/modules/*/api/**`、`*.msw.ts`）不手改
-- 本 DRAFT 階段：`src/**`、`openapi.yaml`、`orval.config.ts` 一律不動
+T1 範圍：
+
+- 架構 spec 本體與其 §0 鎖定決策（R1–R29、D1–D5）；權限字串格式維持 `resource:action`（R17）、operation → permission 只在 YAML `x-permission`（R21）
+- `build()` 的執行期驗證（R8 / R13 / R21 / R23）不得移除
+- `openapi.yaml`、`orval.config.ts`；orval 產物（`src/modules/*/api/**`、`*.msw.ts`）不手改
+- 角色 grants 矩陣內容（OD-GRANT-1 已定案）：只收窄型別，不增減任何 grant；`coreRoles` 清單照架構 spec §6.1
+- 不新增 module；`app/modules.ts` 的 `.use(` 數量不變
+- T2 / T3 範圍（module id、route id、nav `to` / label、i18n、domain schema 錨定）
 
 ### Done Command
 
+T1：
+
 ```bash
-pnpm build && pnpm exec vitest run && pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}" && pnpm verify:core-only
+pnpm build && pnpm exec vitest run && pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}" && pnpm gen:api && git diff --exit-code -- src/modules/*/api src/modules/*/mocks src/app/operations.gen.ts && pnpm verify:core-only
 ```
 
 expected: exit 0；輸出含 `core-only build: OK`
 
-### Owner Decisions（待裁決）
+### Owner Decisions
+
+全部已由 owner 2026-11-10 裁決；選項表與原建議保留供追溯。
 
 #### OD-TYPE-1 單一來源的形式
+
+已裁決（owner 2026-11-10）：**C 混合**——跨信任邊界的契約（權限目錄）用 Zod `z.enum` 為來源，同時推導型別並在邊界 `safeParse` grants；純編譯期結構（module id / route id / nav / i18n key）用 `as const` / registry。
 
 | 選項 | 內容 | 後果 |
 |---|---|---|
@@ -118,6 +173,8 @@ PoC 證據：P2（`as const` registry）與 P2z（Zod-first registry）都可行
 
 #### OD-TYPE-2 全域 union 怎麼組裝
 
+已裁決（owner 2026-11-10）：**B registry + 一點 C**——`TPermissionRegistry` declaration merging（同 `TRouteIdRegistry`）；`operations.gen.ts` 改輸出 `as const` 並對 registry 的 `TPermission` 型別檢查；保留 `build()` 執行期檢查；不另建權限 codegen。
+
 | 選項 | 內容 | 後果 |
 |---|---|---|
 | A kernel `.use()` 鏈泛型推導 | `createApp().use()` 以泛型累積 union | P1：只在 app 層可用；module 內部與 `shared/ui` 引用會循環（TS2456）或違反依賴方向，**擋不到 route / ui 的 typo**，達不到需求 |
@@ -127,6 +184,8 @@ PoC 證據：P2（`as const` registry）與 P2z（Zod-first registry）都可行
 **建議：B 為主，加上 C 的一小部分**：module 權限用 registry；`x-permission` 沿用既有 extract，讓 `operations.gen.ts` 改輸出 `as const` 並以 registry 的 `TPermission` 檢查（P3b），YAML typo 從 vitest 前移到 `tsc`。不另建權限 codegen。
 
 #### OD-TYPE-3 domain 型別來源
+
+已裁決（owner 2026-11-10）：**C 手寫 + 錨定**——`model/schema.ts` 加 `satisfies z.ZodType<產物型別>`（或等價雙向相容斷言），mock seed `satisfies 產物型別[]`；orval 產 Zod（B）列為之後評估，不在本 spec 範圍。
 
 | 選項 | 內容 | 後果 |
 |---|---|---|
@@ -138,15 +197,19 @@ PoC 證據：P2（`as const` registry）與 P2z（Zod-first registry）都可行
 
 #### OD-TYPE-4 分期與第一棒範圍
 
+已裁決（owner 2026-11-10）：**A 權限先**——T1 權限 → T2 module 契約 → T3 domain 錨定。nav `to`：已裁決（owner 2026-11-10）：**納入 T2**（path registry，R4 處理見 §3）。
+
 | 選項 | 內容 | 後果 |
 |---|---|---|
 | A 權限先（T1 → T2 → T3） | 見 Milestones | 最急的靜默失效（route / ui 永遠無權限）先解；T2 有 M6 key 搬遷前置，延後不卡 |
 | B 權限 + module 契約一棒 | T1 + T2 合併 | 一次到位但範圍大；nav label 前置未完成會卡住整棒 |
 | C 先做 domain 型別錨定（T3） | 先處理 openapi 抽換效益 | 效益 (a) 已部分存在（P5），急迫度低於權限 |
 
-**建議：A**。另請 owner 裁決 T2 是否納入 `TNavItem.to` path registry（§3 與 R4 的張力）。
+**建議：A**。另請 owner 裁決 T2 是否納入 `TNavItem.to` path registry（已裁：納入，見上）。
 
 #### OD-TYPE-5 `defineModule` 相容策略
+
+已裁決（owner 2026-11-10）：**A 一次切換**。
 
 | 選項 | 內容 | 後果 |
 |---|---|---|
@@ -156,6 +219,8 @@ PoC 證據：P2（`as const` registry）與 P2z（Zod-first registry）都可行
 **建議：A**。module 數固定（M8 凍結）、字面值已全合法，漸進只增加成本。
 
 #### OD-TYPE-6 role id 是否型別化（`mockGrants` 的 key）
+
+已裁決（owner 2026-11-10）：**A 型別化，併入 T1**——落地 `coreRoles`（`as const`），`mockGrants` key 收窄為 role union。
 
 | 選項 | 內容 | 後果 |
 |---|---|---|
