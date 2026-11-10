@@ -24,7 +24,23 @@ cp .env.example .env   # 必要：mock 模式需要 VITE_API_BASE_URL
 pnpm dev
 ```
 
-展示帳號：`admin@example.com` / `admin123`（superadmin）
+### 展示帳號
+
+所有帳號密碼都是 `admin123`。能不能進後台、看得到什麼由角色的 grants 決定（`src/app/mock/permission-matrix.ts` + 各 module `permissions.mockGrants`）。
+
+| 帳號 | 角色 | 登入後 |
+|---|---|---|
+| `admin@example.com` | superadmin | 全部權限（`*`） |
+| `bob@example.com` | admin | 除了使用者的編輯與角色變更，其餘都能讀寫 |
+| `carol@example.com` | support | 訂單可讀寫；客戶、團隊成員、供應商、標籤、Banner、文章唯讀；看不到商品、使用者 |
+| `david@example.com` | partner | 商品可讀寫；客戶、團隊成員、供應商、標籤、Banner、文章唯讀；看不到訂單、使用者 |
+| `eve@example.com` | premium | 沒有後台權限，登入後內容區顯示 403 |
+| `frank@example.com`、`grace@example.com` | user | 同上 |
+| `henry@example.com` | guest | 同上 |
+
+帳號來源是 `src/modules/users/mocks/seed.ts`，密碼在 `src/modules/auth/mocks/seed.ts`。
+
+mock 模式下登入頁有角色快選（superadmin / admin / support / partner / premium 各一），點一下就把帳密帶進表單。
 
 ### 環境變數
 

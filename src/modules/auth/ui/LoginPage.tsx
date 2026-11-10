@@ -8,10 +8,28 @@ import { Label } from "@/shared/ui/label";
 
 import { useLogin } from "../model/use-login";
 
-import type { SubmitEvent } from "react";
+import type { MouseEvent, SubmitEvent } from "react";
 
-/** 登入表單（auth module 預設頁）；全螢幕外框由 shell 的 AuthLayout 提供 */
-const LoginPage = () => {
+type TDemoAccount = { email: string; password: string; role: string };
+
+/** 帶入帳密、不送出（login-demo-accounts spec D4） */
+const fillForm =
+  ({ email, password }: TDemoAccount) =>
+  (event: MouseEvent<HTMLButtonElement>) => {
+    const fields = event.currentTarget.form!.elements;
+    (fields.namedItem("email") as HTMLInputElement).value = email;
+    (fields.namedItem("password") as HTMLInputElement).value = password;
+  };
+
+/**
+ * 登入表單（auth module 預設頁）；全螢幕外框由 shell 的 AuthLayout 提供。
+ * `demoAccounts` 由 index.ts 注入（只在 mock 模式非空，spec D2）。
+ */
+const LoginPage = ({
+  demoAccounts = [],
+}: {
+  demoAccounts?: TDemoAccount[];
+}) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -66,6 +84,27 @@ const LoginPage = () => {
         {t("login.submit")}
       </Button>
       <p className="text-xs text-muted-foreground">{t("login.hint")}</p>
+      {demoAccounts.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-medium">{t("login.demo.title")}</p>
+          {demoAccounts.map((account) => (
+            <Button
+              key={account.email}
+              type="button"
+              variant="outline"
+              className="h-auto flex-col items-start whitespace-normal text-left"
+              onClick={fillForm(account)}
+            >
+              <span className="font-medium">
+                {t(`login.demo.roles.${account.role}`)} · {account.email}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {t(`login.demo.descriptions.${account.role}`)}
+              </span>
+            </Button>
+          ))}
+        </div>
+      )}
     </form>
   );
 };
