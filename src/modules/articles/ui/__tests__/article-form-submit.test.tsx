@@ -54,6 +54,21 @@ vi.mock("../components/TiptapEditor", () => ({
 
 type TCaptured = { method: string; body: Record<string, unknown> };
 const writes: TCaptured[] = [];
+// `/admin/images` 實際回傳的上傳結果（驗 image_url 帶完整 file_url，而非只有檔名）
+const uploaded = { file_url: "" };
+const onResponse = async ({
+  request,
+  response,
+}: {
+  request: Request;
+  response: Response;
+}) => {
+  if (
+    request.method === "POST" &&
+    new URL(request.url).pathname === "/admin/images"
+  )
+    uploaded.file_url = (await response.clone().json()).file_url;
+};
 const onRequest = async ({ request }: { request: Request }) => {
   if (
     ["POST", "PUT"].includes(request.method) &&
@@ -80,10 +95,13 @@ describe("ArticleForm 送出（P3）", () => {
     writes.length = 0;
     route.editId = "";
     await mountAsSuperadmin();
+    uploaded.file_url = "";
     server.events.on("request:start", onRequest);
+    server.events.on("response:mocked", onResponse);
   });
   afterEach(() => {
     server.events.removeListener("request:start", onRequest);
+    server.events.removeListener("response:mocked", onResponse);
   });
 
   it("新增：上傳封面後可送出，POST body 帶上傳的 image_url", async () => {
@@ -102,9 +120,10 @@ describe("ArticleForm 送出（P3）", () => {
 
     await waitFor(() => expect(writes).toHaveLength(1));
     expect(writes[0].method).toBe("POST");
+    expect(uploaded.file_url).toBeTruthy();
     expect(writes[0].body).toMatchObject({
       title: "P3 new article",
-      image_url: { file_name: "cover.webp" },
+      image_url: { file_name: "cover.webp", file_url: uploaded.file_url },
     });
   });
 

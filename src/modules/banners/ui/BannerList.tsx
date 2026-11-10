@@ -133,9 +133,11 @@ const BannerList = () => {
 
   const confirmDelete = async () => {
     if (!bannerToDelete) return;
-    // 成功 / 失敗 toast 與列表 invalidate 由 useDeleteBanner 處理
-    await deleteBannerMutation.mutateAsync(bannerToDelete.banner_id);
-    setBannerToDelete(null);
+    // 成功 / 失敗 toast 與列表 invalidate 由 useDeleteBanner 處理；失敗（回 undefined）時保留 dialog
+    const response = await deleteBannerMutation.mutateAsync(
+      bannerToDelete.banner_id
+    );
+    if (response) setBannerToDelete(null);
   };
 
   const handlePromoteToActive = (banner: TBanner) => {

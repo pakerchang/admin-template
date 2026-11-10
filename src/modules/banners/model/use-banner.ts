@@ -204,7 +204,9 @@ export const useDeleteBanner = () => {
 
       return response;
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // mutationFn 在 API 錯誤時回 undefined（已 toast 錯誤）：不可再報成功
+      if (!response) return;
       queryClient.invalidateQueries({ queryKey: ["bannerList"] });
       toast({
         title: t("common.success"),
