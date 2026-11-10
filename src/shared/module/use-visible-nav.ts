@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useCan } from "@/shared/permission";
 
 import type { TRegistryNavItem, TResolvedNavItem } from "./types";
+import type { TLeafKey } from "@/shared/i18n/types";
 
 /** 已排序、未過濾的 registry nav（label 為全域 key），由 kernel 注入（§4.3 步驟 3）；shell 不直接讀它 */
 export const NavContext = createContext<readonly TRegistryNavItem[]>([]);
@@ -25,11 +26,14 @@ export const useVisibleNav = (): TResolvedNavItem[] => {
     () =>
       nav.flatMap(({ labelKey, children, ...item }) => {
         if (!allowed(item.permission)) return [];
-        const resolved = { ...item, label: t(labelKey) };
+        const resolved = { ...item, label: t(labelKey as TLeafKey) };
         if (!children) return [resolved];
         const visible = children
           .filter((c) => allowed(c.permission))
-          .map(({ labelKey: key, ...c }) => ({ ...c, label: t(key) }));
+          .map(({ labelKey: key, ...c }) => ({
+            ...c,
+            label: t(key as TLeafKey),
+          }));
         return visible.length ? [{ ...resolved, children: visible }] : [];
       }),
     [nav, allowed, t]
@@ -48,7 +52,7 @@ export const useRouteTitleResolver = (): ((
   return useCallback(
     (path: string) => {
       const key = titles.get(path);
-      return key === undefined ? undefined : t(key);
+      return key === undefined ? undefined : t(key as TLeafKey);
     },
     [titles, t]
   );

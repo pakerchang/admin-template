@@ -42,7 +42,7 @@ import { MultiSelectField } from "./components/MultiSelectField";
 import type { EProductType } from "../model/schema";
 import type { TProductForm } from "../model/use-product";
 import type { EActiveStatus } from "@/shared/api/schema";
-import type { TransKey } from "@/shared/i18n/types";
+import type { TLeafKey } from "@/shared/i18n/types";
 
 const DEFAULT_LANG_VALUES = { zh: "", en: "", th: "" };
 const DEFAULT_VALUES: TProductForm = {
@@ -266,7 +266,7 @@ const ProductDraftForm = () => {
             <SelectContent>
               {Object.values(productTypeEnums.enum).map((type) => (
                 <SelectItem key={type} value={type}>
-                  {t(`product.productTypes.${type}` as TransKey)}
+                  {t(`product.productTypes.${type}` as TLeafKey)}
                 </SelectItem>
               ))}
             </SelectContent>

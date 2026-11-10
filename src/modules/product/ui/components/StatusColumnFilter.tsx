@@ -11,6 +11,7 @@ import {
 
 import type { TProduct } from "../../model/schema";
 import type { Column } from "@tanstack/react-table";
+import type { TFunction } from "i18next";
 
 type StatusCounts = {
   total: number;
@@ -25,7 +26,7 @@ const ALL_STATUS_VALUE = "all" as const;
 
 type FilterValue = EActiveStatus | typeof ALL_STATUS_VALUE;
 
-const createStatusOptions = (t: (key: string) => string) => [
+const createStatusOptions = (t: TFunction) => [
   {
     value: ALL_STATUS_VALUE,
     label: t("product.filter.allStatus"),

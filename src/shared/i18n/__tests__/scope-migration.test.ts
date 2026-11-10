@@ -35,11 +35,14 @@ const leaves = (o: TDict, p = ""): string[] =>
       : [`${p}${k}`]
   );
 
+/** 新撰 en 的 3 個 banners key（搬遷後名稱；old key 由下方 regex 對回 banners 舊路徑） */
 const NEW_EN_KEYMAP = [
-  "pages.banner.confirmDelete",
-  "pages.banner.deleteConfirm",
-  "pages.banner.deleteDescription",
+  "banners.confirmDelete",
+  "banners.deleteConfirm",
+  "banners.deleteDescription",
 ];
+const OLD_BANNER =
+  /^pages\.banner\.(confirmDelete|deleteConfirm|deleteDescription)$/;
 
 describe("scope-keymap：搬遷後值不變（AC-6）", () => {
   it.each(keymap.map((r) => [r.old, r] as const))("%s", (_old, r) => {
@@ -47,13 +50,10 @@ describe("scope-keymap：搬遷後值不變（AC-6）", () => {
     expect(resolve("en", r.new)).toBe(r.en);
   });
 
-  it('"enSource": "new" 恰為 banners 的 3 個 key', () => {
-    expect(
-      keymap
-        .filter((r) => "enSource" in r && r.enSource === "new")
-        .map((r) => r.old)
-        .sort()
-    ).toEqual(NEW_EN_KEYMAP);
+  it('"enSource": "new" 恰為 banners 舊路徑的 3 個 key', () => {
+    const fresh = keymap.filter((r) => "enSource" in r && r.enSource === "new");
+    expect(fresh.map((r) => r.new).sort()).toEqual(NEW_EN_KEYMAP);
+    for (const r of fresh) expect(r.old).toMatch(OLD_BANNER);
   });
 
   it("old 不重複、new 不重複", () => {
@@ -78,7 +78,10 @@ describe("core-en-additions：留 core、只補 en（AC-6）", () => {
           .map((r) => r.old),
         ...coreAdditions.filter((r) => r.enSource === "new").map((r) => r.key),
       ].sort()
-    ).toEqual([...NEW_EN_KEYMAP, "validation.email.invalid"].sort());
+    ).toHaveLength(4);
+    expect(
+      coreAdditions.filter((r) => r.enSource === "new").map((r) => r.key)
+    ).toEqual(["validation.email.invalid"]);
   });
 });
 

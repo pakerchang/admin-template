@@ -8,6 +8,7 @@ import { Label } from "@/shared/ui/label";
 
 import { useLogin } from "../model/use-login";
 
+import type { TLeafKey } from "@/shared/i18n/types";
 import type { MouseEvent, SubmitEvent } from "react";
 
 type TDemoAccount = { email: string; password: string; role: string };
@@ -96,10 +97,11 @@ const LoginPage = ({
               onClick={fillForm(account)}
             >
               <span className="font-medium">
-                {t(`auth.demo.roles.${account.role}`)} · {account.email}
+                {t(`auth.demo.roles.${account.role}` as TLeafKey)} ·{" "}
+                {account.email}
               </span>
               <span className="text-xs text-muted-foreground">
-                {t(`auth.demo.descriptions.${account.role}`)}
+                {t(`auth.demo.descriptions.${account.role}` as TLeafKey)}
               </span>
             </Button>
           ))}

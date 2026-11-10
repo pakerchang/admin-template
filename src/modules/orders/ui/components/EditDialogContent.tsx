@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
 import { EOrderStatus } from "../../model/schema";
 
 import type { TOrder } from "../../model/schema";
+import type { TLeafKey } from "@/shared/i18n/types";
 
 interface EditDialogContentProps {
   defaultStatus: TOrder["order_status"];
@@ -65,7 +66,7 @@ const EditDialogContent = ({
                 className="flex cursor-pointer items-center gap-x-2 rounded-sm border p-2 hover:bg-accent"
               >
                 <RadioGroupItem id={option.value} value={option.value} />
-                <span className="flex-1">{t(option.label)}</span>
+                <span className="flex-1">{t(option.label as TLeafKey)}</span>
               </Label>
             ))}
           </RadioGroup>

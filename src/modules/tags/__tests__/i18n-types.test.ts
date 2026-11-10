@@ -13,6 +13,12 @@ describe("tags i18n keys are typed (AC-4 (1))", () => {
       t("tags.addTag"),
       t("tags.messages.createSuccess"),
       t("common.cancel"),
+      // @ts-expect-error t() 拒絕 module key typo
+      t("tags.addTga"),
+      // @ts-expect-error t() 拒絕搬遷前的舊 key
+      t("pages.tag.addTag"),
+      // @ts-expect-error t() 拒絕舊 nav key
+      t("dashboard.menu.tags.title"),
     ];
     const ok: TransKey = "tags.addTag";
     const core: TransKey = "common.cancel";

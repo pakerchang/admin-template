@@ -11,6 +11,7 @@ import {
 } from "@/shared/ui/dialog";
 
 import type { FieldChange } from "../../model/field-comparison";
+import type { TLeafKey } from "@/shared/i18n/types";
 
 interface ProductEditConfirmDialogProps {
   open: boolean;
@@ -48,13 +49,13 @@ const ProductEditConfirmDialog = ({
     const field = fieldName.split(".")[0];
     if (field === "product_type") {
       const typeKey = `product.productTypes.${value}`;
-      const translated = t(typeKey);
+      const translated = t(typeKey as TLeafKey);
       return translated !== typeKey ? translated : value;
     }
 
     if (field === "product_status") {
       const statusKey = `product.productCreate.${value}`;
-      const translated = t(statusKey);
+      const translated = t(statusKey as TLeafKey);
       return translated !== statusKey ? translated : value;
     }
 
@@ -72,16 +73,16 @@ const ProductEditConfirmDialog = ({
     );
 
     let createFieldKey = `product.productCreate.${camelCaseKey}`;
-    let fieldName = t(createFieldKey);
+    let fieldName = t(createFieldKey as TLeafKey);
 
     if (fieldName === createFieldKey) {
       createFieldKey = `product.productCreate.${fieldKey}`;
-      fieldName = t(createFieldKey);
+      fieldName = t(createFieldKey as TLeafKey);
     }
 
     if (fieldName === createFieldKey) {
       const tableFieldKey = `tables.product.${fieldKey}`;
-      fieldName = t(tableFieldKey);
+      fieldName = t(tableFieldKey as TLeafKey);
 
       if (fieldName === tableFieldKey) {
         fieldName = fieldKey

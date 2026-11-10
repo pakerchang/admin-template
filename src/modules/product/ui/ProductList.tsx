@@ -26,7 +26,7 @@ import Card from "./components/Card";
 import StatusColumnFilter from "./components/StatusColumnFilter";
 
 import type { TProduct } from "../model/schema";
-import type { TransKey, TransTypes } from "@/shared/i18n/types";
+import type { TLeafKey, TransTypes } from "@/shared/i18n/types";
 import type {
   ColumnDef,
   PaginationState,
@@ -152,7 +152,7 @@ const ProductPage = () => {
       cell: ({ row }) => {
         const productType = row.getValue("product_type") as string;
         const displayText = productType
-          ? t(`product.productTypes.${productType}` as TransKey).toString()
+          ? t(`product.productTypes.${productType}` as TLeafKey).toString()
           : "-";
 
         return <p className="text-center">{displayText}</p>;
@@ -261,7 +261,7 @@ const ProductPage = () => {
       cell: ({ row }) => {
         const status = row.getValue<string>("product_status");
         const displayText = status
-          ? t(`product.status.${status}` as TransKey).toString()
+          ? t(`product.status.${status}` as TLeafKey).toString()
           : "-";
         return <p className="text-center">{displayText}</p>;
       },

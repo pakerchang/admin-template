@@ -37,6 +37,7 @@ import { useGetStaffList, useDeleteStaff } from "../model/use-staff";
 import StaffFormDialog from "./components/StaffFormDialog";
 
 import type { TStaffUser } from "../model/schema";
+import type { TLeafKey } from "@/shared/i18n/types";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 
 const TeamMemberList = () => {
@@ -213,7 +214,7 @@ const TeamMemberList = () => {
                 }
               )}
             >
-              {t(`team-members.roles.${role}`)}
+              {t(`team-members.roles.${role}` as TLeafKey)}
             </span>
           </div>
         );
