@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -10,6 +11,7 @@ import { Spinner } from "@/shared/ui/spinner";
 import { TextInput } from "@/shared/ui/text-inputs";
 
 import { userSchema } from "../model/schema";
+import { useGetUser, useUpdateUser } from "../model/use-user";
 
 import type { TUser } from "../model/schema";
 
@@ -27,7 +29,10 @@ const DEFAULT_VALUES: TUserForm = {
 
 const UserFormPage = () => {
   const { t } = useTranslation();
-  // const { id } = useParams({ from: "/users/edit/$id" })
+  const navigate = useNavigate();
+  const { id = "" } = useParams({ strict: false }) as { id?: string };
+  const { data: userData, isLoading } = useGetUser(id);
+  const { mutateAsync: updateUser, isPending } = useUpdateUser();
 
   const form = useForm<TUserForm>({
     resolver: zodResolver(
@@ -37,17 +42,14 @@ const UserFormPage = () => {
     mode: "onChange",
   });
 
-  const isLoading = false;
-  const userData = null;
-
   useEffect(() => {
     if (userData) {
       form.reset(userData);
     }
   }, [form, userData]);
 
-  const onSubmit = form.handleSubmit(() => {
-    // Handle form submission
+  const onSubmit = form.handleSubmit(async (values) => {
+    if (await updateUser(values)) navigate({ to: "/users" });
   });
 
   if (isLoading) {
@@ -64,7 +66,7 @@ const UserFormPage = () => {
         permission="users:update"
         form="user-form"
         className="h-10 w-fit"
-        disabled={!form.formState.isDirty}
+        disabled={!form.formState.isDirty || isPending}
       >
         {t("common.submit")}
       </FormSubmit>

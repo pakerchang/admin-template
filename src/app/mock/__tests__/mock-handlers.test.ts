@@ -21,6 +21,8 @@ const login = (email: string) =>
   });
 
 const emailOf = (role: string) => users.find((u) => u.role === role)!.email;
+// ponytail: 目前唯一的 path param 是 users 的 `:id`；出現其他 param 時改成依 path 對照表代換
+const concrete = (path: string) => path.replace(":id", "user-2");
 
 /** 登入後把 session 存起來，apiFetch 之後的 request 都帶它的 token */
 const signIn = async (email: string) => {
@@ -88,7 +90,7 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
       await signIn(DEMO_ACCOUNT.email);
       for (const { method, path } of operations.routes) {
         if (method !== "GET") continue;
-        const res = await apiFetch(path);
+        const res = await apiFetch(concrete(path));
         expect([path, res.status]).toEqual([path, 200]);
       }
     });
@@ -119,6 +121,10 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
         "PUT /user/me/profile": [
           { first_name: "Alicia" },
           { code: 200, data: { user_id: "user-1", first_name: "Alicia" } },
+        ],
+        "PUT /users/:id": [
+          { first_name: "Bobby" },
+          { code: 200, data: { user_id: "user-2", first_name: "Bobby" } },
         ],
         "POST /admin/user/role": [
           { target_user_id: "user-8", role: "user" },
@@ -186,7 +192,7 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
         async (key) => {
           const [method, path] = key.split(" ");
           const [body, expected] = CASES[key];
-          const res = await apiFetch(path, {
+          const res = await apiFetch(concrete(path), {
             method: method as "POST" | "PUT" | "DELETE",
             body,
           });

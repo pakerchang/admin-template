@@ -76,6 +76,60 @@ paths:
                           $ref: "#/components/schemas/User"
         "403":
           $ref: "#/components/responses/Error"
+  /users/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getUser
+      tags: [users]
+      x-permission: users:read
+      responses:
+        "200":
+          description: 單一使用者
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/User"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    put:
+      operationId: updateUser
+      tags: [users]
+      x-permission: users:update
+      requestBody:
+        required: true
+        description: 只套用 email / first_name / last_name / phone_number / address / remark；role 走 updateUserRole
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: 更新後的使用者
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/User"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
   /user/me/profile:
     get:
       operationId: getMyProfile
@@ -1046,6 +1100,21 @@ components:
     ProfileUpdate:
       type: object
       properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone_number:
+          type: string
+        address:
+          type: string
+        remark:
+          type: string
+    UserUpdate:
+      type: object
+      properties:
+        email:
+          type: string
         first_name:
           type: string
         last_name:
