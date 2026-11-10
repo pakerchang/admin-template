@@ -13,6 +13,7 @@ import {
   convertToApiSorting,
 } from "@/shared/ui/data-table/hooks/useApiSorting";
 import EditActions from "@/shared/ui/edit-actions";
+import { Guarded } from "@/shared/ui/guarded";
 import { Navbar } from "@/shared/ui/navbar/navbar";
 
 import { useDeleteArticle, useGetArticleList } from "../model/use-article";
@@ -266,18 +267,20 @@ const ArticleListPage = () => {
     <div className="flex size-full flex-col gap-4">
       <Navbar>
         <div className="flex w-full items-center justify-end">
-          <Button
-            onClick={() => {
-              try {
-                navigate({ to: "/articles/create" });
-              } catch (error) {
-                console.error("Navigation error:", error);
-              }
-            }}
-          >
-            <Plus className="size-4" />
-            {t("common.createArticle")}
-          </Button>
+          <Guarded permission="articles:create">
+            <Button
+              onClick={() => {
+                try {
+                  navigate({ to: "/articles/create" });
+                } catch (error) {
+                  console.error("Navigation error:", error);
+                }
+              }}
+            >
+              <Plus className="size-4" />
+              {t("common.createArticle")}
+            </Button>
+          </Guarded>
         </div>
       </Navbar>
 

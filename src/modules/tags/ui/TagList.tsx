@@ -1,4 +1,4 @@
-import { ArrowUpDown, Edit, Plus, Search, Tags, Trash2 } from "lucide-react";
+import { ArrowUpDown, Plus, Search, Tags } from "lucide-react";
 import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -18,15 +18,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
+import EditActions from "@/shared/ui/edit-actions";
+import { Guarded } from "@/shared/ui/guarded";
 import { Input } from "@/shared/ui/input";
 import { Navbar } from "@/shared/ui/navbar/navbar";
 import { Spinner } from "@/shared/ui/spinner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/shared/ui/tooltip";
 
 import { useGetTagList, useDeleteTag } from "../model/use-tag";
 
@@ -183,42 +179,16 @@ const TagList = () => {
       cell: ({ row }) => {
         const tag = row.original;
         return (
-          <div className="flex justify-center space-x-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleEditTag(tag)}
-                  >
-                    <Edit className="size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t("pages.tag.editTag")}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteTag(tag)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t("pages.tag.deleteTag")}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <EditActions
+            onEdit={{
+              handler: () => handleEditTag(tag),
+              permission: "tags:update",
+            }}
+            onDelete={{
+              handler: () => handleDeleteTag(tag),
+              permission: "tags:delete",
+            }}
+          />
         );
       },
     },
@@ -246,10 +216,12 @@ const TagList = () => {
               {t("dashboard.menu.tags.title")}
             </h2>
           </div>
-          <Button onClick={handleCreateTag}>
-            <Plus className="mr-2 size-4" />
-            {t("pages.tag.addTag")}
-          </Button>
+          <Guarded permission="tags:create">
+            <Button onClick={handleCreateTag}>
+              <Plus className="mr-2 size-4" />
+              {t("pages.tag.addTag")}
+            </Button>
+          </Guarded>
         </div>
 
         <div className="flex items-center space-x-2">

@@ -13,6 +13,7 @@ import { useImgUpload } from "@/shared/api/upload";
 import { arraysEqual } from "@/shared/lib/array-helpers";
 import { createGeneralImageValidationManager } from "@/shared/lib/image-validation";
 import { Button } from "@/shared/ui/button";
+import { FormSubmit } from "@/shared/ui/form-submit";
 import ImageUploadDialog from "@/shared/ui/image-upload/image-upload-dialog";
 import { Label } from "@/shared/ui/label";
 import { Navbar } from "@/shared/ui/navbar/navbar";
@@ -251,8 +252,8 @@ const ProductEditForm = () => {
 
   const navbarActions = (
     <div className="flex w-full items-center justify-end">
-      <Button
-        type="submit"
+      <FormSubmit
+        permission="product:update"
         form="product-edit-form"
         className="h-10 w-fit"
         disabled={isSubmitDisabled}
@@ -260,7 +261,7 @@ const ProductEditForm = () => {
         {isEditUpdating
           ? t("pages.product.productCreate.submitting")
           : t("common.submit")}
-      </Button>
+      </FormSubmit>
     </div>
   );
 

@@ -10,6 +10,7 @@ import { useImgUpload } from "@/shared/api/upload";
 import { useValidationMessage } from "@/shared/lib/gen-validate-message";
 import { createGeneralImageValidationManager } from "@/shared/lib/image-validation";
 import { Button } from "@/shared/ui/button";
+import { FormSubmit } from "@/shared/ui/form-submit";
 import ImageUploadDialog from "@/shared/ui/image-upload/image-upload-dialog";
 import { Navbar } from "@/shared/ui/navbar/navbar";
 import Paper from "@/shared/ui/paper";
@@ -228,8 +229,8 @@ const ArticleFormPage = () => {
           >
             {t("common.cancel")}
           </Button>
-          <Button
-            type="submit"
+          <FormSubmit
+            permission={isEditMode ? "articles:update" : "articles:create"}
             form="article-form"
             disabled={isCreateUploading || isEditUpdating}
           >
@@ -237,7 +238,7 @@ const ArticleFormPage = () => {
               <Spinner className="mr-2 size-4" />
             ) : null}
             {isEditMode ? t("common.update") : t("common.create")}
-          </Button>
+          </FormSubmit>
         </div>
       </Navbar>
 

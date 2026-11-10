@@ -10,6 +10,7 @@ import { activeStatusEnums } from "@/shared/api/schema";
 import { useImgUpload } from "@/shared/api/upload";
 import { createGeneralImageValidationManager } from "@/shared/lib/image-validation";
 import { Button } from "@/shared/ui/button";
+import { FormSubmit } from "@/shared/ui/form-submit";
 import ImageUploadDialog from "@/shared/ui/image-upload/image-upload-dialog";
 import { Label } from "@/shared/ui/label";
 import { Navbar } from "@/shared/ui/navbar/navbar";
@@ -96,8 +97,8 @@ const ProductCreateForm = () => {
 
   const navbarActions = (
     <div className="flex w-full items-center justify-end">
-      <Button
-        type="submit"
+      <FormSubmit
+        permission="product:create"
         form="product-create-form"
         className="h-10 w-fit"
         disabled={isSubmitDisabled}
@@ -105,7 +106,7 @@ const ProductCreateForm = () => {
         {isCreateUploading
           ? t("pages.product.productCreate.submitting")
           : t("common.submit")}
-      </Button>
+      </FormSubmit>
     </div>
   );
 
