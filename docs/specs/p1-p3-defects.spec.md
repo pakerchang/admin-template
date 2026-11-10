@@ -14,7 +14,7 @@
 - [ ] (c) 新增文章：上傳封面後送出，打 `POST /admin/articles` 且 body 的 `image_url` 等於上傳結果（`file_name` + `/admin/images` 回傳的 `file_url`）（RTL + MSW）。`src/modules/articles/ui/__tests__/article-form-submit.test.tsx`
 - [ ] (d) 編輯既有文章（不換封面）送出，打 `PUT /admin/articles` 且 `image_url` 保持原值（同上測試檔）
 - [ ] (e) 既有測試全綠、build 通過、lint 無違規（Done Command）
-- [ ] (f) `[manual]` 瀏覽器 mock 模式各點一次：訂單列表代理商編號、banner 刪除、文章新增（留給 owner）
+- [x] (f) `[manual]` 瀏覽器 mock 模式各點一次：訂單列表代理商編號、banner 刪除、文章新增。**agent 已驗（chrome-devtools，2026-11-10），owner 未親驗**；owner 2026-11-10 裁決接受 agent 代驗（同 M2 / M3 AC-5 標註）。證據：代理商編號欄顯示 seed `supplier-N`；`DELETE /admin/banners` 200 後列表移除該筆；`POST /admin/articles` 200 且 body `image_url` = `/admin/images` 上傳結果
 
 ### Touches
 
