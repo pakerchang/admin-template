@@ -52,7 +52,6 @@ export const useGetUserList = (pagination: Partial<TPagination>) => {
     },
     gcTime: 1000 * 60 * 5,
     staleTime: 1000 * 60 * 2,
-    refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
     placeholderData: (prev) => prev,
