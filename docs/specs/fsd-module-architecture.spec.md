@@ -247,10 +247,17 @@ export type TLocale = "en" | "zh";
 export interface TRouteIdRegistry {}         // 例（R23 格式）：{ "orders.list": true; "orders.details": true }
 export type TRouteId = Extract<keyof TRouteIdRegistry, string>;   // 命名格式 `${moduleId}.${name}`（R23 / OQ-16 已裁）
 
+// typed-contracts T2（docs/specs/typed-contracts-t2.spec.md）：module id 與 nav 路徑也走 declaration merging registry；不得帶 index signature、不得在測試檔 augment
+export interface TModuleIdRegistry {}       // 各 module 在 index.ts augment：{ orders: true }
+export type TModuleId = Extract<keyof TModuleIdRegistry, string>;
+export interface TRoutePathRegistry { "/": true }   // core 自帶 "/"；各 module 在 model/routes.ts 登錄自己的靜態完整路徑（無 $param、無結尾斜線）
+export type TRoutePath = Extract<keyof TRoutePathRegistry, string>;
+// StaticDataRouteOption.routeId?: TRouteId（kernel 由 ctx.page 注入）
+
 export type TNavItem = {
   id: string;
   label: string;              // module 字典 `nav` 段的局部 key（例 "title"）；kernel 組 `${moduleId}.nav.${label}`，翻譯後注入 shell（owner 2026-11-11 補裁 2、3，見 i18n-scope-migration spec）；defineModule 由 i18n 推導收窄
-  to: string;                 // 絕對路徑（跨 module 導航只經 nav 字串）
+  to: TRoutePath;             // 已登錄的靜態絕對路徑（跨 module 導航只經 nav 字串；T2：build() 另驗是實際 route 路徑）
   icon?: ComponentType<{ className?: string }>;
   permission: TPermission;    // 必填，nav 過濾依據（§6.3）
   order?: number;             // 排序，預設 100
@@ -268,6 +275,7 @@ export type TPageRouteOpts<TOpts> = TOpts & TGuard & {
   component: ComponentType<any>;                     // ★ 必填：module 預設頁面（由 index.ts 注入，§4.4）
 };
 
+// T2：TRouteContext<Id> / TPublicRouteContext<Id> 的 page 只收 Extract<TRouteId, `${Id}.${string}`>（R23 前綴在 tsc 擋）；Id 預設全部 module id（kernel / 寬型別 TModule 用）
 export type TRouteContext = {
   parent: AnyRoute;                                  // protected layout route
   /** kernel 注入（§4.3）：shared guardedRoute + 注入 errorComponent；runtime 帶 component → build() throw */
@@ -284,20 +292,20 @@ export type TPublicRouteContext = {
 };
 
 export type TModule = {
-  id: string;                                        // kebab-case，唯一
+  id: TModuleId;                                     // kebab-case，唯一（T2：須在 TModuleIdRegistry 登錄）
   kind: "generic" | "domain";                        // D4 驗收腳本依此挑出 domain
-  requires?: readonly string[];                      // ★ R8：依賴的 module id；缺 → createApp 啟動 fail fast
+  requires?: readonly TModuleId[];                   // ★ R8：依賴的 module id；缺 → createApp 啟動 fail fast
   routes?: (ctx: TRouteContext) => AnyRoute[];       // 掛在 protected 下的子樹；在 index.ts 組裝（model/routes 的 defineRoutes + ui 頁面，§4.4）
   publicRoutes?: (ctx: TPublicRouteContext) => AnyRoute[];  // 例：/login（page route，routeId 必填）
   nav?: TNavItem[];
-  routeTitles?: readonly { to: string; label: string }[];  // 沒有 nav 的 route 宣告 breadcrumb 標題（label 同 nav 局部 key，不進 sidebar；owner 2026-11-11 補裁 4）
+  routeTitles?: readonly { to: TRoutePath; label: string }[];  // 沒有 nav 的 route 宣告 breadcrumb 標題（label 同 nav 局部 key，不進 sidebar；owner 2026-11-11 補裁 4）
   i18n?: Record<TLocale, Record<string, unknown>>;   // ★ 裸字典（不含 module id 頂層）；kernel 以 { [id]: dict } scope（§4.3、§5.4）
   mockHandlers?: HttpHandler[];                      // ★ R11：MSW handler（orval 產物 + override 接 seed），§4.5
   permissions?: TModulePermissions;                  // R21：權限目錄 resources + 角色預設 grant mockGrants（+ ABAC conditions，§6A），§6.1；operation→permission 不在 module，只在 YAML x-permission（§6.5）
   // future: slots?: ...（D2：以新增欄位 + <Slot> 擴充，不改既有欄位）
 };
 
-export const defineModule = <const M extends TModule>(m: M): M => m;   // 純型別輔助
+export const defineModule = <const M extends TModule>(m: M): M => m;   // 純型別輔助（實際簽章另以獨立型別參數收窄 nav label、requires 不得含自己、routes 的 ctx 為 TRouteContext<自己的 id>，見 src/shared/module/types.ts 與 typed-contracts T2 §3.2）
 ```
 
 ### 4.2 `createApp` / registry（`app/kernel`）

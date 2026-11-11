@@ -18,13 +18,16 @@ export const bannerDesktopResolutionRule: ImageValidationRule = {
   priority: 10,
   async validate(
     _file: File,
-    metadata?: ImageMetadata,
-    context?: ValidationContext
+    metadata: ImageMetadata | undefined,
+    context: ValidationContext
   ): Promise<ValidationResult> {
-    const t = context?.t;
+    const { t } = context;
 
     if (!metadata || !metadata.width || !metadata.height) {
-      const message = "無法獲取圖片尺寸資訊，請確保檔案為有效的圖片格式";
+      const message = t(
+        "banners.validation.image.resolution.metadataMissing",
+        {}
+      );
 
       return {
         isValid: false,
@@ -42,9 +45,10 @@ export const bannerDesktopResolutionRule: ImageValidationRule = {
     const MAX_HEIGHT = 2160;
 
     if (width < MIN_WIDTH || height < MIN_HEIGHT) {
-      const message = t
-        ? t("banners.validation.image.resolution.desktop.tooSmall", {})
-        : `桌面版圖片解析度過小，最小支援 ${MIN_WIDTH}×${MIN_HEIGHT}`;
+      const message = t(
+        "banners.validation.image.resolution.desktop.tooSmall",
+        {}
+      );
 
       return {
         isValid: false,
@@ -54,9 +58,10 @@ export const bannerDesktopResolutionRule: ImageValidationRule = {
     }
 
     if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-      const message = t
-        ? t("banners.validation.image.resolution.desktop.tooLarge", {})
-        : `桌面版圖片解析度過大，最大支援 ${MAX_WIDTH}×${MAX_HEIGHT}`;
+      const message = t(
+        "banners.validation.image.resolution.desktop.tooLarge",
+        {}
+      );
 
       return {
         isValid: false,
@@ -70,9 +75,10 @@ export const bannerDesktopResolutionRule: ImageValidationRule = {
     const tolerance = 0.05; // 5% 容許誤差
 
     if (!isAspectRatioInRange(aspectRatio, targetRatio, tolerance)) {
-      const message = t
-        ? t("banners.validation.image.resolution.desktop.aspectRatio", {})
-        : `桌面版圖片寬高比不符合 16:9 規範，目前為 ${width}×${height}`;
+      const message = t(
+        "banners.validation.image.resolution.desktop.aspectRatio",
+        {}
+      );
 
       return {
         isValid: false,
@@ -93,13 +99,16 @@ export const bannerMobileResolutionRule: ImageValidationRule = {
   priority: 10,
   async validate(
     _file: File,
-    metadata?: ImageMetadata,
-    context?: ValidationContext
+    metadata: ImageMetadata | undefined,
+    context: ValidationContext
   ): Promise<ValidationResult> {
-    const t = context?.t;
+    const { t } = context;
 
     if (!metadata || !metadata.width || !metadata.height) {
-      const message = "無法獲取圖片尺寸資訊，請確保檔案為有效的圖片格式";
+      const message = t(
+        "banners.validation.image.resolution.metadataMissing",
+        {}
+      );
 
       return {
         isValid: false,
@@ -118,11 +127,9 @@ export const bannerMobileResolutionRule: ImageValidationRule = {
 
     if (width < MIN_WIDTH || height < MIN_HEIGHT) {
       const minResolution = `${MIN_WIDTH}x${MIN_HEIGHT}`;
-      const message = t
-        ? t("banners.validation.image.resolution.mobile.tooSmall", {
-            minResolution,
-          })
-        : `手機版圖片解析度過小，最小支援 ${MIN_WIDTH}×${MIN_HEIGHT}`;
+      const message = t("banners.validation.image.resolution.mobile.tooSmall", {
+        minResolution,
+      });
 
       return {
         isValid: false,
@@ -133,11 +140,9 @@ export const bannerMobileResolutionRule: ImageValidationRule = {
 
     if (width > MAX_WIDTH || height > MAX_HEIGHT) {
       const maxResolution = `${MAX_WIDTH}x${MAX_HEIGHT}`;
-      const message = t
-        ? t("banners.validation.image.resolution.mobile.tooLarge", {
-            maxResolution,
-          })
-        : `手機版圖片解析度過大，最大支援 ${MAX_WIDTH}×${MAX_HEIGHT}`;
+      const message = t("banners.validation.image.resolution.mobile.tooLarge", {
+        maxResolution,
+      });
 
       return {
         isValid: false,
@@ -151,9 +156,10 @@ export const bannerMobileResolutionRule: ImageValidationRule = {
     const tolerance = 0.05; // 5% 容許誤差
 
     if (!isAspectRatioInRange(aspectRatio, targetRatio, tolerance)) {
-      const message = t
-        ? t("banners.validation.image.resolution.mobile.aspectRatio", {})
-        : `手機版圖片寬高比不符合 16:9 規範，目前為 ${width}×${height}`;
+      const message = t(
+        "banners.validation.image.resolution.mobile.aspectRatio",
+        {}
+      );
 
       return {
         isValid: false,

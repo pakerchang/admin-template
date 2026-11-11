@@ -34,5 +34,18 @@
       "error": "新增使用者失敗"
     }
   },
-  "addUser": "新增使用者"
+  "addUser": "新增使用者",
+  "editRole": {
+    "title": "編輯使用者角色",
+    "description": "請選擇新的使用者角色"
+  },
+  "roles": {
+    "new": "新使用者",
+    "user": "一般使用者",
+    "vip": "VIP會員",
+    "agent": "代理商",
+    "cservice": "客服",
+    "admin": "管理員",
+    "superadmin": "超級管理員"
+  }
 }

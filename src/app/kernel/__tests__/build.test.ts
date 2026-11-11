@@ -10,7 +10,7 @@ import { build } from "../build";
 import { createApp } from "../create-app";
 
 import type { TBuildInput } from "../build";
-import type { TModule, TRouteId, TShell } from "@/shared/module";
+import type { TModule, TRouteContext, TRouteId, TShell } from "@/shared/module";
 import type {
   OperationPermissions,
   TOperationTable,
@@ -24,14 +24,20 @@ import type { ComponentType } from "react";
  * typed-contracts T1：fixture 刻意用 registry 外的權限字串（`x:read`、`a:typo`…）測 build() 執行期檢查 →
  * 以寬型別入口宣告，catalog 由 resources 補齊；執行期行為不變。
  */
-type TLooseModule = Omit<Partial<TModule>, "nav" | "permissions"> & {
+type TLooseModule = Omit<
+  Partial<TModule>,
+  "nav" | "permissions" | "requires" | "routeTitles"
+> & {
   nav?: { id: string; label: string; to: string; permission: string }[] | any[];
+  /** T2：假 module id／假路徑（core-only 也要能跑）走寬入口，在 mod() 注入點 cast */
+  requires?: string[];
+  routeTitles?: { to: string; label: string }[];
   permissions?: {
     resources: Record<string, string[]>;
     mockGrants?: Record<string, readonly string[]>;
   };
 };
-/** 寬型別 TModule 入口（不經 defineModule 的 nav 局部 key 推導）：fixture 刻意含非法 label */
+/** 寬型別 TModule 入口（不經 defineModule 的 nav 局部 key 推導）：fixture 刻意含非法 label、假 id、假路徑 */
 const mod = (
   id: string,
   { permissions, ...extra }: TLooseModule = {}
@@ -57,6 +63,17 @@ const navI18n = (...keys: string[]) => ({
 });
 
 const rid = (id: string) => id as TRouteId;
+/** T2：nav／routeTitles 的 `to` 必須是實際 route 路徑 → fixture 自己建出這些路徑（只做分組的 layout route） */
+const routesAt = (...paths: string[]) => ({
+  routes: (c: TRouteContext) =>
+    paths.map((p) =>
+      c.layout({
+        getParentRoute: () => c.parent,
+        path: p.slice(1),
+        permission: "authenticated",
+      })
+    ),
+});
 const page = (testId: string): ComponentType =>
   function Page() {
     return createElement("div", { "data-testid": testId });
@@ -197,6 +214,7 @@ describe("build() validation", () => {
         nav: [{ id: "o", label: "title", to: "/orders", permission }],
         i18n: navI18n("title"),
         permissions: { resources: { orders: ["read", "update", "export"] } },
+        ...routesAt("/orders"),
       });
     expect(() => build(ctx([navWith("orders:typo")]))).toThrow(
       /"orders".*"orders:typo"/
@@ -448,10 +466,12 @@ describe("assembly (AC-4)", () => {
           nav: [navItem("n1"), navItem("n2", 5)],
           i18n: navI18n("n1", "n2"),
           ...resources,
+          ...routesAt("/n1", "/n2"),
         }),
         mod("m2", {
           nav: [navItem("n3", 100), navItem("n4", 1)],
           i18n: navI18n("n3", "n4"),
+          ...routesAt("/n3", "/n4"),
         }),
       ])
     );
@@ -483,11 +503,13 @@ describe("permission catalog", () => {
       permissions: { resources: { orders: ["read", "update"] } },
       nav: [{ id: "n", label: "n", to: "/a", permission: "orders:export" }],
       i18n: navI18n("n"),
+      ...routesAt("/a"),
     });
     const b = mod("b", {
       permissions: { resources: { orders: ["update", "export"] } },
       nav: [{ id: "m", label: "m", to: "/b", permission: "orders:read" }],
       i18n: navI18n("m"),
+      ...routesAt("/b"),
     });
     const ops: TOperationTable = {
       routes: [
@@ -698,6 +720,7 @@ describe("nav label 執行期驗證與 registry 注入（i18n-scope-migration AC
       nav: [item("title", { children: [item("orderList")] })],
       i18n: navI18n("title", "orderList"),
       ...r,
+      ...routesAt("/title", "/orderList"),
     });
     const { registry } = build(ctx([m]));
     expect(registry.nav).toHaveLength(1);
@@ -716,6 +739,7 @@ describe("nav label 執行期驗證與 registry 注入（i18n-scope-migration AC
     const users = mod("users", {
       routeTitles: [{ to: "/users", label: "title" }],
       i18n: navI18n("title"),
+      ...routesAt("/users"),
     });
     const orders = mod("orders", {
       nav: [
@@ -726,6 +750,7 @@ describe("nav label 執行期驗證與 registry 注入（i18n-scope-migration AC
       ],
       i18n: navI18n("title", "list"),
       ...r,
+      ...routesAt("/orders", "/orders/list"),
     });
     const { registry } = build(ctx([users, orders]));
     expect(registry.nav.map((n) => n.id)).toEqual(["title"]);
@@ -753,5 +778,79 @@ describe("nav label 執行期驗證與 registry 注入（i18n-scope-migration AC
       ...r,
     });
     expect(() => build(ctx([a2, b]))).toThrow(/"\/x".*"a".*"b"/);
+  });
+});
+
+describe("nav／routeTitles to 必須是實際 route 路徑（typed-contracts T2 AC-6）", () => {
+  const r = { permissions: { resources: { r: ["read"] } } };
+  const item = (to: string, extra: object = {}) => ({
+    id: to,
+    label: "title",
+    to,
+    permission: "r:read",
+    ...extra,
+  });
+  const navMod = (id: string, extra: object) =>
+    mod(id, { i18n: navI18n("title", "c"), ...r, ...extra });
+
+  it("(a) nav 頂層 to 不是任何 route 的路徑 → throw（含 module id 與 to）", () => {
+    const m = navMod("orders", {
+      nav: [item("/nope")],
+      ...routesAt("/orders"),
+    });
+    expect(() => build(ctx([m]))).toThrow(/"orders".*"\/nope"/);
+  });
+  it("(b) children 的 to 同上", () => {
+    const m = navMod("orders", {
+      nav: [
+        item("/orders", { children: [{ ...item("/orders/x"), label: "c" }] }),
+      ],
+      ...routesAt("/orders"),
+    });
+    expect(() => build(ctx([m]))).toThrow(/"orders".*"\/orders\/x"/);
+  });
+  it("(c) routeTitles 的 to 同上", () => {
+    const m = navMod("users", {
+      routeTitles: [{ to: "/users", label: "title" }],
+      ...routesAt("/user"),
+    });
+    expect(() => build(ctx([m]))).toThrow(/"users".*"\/users"/);
+  });
+  it("(d) layout path x + 子 route path / → nav /x 不 throw（結尾斜線正規化）", () => {
+    const m = navMod("x", {
+      nav: [item("/x")],
+      routes: (c: TRouteContext) => {
+        const base = c.layout({
+          getParentRoute: () => c.parent,
+          path: "x",
+          permission: "authenticated",
+        });
+        return [
+          base.addChildren([
+            c.page({
+              getParentRoute: () => base,
+              path: "/",
+              permission: "authenticated",
+              routeId: rid("x.list"),
+              component: page("x"),
+            }),
+          ]),
+        ];
+      },
+    });
+    expect(() => build(ctx([m]))).not.toThrow();
+  });
+  it("(e) to 指到另一個已安裝 module 的路徑 → 不 throw", () => {
+    const a = navMod("a", { nav: [item("/b")] });
+    const b = mod("b", routesAt("/b"));
+    expect(() => build(ctx([a, b]))).not.toThrow();
+  });
+  it('(f) to: "/" → 不 throw', () => {
+    const m = navMod("a", {
+      nav: [item("/")],
+      routeTitles: [{ to: "/a", label: "c" }],
+      ...routesAt("/a"),
+    });
+    expect(() => build(ctx([m]))).not.toThrow();
   });
 });

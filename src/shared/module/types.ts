@@ -10,19 +10,38 @@ export type TLocale = "en" | "zh";
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface TRouteIdRegistry {}
 export type TRouteId = Extract<keyof TRouteIdRegistry, string>;
+/** R23：只屬於 module `Id` 的 route id（`${Id}.${name}`） */
+export type TOwnRouteId<Id extends string> = Extract<
+  TRouteId,
+  `${Id}.${string}`
+>;
+
+/** module id registry：每個 module 在 index.ts augment `{ <id>: true }`（typed-contracts T2 §2.1）；不得帶 index signature */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface TModuleIdRegistry {}
+export type TModuleId = Extract<keyof TModuleIdRegistry, string>;
+
+/**
+ * nav / routeTitles 可用的靜態完整路徑（無 `$param`、無結尾斜線；T2 §2.3）。
+ * module 在 model/routes.ts augment；core 自帶 `"/"`（protected index），registry 永不為 never
+ */
+export interface TRoutePathRegistry {
+  "/": true;
+}
+export type TRoutePath = Extract<keyof TRoutePathRegistry, string>;
 
 declare module "@tanstack/react-router" {
   interface StaticDataRouteOption {
     permission?: TPermission | "authenticated";
-    /** 執行期 metadata，用 string：TRouteId 在無 module augment 時為 never */
-    routeId?: string;
+    /** kernel 由 ctx.page 的 routeId 注入（執行期 metadata） */
+    routeId?: TRouteId;
   }
 }
 
 type TNavBase = {
   id: string;
-  /** 絕對路徑（跨 module 導航只經 nav 字串） */
-  to: string;
+  /** 已登錄的靜態絕對路徑（跨 module 導航只經 nav 字串；build() 另驗實際 route 存在） */
+  to: TRoutePath;
   icon?: ComponentType<{ className?: string }>;
   /** 必填，nav 過濾依據（§6.3） */
   permission: TPermission;
@@ -39,7 +58,10 @@ type TNavTree<TLabel> = TNavBase & TLabel & { children?: TNavNode<TLabel>[] };
 export type TNavItem<L extends string = string> = TNavTree<{ label: L }>;
 
 /** 沒有 nav 的 route 標題（只供 breadcrumb，不進 sidebar；補裁 4）。label 同 nav 局部 key */
-export type TRouteTitle<L extends string = string> = { to: string; label: L };
+export type TRouteTitle<L extends string = string> = {
+  to: TRoutePath;
+  label: L;
+};
 
 /** registry 內部的 nav 項目：kernel 以組好的全域 key 取代局部 label（不外流到 shell） */
 export type TRegistryNavItem = TNavTree<{ labelKey: string }>;
@@ -55,42 +77,43 @@ export type TLayoutRouteOpts<TOpts> = TOpts &
     component?: never;
     routeId?: never;
   };
-export type TPageRouteOpts<TOpts> = TOpts &
+export type TPageRouteOpts<TOpts, Id extends string = TModuleId> = TOpts &
   TGuard & {
-    /** 必填：有畫面就必須可覆寫（D1）；格式 `${moduleId}.${name}`（R23） */
-    routeId: TRouteId;
+    /** 必填：有畫面就必須可覆寫（D1）；格式 `${moduleId}.${name}`，前綴只能是所屬 module（R23） */
+    routeId: TOwnRouteId<Id>;
     /** 必填：module 預設頁面（由 index.ts 注入，§4.4） */
     component: ComponentType<any>;
   };
 
-export type TRouteContext = {
+/** Id = 所屬 module；預設（全部 module）只給 kernel 與寬型別 TModule 用 */
+export type TRouteContext<Id extends TModuleId = TModuleId> = {
   /** protected layout route */
   parent: AnyRoute;
   /** kernel 注入：runtime 帶 component → build() throw */
   layout: <TOpts>(opts: TLayoutRouteOpts<TOpts>) => AnyRoute;
   /** kernel 注入：runtime 缺 routeId 或 component → build() throw */
-  page: <TOpts>(opts: TPageRouteOpts<TOpts>) => AnyRoute;
+  page: <TOpts>(opts: TPageRouteOpts<TOpts, Id>) => AnyRoute;
 };
 
 /** publicRoutes（例：/login）也要能覆寫，同樣只給 page / layout helper，但不掛 permission guard */
-export type TPublicRouteContext = {
+export type TPublicRouteContext<Id extends TModuleId = TModuleId> = {
   /** auth layout route */
   parent: AnyRoute;
   layout: <TOpts>(
     opts: TOpts & { component?: never; routeId?: never }
   ) => AnyRoute;
   page: <TOpts>(
-    opts: TOpts & { routeId: TRouteId; component: ComponentType<any> }
+    opts: TOpts & { routeId: TOwnRouteId<Id>; component: ComponentType<any> }
   ) => AnyRoute;
 };
 
 export type TModule = {
-  /** kebab-case，唯一 */
-  id: string;
+  /** kebab-case，唯一；須在 TModuleIdRegistry 登錄 */
+  id: TModuleId;
   /** D4 驗收腳本依此挑出 domain */
   kind: "generic" | "domain";
   /** R8：依賴的 module id；缺 → build() fail fast */
-  requires?: readonly string[];
+  requires?: readonly TModuleId[];
   routes?: (ctx: TRouteContext) => AnyRoute[];
   publicRoutes?: (ctx: TPublicRouteContext) => AnyRoute[];
   nav?: TNavItem[];
@@ -120,14 +143,21 @@ export type TNavLocalKey<I> = I extends { en: infer E; zh: infer Z }
  * 只靠 M 推導時 TS 會先固定 M、label 推導退化成 never（實測）
  */
 export const defineModule = <
-  const M extends TModule,
+  const M extends Omit<TModule, "routes" | "publicRoutes">,
+  const Id extends TModuleId,
   const I extends TModuleI18n = never,
   const L extends TNavLocalKey<I> = never,
 >(
   m: M & {
+    id: Id;
     i18n?: I;
     nav?: TNavItem<L>[];
     routeTitles?: readonly TRouteTitle<L>[];
+    /** 不得 requires 自己（T2 §2.1） */
+    requires?: readonly Exclude<TModuleId, Id>[];
+    /** route id 前綴只能是自己的 id（R23，OD-T2-2 B） */
+    routes?: (ctx: TRouteContext<Id>) => AnyRoute[];
+    publicRoutes?: (ctx: TPublicRouteContext<Id>) => AnyRoute[];
   }
 ): M => m;
 

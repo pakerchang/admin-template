@@ -52,7 +52,7 @@ describe("tags permissions are typed (T1 AC-1 / AC-4)", () => {
   });
 
   it("nav permission", () => {
-    const item = { id: "t", label: "x", to: "/tags" };
+    const item = { id: "t", label: "x", to: "/tags" as const };
     const ok: TNavItem = { ...item, permission: "tags:read" };
     // @ts-expect-error action typo
     const raed: TNavItem = { ...item, permission: "tags:raed" };

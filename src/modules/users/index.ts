@@ -28,6 +28,12 @@ declare module "@/shared/i18n/types" {
   }
 }
 
+declare module "@/shared/module" {
+  interface TModuleIdRegistry {
+    users: true;
+  }
+}
+
 export default defineModule({
   id: "users",
   kind: "generic",

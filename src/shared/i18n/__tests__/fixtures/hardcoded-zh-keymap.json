@@ -1,0 +1,220 @@
+[
+  {
+    "key": "team-members.toast.get.listError",
+    "zh": "獲取員工列表失敗",
+    "en": "Failed to get staff list",
+    "enSource": "new",
+    "sites": ["src/modules/team-members/model/use-staff.ts:162"]
+  },
+  {
+    "key": "team-members.toast.create.error",
+    "zh": "創建員工失敗",
+    "en": "Staff creation failed",
+    "enSource": "new",
+    "sites": [
+      "src/modules/team-members/model/use-staff.ts:189",
+      "src/modules/team-members/model/use-staff.ts:205"
+    ]
+  },
+  {
+    "key": "team-members.toast.update.error",
+    "zh": "更新員工失敗",
+    "en": "Staff update failed",
+    "enSource": "new",
+    "sites": [
+      "src/modules/team-members/model/use-staff.ts:222",
+      "src/modules/team-members/model/use-staff.ts:238"
+    ]
+  },
+  {
+    "key": "team-members.toast.delete.error",
+    "zh": "刪除員工失敗",
+    "en": "Staff deletion failed",
+    "enSource": "new",
+    "sites": [
+      "src/modules/team-members/model/use-staff.ts:257",
+      "src/modules/team-members/model/use-staff.ts:273"
+    ]
+  },
+  {
+    "key": "team-members.toast.create.success",
+    "zh": "員工創建成功",
+    "en": "Staff created successfully",
+    "enSource": "new",
+    "sites": ["src/modules/team-members/model/use-staff.ts:198"]
+  },
+  {
+    "key": "team-members.toast.update.success",
+    "zh": "員工資料更新成功",
+    "en": "Staff updated successfully",
+    "enSource": "new",
+    "sites": ["src/modules/team-members/model/use-staff.ts:231"]
+  },
+  {
+    "key": "team-members.toast.delete.success",
+    "zh": "員工刪除成功",
+    "en": "Staff deleted successfully",
+    "enSource": "new",
+    "sites": ["src/modules/team-members/model/use-staff.ts:266"]
+  },
+  {
+    "key": "articles.toast.profile.fetchError",
+    "zh": "獲取用戶資訊失敗，請重新登入",
+    "en": "Failed to get user info, please sign in again",
+    "enSource": "new",
+    "sites": [
+      "src/modules/articles/model/use-article.ts:125",
+      "src/modules/articles/model/use-article.ts:197"
+    ]
+  },
+  {
+    "key": "articles.toast.profile.missing",
+    "zh": "無法獲取用戶資訊，請重新登入",
+    "en": "User info unavailable, please sign in again",
+    "enSource": "new",
+    "sites": [
+      "src/modules/articles/model/use-article.ts:136",
+      "src/modules/articles/model/use-article.ts:208"
+    ]
+  },
+  {
+    "key": "consumers.toast.get.listError",
+    "zh": "獲取客戶列表失敗",
+    "en": "Failed to get customer list",
+    "enSource": "new",
+    "sites": ["src/modules/consumers/model/use-consumer.ts:62"]
+  },
+  {
+    "key": "consumers.toast.get.transactionError",
+    "zh": "獲取交易記錄失敗",
+    "en": "Failed to get transaction history",
+    "enSource": "new",
+    "sites": ["src/modules/consumers/model/use-consumer.ts:108"]
+  },
+  {
+    "key": "product.productDraft.copyName",
+    "zh": "{{name}}（複製）",
+    "en": "{{name}} (Copy)",
+    "enSource": "new",
+    "sites": ["src/modules/product/ui/ProductDraftForm.tsx:77"]
+  },
+  {
+    "key": "users.editRole.title",
+    "zh": "編輯使用者角色",
+    "en": "Edit User Role",
+    "enSource": "new",
+    "sites": [
+      "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:37"
+    ]
+  },
+  {
+    "key": "users.editRole.description",
+    "zh": "請選擇新的使用者角色",
+    "en": "Select a new role for the user",
+    "enSource": "new",
+    "sites": [
+      "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:38"
+    ]
+  },
+  {
+    "key": "users.roles.new",
+    "zh": "新使用者",
+    "en": "New User",
+    "enSource": "new",
+    "sites": [
+      "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:48"
+    ]
+  },
+  {
+    "key": "users.roles.user",
+    "zh": "一般使用者",
+    "en": "User",
+    "enSource": "new",
+    "sites": [
+      "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:53"
+    ]
+  },
+  {
+    "key": "users.roles.vip",
+    "zh": "VIP會員",
+    "en": "VIP Member",
+    "enSource": "new",
+    "sites": [
+      "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:58"
+    ]
+  },
+  {
+    "key": "users.roles.agent",
+    "zh": "代理商",
+    "en": "Agent",
+    "enSource": "existing:consumers.order.agent",
+    "sites": [
+      "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:63"
+    ]
+  },
+  {
+    "key": "users.roles.cservice",
+    "zh": "客服",
+    "en": "Customer Service",
+    "enSource": "existing:team-members.roles.cservice",
+    "sites": [
+      "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:68"
+    ]
+  },
+  {
+    "key": "users.roles.admin",
+    "zh": "管理員",
+    "en": "Admin",
+    "enSource": "existing:team-members.roles.admin",
+    "sites": [
+      "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:73"
+    ]
+  },
+  {
+    "key": "users.roles.superadmin",
+    "zh": "超級管理員",
+    "en": "Super Admin",
+    "enSource": "existing:team-members.roles.superadmin",
+    "sites": [
+      "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:78"
+    ]
+  },
+  {
+    "key": "banners.validation.image.resolution.metadataMissing",
+    "zh": "無法獲取圖片尺寸資訊，請確保檔案為有效的圖片格式",
+    "en": "Unable to read image dimensions. Please make sure the file is a valid image",
+    "enSource": "new",
+    "sites": [
+      "src/modules/banners/model/image-validation/resolution.rule.ts:27",
+      "src/modules/banners/model/image-validation/resolution.rule.ts:102"
+    ]
+  },
+  {
+    "key": "validation.image.ruleFailed",
+    "zh": "驗證規則執行失敗: {{reason}}",
+    "en": "Validation rule failed: {{reason}}",
+    "enSource": "new",
+    "sites": ["src/shared/lib/image-validation/manager.ts:142"]
+  },
+  {
+    "key": "validation.image.unknownError",
+    "zh": "未知錯誤",
+    "en": "Unknown error",
+    "enSource": "new",
+    "sites": ["src/shared/lib/image-validation/manager.ts:142"]
+  },
+  {
+    "key": "dialog.imgUpload.formatSeparator",
+    "zh": "、",
+    "en": ", ",
+    "enSource": "new",
+    "sites": ["src/shared/ui/image-upload/image-upload-dialog.tsx:327"]
+  },
+  {
+    "key": "lng.label",
+    "zh": "語言",
+    "en": "Language",
+    "enSource": "new",
+    "sites": ["src/shells/default/app-sidebar.tsx:138"]
+  }
+]

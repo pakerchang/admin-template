@@ -20,6 +20,10 @@ const EXPECTED_GENERAL_CONFIG = {
   },
 };
 
+// 測試用翻譯函式：回傳 key 與參數（OD-HZ-1 A：t 為必填，規則訊息一律走 t）
+const t = (key: string, options?: Record<string, unknown>) =>
+  `${key} ${JSON.stringify(options ?? {})}`;
+
 describe("General Image Validation Manager", () => {
   describe("createGeneralImageValidationManager", () => {
     it("should create a validation manager with basic rules", () => {
@@ -85,7 +89,7 @@ describe("General Image Validation Manager", () => {
         type: "image/jpeg",
       });
 
-      const result = await manager.validateImage(mockFile);
+      const result = await manager.validateImage(mockFile, { t });
 
       // 應該通過基礎驗證（檔案類型、檔名格式）
       expect(result.isValid).toBe(true);
@@ -98,7 +102,7 @@ describe("General Image Validation Manager", () => {
         type: "image/png",
       });
 
-      const result = await manager.validateImage(mockFile);
+      const result = await manager.validateImage(mockFile, { t });
 
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -110,7 +114,7 @@ describe("General Image Validation Manager", () => {
         type: "image/webp",
       });
 
-      const result = await manager.validateImage(mockFile);
+      const result = await manager.validateImage(mockFile, { t });
 
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -122,7 +126,7 @@ describe("General Image Validation Manager", () => {
         type: "application/pdf",
       });
 
-      const result = await manager.validateImage(mockFile);
+      const result = await manager.validateImage(mockFile, { t });
 
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -134,13 +138,13 @@ describe("General Image Validation Manager", () => {
         type: "image/jpeg",
       });
 
-      const result = await manager.validateImage(mockFile);
+      const result = await manager.validateImage(mockFile, { t });
 
       expect(result.isValid).toBe(false);
       // 檢查是否有來自檔名格式規則的錯誤
       const hasFilenameError = result.errors.some(
         (error) =>
-          error.message?.includes("檔名只能包含英文字母、數字、底線") || false
+          error.message?.includes("validation.image.fileName.format") || false
       );
       expect(hasFilenameError).toBe(true);
     });
@@ -151,7 +155,7 @@ describe("General Image Validation Manager", () => {
         type: "image/jpeg",
       });
 
-      const result = await manager.validateImage(mockFile);
+      const result = await manager.validateImage(mockFile, { t });
 
       // 不應該有前綴相關的錯誤 (通用驗證管理器不包含前綴驗證規則)
       expect(

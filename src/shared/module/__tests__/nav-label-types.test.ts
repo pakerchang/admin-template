@@ -21,18 +21,19 @@ const noNav = { en: { list: { title: "X" } }, zh: { list: { title: "X" } } };
 
 const base = { kind: "generic", i18n } as const;
 const p = "app:access" as const;
-const n = (label: string) => ({ id: label, to: `/${label}`, permission: p });
+/** T2：id 與 to 收窄成已登錄的 generic id／core 路徑（core-safe）；斷言對象仍是 label */
+const n = (label: string) => ({ id: label, to: "/" as const, permission: p });
 /** 反例用短寫法：@ts-expect-error 只壓下一行，每個反例必須單行放得下（prettier 折行會讓指令對不到，見 docs/TRAPS.md） */
 const d = defineModule;
-const a = { ...base, id: "a" } as const;
-const g = { kind: "generic", id: "a" } as const;
+const a = { ...base, id: "users" } as const;
+const g = { kind: "generic", id: "users" } as const;
 const item = <L extends string>(label: L) => ({ ...n("a"), label });
 
 describe("defineModule nav label 局部 key（AC-4 (2)）", () => {
   it("正例：頂層與 children 用存在的局部 key；保留 id 字面型別", () => {
     const m = defineModule({
       ...base,
-      id: "a",
+      id: "users",
       nav: [
         {
           ...n("a"),
@@ -41,13 +42,13 @@ describe("defineModule nav label 局部 key（AC-4 (2)）", () => {
         },
       ],
     });
-    expectTypeOf(m.id).toEqualTypeOf<"a">();
+    expectTypeOf(m.id).toEqualTypeOf<"users">();
     // 反例用的短寫法本身合法（反例失敗只因 label）
     const short = d({
       ...a,
       nav: [{ ...item("title"), children: [item("list")] }],
     });
-    expectTypeOf(short.id).toEqualTypeOf<"a">();
+    expectTypeOf(short.id).toEqualTypeOf<"users">();
   });
 
   it("反例：每一類都 tsc 失敗", () => {
@@ -87,9 +88,9 @@ describe("defineModule routeTitles（AC-4 (2)、補裁 4）", () => {
   it("反例：不存在的局部 key、無 i18n", () => {
     const check = () => [
       // @ts-expect-error routeTitles 用不存在的局部 key
-      d({ ...a, routeTitles: [{ to: "/u", label: "typo" }] }),
+      d({ ...a, routeTitles: [{ to: "/", label: "typo" }] }),
       // @ts-expect-error 無 i18n 卻宣告 routeTitles
-      d({ ...g, routeTitles: [{ to: "/u", label: "title" }] }),
+      d({ ...g, routeTitles: [{ to: "/", label: "title" }] }),
     ];
     expectTypeOf(check).toBeFunction();
   });

@@ -7,11 +7,16 @@ declare module "@/shared/module" {
     "articles.create": true;
     "articles.edit": true;
   }
+  /** 只登錄靜態完整路徑（無 $param、無結尾斜線；T2 OD-T2-3） */
+  interface TRoutePathRegistry {
+    "/articles": true;
+    "/articles/create": true;
+  }
 }
 
 /** headless：不 import ui，頁面由 index.ts 注入（§4.4）；create / edit 共用同一張表單頁 */
 export const articlesRoutes = (
-  ctx: TRouteContext,
+  ctx: TRouteContext<"articles">,
   pages: { list: ComponentType; form: ComponentType }
 ) => {
   const base = ctx.layout({

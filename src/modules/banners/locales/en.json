@@ -15,7 +15,8 @@
           "tooSmall": "Mobile image resolution is too small, minimum recommended {{minResolution}} pixels",
           "tooLarge": "Mobile image resolution is too large, maximum supported {{maxResolution}} pixels",
           "aspectRatio": "For mobile, recommended to use 16:9 aspect ratio"
-        }
+        },
+        "metadataMissing": "Unable to read image dimensions. Please make sure the file is a valid image"
       }
     },
     "url": {

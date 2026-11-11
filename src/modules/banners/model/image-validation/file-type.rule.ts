@@ -14,19 +14,19 @@ export const bannerFileTypeRule: ImageValidationRule = {
   priority: 1,
   async validate(
     file: File,
-    _metadata?: ImageMetadata,
-    context?: ValidationContext
+    _metadata: ImageMetadata | undefined,
+    context: ValidationContext
   ): Promise<ValidationResult> {
-    const t = context?.t;
+    const { t } = context;
 
     const allowedTypes = ["image/webp"];
     const allowedExtensions = [".webp"];
     const extensionsText = allowedExtensions.join(", ");
 
     if (!allowedTypes.includes(file.type)) {
-      const message = t
-        ? t("validation.image.type.unsupported", { extensions: extensionsText })
-        : `Banner 圖片請使用 ${extensionsText} 格式以確保最佳顯示品質和載入速度`;
+      const message = t("validation.image.type.unsupported", {
+        extensions: extensionsText,
+      });
 
       return {
         isValid: false,
@@ -37,11 +37,9 @@ export const bannerFileTypeRule: ImageValidationRule = {
 
     const extension = file.name.toLowerCase().split(".").pop();
     if (!extension || !allowedExtensions.includes(`.${extension}`)) {
-      const message = t
-        ? t("validation.image.type.extensionMismatch", {
-            extensions: extensionsText,
-          })
-        : `Banner 圖片請使用 ${extensionsText} 格式`;
+      const message = t("validation.image.type.extensionMismatch", {
+        extensions: extensionsText,
+      });
 
       return {
         isValid: false,

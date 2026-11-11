@@ -5,6 +5,7 @@ import coreEn from "@/shared/i18n/locales/en.json";
 import coreZh from "@/shared/i18n/locales/zh.json";
 
 import coreAdditions from "./fixtures/core-en-additions.json";
+import hardcodedZhKeymap from "./fixtures/hardcoded-zh-keymap.json";
 import deleted from "./fixtures/scope-deleted.json";
 import keymap from "./fixtures/scope-keymap.json";
 
@@ -98,8 +99,12 @@ describe("scope-deleted：無引用 key 已刪除（AC-6）", () => {
 
   it("覆蓋完整：keymap + deleted + core 未改名 key = 基準 core 字典 552 個 leaf key", () => {
     const news = new Set(keymap.map((r) => r.new));
+    // 基準之後新增的 core key 不在 552 內（i18n-hardcoded-strings H1 的 4 個 core key）
+    const later = new Set(hardcodedZhKeymap.map((r) => r.key));
     const kept = new Set(
-      [...leaves(core.zh), ...leaves(core.en)].filter((k) => !news.has(k))
+      [...leaves(core.zh), ...leaves(core.en)].filter(
+        (k) => !news.has(k) && !later.has(k)
+      )
     );
     expect(keymap.length + deleted.length + kept.size).toBe(552);
   });

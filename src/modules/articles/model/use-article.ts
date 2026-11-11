@@ -122,7 +122,7 @@ export const useCreateArticle = () => {
       if (!currentUser) {
         toast({
           title: t("common.error"),
-          description: "獲取用戶資訊失敗，請重新登入",
+          description: t("articles.toast.profile.fetchError"),
           variant: "destructive",
         });
         throw new Error("Failed to get user profile");
@@ -133,7 +133,7 @@ export const useCreateArticle = () => {
       if (!currentUser?.user_id) {
         toast({
           title: t("common.error"),
-          description: "無法獲取用戶資訊，請重新登入",
+          description: t("articles.toast.profile.missing"),
           variant: "destructive",
         });
         throw new Error("No user data available");
@@ -194,7 +194,7 @@ export const useUpdateArticle = () => {
       if (!currentUser) {
         toast({
           title: t("common.error"),
-          description: "獲取用戶資訊失敗，請重新登入",
+          description: t("articles.toast.profile.fetchError"),
           variant: "destructive",
         });
         throw new Error("Failed to get user profile");
@@ -205,7 +205,7 @@ export const useUpdateArticle = () => {
       if (!currentUser?.user_id) {
         toast({
           title: t("common.error"),
-          description: "無法獲取用戶資訊，請重新登入",
+          description: t("articles.toast.profile.missing"),
           variant: "destructive",
         });
         throw new Error("No user data available");

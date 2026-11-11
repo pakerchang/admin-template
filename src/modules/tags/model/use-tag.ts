@@ -22,7 +22,7 @@ export const useCreateTagSchema = () => {
     })
     .extend({
       tag_name: z.string().min(1, {
-        message: t("validation.required.field", { field: "標籤名稱" }),
+        message: t("validation.required.field", { field: t("tags.tagName") }),
       }),
     });
 

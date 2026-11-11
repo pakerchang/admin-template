@@ -324,7 +324,7 @@ const ImageUpload = ({
                       {t("dialog.imgUpload.allowedFormats", {
                         formats: allowedFormats.extensions
                           .map((ext) => ext.toUpperCase().replace(".", ""))
-                          .join("、"),
+                          .join(t("dialog.imgUpload.formatSeparator")),
                       })}
                     </p>
                   </FormItem>
