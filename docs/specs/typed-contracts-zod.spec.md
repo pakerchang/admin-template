@@ -1,6 +1,6 @@
 # 型別契約（Zod / 推導型別）Spec
 
-狀態：**已裁決（owner 2026-11-10），T1 定稿可派工；本 spec 只涵蓋 T1**（T2 / T3 為後續棒次，各自另起 spec）
+狀態：**T1 已合併**（PR #25，merge `bc13403`，2026-11-10；AC-9 `[manual]` owner 親驗 pending）。已裁決（owner 2026-11-10）；本 spec 只涵蓋 T1（T2 / T3 為後續棒次，各自另起 spec）
 
 - 需求來源：`docs/specs/refactor/README.md`「全域（owner 2026-11-10 新需求）」列。
 - 上位 spec：`docs/specs/fsd-module-architecture.spec.md`（下稱「架構 spec」）。本 spec 不改其 §0 鎖定決策；與鎖定決策的張力與 owner 處理見 §3。
@@ -111,16 +111,18 @@ T2 / T3 列在此表僅記錄原則的適用範圍與歸屬，驗收由各自後
 - core 權限的型別測試：`src/shared/permission/__tests__/permission-types.test.ts`（只用 `app:access`、`*`，core-safe）
 - role 型別測試：`src/app/mock/__tests__/role-types.test.ts`（只引用 `coreRoles`，core-safe）
 
-- [ ] AC-1 [cmd] 權限 typo 在下列每一處 `tsc` 失敗，每處至少一個 action typo（例 `tags:raed`）與一個 resource typo（例 `tag:read`）：route `ctx.page` / `ctx.layout` 的 `permission`（即 `staticData.permission`）、nav `permission`、`rowActions` 項目、`EditActions` 的 `{ handler, permission }`、`FormSubmit` 的 `permission` prop、`Guarded` 的 `permission` prop、`mockGrants` 與 `coreGrants` 的 grant 值（另含 `tag:*` 這類 resource 不存在的 wildcard）。案例寫在 `src/modules/tags/__tests__/permission-types.test.ts`。驗收：`pnpm exec tsc -b tsconfig.app.json` exit 0。
-- [ ] AC-2 [cmd] role typo 在 `mockGrants` 與 `coreGrants` 的 key `tsc` 失敗（例 `admn`），`coreRoles` 以外的 key 皆拒；`coreRoles` 恰為架構 spec §6.1 的 7 個角色（型別測試以 `expectTypeOf` 鎖住 union）。案例寫在 `src/app/mock/__tests__/role-types.test.ts`。驗收同 AC-1。
-- [ ] AC-3 [cmd] `operations.gen.ts`：permissions 值型別為 `TPermission | "public"`；型別測試寫在既有 `src/app/kernel/__tests__/operations-gen.test.ts`，以 `@ts-expect-error` 鎖住「不在 registry 的 `resource:action` 指派給 `TOperationTable["permissions"]` 的值」；`pnpm gen:api && git diff --exit-code -- src/app/operations.gen.ts` 確認產物與 extract 腳本一致；`build()` 1.5.3 執行期檢查保留且既有測試照過。
-- [ ] AC-4 [cmd] 合法值通過：AC-1 / AC-2 每一處（含 `Guarded`）各至少一個合法案例，不帶 `@ts-expect-error`——route 含 `"authenticated"`；`app:access` 寫在 `src/shared/permission/__tests__/permission-types.test.ts`，並以 `expectTypeOf` 斷言 core-only 下 `TPermission` 非 `never`；grant 值含 `resource:*` 與 `*`。`pnpm exec tsc -b tsconfig.app.json` exit 0。
-- [ ] AC-5 [cmd] grants 邊界 `safeParse`：`src/app/kernel/__tests__/grant-boundary.test.ts` 對兩個入口（login 回應寫入 session 前、`getAuth()` 讀 localStorage 後）各餵 `["orders:read", "orders:raed", "orders:*", "*", "nope", 123]`，結果只保留 `["orders:read", "orders:*", "*"]`；完全合法的 grants 原樣保留；以未 `.use()` orders 的 app 組出 schema 時 `orders:*` 權限被丟棄。此檔引用 domain 權限字串，補進 `scripts/verify-core-only.sh` 的 `FULL_INSTALL_TESTS`。`pnpm exec vitest run src/app/kernel/__tests__/grant-boundary.test.ts` exit 0。
-- [ ] AC-6 [cmd] `pnpm verify:core-only` exit 0、輸出含 `core-only build: OK`（core-only 下 `TPermission` 只含 core 權限，非 `never`）；新增的完整安裝型測試若放在 core 目錄，補進腳本 `FULL_INSTALL_TESTS`。
-- [ ] AC-7 [cmd] `pnpm build && pnpm exec vitest run` exit 0；5 個含刻意非法 fixture 的測試檔（`build.test.ts`、`operations-yaml.test.ts`、`use-visible-nav.test.tsx`、`can.test.ts`、`data-table-row-actions.test.tsx`）原斷言的執行期行為不變。
-- [ ] AC-8 [cmd] `pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"` 0 error（boundaries 規則不放寬）。
-- [ ] AC-9 [manual] IDE 補全目視：VS Code 於 route / nav / `rowActions` / `Guarded` / `mockGrants` 的 `permission: "` 與 role key 位置觸發補全，看到 registry 全集；寫 `tags:raed` 出現紅線。**owner 親驗 pending，不阻擋交付**。
-- [ ] AC-10 [cmd] 單一來源：在既有 `src/app/__tests__/permission-structure.test.ts` 新增案例，斷言每個已 `.use()` module 的 `permissions.resources` 與其 Zod 權限目錄（各 resource `z.enum(...).options`）逐一相等，且 core 目錄含 `app:access`。`pnpm exec vitest run src/app/__tests__/permission-structure.test.ts` exit 0。
+- [x] AC-1 [cmd] 權限 typo 在下列每一處 `tsc` 失敗，每處至少一個 action typo（例 `tags:raed`）與一個 resource typo（例 `tag:read`）：route `ctx.page` / `ctx.layout` 的 `permission`（即 `staticData.permission`）、nav `permission`、`rowActions` 項目、`EditActions` 的 `{ handler, permission }`、`FormSubmit` 的 `permission` prop、`Guarded` 的 `permission` prop、`mockGrants` 與 `coreGrants` 的 grant 值（另含 `tag:*` 這類 resource 不存在的 wildcard）。案例寫在 `src/modules/tags/__tests__/permission-types.test.ts`。驗收：`pnpm exec tsc -b tsconfig.app.json` exit 0。（證據：PR #25，merge `bc13403`）
+- [x] AC-2 [cmd] role typo 在 `mockGrants` 與 `coreGrants` 的 key `tsc` 失敗（例 `admn`），`coreRoles` 以外的 key 皆拒；`coreRoles` 恰為架構 spec §6.1 的 7 個角色（型別測試以 `expectTypeOf` 鎖住 union）。案例寫在 `src/app/mock/__tests__/role-types.test.ts`。驗收同 AC-1。（證據：PR #25，merge `bc13403`）
+- [x] AC-3 [cmd] `operations.gen.ts`：permissions 值型別為 `TPermission | "public"`；型別測試寫在既有 `src/app/kernel/__tests__/operations-gen.test.ts`，以 `@ts-expect-error` 鎖住「不在 registry 的 `resource:action` 指派給 `TOperationTable["permissions"]` 的值」；`pnpm gen:api && git diff --exit-code -- src/app/operations.gen.ts` 確認產物與 extract 腳本一致；`build()` 1.5.3 執行期檢查保留且既有測試照過。（證據：PR #25，merge `bc13403`）
+- [x] AC-4 [cmd] 合法值通過：AC-1 / AC-2 每一處（含 `Guarded`）各至少一個合法案例，不帶 `@ts-expect-error`——route 含 `"authenticated"`；`app:access` 寫在 `src/shared/permission/__tests__/permission-types.test.ts`，並以 `expectTypeOf` 斷言 core-only 下 `TPermission` 非 `never`；grant 值含 `resource:*` 與 `*`。`pnpm exec tsc -b tsconfig.app.json` exit 0。（證據：PR #25，merge `bc13403`）
+- [x] AC-5 [cmd] grants 邊界 `safeParse`：`src/app/kernel/__tests__/grant-boundary.test.ts` 對兩個入口（login 回應寫入 session 前、`getAuth()` 讀 localStorage 後）各餵 `["orders:read", "orders:raed", "orders:*", "*", "nope", 123]`，結果只保留 `["orders:read", "orders:*", "*"]`；完全合法的 grants 原樣保留；以未 `.use()` orders 的 app 組出 schema 時 `orders:*` 權限被丟棄。此檔引用 domain 權限字串，補進 `scripts/verify-core-only.sh` 的 `FULL_INSTALL_TESTS`。`pnpm exec vitest run src/app/kernel/__tests__/grant-boundary.test.ts` exit 0。（證據：PR #25，merge `bc13403`）
+- [x] AC-6 [cmd] `pnpm verify:core-only` exit 0、輸出含 `core-only build: OK`（core-only 下 `TPermission` 只含 core 權限，非 `never`）；新增的完整安裝型測試若放在 core 目錄，補進腳本 `FULL_INSTALL_TESTS`。（證據：PR #25，merge `bc13403`）
+- [x] AC-7 [cmd] `pnpm build && pnpm exec vitest run` exit 0；5 個含刻意非法 fixture 的測試檔（`build.test.ts`、`operations-yaml.test.ts`、`use-visible-nav.test.tsx`、`can.test.ts`、`data-table-row-actions.test.tsx`）原斷言的執行期行為不變。（證據：PR #25，merge `bc13403`）
+- [x] AC-8 [cmd] `pnpm exec eslint "src/**/*.{js,jsx,ts,tsx}"` 0 error（boundaries 規則不放寬）。（證據：PR #25，merge `bc13403`）
+- [ ] AC-9 [manual] IDE 補全目視：VS Code 於 route / nav / `rowActions` / `Guarded` / `mockGrants` 的 `permission: "` 與 role key 位置觸發補全，看到 registry 全集；寫 `tags:raed` 出現紅線。**owner 親驗 pending，不阻擋交付**。（未勾：`[manual]`，無 owner 親驗紀錄）
+
+勾選證據（AC-1～8、AC-10）：PR #25「feat(permission): type permissions and roles via Zod catalog registry (T1)」，實作 commit `8ccd974`，merge commit `bc13403`（2026-11-10 合入 master，`gh pr view 25` state=MERGED）；codex 審查 PASS；Done Command exit 0，53 files / 427 tests。
+- [x] AC-10 [cmd] 單一來源：在既有 `src/app/__tests__/permission-structure.test.ts` 新增案例，斷言每個已 `.use()` module 的 `permissions.resources` 與其 Zod 權限目錄（各 resource `z.enum(...).options`）逐一相等，且 core 目錄含 `app:access`。`pnpm exec vitest run src/app/__tests__/permission-structure.test.ts` exit 0。（證據：PR #25，merge `bc13403`）
 
 T1 承諾 → AC 對照：Zod 目錄單一來源（AC-10）；registry 推導 `TPermission` / `TGrant`（AC-1、AC-4、AC-6）；一次切換與 5 個 fixture 測試檔（AC-7）；`operations.gen.ts`（AC-3）；邊界 `safeParse`（AC-5）；role 型別化（AC-2）；權限各強制點含 `Guarded`（AC-1、AC-4、AC-9）；grant 矩陣內容不變（Must-Not-Touch，AC-7 既有測試照過）。
 
