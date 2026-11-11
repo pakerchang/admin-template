@@ -19,6 +19,12 @@ declare module "@/shared/i18n/types" {
   }
 }
 
+declare module "@/shared/module" {
+  interface TModuleIdRegistry {
+    auth: true;
+  }
+}
+
 export default defineModule({
   id: "auth",
   kind: "generic",

@@ -13,7 +13,7 @@ const moduleIdOf = (path: string) => path.split("/")[3];
 
 describe("i18n 字典分層（spec §4.3 步驟 4、§5.4；M6 AC-3）", () => {
   const { registry } = makeApp().build();
-  const ids = registry.modules.map((m) => m.id);
+  const ids: string[] = registry.modules.map((m) => m.id);
 
   it("以實際 10 個 module 跑 build() 不 throw", () => {
     expect(ids).toHaveLength(10);

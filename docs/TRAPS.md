@@ -65,6 +65,27 @@
 - **禁令**：label 約束一律從獨立型別參數推導（`defineModule<const M, const I, const L extends TNavLocalKey<I>>`，見 `src/shared/module/types.ts`）；禁止改回只用 `M` 推導，也禁止以 cast 讓正例通過。型別 PoC 必含 `routes: (ctx) => …`。
 - **來源**：i18n-scope-migration I1 實作（scratchpad PoC 重現）；`src/shared/module/__tests__/nav-label-types.test.ts`。
 
+### 測試檔 augment `TModuleIdRegistry`／`TRoutePathRegistry`，假 id 變成全域合法（typed-contracts T2 起）
+
+- **症狀**：為了讓 fixture 的假 module id（`"a"`、`"x"`）或假路徑（`"/c"`）通過 `tsc`，在測試檔寫 `declare module "@/shared/module" { interface TModuleIdRegistry { a: true } }`；之後正式碼寫錯成 `"a"` 也不報錯，補全清單多出假值。
+- **真因**：declaration merging 是全域的，`tsconfig.app.json` 的 `include` 含 `src/**/*`，測試檔的 augment 對整個 program 生效。
+- **禁令**：測試檔禁止 augment 這兩個 registry（Done Command 以 `git grep` 機械檢查）；假 id／假路徑 fixture 走寬型別入口（例 `build.test.ts` 的 `mod()`、`TLooseModule`），在注入點 cast；core-safe 測試只用 generic id 與 `"/"`。
+- **來源**：`docs/specs/typed-contracts-t2.spec.md` Milestone 4、AC-8；`src/app/kernel/__tests__/build.test.ts`。
+
+### nav `to` 寫 `"/articles/"` 或拿 `route.fullPath` 比對，路徑檢查失準（typed-contracts T2 起）
+
+- **症狀**：列表頁是 layout `path: "articles"` + 子 route `path: "/"`，TanStack 的 fullPath 是 `"/articles/"`，與 nav 的 `"/articles"` 對不上；或在 `build()` 讀 `fullPath` 拿到 `undefined`。
+- **真因**：子 route `path: "/"` 會產生結尾斜線；`fullPath` 要等 `createRouter` 時才算出來。
+- **禁令**：`TRoutePathRegistry` 與 nav／`routeTitles` 的 `to` 一律無結尾斜線、不含 `$param`；`build()` 的路徑檢查自行依 children 鏈串 `options.path` 並正規化結尾斜線（`routePaths`），不改用 `fullPath`。
+- **來源**：`src/app/kernel/build.ts`（`routePaths`、`assertTitledPaths`）；T2 AC-6 (d)。
+
+### 兩個不同 module 的 `TRouteContext<Id>` 互相可指派（typed-contracts T2 起）
+
+- **症狀**：tags 的 `routes: (ctx) => productRoutes(ctx, …)`（`productRoutes` 參數是 `TRouteContext<"product">`）`tsc` 不報錯；直接在 tags 的 ctx 寫 `ctx.page({ routeId: "product.list" })` 則會報錯。
+- **真因**：`page` 是泛型函式，TS 比較兩個泛型簽章時會把 `TOpts` 抹掉，`routeId` 的差異不參與可指派性判斷。
+- **禁令**：不要把「傳錯 module 的 routes factory」當成 `tsc` 會擋的情況；這個錯誤仍由 `build()` `pageFor` 的 R23 前綴檢查擋下，禁止移除那道執行期檢查。
+- **來源**：T2 實作棒 PoC（scratchpad 探針，`tsc` 實測）。
+
 ### `// prettier-ignore -- 說明` 沒有效果
 
 - **症狀**：加了 `// prettier-ignore -- 理由` 的程式碼仍被 prettier 折行（接著 `@ts-expect-error` 失效，見上一條）。
