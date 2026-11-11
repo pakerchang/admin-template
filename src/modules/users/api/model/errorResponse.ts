@@ -7,6 +7,6 @@
 import type { ErrorBody } from "./errorBody";
 
 /**
- * 錯誤（401 帳密錯誤 / 403 guard 或本人檢查 / 404 找不到）
+ * 錯誤（400 body 不合法 / 401 帳密錯誤 / 403 guard 或本人檢查 / 404 找不到 / 409 資料重複）
  */
 export type ErrorResponse = ErrorBody;

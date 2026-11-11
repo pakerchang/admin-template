@@ -51,7 +51,10 @@ describe("F-1 AC-3：寫入表單 route 不能只要 :read", () => {
       .map((r) => r.options.staticData ?? {})
       .filter((s) => /\.(create|edit|draft)$/.test(s.routeId ?? ""))
       .filter((s) => !EXCEPT.includes(s.routeId!));
-    expect(formRoutes.length).toBe(7);
+    expect(formRoutes.length).toBe(8);
+    expect(
+      formRoutes.find((s) => s.routeId === "users.create")?.permission
+    ).toBe("users:create");
     expect(
       formRoutes.filter((s) => String(s.permission).endsWith(":read"))
     ).toEqual([]);

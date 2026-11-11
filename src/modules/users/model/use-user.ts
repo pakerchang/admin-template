@@ -8,6 +8,7 @@ import { paginationSchema } from "@/shared/api/schema";
 import { useToast } from "@/shared/lib/use-toast";
 
 import {
+  createUser,
   getMyProfile,
   getUser,
   listUsers,
@@ -108,6 +109,38 @@ export const useUpdateUser = () => {
       toast({
         title: t("common.success"),
         description: t("users.toast.update.success"),
+        variant: "success",
+      });
+      return response.data;
+    },
+  });
+};
+
+/** 管理者新增使用者（role 由後端決定）；成功回傳建立的使用者，失敗回 undefined */
+export const useCreateUser = () => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (
+      data: Omit<TUser, "user_id" | "created_at" | "updated_at" | "role">
+    ) => {
+      const response = await createUser(data).catch(nullOnApiError);
+
+      if (!response) {
+        toast({
+          title: t("common.error"),
+          description: t("users.toast.create.error"),
+          variant: "destructive",
+        });
+        return undefined;
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast({
+        title: t("common.success"),
+        description: t("users.toast.create.success"),
         variant: "success",
       });
       return response.data;

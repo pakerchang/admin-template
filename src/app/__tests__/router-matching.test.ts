@@ -28,6 +28,12 @@ describe("module router matching", () => {
     expect(ids.at(-1)).toBe(leafId);
   });
 
+  it("/users/create resolves to users.create, not edit/$id", () => {
+    const leaf = matches("/users/create").at(-1);
+    expect(leaf?.routeId).toBe("/users/create");
+    expect(leaf?.staticData).toMatchObject({ routeId: "users.create" });
+  });
+
   it("/orders/9 resolves params.id", () => {
     expect(matches("/orders/9").at(-1)?.params).toEqual({ id: "9" });
   });
