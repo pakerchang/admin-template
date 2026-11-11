@@ -6,6 +6,7 @@
  */
 
 export * from "./apiEnvelope";
+export * from "./createUser200";
 export * from "./errorBody";
 export * from "./errorResponse";
 export * from "./getUser200";
@@ -24,5 +25,6 @@ export * from "./updateUserRole200";
 export * from "./updateUserRole200Data";
 export * from "./updateUserRoleBody";
 export * from "./user";
+export * from "./userCreate";
 export * from "./userRole";
 export * from "./userUpdate";

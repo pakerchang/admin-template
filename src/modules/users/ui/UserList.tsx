@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
-import { ArrowUpDown, Pencil, UserCog } from "lucide-react";
+import { ArrowUpDown, Pencil, Plus, UserCog } from "lucide-react";
 import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -8,6 +8,7 @@ import { paginationSchema } from "@/shared/api/schema";
 import { Button } from "@/shared/ui/button";
 import DataTable from "@/shared/ui/data-table/data-table";
 import { Dialog } from "@/shared/ui/dialog";
+import { Guarded } from "@/shared/ui/guarded";
 import { Navbar } from "@/shared/ui/navbar/navbar";
 
 import { useGetUserList, useUpdateUserRole } from "../model/use-user";
@@ -173,7 +174,15 @@ const UserList = () => {
   return (
     <div className="flex size-full flex-col gap-4">
       <Navbar />
-      <div className="p-4">
+      <div className="flex flex-col gap-4 p-4">
+        <div className="flex items-center justify-end">
+          <Guarded permission="users:create">
+            <Button onClick={() => navigate({ to: "/users/create" })}>
+              <Plus className="mr-2 size-4" />
+              {t("users.addUser")}
+            </Button>
+          </Guarded>
+        </div>
         <DataTable
           columns={columns}
           rowActions={rowActions}

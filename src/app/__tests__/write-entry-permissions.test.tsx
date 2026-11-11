@@ -218,3 +218,49 @@ describe("AC-2：唯讀角色直接進 create / edit，內容區 Forbidden、URL
     TEST_TIMEOUT
   );
 });
+
+describe("user-create AC-7：只有 superadmin 能新增使用者（OD-UC-1 = A）", () => {
+  it.each([
+    ["admin", 0],
+    ["superadmin", 1],
+  ])(
+    "/users as %s: add-user buttons = %i",
+    async (role, expected) => {
+      await renderAt("/users", role);
+      await tableLoaded();
+      expect(btn("users.addUser")).toHaveLength(expected);
+    },
+    TEST_TIMEOUT
+  );
+
+  it(
+    "/users/create as admin → shell.Forbidden, URL unchanged",
+    async () => {
+      const router = await renderAt("/users/create", "admin");
+      const forbidden = await screen.findByText(
+        "unauthorized.accessDenied.title",
+        undefined,
+        WAIT
+      );
+      expect(
+        within(document.querySelector("main")!).getByText(
+          "unauthorized.accessDenied.title"
+        )
+      ).toBe(forbidden);
+      expect(router.state.location.pathname).toBe("/users/create");
+    },
+    TEST_TIMEOUT
+  );
+
+  it(
+    "/users/create as superadmin → not forbidden",
+    async () => {
+      const router = await renderAt("/users/create", "superadmin");
+      await router.load();
+      expect(
+        router.state.matches.some((m) => m.error instanceof ForbiddenError)
+      ).toBe(false);
+    },
+    TEST_TIMEOUT
+  );
+});

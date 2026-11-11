@@ -4,6 +4,7 @@
   },
   "userForm": {
     "title": "Edit User Profile",
+    "createTitle": "Create User",
     "firstName": "First Name",
     "lastName": "Last Name",
     "email": "Email Address",
@@ -27,8 +28,13 @@
     "update": {
       "success": "User data updated successfully",
       "error": "Failed to update user data"
+    },
+    "create": {
+      "success": "User created successfully",
+      "error": "Failed to create user"
     }
   },
+  "addUser": "Add User",
   "editRole": {
     "title": "Edit User Role",
     "description": "Select a new role for the user"

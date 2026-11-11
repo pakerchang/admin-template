@@ -28,6 +28,7 @@ const LEGACY_FULL_PATHS = [
   "/tags",
   "/team-members",
   "/users",
+  "/users/create",
   "/users/edit/$id",
 ];
 
@@ -73,6 +74,7 @@ describe("module wiring (M3)", () => {
       "suppliers.list",
       "tags.list",
       "team-members.list",
+      "users.create",
       "users.edit",
       "users.list",
     ]);

@@ -21,6 +21,7 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  CreateUser200,
   ErrorResponse,
   GetUser200,
   ListUsers200,
@@ -31,6 +32,7 @@ import type {
   UpdateUserRole200,
   UpdateUserRoleBody,
   User,
+  UserCreate,
   UserUpdate,
 } from "./model";
 
@@ -202,6 +204,113 @@ export function useListUsers<
 
   return withQueryKey(query, queryOptions.queryKey);
 }
+
+export const getCreateUserUrl = () => {
+  return `/users`;
+};
+
+export const createUser = async (
+  userCreate: UserCreate,
+  options?: Parameters<typeof fetcher>[1]
+): Promise<CreateUser200> => {
+  const getHeaders = (
+    h?: NonNullable<RequestInit["headers"]>
+  ): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(
+          h as Iterable<Iterable<string>>,
+          (entry) => Array.from(entry) as [string, string]
+        )
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<
+      string | readonly string[] | undefined
+    >(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+  return fetcher<CreateUser200>(getCreateUserUrl(), {
+    ...options,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...getHeaders(options?.headers),
+    },
+    body: JSON.stringify(userCreate),
+  });
+};
+
+export const getCreateUserMutationKey = () => ["createUser"] as const;
+
+export const getCreateUserMutationOptions = <
+  TError = ErrorResponse,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createUser>>,
+    TError,
+    CreateUserMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof fetcher>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createUser>>,
+  TError,
+  CreateUserMutationVariables,
+  TContext
+> => {
+  const mutationKey = getCreateUserMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createUser>>,
+    CreateUserMutationVariables
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createUser(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateUserMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createUser>>
+>;
+export type CreateUserMutationBody = UserCreate;
+export type CreateUserMutationError = ErrorResponse;
+export type CreateUserMutationVariables = { data: UserCreate };
+
+export const useCreateUser = <TError = ErrorResponse, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createUser>>,
+      TError,
+      CreateUserMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof fetcher>;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof createUser>>,
+  TError,
+  CreateUserMutationVariables,
+  TContext
+> => {
+  return useMutation(getCreateUserMutationOptions(options), queryClient);
+};
 
 export const getGetUserUrl = (id: string) => {
   return `/users/${id}`;

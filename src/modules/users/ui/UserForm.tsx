@@ -11,7 +11,7 @@ import { Spinner } from "@/shared/ui/spinner";
 import { TextInput } from "@/shared/ui/text-inputs";
 
 import { userSchema } from "../model/schema";
-import { useGetUser, useUpdateUser } from "../model/use-user";
+import { useCreateUser, useGetUser, useUpdateUser } from "../model/use-user";
 
 import type { TUser } from "../model/schema";
 
@@ -32,7 +32,10 @@ const UserFormPage = () => {
   const navigate = useNavigate();
   const { id = "" } = useParams({ strict: false }) as { id?: string };
   const { data: userData, isLoading } = useGetUser(id);
-  const { mutateAsync: updateUser, isPending } = useUpdateUser();
+  const isCreate = !id;
+  const { mutateAsync: updateUser, isPending: isUpdating } = useUpdateUser();
+  const { mutateAsync: createUser, isPending: isCreating } = useCreateUser();
+  const isPending = isUpdating || isCreating;
 
   const form = useForm<TUserForm>({
     resolver: zodResolver(
@@ -48,8 +51,11 @@ const UserFormPage = () => {
     }
   }, [form, userData]);
 
-  const onSubmit = form.handleSubmit(async (values) => {
-    if (await updateUser(values)) navigate({ to: "/users" });
+  const onSubmit = form.handleSubmit(async ({ user_id, ...data }) => {
+    const saved = isCreate
+      ? await createUser(data)
+      : await updateUser({ user_id, ...data });
+    if (saved) navigate({ to: "/users" });
   });
 
   if (isLoading) {
@@ -63,7 +69,7 @@ const UserFormPage = () => {
   const navbarActions = (
     <div className="flex w-full items-center justify-end">
       <FormSubmit
-        permission="users:update"
+        permission={isCreate ? "users:create" : "users:update"}
         form="user-form"
         className="h-10 w-fit"
         disabled={!form.formState.isDirty || isPending}
@@ -82,7 +88,11 @@ const UserFormPage = () => {
         onSubmit={onSubmit}
       >
         <Paper className="flex w-full flex-col gap-4">
-          <h3 className="text-2xl font-bold">{t("users.userForm.title")}</h3>
+          <h3 className="text-2xl font-bold">
+            {t(
+              isCreate ? "users.userForm.createTitle" : "users.userForm.title"
+            )}
+          </h3>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <TextInput

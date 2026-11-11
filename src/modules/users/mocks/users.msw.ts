@@ -15,6 +15,7 @@ import type {
 
 import { UserRole } from "../api/model";
 import type {
+  CreateUser200,
   GetUser200,
   ListUsers200,
   ProfileUpdate,
@@ -23,6 +24,7 @@ import type {
   UpdateUserRole200,
   UpdateUserRoleBody,
   User,
+  UserCreate,
   UserUpdate,
 } from "../api/model";
 
@@ -51,6 +53,33 @@ export const getListUsersResponseMock = (): ListUsers200 => ({
         created_at: faker.string.alpha({ length: { min: 10, max: 20 } }),
         updated_at: faker.string.alpha({ length: { min: 10, max: 20 } }),
       })),
+      undefined,
+    ]),
+  },
+});
+
+export const getCreateUserResponseMock = (): CreateUser200 => ({
+  ...{
+    code: faker.number.int(),
+    msg: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    error: faker.string.alpha({ length: { min: 10, max: 20 } }),
+    data: faker.helpers.arrayElement([{}, undefined]),
+    total: faker.helpers.arrayElement([faker.number.int(), undefined]),
+  },
+  ...{
+    data: faker.helpers.arrayElement([
+      {
+        user_id: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        email: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        first_name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        last_name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        phone_number: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        address: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        remark: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        role: faker.helpers.arrayElement(Object.values(UserRole)),
+        created_at: faker.string.alpha({ length: { min: 10, max: 20 } }),
+        updated_at: faker.string.alpha({ length: { min: 10, max: 20 } }),
+      },
       undefined,
     ]),
   },
@@ -193,6 +222,32 @@ export const getListUsersMockHandler = (
   );
 };
 
+export const getCreateUserMockHandler = (
+  overrideResponse?:
+    | CreateUser200
+    | ((
+        info: Parameters<HttpResponseResolver<PathParams, UserCreate>>[0]
+      ) => Promise<CreateUser200> | CreateUser200),
+  options?: RequestHandlerOptions
+) => {
+  return http.post<PathParams, UserCreate>(
+    "*/users",
+    async (
+      info: Parameters<HttpResponseResolver<PathParams, UserCreate>>[0]
+    ) => {
+      return HttpResponse.json(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === "function"
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getCreateUserResponseMock(),
+        { status: 200 }
+      );
+    },
+    options
+  );
+};
+
 export const getGetUserMockHandler = (
   overrideResponse?:
     | GetUser200
@@ -320,6 +375,7 @@ export const getUpdateUserRoleMockHandler = (
 };
 export const getAdminTemplateAPIMock = () => [
   getListUsersMockHandler(),
+  getCreateUserMockHandler(),
   getGetUserMockHandler(),
   getUpdateUserMockHandler(),
   getGetMyProfileMockHandler(),

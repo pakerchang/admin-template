@@ -86,6 +86,19 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
       ).toBe(403);
     });
 
+    it("admin (users:read only): list allowed, POST /users denied", async () => {
+      await signIn(emailOf("admin"));
+      expect((await apiFetch("/users")).status).toBe(200);
+      const res = await apiFetch<{ error: string }>("/users", {
+        method: "POST",
+        body: { email: "x@example.com" },
+      });
+      expect(res.status).toBe(403);
+      expect(res.body.error).toBe(
+        "forbidden: createUser requires users:create"
+      );
+    });
+
     it("superadmin reaches every operation (AC-6 API side)", async () => {
       await signIn(DEMO_ACCOUNT.email);
       for (const { method, path } of operations.routes) {
@@ -121,6 +134,17 @@ describe("kernel mock handlers wired with the real operation table (AC-2, R22 / 
         "PUT /user/me/profile": [
           { first_name: "Alicia" },
           { code: 200, data: { user_id: "user-1", first_name: "Alicia" } },
+        ],
+        "POST /users": [
+          {
+            email: "w2-user@example.com",
+            first_name: "W2",
+            last_name: "User",
+            phone_number: "0912345678",
+            address: "W2 street",
+            remark: "",
+          },
+          { code: 200, data: { email: "w2-user@example.com", role: "user" } },
         ],
         "PUT /users/:id": [
           { first_name: "Bobby" },

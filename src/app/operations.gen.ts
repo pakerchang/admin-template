@@ -5,6 +5,7 @@ export const operations = {
   routes: [
     { method: "POST", path: "/api/auth/login", operationId: "login" },
     { method: "GET", path: "/users", operationId: "listUsers" },
+    { method: "POST", path: "/users", operationId: "createUser" },
     { method: "GET", path: "/users/:id", operationId: "getUser" },
     { method: "PUT", path: "/users/:id", operationId: "updateUser" },
     { method: "GET", path: "/user/me/profile", operationId: "getMyProfile" },
@@ -57,6 +58,7 @@ export const operations = {
   permissions: {
     login: "public",
     listUsers: "users:read",
+    createUser: "users:create",
     getUser: "users:read",
     updateUser: "users:update",
     getMyProfile: "app:access",

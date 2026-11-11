@@ -76,6 +76,35 @@ paths:
                           $ref: "#/components/schemas/User"
         "403":
           $ref: "#/components/responses/Error"
+    post:
+      operationId: createUser
+      tags: [users]
+      x-permission: users:create
+      requestBody:
+        required: true
+        description: role 一律建為 user（改角色走 updateUserRole）；user_id / 時間戳由後端產生
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "200":
+          description: 建立後的使用者
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
   /users/{id}:
     parameters:
       - in: path
@@ -951,7 +980,7 @@ components:
           schema:
             $ref: "#/components/schemas/MessageBody"
     Error:
-      description: 錯誤（401 帳密錯誤 / 403 guard 或本人檢查 / 404 找不到）
+      description: 錯誤（400 body 不合法 / 401 帳密錯誤 / 403 guard 或本人檢查 / 404 找不到 / 409 資料重複）
       content:
         application/json:
           schema:
@@ -1100,6 +1129,28 @@ components:
     ProfileUpdate:
       type: object
       properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone_number:
+          type: string
+        address:
+          type: string
+        remark:
+          type: string
+    UserCreate:
+      type: object
+      required:
+        - email
+        - first_name
+        - last_name
+        - phone_number
+        - address
+        - remark
+      properties:
+        email:
+          type: string
         first_name:
           type: string
         last_name:
