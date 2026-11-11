@@ -41,7 +41,7 @@ route 定義分布：10 個 module 都有 `model/routes.ts`；9 個用 `routes(c
 ### 2.2 `staticData.routeId` 收窄與 route id 前綴（OD-T2-2）
 
 - `StaticDataRouteOption.routeId?: TRouteId`（取代 `string`）。`TRouteId` 在完整安裝與 core-only 都不是 `never`（generic module 都 augment 了 `TRouteIdRegistry`），原註解的前提已不成立。
-- （OD-T2-2 已裁決 B）`TRouteContext<Id>`／`TPublicRouteContext<Id>`：`page` 的 `routeId` 收窄為 `` Extract<TRouteId, `${Id}.${string}`> ``，R23 前綴在 `tsc` 就擋。各 `routes.ts` 的 factory 參數改成 `TRouteContext<"orders">` 這類具體 Id；若仍寫寬型別 `TRouteContext`，把窄 ctx 傳給它時 `tsc` 失敗（函式參數逆變），所以不會悄悄退回寬型別。
+- （OD-T2-2 已裁決 B）`TRouteContext<Id>`／`TPublicRouteContext<Id>`：`page` 的 `routeId` 收窄為 `` Extract<TRouteId, `${Id}.${string}`> ``，R23 前綴在 `tsc` 就擋。各 `routes.ts` 的 factory 參數改成 `TRouteContext<"orders">` 這類具體 Id；直接在某 module 的 ctx 寫別的 module 的 id（例 tags 的 ctx 寫 `ctx.page({ routeId: "product.list" })`）`tsc` 會擋；但 ctx 本身的可指派性**不**收窄：`page` 是泛型函式，TS 比較兩個泛型簽章時抹掉 `TOpts`，所以兩個不同 module 的 `TRouteContext<Id>` 可互相指派，把 tags 的 ctx 傳給參數為 `TRouteContext<"product">` 的 factory 時 `tsc` 不報錯（實作 PR #37 實測；陷阱見 `docs/TRAPS.md`「兩個不同 module 的 `TRouteContext<Id>` 互相可指派」）。這類「傳錯 module 的 routes factory」由執行期 R23 擋下（下一條）。
 - `build()` 的 `pageFor` R23 檢查、重複檢查保留（第二道防線）。
 
 ### 2.3 nav `to` path registry（OD-T2-3、OD-T2-4）

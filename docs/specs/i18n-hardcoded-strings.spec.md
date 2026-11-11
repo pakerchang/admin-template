@@ -23,7 +23,7 @@
 
 ### 1.2 逐處清單（不含 seed）
 
-欄位說明：**處理**＝`key`（新增 key）、`reuse`（改用既有 key）、`刪 fallback`（OD-HZ-1 A：刪掉沒傳 `t` 時的中文 fallback 分支，該分支在 app 內不會被執行）、`英文字面值`（不顯示在 UI 的開發者訊息）、`保留`（白名單）。**位置**依 OD-I18N-3 A 判定。**建議 key** 為 I1 落地後的名稱，與同 module 既有 key 的路徑形狀對齊（例：`toast.article.get.listError` 經 I1 → `articles.toast.get.listError`）；I1 實際落地的同類 key 形狀不同時，以 I1 為準調整。**en 來源**：`既有:<key>` 表示沿用該 key 的現有 en 值；`new` 表示本 spec 起草的新譯文。依 OD-HZ-4 A，en 以本表為準；`new` 的 22 個譯文為**最終版**（main 代裁 2026-11-11，owner 可於 PR #29 覆核）；之後改字依 OD-HZ-4 的改字規則，必須在同一個 PR 同步修改本表與相關 AC。
+欄位說明：**處理**＝`key`（新增 key）、`reuse`（改用既有 key）、`刪 fallback`（OD-HZ-1 A：刪掉沒傳 `t` 時的中文 fallback 分支，該分支在 app 內不會被執行）、`英文字面值`（不顯示在 UI 的開發者訊息）、`保留`（白名單）。**位置**依 OD-I18N-3 A 判定。**建議 key** 為 I1 落地後的名稱，與同 module 既有 key 的路徑形狀對齊（例：`toast.article.get.listError` 經 I1 → `articles.toast.get.listError`）；I1 實際落地的同類 key 形狀不同時，以 I1 為準調整。**en 來源**：`既有:<key>` 表示沿用該 key 的現有 en 值；`new` 表示本 spec 起草的新譯文。依 OD-HZ-4 A，en 以本表為準；`new` 的 24 個譯文為**最終版**（T3 PR #39 對齊 `userRoleEnum` 後由 22 改為 24）（main 代裁 2026-11-11，owner 可於 PR #29 覆核）；之後改字依 OD-HZ-4 的改字規則，必須在同一個 PR 同步修改本表與相關 AC。
 
 | 檔:行 | 字串 | 處理 | 位置 | 建議 key | en（來源） |
 |---|---|---|---|---|---|
@@ -48,8 +48,8 @@
 | `EditUserRoleDialogContent.tsx:58` | VIP會員（T3 對齊 `userRoleEnum` 後 zh 改為「進階會員」） | key | users | `users.roles.premium` | Premium Member（new，T3 OD-T3-4） |
 | `EditUserRoleDialogContent.tsx:63` | 代理商（T3 對齊 `userRoleEnum` 後 zh 改為「合作夥伴」） | key | users | `users.roles.partner` | Partner（new，T3 OD-T3-4） |
 | `EditUserRoleDialogContent.tsx:68` | 客服 | key | users | `users.roles.support` | Customer Support（new，T3 OD-T3-4） |
-| `EditUserRoleDialogContent.tsx:73` | 管理員 | key | users | `users.roles.admin` | Admin（既有:`staff.roles.admin`） |
-| `EditUserRoleDialogContent.tsx:78` | 超級管理員 | key | users | `users.roles.superadmin` | Super Admin（既有:`staff.roles.superadmin`） |
+| `EditUserRoleDialogContent.tsx:73` | 管理員 | key | users | `users.roles.admin` | Admin（既有:`team-members.roles.admin`） |
+| `EditUserRoleDialogContent.tsx:78` | 超級管理員 | key | users | `users.roles.superadmin` | Super Admin（既有:`team-members.roles.superadmin`） |
 | `banners/model/image-validation/file-type.rule.ts:29`、`:44` | Banner 圖片請使用 … 格式… | 刪 fallback | — | — | — |
 | `banners/.../filename-prefix.rule.ts:25`、`:55` | 桌面版／手機版圖片檔名請以 d_／m_ 開頭 | 刪 fallback | — | — | — |
 | `banners/.../filesize.rule.ts:33`、`:46`、`:77`、`:90` | 檔案大小過小…／超過限制… | 刪 fallback | — | — | — |
@@ -75,7 +75,7 @@
 | 保留（白名單） | 1 處 | `app-sidebar.tsx:62` |
 | 合計 | 56 處（其中 manager.ts:142 一處計入「新增 key」） | |
 
-26 個新 key 中 en 譯文：沿用既有 en 值 4 個（`users.roles.agent` / `cservice` / `admin` / `superadmin`），新撰 22 個（最終版，main 代裁 2026-11-11，owner 可於 PR #29 覆核；見 OD-HZ-4）。
+26 個新 key 中 en 譯文：沿用既有 en 值 2 個（`users.roles.admin` / `superadmin`，沿用 `team-members.roles.*`），新撰 24 個（T3 PR #39 對齊 `userRoleEnum` 後，`agent` / `cservice` 改為 `partner` / `support` 並改為新撰；以 master `hardcoded-zh-keymap.json` 的 `enSource` 計數核對）（最終版，main 代裁 2026-11-11，owner 可於 PR #29 覆核；見 OD-HZ-4）。
 
 ### 1.4 現況機制（影響設計的事實）
 
@@ -198,13 +198,13 @@ expected: exit 0，最後輸出含 `core-only build: OK`
 
 #### OD-HZ-4 新 key 的 en 譯文來源
 
-22 個新撰譯文 + 4 個沿用既有 en 值，列在 §1.2。
+22 個新撰譯文 + 4 個沿用既有 en 值，列在 §1.2。（T3 PR #39 對齊 `userRoleEnum` 後為新撰 24 + 沿用 2，見 §1.3）
 
 | 選項 | 內容 | 後果 |
 |---|---|---|
 | A 以本 spec §1.2 的 en 為準 | 實作棒照表寫入，fixture `enSource` 標 `new` / `existing:<key>`；AC-0 重盤若有新增位置，實作棒依同類 key 句型撰寫並在交付報告列出 | 審 spec 時就審譯文，與 OD-I18N-6 的做法一致 |
 | B owner 另行提供 | 實作棒先放 placeholder | 多一輪往返；placeholder 會讓 AC-2 的 `en !== zh` 斷言難以定義 |
 
-**已裁決：A（main 代裁 2026-11-11，owner 可於 PR #29 覆核）**。實作棒照 §1.2 逐字寫入 en；22 個新撰譯文（`enSource: "new"`）為**最終版**，實作棒不得自行改字。
+**已裁決：A（main 代裁 2026-11-11，owner 可於 PR #29 覆核）**。實作棒照 §1.2 逐字寫入 en；22 個新撰譯文（`enSource: "new"`）為**最終版**，實作棒不得自行改字。（T3 PR #39 對齊 `userRoleEnum` 後為新撰 24 + 沿用 2，見 §1.3）
 
 **改字規則**：§1.2 任何 en / zh 值要改（含 owner 覆核後的改字），必須在**同一個 PR** 內一起修改：(1) 本 spec §1.2 對應列；(2) AC-2 fixture `hardcoded-zh-keymap.json` 對應列與字典值；(3) 若該字串被 AC 寫死（目前為 AC-5 的 `Edit User Role`、`Staff creation failed`，以及 AC-5 zh 案例比對的 §1.2 原文），同步修改該 AC 文字與對應測試斷言。AC-0 重盤若出現 §1.2 沒有的新位置，實作棒撰寫的譯文同樣要在同一個 PR 補進 §1.2 與 AC-2 fixture。只改字典或 fixture 而不改 spec 的 PR 視為不符本 spec。
