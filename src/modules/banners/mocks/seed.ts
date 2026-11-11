@@ -1,8 +1,8 @@
 import { iso, placeholderImage } from "@/shared/api/mock-db";
 
-import type { TBanner } from "../model/schema";
+import type { Banner } from "../api/model";
 
-export const banners: TBanner[] = [
+export const banners = [
   "Summer Sale",
   "New Arrivals",
   "Free Shipping",
@@ -25,4 +25,4 @@ export const banners: TBanner[] = [
   banner_status: i < 3 ? "active" : "inactive",
   created_at: iso(60 - i * 3),
   updated_at: iso(5),
-}));
+})) satisfies Banner[];

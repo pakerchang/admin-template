@@ -10,9 +10,10 @@ import {
   getUpdateTagMockHandler,
 } from "./tags.msw";
 
+import type { Tag } from "../api/model";
 import type { HttpHandler } from "msw";
 
-const collection = createCollection(tags, "tag_id", {
+const collection = createCollection<Tag>(tags, "tag_id", {
   searchField: "tag_name",
 });
 

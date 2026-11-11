@@ -10,9 +10,10 @@ import {
 } from "./product.msw";
 import { products } from "./seed";
 
+import type { Product } from "../api/model";
 import type { HttpHandler } from "msw";
 
-const collection = createCollection(products, "product_id", {
+const collection = createCollection<Product>(products, "product_id", {
   searchField: "product_name",
 });
 

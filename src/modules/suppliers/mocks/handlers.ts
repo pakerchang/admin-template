@@ -10,9 +10,10 @@ import {
   getUpdateSupplierMockHandler,
 } from "./suppliers.msw";
 
+import type { Supplier } from "../api/model";
 import type { HttpHandler } from "msw";
 
-const collection = createCollection(suppliers, "supplier_id", {
+const collection = createCollection<Supplier>(suppliers, "supplier_id", {
   searchField: "supplier_name",
 });
 

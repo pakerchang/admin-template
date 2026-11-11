@@ -35,7 +35,9 @@ const OrderCard = ({ order }: OrderCardProps) => {
         <div className="text-right">
           <div className="flex items-center gap-2 text-sm text-white">
             <Calendar className="size-4" />
-            {dayjs(order.created_at).format("YYYY-MM-DD HH:mm")}
+            {order.created_at
+              ? dayjs(order.created_at).format("YYYY-MM-DD HH:mm")
+              : "—"}
           </div>
           <div className="flex items-center justify-between gap-2 font-semibold text-white">
             {t("order.totalAmount")}:

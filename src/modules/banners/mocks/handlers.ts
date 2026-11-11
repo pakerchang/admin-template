@@ -10,9 +10,10 @@ import {
 } from "./banners.msw";
 import { banners } from "./seed";
 
+import type { Banner } from "../api/model";
 import type { HttpHandler } from "msw";
 
-const collection = createCollection(banners, "banner_id", {
+const collection = createCollection<Banner>(banners, "banner_id", {
   searchField: "title",
 });
 

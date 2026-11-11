@@ -2,6 +2,8 @@ import { z } from "zod";
 
 import { imageResponseSchema } from "@/shared/api/schema";
 
+import { OrderStatus } from "../api/model";
+
 export enum EOrderStatus {
   NEW = "new",
   PENDING = "pending",
@@ -17,7 +19,8 @@ export enum EShipped {
   EXPRESS = "express",
 }
 
-export const orderStatusSchema = z.enum(EOrderStatus);
+// T3 OD-T3-3 A：值域取自 YAML 產物；EOrderStatus 與其相等由 schema-anchor 測試錨定
+export const orderStatusSchema = z.enum(OrderStatus);
 
 export const contactInfoSchema = z.object({
   address: z.string(),

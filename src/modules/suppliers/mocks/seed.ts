@@ -1,8 +1,8 @@
 import { iso } from "@/shared/api/mock-db";
 
-import type { TSupplier } from "../model/schema";
+import type { Supplier } from "../api/model";
 
-export const suppliers: TSupplier[] = [
+export const suppliers = [
   "Mountain Tea Co.",
   "Sunrise Farms",
   "Blue Ocean Trading",
@@ -19,4 +19,4 @@ export const suppliers: TSupplier[] = [
   remark: i % 2 === 0 ? "Preferred supplier" : "",
   created_at: iso(300 - i * 20),
   updated_at: iso(30 - i),
-}));
+})) satisfies Supplier[];

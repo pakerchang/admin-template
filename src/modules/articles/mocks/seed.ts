@@ -1,12 +1,12 @@
 import { iso, placeholderImage } from "@/shared/api/mock-db";
 
-import type { TArticle } from "../model/schema";
+import type { Article } from "../api/model";
 
 /** R5：作者（staff_id / 名字）與標籤名稱是自帶快照，與 team-members / tags seed 的值一致 */
 const AUTHORS = ["Alice", "Bob", "Carol", "David", "Eve"];
 const TAG_NAMES = ["Best Seller", "New", "Organic", "Limited", "Gift"];
 
-export const articles: TArticle[] = [
+export const articles = [
   "How to Brew the Perfect Oolong",
   "A Short History of Taiwanese Tea",
   "Pairing Tea with Desserts",
@@ -29,4 +29,4 @@ export const articles: TArticle[] = [
   content_html: `<h2>${title}</h2><p>This is a demo article used for the UI showcase.</p>`,
   created_at: iso(40 - i * 4),
   updated_at: iso(8 - i),
-}));
+})) satisfies Article[];

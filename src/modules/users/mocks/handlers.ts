@@ -22,15 +22,20 @@ import {
   getUpdateUserRoleMockHandler,
 } from "./users.msw";
 
-import type { User } from "../api/model";
+import type {
+  ProfileUpdate,
+  UpdateUserRoleBody,
+  User,
+  UserUpdate,
+} from "../api/model";
 import type { HttpHandler } from "msw";
 
-const collection = createCollection(users, "user_id");
+const collection = createCollection<User>(users, "user_id");
 const byId = (userId: string) =>
   collection.all().find((user) => user.user_id === userId);
 
 // users module 擁有帳號資料：guard 與 login 經 session store 查角色，讀到的是目前（可能被改過）的角色
-setMockRoleResolver((userId) => byId(userId)?.role as string | undefined);
+setMockRoleResolver((userId) => byId(userId)?.role);
 
 // auth module 的 login 用（經本 module 的 index.ts 公開），回傳記憶體中的那筆帳號
 export const findMockUserByEmail = (email: unknown) =>
@@ -78,25 +83,32 @@ export const usersMockHandlers: HttpHandler[] = [
   getGetUserMockHandler(({ params }) => ok(byId(String(params.id))!)),
   getUpdateUserMockHandler(async ({ params, request }) => {
     const user = byId(String(params.id))!;
-    const body = await bodyOf(request);
-    for (const key of USER_FIELDS) if (key in body) user[key] = body[key];
+    const body = await bodyOf<UserUpdate>(request);
+    for (const key of USER_FIELDS) {
+      const value = body[key];
+      if (value !== undefined) user[key] = value;
+    }
     user.updated_at = now();
     return ok(user);
   }),
-  getGetMyProfileMockHandler(
-    ({ request }) => me(request.headers.get("Authorization")) as unknown as User
+  getGetMyProfileMockHandler(({ request }) =>
+    me(request.headers.get("Authorization"))!
   ),
   // 只套用白名單欄位；role / user_id / email 等身分與權限欄位忽略（呼叫端會送整個 TUser）
   getUpdateMyProfileMockHandler(async ({ request }) => {
     const user = me(request.headers.get("Authorization"))!;
-    const body = await bodyOf(request);
-    for (const key of PROFILE_FIELDS) if (key in body) user[key] = body[key];
+    const body = await bodyOf<ProfileUpdate>(request);
+    for (const key of PROFILE_FIELDS) {
+      const value = body[key];
+      if (value !== undefined) user[key] = value;
+    }
     user.updated_at = now();
     return ok(user);
   }),
   getUpdateUserRoleMockHandler(async ({ request }) => {
-    const body = await bodyOf(request);
-    byId(String(body.target_user_id))!.role = body.role;
+    // 不驗證 role（T3 OD-T3-5 A）；形狀以產物 body 型別宣告
+    const body = await bodyOf<UpdateUserRoleBody>(request);
+    byId(body.target_user_id)!.role = body.role;
     return ok({ role: body.role });
   }),
 ];

@@ -166,7 +166,7 @@ export const useUpdateOrderStatus = () => {
       order_status,
     }: {
       order_id: TOrder["order_id"];
-      order_status: EOrderStatus;
+      order_status: TOrder["order_status"];
     }) => {
       const response = await updateOrder({
         order_id,

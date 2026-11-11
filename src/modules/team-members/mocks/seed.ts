@@ -1,9 +1,9 @@
 import { iso } from "@/shared/api/mock-db";
 
-import type { TStaffUser } from "../model/schema";
+import type { Staff } from "../api/model";
 
 /** R5：自帶 staff seed（人名 / email / 時間與 users seed 前 5 筆一致，不讀 users 的 collection） */
-export const staff: TStaffUser[] = [
+export const staff = [
   ["Alice", "Chen"],
   ["Bob", "Lin"],
   ["Carol", "Wang"],
@@ -19,4 +19,4 @@ export const staff: TStaffUser[] = [
   role: i === 0 ? "superadmin" : "admin",
   created_at: iso(200 - i * 10),
   updated_at: iso(20 - i),
-}));
+})) satisfies Staff[];

@@ -9,9 +9,10 @@ import {
 } from "./orders.msw";
 import { orders } from "./seed";
 
+import type { Order } from "../api/model";
 import type { HttpHandler } from "msw";
 
-const collection = createCollection(orders, "order_id");
+const collection = createCollection<Order>(orders, "order_id");
 
 export const ordersMockHandlers: HttpHandler[] = [
   // K1：更新不存在的 id → 404（orval handler 只回 200）
