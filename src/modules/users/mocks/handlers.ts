@@ -68,7 +68,9 @@ const createSchema = userSchema.omit({
 
 /** 不合法 body → 400；email 重複（不分大小寫，OD-UC-4 = A）→ 409；否則 fall through（K1：排在 orval handler 前） */
 const rejectInvalidCreate = async ({ request }: { request: Request }) => {
-  const parsed = createSchema.safeParse(await bodyOf(request));
+  // bodyOf 直接 JSON.parse：非法 JSON 視同不合法 body（undefined → safeParse 失敗 → 400）
+  const body = await bodyOf(request).catch(() => undefined);
+  const parsed = createSchema.safeParse(body);
   if (!parsed.success) return errorResponse(400, "Invalid body");
   const email = parsed.data.email.toLowerCase();
   return collection

@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { fetcher } from "@/shared/api/fetcher";
 import { mountAsSuperadmin } from "@/test/sign-in";
 
 import {
   createUser,
+  getCreateUserUrl,
   getUser,
   listUsers,
   updateUser,
@@ -116,6 +118,18 @@ describe("users mock createUser (user-create AC-3)", () => {
     const before = await count();
     await expect(
       createUser({ ...valid("ac3d@example.com"), ...patch } as never)
+    ).rejects.toMatchObject({ status: 400 });
+    expect(await count()).toBe(before);
+  });
+
+  it("(d3) malformed JSON body → 400, nothing written", async () => {
+    const before = await count();
+    await expect(
+      fetcher(getCreateUserUrl(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{",
+      })
     ).rejects.toMatchObject({ status: 400 });
     expect(await count()).toBe(before);
   });
