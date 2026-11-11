@@ -159,7 +159,7 @@ export const useGetStaffList = (query: Partial<TStaffQuery>) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: "獲取員工列表失敗",
+          description: t("team-members.toast.get.listError"),
           variant: "destructive",
         });
         return undefined;
@@ -186,7 +186,7 @@ export const useCreateStaff = () => {
       const response = await createStaff(staffData).catch(nullOnApiError);
 
       if (!response) {
-        throw new Error("創建員工失敗");
+        throw new Error(t("team-members.toast.create.error"));
       }
 
       return response;
@@ -194,15 +194,15 @@ export const useCreateStaff = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staff"] });
       toast({
-        title: "成功",
-        description: "員工創建成功",
+        title: t("common.success"),
+        description: t("team-members.toast.create.success"),
         variant: "default",
       });
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: error.message || "創建員工失敗",
+        description: error.message || t("team-members.toast.create.error"),
         variant: "destructive",
       });
     },
@@ -219,7 +219,7 @@ export const useUpdateStaff = () => {
       const response = await updateStaff(staffData).catch(nullOnApiError);
 
       if (!response) {
-        throw new Error("更新員工失敗");
+        throw new Error(t("team-members.toast.update.error"));
       }
 
       return response;
@@ -227,15 +227,15 @@ export const useUpdateStaff = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staff"] });
       toast({
-        title: "成功",
-        description: "員工資料更新成功",
+        title: t("common.success"),
+        description: t("team-members.toast.update.success"),
         variant: "default",
       });
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: error.message || "更新員工失敗",
+        description: error.message || t("team-members.toast.update.error"),
         variant: "destructive",
       });
     },
@@ -254,7 +254,7 @@ export const useDeleteStaff = () => {
       );
 
       if (!response) {
-        throw new Error("刪除員工失敗");
+        throw new Error(t("team-members.toast.delete.error"));
       }
 
       return response;
@@ -262,15 +262,15 @@ export const useDeleteStaff = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["staff"] });
       toast({
-        title: "成功",
-        description: "員工刪除成功",
+        title: t("common.success"),
+        description: t("team-members.toast.delete.success"),
         variant: "default",
       });
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: error.message || "刪除員工失敗",
+        description: error.message || t("team-members.toast.delete.error"),
         variant: "destructive",
       });
     },

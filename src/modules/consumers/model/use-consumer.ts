@@ -59,7 +59,7 @@ export const useGetCustomerList = (query: Partial<TCustomerQuery>) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: "獲取客戶列表失敗",
+          description: t("consumers.toast.get.listError"),
           variant: "destructive",
         });
         return undefined;
@@ -105,7 +105,7 @@ export const useGetTransactionHistory = (
       if (!response) {
         toast({
           title: t("common.error"),
-          description: "獲取交易記錄失敗",
+          description: t("consumers.toast.get.transactionError"),
           variant: "destructive",
         });
         return undefined;

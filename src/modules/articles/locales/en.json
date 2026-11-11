@@ -93,6 +93,10 @@
     "delete": {
       "success": "Article deleted successfully",
       "error": "Article deletion failed"
+    },
+    "profile": {
+      "fetchError": "Failed to get user info, please sign in again",
+      "missing": "User info unavailable, please sign in again"
     }
   }
 }

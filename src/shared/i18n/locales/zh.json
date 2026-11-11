@@ -40,7 +40,9 @@
       "fileSize": {
         "tooSmall": "檔案大小過小，可能影響圖片品質，建議至少 {{minSize}}",
         "tooLarge": "檔案大小超過限制，最大支援 {{maxSize}}"
-      }
+      },
+      "ruleFailed": "驗證規則執行失敗: {{reason}}",
+      "unknownError": "未知錯誤"
     },
     "text": {
       "min": "{{field}}不能小於 {{min}} 個字元",
@@ -61,7 +63,8 @@
   "lng": {
     "zh": "中文",
     "en": "英文",
-    "th": "泰文"
+    "th": "泰文",
+    "label": "語言"
   },
   "status": {
     "new": "新訂單",
@@ -117,7 +120,8 @@
       "fileName": "圖片名稱",
       "submit": "上傳",
       "cancel": "取消",
-      "allowedFormats": "允許的格式：{{formats}}"
+      "allowedFormats": "允許的格式：{{formats}}",
+      "formatSeparator": "、"
     }
   },
   "toast": {

@@ -35,5 +35,11 @@
     "pending": "Pending",
     "completed": "Completed",
     "cancelled": "Cancelled"
+  },
+  "toast": {
+    "get": {
+      "listError": "Failed to get customer list",
+      "transactionError": "Failed to get transaction history"
+    }
   }
 }

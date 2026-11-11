@@ -48,7 +48,8 @@
   "productDraft": {
     "title": "複製商品 - {{productName}}",
     "description": "基於現有商品建立副本，可修改後建立為新商品",
-    "copyToCreate": "複製建立"
+    "copyToCreate": "複製建立",
+    "copyName": "{{name}}（複製）"
   },
   "productEditConfirm": {
     "title": "確認編輯內容",

@@ -21,7 +21,7 @@ export async function getImageMetadata(file: File): Promise<ImageMetadata> {
 
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
-      reject(new Error("無法讀取圖片資訊"));
+      reject(new Error("Failed to read image metadata"));
     };
 
     img.src = objectUrl;

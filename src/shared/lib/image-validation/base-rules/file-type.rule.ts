@@ -15,20 +15,20 @@ export const fileTypeRule: ImageValidationRule = {
   name: "file-type",
   priority: 1, // 最高優先級，最先執行
   async validate(file, _metadata, context): Promise<ValidationResult> {
-    const t = context?.t;
+    const { t } = context;
 
     // 動態格式注入：優先使用 context 中的限制，否則使用預設
-    const allowedTypes = context?.allowedTypes || SUPPORTED_IMAGE_TYPES;
+    const allowedTypes = context.allowedTypes || SUPPORTED_IMAGE_TYPES;
     const allowedExtensions =
-      context?.allowedExtensions || SUPPORTED_IMAGE_EXTENSIONS;
+      context.allowedExtensions || SUPPORTED_IMAGE_EXTENSIONS;
 
     const extensionsText = allowedExtensions.join(", ");
 
     // 檢查 MIME type
     if (!allowedTypes.includes(file.type)) {
-      const message = t
-        ? t("validation.image.type.unsupported", { extensions: extensionsText })
-        : `不支援的檔案類型。請上傳 ${extensionsText} 格式的圖片`;
+      const message = t("validation.image.type.unsupported", {
+        extensions: extensionsText,
+      });
 
       return {
         isValid: false,
@@ -40,11 +40,9 @@ export const fileTypeRule: ImageValidationRule = {
     // 檢查副檔名
     const extension = file.name.toLowerCase().split(".").pop();
     if (!extension || !allowedExtensions.includes(`.${extension}`)) {
-      const message = t
-        ? t("validation.image.type.extensionMismatch", {
-            extensions: extensionsText,
-          })
-        : `不支援的副檔名。請確保檔案為 ${extensionsText} 格式`;
+      const message = t("validation.image.type.extensionMismatch", {
+        extensions: extensionsText,
+      });
 
       return {
         isValid: false,

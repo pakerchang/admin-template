@@ -28,5 +28,18 @@
       "success": "User data updated successfully",
       "error": "Failed to update user data"
     }
+  },
+  "editRole": {
+    "title": "Edit User Role",
+    "description": "Select a new role for the user"
+  },
+  "roles": {
+    "new": "New User",
+    "user": "User",
+    "vip": "VIP Member",
+    "agent": "Agent",
+    "cservice": "Customer Service",
+    "admin": "Admin",
+    "superadmin": "Super Admin"
   }
 }

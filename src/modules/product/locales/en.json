@@ -48,7 +48,8 @@
   "productDraft": {
     "title": "Copy Product - {{productName}}",
     "description": "Create a copy based on existing product, modify and create as new product",
-    "copyToCreate": "Copy to Create"
+    "copyToCreate": "Copy to Create",
+    "copyName": "{{name}} (Copy)"
   },
   "productEditConfirm": {
     "title": "Confirm Edit Content",

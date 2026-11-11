@@ -20,17 +20,15 @@ export const bannerDesktopFilesizeRule: ImageValidationRule = {
   priority: 15,
   async validate(
     file: File,
-    metadata?: ImageMetadata,
-    context?: ValidationContext
+    metadata: ImageMetadata | undefined,
+    context: ValidationContext
   ): Promise<ValidationResult> {
-    const t = context?.t;
+    const { t } = context;
     const fileSize = metadata?.size || file.size;
 
     if (fileSize < MIN_FILE_SIZE) {
       const minSize = formatFileSize(MIN_FILE_SIZE);
-      const message = t
-        ? t("validation.image.fileSize.tooSmall", { minSize })
-        : `檔案大小過小，可能影響圖片品質，建議至少 ${minSize}`;
+      const message = t("validation.image.fileSize.tooSmall", { minSize });
 
       return {
         isValid: false,
@@ -41,9 +39,9 @@ export const bannerDesktopFilesizeRule: ImageValidationRule = {
 
     if (fileSize > MAX_FILE_SIZE_DESKTOP) {
       const maxSizeFormatted = formatFileSize(MAX_FILE_SIZE_DESKTOP);
-      const message = t
-        ? t("validation.image.fileSize.tooLarge", { maxSize: maxSizeFormatted })
-        : `檔案大小超過限制，最大支援 ${maxSizeFormatted}`;
+      const message = t("validation.image.fileSize.tooLarge", {
+        maxSize: maxSizeFormatted,
+      });
 
       return {
         isValid: false,
@@ -64,17 +62,15 @@ export const bannerMobileFilesizeRule: ImageValidationRule = {
   priority: 15,
   async validate(
     file: File,
-    metadata?: ImageMetadata,
-    context?: ValidationContext
+    metadata: ImageMetadata | undefined,
+    context: ValidationContext
   ): Promise<ValidationResult> {
-    const t = context?.t;
+    const { t } = context;
     const fileSize = metadata?.size || file.size;
 
     if (fileSize < MIN_FILE_SIZE) {
       const minSize = formatFileSize(MIN_FILE_SIZE);
-      const message = t
-        ? t("validation.image.fileSize.tooSmall", { minSize })
-        : `檔案大小過小，可能影響圖片品質，建議至少 ${minSize}`;
+      const message = t("validation.image.fileSize.tooSmall", { minSize });
 
       return {
         isValid: false,
@@ -85,9 +81,9 @@ export const bannerMobileFilesizeRule: ImageValidationRule = {
 
     if (fileSize > MAX_FILE_SIZE_MOBILE) {
       const maxSizeFormatted = formatFileSize(MAX_FILE_SIZE_MOBILE);
-      const message = t
-        ? t("validation.image.fileSize.tooLarge", { maxSize: maxSizeFormatted })
-        : `檔案大小超過限制，最大支援 ${maxSizeFormatted}`;
+      const message = t("validation.image.fileSize.tooLarge", {
+        maxSize: maxSizeFormatted,
+      });
 
       return {
         isValid: false,

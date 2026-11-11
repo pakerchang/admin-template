@@ -35,5 +35,11 @@
     "pending": "處理中",
     "completed": "已完成",
     "cancelled": "已取消"
+  },
+  "toast": {
+    "get": {
+      "listError": "獲取客戶列表失敗",
+      "transactionError": "獲取交易記錄失敗"
+    }
   }
 }

@@ -32,5 +32,22 @@
     "superadmin": "超級管理員",
     "admin": "管理員",
     "cservice": "客服"
+  },
+  "toast": {
+    "get": {
+      "listError": "獲取員工列表失敗"
+    },
+    "create": {
+      "error": "創建員工失敗",
+      "success": "員工創建成功"
+    },
+    "update": {
+      "error": "更新員工失敗",
+      "success": "員工資料更新成功"
+    },
+    "delete": {
+      "error": "刪除員工失敗",
+      "success": "員工刪除成功"
+    }
   }
 }
