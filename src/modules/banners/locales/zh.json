@@ -15,7 +15,8 @@
           "tooSmall": "手機版圖片解析度過小，建議最小 {{minResolution}} 像素",
           "tooLarge": "手機版圖片解析度過大，最大支援 {{maxResolution}} 像素",
           "aspectRatio": "手機版建議使用 16:9 的寬高比"
-        }
+        },
+        "metadataMissing": "無法獲取圖片尺寸資訊，請確保檔案為有效的圖片格式"
       }
     },
     "url": {

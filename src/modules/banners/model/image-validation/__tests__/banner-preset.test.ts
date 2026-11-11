@@ -47,6 +47,10 @@ const BANNER_VALIDATION_CONFIG = {
   },
 };
 
+// 測試用翻譯函式：回傳 key 與參數（OD-HZ-1 A：t 為必填，規則訊息一律走 t）
+const t = (key: string, options?: Record<string, unknown>) =>
+  `${key} ${JSON.stringify(options ?? {})}`;
+
 describe("Banner Preset", () => {
   beforeAll(() => {
     // Mock URL methods for image metadata tests
@@ -158,7 +162,7 @@ describe("Banner Preset", () => {
       type: "image/webp",
     });
 
-    const result = await manager.validateImage(mockWebPFile);
+    const result = await manager.validateImage(mockWebPFile, { t });
 
     // WebP 檔案應該通過驗證
     expect(result.isValid).toBe(true);
@@ -173,7 +177,7 @@ describe("Banner Preset", () => {
       type: "image/webp",
     });
 
-    const result = await manager.validateImage(mockWebPFile);
+    const result = await manager.validateImage(mockWebPFile, { t });
 
     // WebP 檔案應該通過驗證
     expect(result.isValid).toBe(true);
@@ -188,7 +192,7 @@ describe("Banner Preset", () => {
       type: "image/jpeg",
     });
 
-    const result = await manager.validateImage(mockJpegFile);
+    const result = await manager.validateImage(mockJpegFile, { t });
 
     // 非 WebP 檔案應該被拒絕
     expect(result.isValid).toBe(false);
@@ -210,7 +214,7 @@ describe("Banner Preset", () => {
       type: "image/jpeg",
     });
 
-    const result = await manager.validateImage(mockJpegFile);
+    const result = await manager.validateImage(mockJpegFile, { t });
 
     // 非 WebP 檔案應該被拒絕
     expect(result.isValid).toBe(false);

@@ -40,7 +40,7 @@ export const ValidationContextSchema = z.object({
       filenameRules: FilenameRuleSchema.optional(),
     })
     .optional(),
-  t: I18nFunctionSchema.optional(),
+  t: I18nFunctionSchema,
 });
 
 export const ValidationRuleSchema = z.object({
@@ -51,7 +51,7 @@ export const ValidationRuleSchema = z.object({
       (
         file: File,
         metadata: z.infer<typeof ImageMetadataSchema> | undefined,
-        context: z.infer<typeof ValidationContextSchema> | undefined,
+        context: z.infer<typeof ValidationContextSchema>,
         ...rest: unknown[]
       ) => Promise<z.infer<typeof ValidationResultSchema>>
     >(),
@@ -63,7 +63,7 @@ export const ValidationOptionsSchema = z.object({
   allowedExtensions: z.array(z.string()).optional(),
   maxFileSize: z.number().positive().optional(),
   customRules: z.array(ValidationRuleSchema).optional(),
-  t: I18nFunctionSchema.optional(),
+  t: I18nFunctionSchema,
 });
 
 export const BatchValidationResultSchema = z.object({

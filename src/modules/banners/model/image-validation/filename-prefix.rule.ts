@@ -13,16 +13,14 @@ export const desktopFilenamePrefixRule: ImageValidationRule = {
   priority: 2,
   async validate(
     file: File,
-    _metadata?: ImageMetadata,
-    context?: ValidationContext
+    _metadata: ImageMetadata | undefined,
+    context: ValidationContext
   ): Promise<ValidationResult> {
-    const t = context?.t;
+    const { t } = context;
     const fileName = file.name;
 
     if (!fileName.startsWith("d_")) {
-      const message = t
-        ? t("banners.validation.image.prefix.desktop", {})
-        : "桌面版圖片檔名請以 d_ 開頭";
+      const message = t("banners.validation.image.prefix.desktop", {});
 
       return {
         isValid: false,
@@ -43,16 +41,14 @@ export const mobileFilenamePrefixRule: ImageValidationRule = {
   priority: 2,
   async validate(
     file: File,
-    _metadata?: ImageMetadata,
-    context?: ValidationContext
+    _metadata: ImageMetadata | undefined,
+    context: ValidationContext
   ): Promise<ValidationResult> {
-    const t = context?.t;
+    const { t } = context;
     const fileName = file.name;
 
     if (!fileName.startsWith("m_")) {
-      const message = t
-        ? t("banners.validation.image.prefix.mobile", {})
-        : "手機版圖片檔名請以 m_ 開頭";
+      const message = t("banners.validation.image.prefix.mobile", {});
 
       return {
         isValid: false,

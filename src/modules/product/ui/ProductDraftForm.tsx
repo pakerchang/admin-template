@@ -43,6 +43,7 @@ import type { EProductType } from "../model/schema";
 import type { TProductForm } from "../model/use-product";
 import type { EActiveStatus } from "@/shared/api/schema";
 import type { TLeafKey } from "@/shared/i18n/types";
+import type { TFunction } from "i18next";
 
 const DEFAULT_LANG_VALUES = { zh: "", en: "", th: "" };
 const DEFAULT_VALUES: TProductForm = {
@@ -71,10 +72,15 @@ const DEFAULT_VALUES: TProductForm = {
   },
 } as const;
 
-const transformProductToDraft = (formData: TProductForm): TProductForm => {
+const transformProductToDraft = (
+  formData: TProductForm,
+  t: TFunction
+): TProductForm => {
   return {
     ...formData,
-    product_name: `${formData.product_name}（複製）`,
+    product_name: t("product.productDraft.copyName", {
+      name: formData.product_name,
+    }),
     product_status: activeStatusEnums.enum.inactive,
   };
 };
@@ -122,8 +128,8 @@ const ProductDraftForm = () => {
 
     const sourceProduct = sourceProductData[0];
     const formData = transformProductToFormData(sourceProduct);
-    return transformProductToDraft(formData);
-  }, [sourceProductData, isLoadingSourceProduct]);
+    return transformProductToDraft(formData, t);
+  }, [sourceProductData, isLoadingSourceProduct, t]);
 
   const form = useForm<TProductForm>({
     resolver: zodResolver(productFormSchema),
@@ -140,7 +146,7 @@ const ProductDraftForm = () => {
     ) {
       const sourceProduct = sourceProductData[0];
       const formData = transformProductToFormData(sourceProduct);
-      const draftData = transformProductToDraft(formData);
+      const draftData = transformProductToDraft(formData, t);
 
       form.reset(draftData);
 

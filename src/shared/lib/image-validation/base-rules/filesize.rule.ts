@@ -13,14 +13,12 @@ export const filesizeRule: ImageValidationRule = {
   name: "file-size",
   priority: 15,
   async validate(file, metadata, context): Promise<ValidationResult> {
-    const t = context?.t;
+    const { t } = context;
     const fileSize = metadata?.size || file.size;
 
     if (fileSize < MIN_FILE_SIZE) {
       const minSize = formatFileSize(MIN_FILE_SIZE);
-      const message = t
-        ? t("validation.image.fileSize.tooSmall", { minSize })
-        : `檔案大小過小，可能影響圖片品質，建議至少 ${minSize}`;
+      const message = t("validation.image.fileSize.tooSmall", { minSize });
 
       return {
         isValid: false,
@@ -31,9 +29,9 @@ export const filesizeRule: ImageValidationRule = {
 
     if (fileSize > MAX_FILE_SIZE_GENERAL) {
       const maxSizeFormatted = formatFileSize(MAX_FILE_SIZE_GENERAL);
-      const message = t
-        ? t("validation.image.fileSize.tooLarge", { maxSize: maxSizeFormatted })
-        : `檔案大小超過限制，最大支援 ${maxSizeFormatted}`;
+      const message = t("validation.image.fileSize.tooLarge", {
+        maxSize: maxSizeFormatted,
+      });
 
       return {
         isValid: false,

@@ -96,7 +96,7 @@ export class ValidationManager implements IValidationManager {
    */
   async validateImage(
     file: File,
-    options?: ValidationOptions
+    options: ValidationOptions
   ): Promise<BatchValidationResult> {
     // 讀取圖片元數據
     let metadata: ImageMetadata | undefined;
@@ -107,22 +107,22 @@ export class ValidationManager implements IValidationManager {
     }
 
     const context: ValidationContext = {
-      imageType: options?.imageType,
-      allowedTypes: options?.allowedTypes,
-      allowedExtensions: options?.allowedExtensions,
-      existingRules: options?.customRules
+      imageType: options.imageType,
+      allowedTypes: options.allowedTypes,
+      allowedExtensions: options.allowedExtensions,
+      existingRules: options.customRules
         ? {
             filenameRules: options.customRules
               .filter((r) => r.name.includes("filename"))
               .map(() => ({ pattern: /.*/, message: "" }))[0],
           }
         : undefined,
-      t: options?.t,
+      t: options.t,
     };
 
     const rulesToExecute = this.getRules();
 
-    const allRulesToExecute = options?.customRules
+    const allRulesToExecute = options.customRules
       ? [...rulesToExecute, ...options.customRules]
       : rulesToExecute;
 
@@ -139,9 +139,12 @@ export class ValidationManager implements IValidationManager {
             ruleName: rule.name,
             result: {
               isValid: false,
-              message: `驗證規則執行失敗: ${
-                error instanceof Error ? error.message : "未知錯誤"
-              }`,
+              message: options.t("validation.image.ruleFailed", {
+                reason:
+                  error instanceof Error
+                    ? error.message
+                    : options.t("validation.image.unknownError", {}),
+              }),
               severity: "error" as const,
             },
           };

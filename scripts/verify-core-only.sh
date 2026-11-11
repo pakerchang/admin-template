@@ -53,6 +53,7 @@ src/app/kernel/__tests__/operations-yaml.test.ts
 src/app/mock/__tests__/mock-handlers.test.ts
 src/app/router/__tests__/forbidden-boundary.test.tsx
 src/app/router/__tests__/index-redirect.test.tsx
+src/shared/i18n/__tests__/hardcoded-zh-keymap.test.ts
 src/shared/i18n/__tests__/module-dictionaries.test.ts
 src/shared/i18n/__tests__/scope-migration.test.ts
 "

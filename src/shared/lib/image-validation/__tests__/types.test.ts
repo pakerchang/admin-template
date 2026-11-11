@@ -17,14 +17,14 @@ type ExpectedContext = {
   existingRules?: {
     filenameRules?: { pattern: RegExp; message: string };
   };
-  t?: I18nFn;
+  t: I18nFn; // OD-HZ-1 A（i18n-hardcoded-strings）：t 必填
 };
 
 type ExpectedValidate = (
   file: File,
   metadata:
     { width: number; height: number; size: number; type: string } | undefined,
-  context: ExpectedContext | undefined,
+  context: ExpectedContext,
   ...rest: unknown[]
 ) => Promise<{
   isValid: boolean;
@@ -48,7 +48,7 @@ describe("image-validation inferred types", () => {
         priority: number;
         validate: ExpectedValidate;
       }[];
-      t?: I18nFn;
+      t: I18nFn;
     }>();
   });
 });

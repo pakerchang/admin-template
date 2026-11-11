@@ -40,7 +40,9 @@
       "fileSize": {
         "tooSmall": "File size is too small, may affect image quality, recommended at least {{minSize}}",
         "tooLarge": "File size exceeds limit, maximum supported {{maxSize}}"
-      }
+      },
+      "ruleFailed": "Validation rule failed: {{reason}}",
+      "unknownError": "Unknown error"
     },
     "text": {
       "min": "{{field}} cannot be less than {{min}} characters",
@@ -61,7 +63,8 @@
   "lng": {
     "zh": "Chinese",
     "en": "English",
-    "th": "Thai"
+    "th": "Thai",
+    "label": "Language"
   },
   "status": {
     "new": "New Order",
@@ -117,7 +120,8 @@
       "fileName": "Image Name",
       "submit": "Submit",
       "cancel": "Cancel",
-      "allowedFormats": "Allowed formats: {{formats}}"
+      "allowedFormats": "Allowed formats: {{formats}}",
+      "formatSeparator": ", "
     }
   },
   "toast": {

@@ -93,6 +93,10 @@
     "delete": {
       "success": "文章刪除成功",
       "error": "刪除文章失敗"
+    },
+    "profile": {
+      "fetchError": "獲取用戶資訊失敗，請重新登入",
+      "missing": "無法獲取用戶資訊，請重新登入"
     }
   }
 }

@@ -24,8 +24,8 @@ export interface ImageValidationRule {
   priority?: number;
   validate: (
     file: File,
-    metadata?: ImageMetadata,
-    context?: ValidationContext
+    metadata: ImageMetadata | undefined,
+    context: ValidationContext
   ) => Promise<ValidationResult>;
 }
 
@@ -34,7 +34,7 @@ export interface IValidationManager {
   unregisterRule(ruleName: string): void;
   validateImage(
     file: File,
-    options?: ValidationOptions
+    options: ValidationOptions
   ): Promise<BatchValidationResult>;
   getRules(): ReadonlyArray<ImageValidationRule>;
   clearRules(): void;

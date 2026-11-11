@@ -32,5 +32,22 @@
     "superadmin": "Super Admin",
     "admin": "Admin",
     "cservice": "Customer Service"
+  },
+  "toast": {
+    "get": {
+      "listError": "Failed to get staff list"
+    },
+    "create": {
+      "error": "Staff creation failed",
+      "success": "Staff created successfully"
+    },
+    "update": {
+      "error": "Staff update failed",
+      "success": "Staff updated successfully"
+    },
+    "delete": {
+      "error": "Staff deletion failed",
+      "success": "Staff deleted successfully"
+    }
   }
 }

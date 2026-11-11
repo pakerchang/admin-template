@@ -6,6 +6,10 @@ import {
   filenameFormatRule,
 } from "../index";
 
+// 測試用翻譯函式：回傳 key 與參數（OD-HZ-1 A：t 為必填，規則訊息一律走 t）
+const t = (key: string, options?: Record<string, unknown>) =>
+  `${key} ${JSON.stringify(options ?? {})}`;
+
 describe("Basic Usage", () => {
   let manager: ReturnType<typeof createValidationManager>;
 
@@ -78,6 +82,7 @@ describe("Basic Usage", () => {
     });
 
     const result = await manager.validateImage(mockFile, {
+      t,
       imageType: "desktop",
     });
 
@@ -93,6 +98,7 @@ describe("Basic Usage", () => {
     });
 
     const result = await manager.validateImage(mockFile, {
+      t,
       imageType: "desktop",
     });
 
@@ -107,12 +113,15 @@ describe("Basic Usage", () => {
     });
 
     const result = await manager.validateImage(mockFile, {
+      t,
       imageType: "desktop",
     });
 
     expect(result.isValid).toBe(false);
     expect(
-      result.errors.some((error) => error.message?.includes("檔名只能包含"))
+      result.errors.some((error) =>
+        error.message?.includes("validation.image.fileName.format")
+      )
     ).toBe(true);
   });
 });

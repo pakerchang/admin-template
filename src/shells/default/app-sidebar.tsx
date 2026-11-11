@@ -135,7 +135,7 @@ export const AppSidebar = () => {
               <Globe className="size-4" />
               <span>
                 {languages.find((lang) => lang.code === i18n.language)?.label ||
-                  "語言"}
+                  t("lng.label")}
               </span>
             </Button>
           </DropdownMenuTrigger>

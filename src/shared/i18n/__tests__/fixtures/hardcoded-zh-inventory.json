@@ -1,0 +1,458 @@
+[
+  {
+    "site": "src/modules/articles/model/use-article.ts:125",
+    "kind": "StringLiteral",
+    "text": "獲取用戶資訊失敗，請重新登入",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/articles/model/use-article.ts:136",
+    "kind": "StringLiteral",
+    "text": "無法獲取用戶資訊，請重新登入",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/articles/model/use-article.ts:197",
+    "kind": "StringLiteral",
+    "text": "獲取用戶資訊失敗，請重新登入",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/articles/model/use-article.ts:208",
+    "kind": "StringLiteral",
+    "text": "無法獲取用戶資訊，請重新登入",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/file-type.rule.ts:29",
+    "kind": "TemplateExpression",
+    "text": "`Banner 圖片請使用 ${extensionsText} 格式以確保最佳顯示品質和載入速度`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/file-type.rule.ts:44",
+    "kind": "TemplateExpression",
+    "text": "`Banner 圖片請使用 ${extensionsText} 格式`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/filename-prefix.rule.ts:25",
+    "kind": "StringLiteral",
+    "text": "桌面版圖片檔名請以 d_ 開頭",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/filename-prefix.rule.ts:55",
+    "kind": "StringLiteral",
+    "text": "手機版圖片檔名請以 m_ 開頭",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/filesize.rule.ts:33",
+    "kind": "TemplateExpression",
+    "text": "`檔案大小過小，可能影響圖片品質，建議至少 ${minSize}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/filesize.rule.ts:46",
+    "kind": "TemplateExpression",
+    "text": "`檔案大小超過限制，最大支援 ${maxSizeFormatted}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/filesize.rule.ts:77",
+    "kind": "TemplateExpression",
+    "text": "`檔案大小過小，可能影響圖片品質，建議至少 ${minSize}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/filesize.rule.ts:90",
+    "kind": "TemplateExpression",
+    "text": "`檔案大小超過限制，最大支援 ${maxSizeFormatted}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/resolution.rule.ts:27",
+    "kind": "StringLiteral",
+    "text": "無法獲取圖片尺寸資訊，請確保檔案為有效的圖片格式",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/resolution.rule.ts:47",
+    "kind": "TemplateExpression",
+    "text": "`桌面版圖片解析度過小，最小支援 ${MIN_WIDTH}×${MIN_HEIGHT}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/resolution.rule.ts:59",
+    "kind": "TemplateExpression",
+    "text": "`桌面版圖片解析度過大，最大支援 ${MAX_WIDTH}×${MAX_HEIGHT}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/resolution.rule.ts:75",
+    "kind": "TemplateExpression",
+    "text": "`桌面版圖片寬高比不符合 16:9 規範，目前為 ${width}×${height}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/resolution.rule.ts:102",
+    "kind": "StringLiteral",
+    "text": "無法獲取圖片尺寸資訊，請確保檔案為有效的圖片格式",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/resolution.rule.ts:125",
+    "kind": "TemplateExpression",
+    "text": "`手機版圖片解析度過小，最小支援 ${MIN_WIDTH}×${MIN_HEIGHT}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/resolution.rule.ts:140",
+    "kind": "TemplateExpression",
+    "text": "`手機版圖片解析度過大，最大支援 ${MAX_WIDTH}×${MAX_HEIGHT}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/banners/model/image-validation/resolution.rule.ts:156",
+    "kind": "TemplateExpression",
+    "text": "`手機版圖片寬高比不符合 16:9 規範，目前為 ${width}×${height}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/modules/consumers/model/use-consumer.ts:62",
+    "kind": "StringLiteral",
+    "text": "獲取客戶列表失敗",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/consumers/model/use-consumer.ts:108",
+    "kind": "StringLiteral",
+    "text": "獲取交易記錄失敗",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:21",
+    "kind": "StringLiteral",
+    "text": "烏龍茶",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:22",
+    "kind": "StringLiteral",
+    "text": "綠茶",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:23",
+    "kind": "StringLiteral",
+    "text": "紅茶",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:24",
+    "kind": "StringLiteral",
+    "text": "茉莉花茶",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:25",
+    "kind": "StringLiteral",
+    "text": "普洱茶",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:26",
+    "kind": "StringLiteral",
+    "text": "茶杯組",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:27",
+    "kind": "StringLiteral",
+    "text": "茶壺",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:28",
+    "kind": "StringLiteral",
+    "text": "禮盒",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:29",
+    "kind": "StringLiteral",
+    "text": "抹茶粉",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:30",
+    "kind": "StringLiteral",
+    "text": "花草茶",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:44",
+    "kind": "TemplateExpression",
+    "text": "`${zh} 商品描述`",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:46",
+    "kind": "StringLiteral",
+    "text": "茶葉",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:47",
+    "kind": "TemplateExpression",
+    "text": "`${zh} 介紹`",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:48",
+    "kind": "StringLiteral",
+    "text": "請存放於陰涼乾燥處",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:50",
+    "kind": "StringLiteral",
+    "text": "台灣",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:52",
+    "kind": "StringLiteral",
+    "text": "順口",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:53",
+    "kind": "StringLiteral",
+    "text": "金黃",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:54",
+    "kind": "StringLiteral",
+    "text": "午後",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:55",
+    "kind": "StringLiteral",
+    "text": "辦公室",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/mocks/seed.ts:56",
+    "kind": "StringLiteral",
+    "text": "點心",
+    "disposition": "seed"
+  },
+  {
+    "site": "src/modules/product/ui/ProductDraftForm.tsx:77",
+    "kind": "TemplateExpression",
+    "text": "`${formData.product_name}（複製）`",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/tags/model/use-tag.ts:25",
+    "kind": "StringLiteral",
+    "text": "標籤名稱",
+    "disposition": "reuse"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:162",
+    "kind": "StringLiteral",
+    "text": "獲取員工列表失敗",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:189",
+    "kind": "StringLiteral",
+    "text": "創建員工失敗",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:197",
+    "kind": "StringLiteral",
+    "text": "成功",
+    "disposition": "reuse"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:198",
+    "kind": "StringLiteral",
+    "text": "員工創建成功",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:205",
+    "kind": "StringLiteral",
+    "text": "創建員工失敗",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:222",
+    "kind": "StringLiteral",
+    "text": "更新員工失敗",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:230",
+    "kind": "StringLiteral",
+    "text": "成功",
+    "disposition": "reuse"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:231",
+    "kind": "StringLiteral",
+    "text": "員工資料更新成功",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:238",
+    "kind": "StringLiteral",
+    "text": "更新員工失敗",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:257",
+    "kind": "StringLiteral",
+    "text": "刪除員工失敗",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:265",
+    "kind": "StringLiteral",
+    "text": "成功",
+    "disposition": "reuse"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:266",
+    "kind": "StringLiteral",
+    "text": "員工刪除成功",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/team-members/model/use-staff.ts:273",
+    "kind": "StringLiteral",
+    "text": "刪除員工失敗",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:37",
+    "kind": "JsxText",
+    "text": "編輯使用者角色",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:38",
+    "kind": "JsxText",
+    "text": "請選擇新的使用者角色",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:48",
+    "kind": "JsxText",
+    "text": "新使用者",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:53",
+    "kind": "JsxText",
+    "text": "一般使用者",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:58",
+    "kind": "JsxText",
+    "text": "VIP會員",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:63",
+    "kind": "JsxText",
+    "text": "代理商",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:68",
+    "kind": "JsxText",
+    "text": "客服",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:73",
+    "kind": "JsxText",
+    "text": "管理員",
+    "disposition": "key"
+  },
+  {
+    "site": "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:78",
+    "kind": "JsxText",
+    "text": "超級管理員",
+    "disposition": "key"
+  },
+  {
+    "site": "src/shared/lib/image-validation/base-rules/file-type.rule.ts:31",
+    "kind": "TemplateExpression",
+    "text": "`不支援的檔案類型。請上傳 ${extensionsText} 格式的圖片`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/shared/lib/image-validation/base-rules/file-type.rule.ts:47",
+    "kind": "TemplateExpression",
+    "text": "`不支援的副檔名。請確保檔案為 ${extensionsText} 格式`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/shared/lib/image-validation/base-rules/filename.rule.ts:19",
+    "kind": "StringLiteral",
+    "text": "檔名只能包含英文字母、數字、底線(_)和連字符(-)",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/shared/lib/image-validation/base-rules/filesize.rule.ts:23",
+    "kind": "TemplateExpression",
+    "text": "`檔案大小過小，可能影響圖片品質，建議至少 ${minSize}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/shared/lib/image-validation/base-rules/filesize.rule.ts:36",
+    "kind": "TemplateExpression",
+    "text": "`檔案大小超過限制，最大支援 ${maxSizeFormatted}`",
+    "disposition": "delete-fallback"
+  },
+  {
+    "site": "src/shared/lib/image-validation/manager.ts:142",
+    "kind": "TemplateExpression",
+    "text": "`驗證規則執行失敗: ${\n                error instanceof Error ? error.message : \"未知錯誤\"\n              }`",
+    "disposition": "key"
+  },
+  {
+    "site": "src/shared/lib/image-validation/utils/image-metadata.ts:24",
+    "kind": "StringLiteral",
+    "text": "無法讀取圖片資訊",
+    "disposition": "english-literal"
+  },
+  {
+    "site": "src/shared/ui/image-upload/image-upload-dialog.tsx:327",
+    "kind": "StringLiteral",
+    "text": "、",
+    "disposition": "key"
+  },
+  {
+    "site": "src/shells/default/app-sidebar.tsx:60",
+    "kind": "StringLiteral",
+    "text": "中文",
+    "disposition": "keep"
+  },
+  {
+    "site": "src/shells/default/app-sidebar.tsx:138",
+    "kind": "StringLiteral",
+    "text": "語言",
+    "disposition": "key"
+  }
+]
