@@ -27,7 +27,7 @@ const StatusColumnFilter = ({ column }: StatusColumnFilterProps) => {
   const filterValue = column.getFilterValue() as EOrderStatus | undefined;
 
   const statusOptions = [
-    { value: ALL_STATUS_VALUE, label: t("pages.order.filter.allStatus") },
+    { value: ALL_STATUS_VALUE, label: t("orders.filter.allStatus") },
     { value: EOrderStatus.NEW, label: t("status.new") },
     { value: EOrderStatus.PENDING, label: t("status.pending") },
     { value: EOrderStatus.PAID, label: t("status.paid") },
@@ -47,7 +47,7 @@ const StatusColumnFilter = ({ column }: StatusColumnFilterProps) => {
 
   const getDisplayValue = () => {
     if (!filterValue) {
-      return t("pages.order.filter.allStatus");
+      return t("orders.filter.allStatus");
     }
     return getOrderStatusText(filterValue, t);
   };
@@ -61,13 +61,13 @@ const StatusColumnFilter = ({ column }: StatusColumnFilterProps) => {
           <SelectValue>
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium">
-                {t("table.headers.order.status")}:
+                {t("orders.table.headers.status")}:
               </span>
               {filterValue ? (
                 <Tag type={filterValue} tagContent={getDisplayValue()} />
               ) : (
                 <span className="text-xs text-muted-foreground">
-                  {t("pages.order.filter.allStatus")}
+                  {t("orders.filter.allStatus")}
                 </span>
               )}
             </div>

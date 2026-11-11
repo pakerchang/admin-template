@@ -94,40 +94,40 @@ const tableLoaded = () =>
   );
 
 const PAGES: Record<string, TPage> = {
-  tags: { path: "/tags", create: "pages.tag.addTag", loaded: tableLoaded },
+  tags: { path: "/tags", create: "tags.addTag", loaded: tableLoaded },
   suppliers: {
     path: "/suppliers",
-    create: "pages.supplier.addSupplier",
+    create: "suppliers.addSupplier",
     loaded: tableLoaded,
   },
   "team-members": {
     path: "/team-members",
-    create: "staff.createStaff",
+    create: "team-members.createStaff",
     loaded: tableLoaded,
   },
   articles: {
     path: "/articles",
-    create: "common.createArticle",
+    create: "articles.common.createArticle",
     loaded: tableLoaded,
   },
   banners: {
     path: "/banners",
-    create: "pages.banner.addBanner",
+    create: "banners.addBanner",
     loaded: () =>
       waitFor(
         () => expect(screen.getAllByRole("img").length).toBeGreaterThan(1),
         WAIT
       ),
     extra: [
-      "pages.banner.actions.promoteToActive",
-      "pages.banner.actions.demoteToInactive",
+      "banners.actions.promoteToActive",
+      "banners.actions.demoteToInactive",
     ],
   },
   product: {
     path: "/products",
-    create: "pages.product.productCreate.addProduct",
+    create: "product.productCreate.addProduct",
     loaded: tableLoaded,
-    extra: ["pages.product.productDraft.copyToCreate"],
+    extra: ["product.productDraft.copyToCreate"],
   },
 };
 

@@ -44,13 +44,13 @@
 | M5 | boundaries 常駐 ignore `**/__tests__/**` 會讓正式碼透過 import 測試檔繞過邊界檢查（現無此用法） | arch chain `reviews/arch-m5-codex-verdict.md` W1 |
 | M5 | spec §7.2 草案的 `no-restricted-syntax`（`createRoute`／`useCan`）與 `use-user-permissions` 限制未上線；M6 搬 pages 時補 | arch chain `reviews/arch-m5-codex-verdict.md` W2、自行決定 #9 |
 | M6 | boundaries `LEGACY_PATHS`（`src/pages/**`、`src/services/**`、`src/components/**`）與 pages 對 module 的 deep import（`order-status-tag`、`banners/model/image-validation`）須隨搬遷一併清除，不能只刪 ignore | arch chain `reviews/m5-impl-report.md`、verdict I1 |
-| M6 | `components/shared/Card.tsx` 歸 product、`components/layouts/LoginPage.tsx` 歸 auth、`components/shared/Navbar.tsx` re-export shim 待刪；`shared/i18n/types.ts` 的 `TranslationResources` 與 §5.4 同名不同義 | arch chain `reviews/m5-impl-report.md` 自行決定 1、2、7 |
+| M6 | `components/shared/Card.tsx` 歸 product、`components/layouts/LoginPage.tsx` 歸 auth、`components/shared/Navbar.tsx` re-export shim 待刪；`shared/i18n/types.ts` 的 `TranslationResources` 與 §5.4 同名不同義（`TranslationResources` 同名問題**已完成**：core 資源型別改名 `TCoreResources`，`TranslationResources` 改為 §5.4 擴充介面，i18n-scope-migration I1） | arch chain `reviews/m5-impl-report.md` 自行決定 1、2、7 |
 | M5 | spec 文字差異（§7.2 `rules`→`policies`、§5.1 檔名 kebab-case、Card 未搬、upload hook 落點）待 M8 同步 | arch chain `reviews/m5-impl-report.md`「spec 差異」 |
-| M6 | `en.json` 比 zh 少 71 個 key（例 `pages.tag.addTag`） | arch chain 觀察 |
+| M6 | `en.json` 比 zh 少 71 個 key（例 `pages.tag.addTag`）（**已完成**：i18n-scope-migration I1） | arch chain 觀察 |
 | M6 | consumers 購買紀錄為自帶 seed，不隨訂單狀態更新（R5/OQ-3 設計代價；codex M6 verdict 判 demo-breaking，main 依 spec 裁定只記錄） | arch chain `reviews/arch-m6-codex-verdict.md`、`arch-m6-rereview-codex-verdict.md` |
 | M6 | `shared/api/mock/session-store.ts` 全域 grant 矩陣「最後寫入者勝」，多 app build 時 login grants 可能與 guard 不一致，且無 reset 生命週期（單 app demo 不受影響） | arch chain `reviews/arch-m6-codex-verdict.md` W2 |
-| M6 | i18n 只搬了 en `users.*`；其餘 domain key（`pages.*`、`dashboard.menu.*`、`table.headers.*` 等，約 770 處 `t()`）與 nav label 尚未改成 `<id>.` scope，需改 key 名 + codemod，另案處理 | arch chain `reviews/m6-impl-report.md` 自行決定 5、spec 差異 |
-| M6 | `shared/ui/navbar/use-breadcrumb.ts` 仍硬編 domain 路徑與翻譯 key，未改由 route `staticData.breadcrumb` 驅動 | arch chain `reviews/arch-m6-codex-verdict.md` info |
+| M6 | i18n 只搬了 en `users.*`；其餘 domain key（`pages.*`、`dashboard.menu.*`、`table.headers.*` 等，約 770 處 `t()`）與 nav label 尚未改成 `<id>.` scope，需改 key 名 + codemod，另案處理（**已完成**：i18n-scope-migration I1） | arch chain `reviews/m6-impl-report.md` 自行決定 5、spec 差異 |
+| M6 | `shared/ui/navbar/use-breadcrumb.ts` 仍硬編 domain 路徑與翻譯 key，未改由 route `staticData.breadcrumb` 驅動（**已完成**：改讀 nav registry（補裁 1 = C），i18n-scope-migration I1） | arch chain `reviews/arch-m6-codex-verdict.md` info |
 | M6 | AC-6 已由 s29 瀏覽器驗（見上）；module 字典的 `mount` 寫入順序（先 `loadLanguages` 再 `addResourceBundle`）只在 vitest 模擬過 | arch chain `reviews/m6-impl-report.md` |
 | M6 | 測試預設 server 只有 guard + core handler；新測試打 module API 須 `resetHandlers(registry.mockHandlers)` | arch chain `reviews/m6-impl-report.md` 已知問題 |
 | M6 | AC-2 grep 擋不到相對路徑的跨 module import（由 boundaries lint 擋） | arch chain `reviews/m6-impl-report.md` 破壞性驗證 3 |
@@ -61,7 +61,10 @@
 | M8 | 字面 grep 會誤排不依賴 domain 的測試（`kernel/__tests__/build.test.ts` 只因 fixture 字串 `"orders.list"` 被排除，core-only 下 kernel 單元測試沒跑）；防呆只擋零命中與過半，擋不住局部漏抓 | arch chain `reviews/arch-m8-codex-verdict.md` W `:43` |
 | M8 | `verify-core-only.sh` cleanup 對整個 repo 跑 `git worktree prune`（可能清掉其他已失效登記）；`worktree remove` 失敗被忽略、只掛 EXIT trap（無 INT/TERM）；strip helper 從原工作目錄執行，未提交的 helper 變更會影響結果。spec 紅線只要求不改工作目錄，已由 `git diff --quiet` 檢查 | arch chain `reviews/arch-m8-codex-verdict.md` W `:17`／`:18`、I `:33` |
 | M8 | override 測試以深 import 取 orders hook（orders `index.ts` 未公開 headless hook），未驗「只用 module index 公開 API 換頁」；AC-4 自動佐證用 fixture shell 與注入認證，未涵蓋實際登入與 default shell sidebar | arch chain `reviews/arch-m8-codex-verdict.md` I |
-| M8 | core-only 畫面殘留 domain 字串（靜態檢視）：en/zh 字典 domain key、`use-breadcrumb.ts` 硬編 case、`table-visibility.ts` 的 `ORDERS_TABLE` 等 storage key、`core-handlers.ts` 註解 | arch chain `reviews/m8-impl-report.md` |
+| M8 | core-only 畫面殘留 domain 字串（靜態檢視）：en/zh 字典 domain key、`use-breadcrumb.ts` 硬編 case、`table-visibility.ts` 的 `ORDERS_TABLE` 等 storage key、`core-handlers.ts` 註解（en/zh 字典 domain key 與 `use-breadcrumb.ts` 項**已完成**：i18n-scope-migration I1；其餘未動） | arch chain `reviews/m8-impl-report.md` |
+| i18n（I1 後） | 非測試 `.ts/.tsx` 硬寫中文 75 處 / 17 檔（mock seed 20、module toast / 錯誤訊息 19、module UI 文案 11、banners 圖片驗證規則 16、core 圖片驗證 7、shell 語言切換 2）未改 i18n（OD-I18N-6 裁決另案） | `docs/specs/i18n-scope-migration.spec.md` §1.4 |
+| i18n（I1 後） | `RecursiveKeyOf` 連物件節點也收進 `TransKey`（例 `"tags.nav"`），`t()` 指到物件也能過 `tsc`；改 leaf-only 對既有 `t()` 呼叫的影響未量測 | `docs/specs/i18n-scope-migration.spec.md`「已知事項」 |
+| i18n（I1 後） | ~~`t()` 本身接受任意 string~~ **已修（I1 codex review 第 1 輪）**：`i18next.d.ts` 改宣告 `CustomTypeOptions.resources`（core + `TranslationResources`），`t()` 只收 leaf key，typo / 舊 key 在 `tsc` 失敗（`tags/__tests__/i18n-types.test.ts` 鎖住）。動態組 key 處以 `as TLeafKey`（`= i18next ParseKeys`）轉型，白名單列在 `key-ownership.test.ts` `DYNAMIC_PREFIXES` | i18n-scope-migration I1 實作棒實測 |
 | M8 | spec 文字差異待同步：AC-4「sidebar 只有 users / team-members」實際只有 team-members（users 本無 nav）；§8.2「漏步驟 2 但跑步驟 4 → tsc 報錯」實測 tsc 不報、由 vitest `build()` 1.5.3 擋；§4.4 覆寫頁「只用 index 公開 API」與現況不符 | arch chain `reviews/m8-impl-report.md`「spec 差異」 |
 | 收尾 | spec 同步只處理差異清單：§4.4 範例 `ordersRoutes.build(ctx, …)`（實作為 `ordersRoutes(ctx, …)`）未改；M1–M3 AC checkbox 未更新；spec md 原本即未通過 prettier --check（未整檔重排） | arch chain `reviews/m8-spec-sync-report.md` |
 | M7a | pnpm-lock 中既有 `unplugin@3.7.0` 的 optional `esbuild` 隨新增 orval 從 0.25.12 解析為 0.28.2（`package.json` 既有版本未變；無故障證據） | api chain `reviews/api-m7a-codex-verdict.md` info 1 |

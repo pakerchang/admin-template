@@ -17,12 +17,12 @@ const createBasicOrderInfo = (
   `${t("order.status")}: ${getOrderStatusText(order.order_status, t)}`,
   `${t("order.totalAmount")}: ${order.total_order_fee}`,
   order.created_at
-    ? `${t("order.createdAt")}: ${dayjs(order.created_at).format(
+    ? `${t("orders.createdAt")}: ${dayjs(order.created_at).format(
         "YYYY-MM-DD HH:mm"
       )}`
     : null,
   order.updated_at
-    ? `${t("order.updatedAt")}: ${dayjs(order.updated_at).format(
+    ? `${t("orders.updatedAt")}: ${dayjs(order.updated_at).format(
         "YYYY-MM-DD HH:mm"
       )}`
     : null,
@@ -36,13 +36,13 @@ const createOrderItemInfo = (
   index: number,
   t: TFunction
 ): (string | null)[] => [
-  `${t("order.item")} ${index + 1}:`,
+  `${t("orders.item")} ${index + 1}:`,
   `  ${t("order.productName")}: ${item.product_name}`,
   `  ${t("order.productId")}: ${item.product_id}`,
   `  ${t("order.quantity")}: ${item.size}`,
-  `  ${t("order.price")}: ${item.price}`,
+  `  ${t("orders.price")}: ${item.price}`,
   item.promotion_note
-    ? `  ${t("order.discountRemark")}: ${item.promotion_note}`
+    ? `  ${t("orders.discountRemark")}: ${item.promotion_note}`
     : null,
 ];
 
@@ -59,7 +59,7 @@ const createOrderDetailsInfo = (
     )
     .flat();
 
-  return [`${t("order.orderDetails")}:`, ...orderItemsText];
+  return [`${t("orders.order.orderDetails")}:`, ...orderItemsText];
 };
 
 /**
@@ -68,7 +68,7 @@ const createOrderDetailsInfo = (
 const createContactInfo = (order: TOrder, t: TFunction): (string | null)[] =>
   order.contact_info
     ? [
-        `${t("order.contactInfo")}:`,
+        `${t("orders.contactInfo")}:`,
         `  Email: ${order.contact_info.email}`,
         `  ${t("order.phone")}: ${order.contact_info.phone}`,
         `  ${t("order.address")}: ${order.contact_info.address}`,

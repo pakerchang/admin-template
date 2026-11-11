@@ -123,7 +123,7 @@ const TagList = () => {
       enableHiding: false,
       enableSorting: true,
       meta: {
-        displayName: t("table.headers.tag.tagId"),
+        displayName: t("tags.table.headers.tagId"),
       },
       header: ({ column }) => (
         <Button
@@ -131,7 +131,7 @@ const TagList = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.tag.tagId")}
+          {t("tags.table.headers.tagId")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -149,7 +149,7 @@ const TagList = () => {
       enableSorting: true,
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.tag.tagName"),
+        displayName: t("tags.table.headers.tagName"),
       },
       header: ({ column }) => (
         <Button
@@ -157,7 +157,7 @@ const TagList = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.tag.tagName")}
+          {t("tags.table.headers.tagName")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -199,7 +199,7 @@ const TagList = () => {
       <div className="flex h-screen w-full items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <Spinner className="size-8" />
-          <p className="text-gray-500">{t("pages.tag.loading")}</p>
+          <p className="text-gray-500">{t("tags.loading")}</p>
         </div>
       </div>
     );
@@ -213,13 +213,13 @@ const TagList = () => {
           <div className="flex items-center space-x-2">
             <Tags className="size-6" />
             <h2 className="text-2xl font-bold tracking-tight">
-              {t("dashboard.menu.tags.title")}
+              {t("tags.nav.title")}
             </h2>
           </div>
           <Guarded permission="tags:create">
             <Button onClick={handleCreateTag}>
               <Plus className="mr-2 size-4" />
-              {t("pages.tag.addTag")}
+              {t("tags.addTag")}
             </Button>
           </Guarded>
         </div>
@@ -227,7 +227,7 @@ const TagList = () => {
         <div className="flex items-center space-x-2">
           <Search className="size-4 text-gray-400" />
           <Input
-            placeholder={t("pages.tag.search.placeholder")}
+            placeholder={t("tags.search.placeholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
@@ -262,9 +262,9 @@ const TagList = () => {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("pages.tag.deleteConfirm")}</DialogTitle>
+            <DialogTitle>{t("tags.deleteConfirm")}</DialogTitle>
             <DialogDescription>
-              {t("pages.tag.deleteDescription", {
+              {t("tags.deleteDescription", {
                 name: tagToDelete?.tag_name,
               })}
             </DialogDescription>
@@ -285,7 +285,7 @@ const TagList = () => {
               {deleteTagMutation.isPending && (
                 <Spinner className="mr-2 size-4" />
               )}
-              {t("pages.tag.confirmDelete")}
+              {t("tags.confirmDelete")}
             </Button>
           </DialogFooter>
         </DialogContent>

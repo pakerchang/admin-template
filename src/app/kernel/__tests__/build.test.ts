@@ -4,7 +4,6 @@ import { createElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 
-import { defineModule } from "@/shared/module";
 import { ForbiddenError } from "@/shared/permission";
 
 import { build } from "../build";
@@ -32,8 +31,12 @@ type TLooseModule = Omit<Partial<TModule>, "nav" | "permissions"> & {
     mockGrants?: Record<string, readonly string[]>;
   };
 };
-const mod = (id: string, { permissions, ...extra }: TLooseModule = {}) =>
-  defineModule({
+/** 寬型別 TModule 入口（不經 defineModule 的 nav 局部 key 推導）：fixture 刻意含非法 label */
+const mod = (
+  id: string,
+  { permissions, ...extra }: TLooseModule = {}
+): TModule =>
+  ({
     id,
     kind: "domain",
     ...extra,
@@ -45,8 +48,13 @@ const mod = (id: string, { permissions, ...extra }: TLooseModule = {}) =>
         ),
       },
     }),
-  } as TModule);
+  }) as TModule;
 const looseOps = (p: Record<string, string>) => p as OperationPermissions;
+/** nav / routeTitles 用的裸字典：`nav` 段 key → 同名文字（zh 加前綴以區分語系） */
+const navI18n = (...keys: string[]) => ({
+  en: { nav: Object.fromEntries(keys.map((k) => [k, k])) },
+  zh: { nav: Object.fromEntries(keys.map((k) => [k, `zh:${k}`])) },
+});
 
 const rid = (id: string) => id as TRouteId;
 const page = (testId: string): ComponentType =>
@@ -161,9 +169,8 @@ describe("build() validation", () => {
   });
   it("throws when nav references an undeclared resource", () => {
     const m = mod("orders", {
-      nav: [
-        { id: "o", label: "orders.nav", to: "/orders", permission: "x:read" },
-      ],
+      nav: [{ id: "o", label: "title", to: "/orders", permission: "x:read" }],
+      i18n: navI18n("title"),
       permissions: { resources: { orders: ["read"] } },
     });
     expect(() => build(ctx([m]))).toThrow(/"orders".*"x:read"/);
@@ -173,14 +180,13 @@ describe("build() validation", () => {
       nav: [
         {
           id: "o",
-          label: "orders.nav",
+          label: "title",
           to: "/orders",
           permission: "orders:read",
-          children: [
-            { id: "c", label: "orders.c", to: "/c", permission: "y:read" },
-          ],
+          children: [{ id: "c", label: "c", to: "/c", permission: "y:read" }],
         },
       ],
+      i18n: navI18n("title", "c"),
       permissions: { resources: { orders: ["read"] } },
     });
     expect(() => build(ctx([m]))).toThrow(/"orders".*"y:read"/);
@@ -188,7 +194,8 @@ describe("build() validation", () => {
   it("throws when nav references a declared resource with an undeclared action (full resource:action match)", () => {
     const navWith = (permission: `${string}:${string}`) =>
       mod("orders", {
-        nav: [{ id: "o", label: "orders.nav", to: "/orders", permission }],
+        nav: [{ id: "o", label: "title", to: "/orders", permission }],
+        i18n: navI18n("title"),
         permissions: { resources: { orders: ["read", "update", "export"] } },
       });
     expect(() => build(ctx([navWith("orders:typo")]))).toThrow(
@@ -418,7 +425,7 @@ describe("route id override resolution", () => {
 describe("assembly (AC-4)", () => {
   const navItem = (id: string, order?: number) => ({
     id,
-    label: `${id}.nav`,
+    label: id,
     to: `/${id}`,
     permission: "r:read" as const,
     order,
@@ -437,8 +444,15 @@ describe("assembly (AC-4)", () => {
   it("nav is stably sorted by order (default 100)", () => {
     const { registry } = build(
       ctx([
-        mod("m1", { nav: [navItem("n1"), navItem("n2", 5)], ...resources }),
-        mod("m2", { nav: [navItem("n3", 100), navItem("n4", 1)] }),
+        mod("m1", {
+          nav: [navItem("n1"), navItem("n2", 5)],
+          i18n: navI18n("n1", "n2"),
+          ...resources,
+        }),
+        mod("m2", {
+          nav: [navItem("n3", 100), navItem("n4", 1)],
+          i18n: navI18n("n3", "n4"),
+        }),
       ])
     );
     expect(registry.nav.map((n) => n.id)).toEqual(["n4", "n2", "n1", "n3"]);
@@ -467,11 +481,13 @@ describe("permission catalog", () => {
   it("unions and dedupes actions when two modules declare the same resource", () => {
     const a = mod("a", {
       permissions: { resources: { orders: ["read", "update"] } },
-      nav: [{ id: "n", label: "a.nav", to: "/a", permission: "orders:export" }],
+      nav: [{ id: "n", label: "n", to: "/a", permission: "orders:export" }],
+      i18n: navI18n("n"),
     });
     const b = mod("b", {
       permissions: { resources: { orders: ["update", "export"] } },
-      nav: [{ id: "m", label: "b.nav", to: "/b", permission: "orders:read" }],
+      nav: [{ id: "m", label: "m", to: "/b", permission: "orders:read" }],
+      i18n: navI18n("m"),
     });
     const ops: TOperationTable = {
       routes: [
@@ -632,5 +648,110 @@ describe("i18n deep merge hardening", () => {
     expect(out.common.nested).toEqual({ a: "core", b: "mod" });
     expect(JSON.stringify(en)).toBe(snapCore);
     expect(JSON.stringify(modEn)).toBe(snapMod);
+  });
+});
+
+describe("nav label 執行期驗證與 registry 注入（i18n-scope-migration AC-3）", () => {
+  const r = { permissions: { resources: { r: ["read"] } } };
+  const item = (label: string, extra: object = {}) => ({
+    id: label,
+    label,
+    to: `/${label}`,
+    permission: "r:read",
+    ...extra,
+  });
+
+  it("(a) 頂層 label 在字典 nav 段不存在 → throw（含 module id 與局部 key）", () => {
+    const m = mod("orders", {
+      nav: [item("typo")],
+      i18n: navI18n("title"),
+      ...r,
+    });
+    expect(() => build(ctx([m]))).toThrow(/"orders".*"typo"/);
+  });
+  it("(b) children label 不存在 → throw", () => {
+    const m = mod("orders", {
+      nav: [item("title", { children: [item("missing")] })],
+      i18n: navI18n("title"),
+      ...r,
+    });
+    expect(() => build(ctx([m]))).toThrow(/"orders".*"missing"/);
+  });
+  it("(c) 只有 zh 有、en 缺 → throw", () => {
+    const m = mod("orders", {
+      nav: [item("title")],
+      i18n: { zh: { nav: { title: "訂單" } }, en: { nav: {} } },
+      ...r,
+    });
+    expect(() => build(ctx([m]))).toThrow(/"orders".*"title"/);
+  });
+  it("(d) label 為完整路徑 → throw", () => {
+    const m = mod("orders", {
+      nav: [item("orders.nav.title")],
+      i18n: navI18n("title"),
+      ...r,
+    });
+    expect(() => build(ctx([m]))).toThrow(/"orders".*"orders\.nav\.title"/);
+  });
+  it("(e) 全部合法 → 不 throw，registry.nav 保存全域 key", () => {
+    const m = mod("orders", {
+      nav: [item("title", { children: [item("orderList")] })],
+      i18n: navI18n("title", "orderList"),
+      ...r,
+    });
+    const { registry } = build(ctx([m]));
+    expect(registry.nav).toHaveLength(1);
+    expect(registry.nav[0].labelKey).toBe("orders.nav.title");
+    expect(registry.nav[0].children?.[0].labelKey).toBe("orders.nav.orderList");
+    expect(registry.nav[0]).not.toHaveProperty("label");
+  });
+  it("(f) routeTitles 的 label 不存在 → throw", () => {
+    const m = mod("users", {
+      routeTitles: [{ to: "/users", label: "typo" }],
+      i18n: navI18n("title"),
+    });
+    expect(() => build(ctx([m]))).toThrow(/"users".*"typo"/);
+  });
+  it("(g) 合法 routeTitles 進 registry.titles、不進 registry.nav", () => {
+    const users = mod("users", {
+      routeTitles: [{ to: "/users", label: "title" }],
+      i18n: navI18n("title"),
+    });
+    const orders = mod("orders", {
+      nav: [
+        item("title", {
+          to: "/orders",
+          children: [item("list", { to: "/orders/list" })],
+        }),
+      ],
+      i18n: navI18n("title", "list"),
+      ...r,
+    });
+    const { registry } = build(ctx([users, orders]));
+    expect(registry.nav.map((n) => n.id)).toEqual(["title"]);
+    expect(Object.fromEntries(registry.titles)).toEqual({
+      "/users": "users.nav.title",
+      "/orders": "orders.nav.title",
+      "/orders/list": "orders.nav.list",
+    });
+  });
+  it("(h) 同一 to 在 nav 與 routeTitles 或兩個 module 間重複 → throw", () => {
+    const a = mod("a", {
+      nav: [item("title", { to: "/x" })],
+      routeTitles: [{ to: "/x", label: "title" }],
+      i18n: navI18n("title"),
+      ...r,
+    });
+    expect(() => build(ctx([a]))).toThrow(/"\/x".*"a".*"a"/);
+    const b = mod("b", {
+      routeTitles: [{ to: "/x", label: "title" }],
+      i18n: navI18n("title"),
+    });
+    const a2 = mod("a", {
+      nav: [item("title", { to: "/x" })],
+      i18n: navI18n("title"),
+      ...r,
+    });
+    expect(() => build(ctx([a2, b]))).toThrow(/"\/x".*"a".*"b"/);
   });
 });

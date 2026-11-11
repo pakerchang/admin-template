@@ -1,0 +1,103 @@
+{
+  "nav": {
+    "title": "商品管理"
+  },
+  "filter": {
+    "allStatus": "全部"
+  },
+  "status": {
+    "active": "上架中",
+    "inactive": "下架中"
+  },
+  "productCreate": {
+    "addProduct": "新增商品",
+    "title": "商品資訊",
+    "productName": "商品名稱",
+    "productType": "商品類型",
+    "productTypePlaceholder": "請選擇商品類型",
+    "productTag": "商品標籤",
+    "productTagInput": "商品標籤{{index}}",
+    "productDescription": "商品描述",
+    "shortTitle": "商品簡稱",
+    "price": "商品價格",
+    "productSize": "商品庫存",
+    "productImages": "商品圖片",
+    "ingredients": "商品成分",
+    "introduction": "商品介紹",
+    "precautions": "商品注意事項",
+    "shelfLife": "商品保存期限",
+    "origin": "商品產地",
+    "aromaLevel": "香氣等級",
+    "flavor": "口味",
+    "appearance": "外觀",
+    "bestOccasion": "最佳場合",
+    "sceneMatching": "場景搭配",
+    "foodPairing": "食物搭配",
+    "submitting": "提交中",
+    "active": "上架",
+    "inactive": "下架",
+    "productStatus": "商品狀態",
+    "productStatusPlaceholder": "請選擇商品上架狀態",
+    "supplier": "供應商",
+    "supplierPlaceholder": "請選擇供應商",
+    "tags": "商品標籤",
+    "addTag": "新增標籤",
+    "selectTag": "選擇標籤",
+    "selectedTags": "已選擇的標籤"
+  },
+  "productDraft": {
+    "title": "複製商品 - {{productName}}",
+    "description": "基於現有商品建立副本，可修改後建立為新商品",
+    "copyToCreate": "複製建立"
+  },
+  "productEditConfirm": {
+    "title": "確認編輯內容",
+    "description": "以下是您要修改的內容，請確認後提交",
+    "noChanges": "沒有檢測到變更",
+    "changesList": "變更清單",
+    "original": "原始資料",
+    "new": "變更資料",
+    "emptyValue": "(空白)",
+    "confirmSubmit": "確認提交"
+  },
+  "productTypes": {
+    "ELECTRONICS": "電子產品",
+    "ACCESSORIES": "配件",
+    "CONSUMABLES": "耗材",
+    "DEVICES": "設備",
+    "MATERIALS": "材料",
+    "FOOD": "食品",
+    "CLOTHING": "服飾",
+    "OTHER": "其他",
+    "NO_TYPE": "未分類"
+  },
+  "table": {
+    "headers": {
+      "thumbnail": "商品圖片",
+      "productName": "商品名稱",
+      "productType": "商品類型",
+      "productStock": "商品庫存",
+      "productStatus": "商品狀態",
+      "productCode": "商品編號",
+      "price": "售價",
+      "actions": "操作"
+    }
+  },
+  "toast": {
+    "get": {
+      "error": "商品資訊取得失敗"
+    },
+    "create": {
+      "success": "商品新增成功",
+      "error": "商品新增失敗"
+    },
+    "update": {
+      "success": "商品更新成功",
+      "error": "商品更新失敗"
+    },
+    "delete": {
+      "success": "商品刪除成功",
+      "error": "商品刪除失敗"
+    }
+  }
+}

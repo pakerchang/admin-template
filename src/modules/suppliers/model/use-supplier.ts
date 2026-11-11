@@ -35,17 +35,17 @@ export const useCreateSupplierSchema = () => {
     })
     .extend({
       supplier_name: z.string().min(1, {
-        message: getMessage.getRequiredMessage("pages.supplier.supplierName"),
+        message: getMessage.getRequiredMessage("suppliers.supplierName"),
       }),
       contact_info: z.object({
         phone: z.string().min(1, {
-          message: getMessage.getRequiredMessage("pages.supplier.phone"),
+          message: getMessage.getRequiredMessage("suppliers.phone"),
         }),
         email: z.string().email({
           message: t("validation.email.invalid"),
         }),
         address: z.string().min(1, {
-          message: getMessage.getRequiredMessage("pages.supplier.address"),
+          message: getMessage.getRequiredMessage("suppliers.address"),
         }),
       }),
       remark: z.string().optional(),
@@ -68,10 +68,10 @@ export const useGetSupplierAll = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("pages.supplier.messages.fetchListFailed"),
+          description: t("suppliers.messages.fetchListFailed"),
           variant: "destructive",
         });
-        throw new Error(t("pages.supplier.messages.fetchListFailed"));
+        throw new Error(t("suppliers.messages.fetchListFailed"));
       }
 
       return response;
@@ -123,10 +123,10 @@ export const useGetSupplierList = (query: Partial<TSupplierQuery>) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("pages.supplier.messages.fetchListFailed"),
+          description: t("suppliers.messages.fetchListFailed"),
           variant: "destructive",
         });
-        throw new Error(t("pages.supplier.messages.fetchListFailed"));
+        throw new Error(t("suppliers.messages.fetchListFailed"));
       }
 
       return response;
@@ -150,7 +150,7 @@ export const useCreateSupplier = () => {
       const response = await createSupplier(supplierData).catch(nullOnApiError);
 
       if (!response) {
-        throw new Error(t("pages.supplier.messages.createFailed"));
+        throw new Error(t("suppliers.messages.createFailed"));
       }
 
       return response;
@@ -159,14 +159,14 @@ export const useCreateSupplier = () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       toast({
         title: t("common.success"),
-        description: t("pages.supplier.messages.createSuccess"),
+        description: t("suppliers.messages.createSuccess"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: error.message || t("pages.supplier.messages.createFailed"),
+        description: error.message || t("suppliers.messages.createFailed"),
         variant: "destructive",
       });
     },
@@ -183,7 +183,7 @@ export const useUpdateSupplier = () => {
       const response = await updateSupplier(supplierData).catch(nullOnApiError);
 
       if (!response) {
-        throw new Error(t("pages.supplier.messages.updateFailed"));
+        throw new Error(t("suppliers.messages.updateFailed"));
       }
 
       return response;
@@ -192,14 +192,14 @@ export const useUpdateSupplier = () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       toast({
         title: t("common.success"),
-        description: t("pages.supplier.messages.updateSuccess"),
+        description: t("suppliers.messages.updateSuccess"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: error.message || t("pages.supplier.messages.updateFailed"),
+        description: error.message || t("suppliers.messages.updateFailed"),
         variant: "destructive",
       });
     },
@@ -218,7 +218,7 @@ export const useDeleteSupplier = () => {
       );
 
       if (!response) {
-        throw new Error(t("pages.supplier.messages.deleteFailed"));
+        throw new Error(t("suppliers.messages.deleteFailed"));
       }
 
       return response;
@@ -227,14 +227,14 @@ export const useDeleteSupplier = () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       toast({
         title: t("common.success"),
-        description: t("pages.supplier.messages.deleteSuccess"),
+        description: t("suppliers.messages.deleteSuccess"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: error.message || t("pages.supplier.messages.deleteFailed"),
+        description: error.message || t("suppliers.messages.deleteFailed"),
         variant: "destructive",
       });
     },

@@ -112,16 +112,16 @@ export const useBannerSort = (
           await Promise.all(updatePromises);
 
           toast({
-            title: t("toast.banner.reorder.success"),
-            description: t("toast.banner.reorder.success"),
+            title: t("banners.toast.reorder.success"),
+            description: t("banners.toast.reorder.success"),
             variant: "success",
           });
         }
       } catch (error) {
         if (error) {
           toast({
-            title: t("toast.banner.reorder.error"),
-            description: t("toast.banner.reorder.errorDescription"),
+            title: t("banners.toast.reorder.error"),
+            description: t("banners.toast.reorder.errorDescription"),
             variant: "destructive",
           });
 
@@ -188,8 +188,8 @@ export const useBannerSort = (
     async (banner: TBanner) => {
       if (hasActiveOperation()) {
         toast({
-          title: t("toast.banner.operationConflict.title"),
-          description: t("toast.banner.operationConflict.promoteDescription"),
+          title: t("banners.toast.operationConflict.title"),
+          description: t("banners.toast.operationConflict.promoteDescription"),
           variant: "destructive",
         });
         return false;
@@ -210,8 +210,8 @@ export const useBannerSort = (
         });
 
         toast({
-          title: t("toast.banner.promoteToActive.success"),
-          description: t("toast.banner.promoteToActive.success"),
+          title: t("banners.toast.promoteToActive.success"),
+          description: t("banners.toast.promoteToActive.success"),
           variant: "success",
         });
 
@@ -219,8 +219,8 @@ export const useBannerSort = (
       } catch (error) {
         if (error) {
           toast({
-            title: t("toast.banner.promoteToActive.error"),
-            description: t("toast.banner.promoteToActive.error"),
+            title: t("banners.toast.promoteToActive.error"),
+            description: t("banners.toast.promoteToActive.error"),
             variant: "destructive",
           });
         }
@@ -246,8 +246,8 @@ export const useBannerSort = (
     async (banner: TBanner) => {
       if (hasActiveOperation()) {
         toast({
-          title: t("toast.banner.operationConflict.title"),
-          description: t("toast.banner.operationConflict.demoteDescription"),
+          title: t("banners.toast.operationConflict.title"),
+          description: t("banners.toast.operationConflict.demoteDescription"),
           variant: "destructive",
         });
         return false;
@@ -282,8 +282,8 @@ export const useBannerSort = (
         await Promise.all(updatePromises);
 
         toast({
-          title: t("toast.banner.removeFromActive.success"),
-          description: t("toast.banner.removeFromActive.success"),
+          title: t("banners.toast.removeFromActive.success"),
+          description: t("banners.toast.removeFromActive.success"),
           variant: "success",
         });
 
@@ -291,8 +291,8 @@ export const useBannerSort = (
       } catch (error) {
         if (error) {
           toast({
-            title: t("toast.banner.removeFromActive.error"),
-            description: t("toast.banner.removeFromActive.error"),
+            title: t("banners.toast.removeFromActive.error"),
+            description: t("banners.toast.removeFromActive.error"),
             variant: "destructive",
           });
         }

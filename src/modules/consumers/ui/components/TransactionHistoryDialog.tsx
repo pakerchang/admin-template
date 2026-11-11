@@ -37,19 +37,19 @@ const TransactionHistoryDialog = ({
   const statusOptions = [
     {
       value: "all",
-      label: t("consumer.orderStatus.all"),
+      label: t("consumers.orderStatus.all"),
     },
     {
       value: "pending",
-      label: t("consumer.orderStatus.pending"),
+      label: t("consumers.orderStatus.pending"),
     },
     {
       value: "completed",
-      label: t("consumer.orderStatus.completed"),
+      label: t("consumers.orderStatus.completed"),
     },
     {
       value: "cancelled",
-      label: t("consumer.orderStatus.cancelled"),
+      label: t("consumers.orderStatus.cancelled"),
     },
   ] as const;
   const { data: purchaseData, isLoading } = useGetTransactionHistory({
@@ -100,7 +100,7 @@ const TransactionHistoryDialog = ({
         <DialogHeader className="pb-6">
           <DialogTitle className="flex items-center gap-2">
             <ShoppingBag className="size-5" />
-            {t("consumer.purchaseHistoryTitle", { name: userName })}
+            {t("consumers.purchaseHistoryTitle", { name: userName })}
           </DialogTitle>
         </DialogHeader>
 
@@ -126,7 +126,7 @@ const TransactionHistoryDialog = ({
                 <div className="flex flex-col items-center gap-4">
                   <Spinner size="large" />
                   <p className="text-gray-200">
-                    {t("consumer.loadingPurchaseHistory")}
+                    {t("consumers.loadingPurchaseHistory")}
                   </p>
                 </div>
               </div>
@@ -135,17 +135,17 @@ const TransactionHistoryDialog = ({
                 <ShoppingBag className="mx-auto size-12 text-gray-400" />
                 <h3 className="mt-4 text-lg font-medium text-gray-200">
                   {selectedStatus !== "all"
-                    ? t("consumer.noMatchingOrders")
-                    : t("consumer.noPurchaseHistory")}
+                    ? t("consumers.noMatchingOrders")
+                    : t("consumers.noPurchaseHistory")}
                 </h3>
                 <p className="mt-2 text-gray-400">
                   {selectedStatus !== "all"
-                    ? t("consumer.noOrdersWithStatus", {
+                    ? t("consumers.noOrdersWithStatus", {
                         status: statusOptions.find(
                           (opt) => opt.value === selectedStatus
                         )?.label,
                       })
-                    : t("consumer.noOrdersFound")}
+                    : t("consumers.noOrdersFound")}
                 </p>
               </div>
             ) : (
@@ -161,7 +161,7 @@ const TransactionHistoryDialog = ({
         {filteredData && filteredData.length > 0 && totalPages > 1 && (
           <div className="flex items-center justify-between border-t pt-4">
             <div className="text-sm text-gray-600">
-              {t("consumer.pageInfo", {
+              {t("consumers.pageInfo", {
                 current: page,
                 total: totalPages,
                 count: totalCount,
@@ -169,7 +169,7 @@ const TransactionHistoryDialog = ({
               {selectedStatus !== "all" && (
                 <span className="ml-2 text-xs text-gray-500">
                   -{" "}
-                  {t("consumer.filterCondition", {
+                  {t("consumers.filterCondition", {
                     status: statusOptions.find(
                       (opt) => opt.value === selectedStatus
                     )?.label,

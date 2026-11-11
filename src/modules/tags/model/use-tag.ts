@@ -43,10 +43,10 @@ export const useGetAllTags = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("pages.tag.messages.fetchListFailed"),
+          description: t("tags.messages.fetchListFailed"),
           variant: "destructive",
         });
-        throw new Error(t("pages.tag.messages.fetchListFailed"));
+        throw new Error(t("tags.messages.fetchListFailed"));
       }
 
       return response;
@@ -102,10 +102,10 @@ export const useGetTagList = (query: Partial<TTagQuery>) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("pages.tag.messages.fetchListFailed"),
+          description: t("tags.messages.fetchListFailed"),
           variant: "destructive",
         });
-        throw new Error(t("pages.tag.messages.fetchListFailed"));
+        throw new Error(t("tags.messages.fetchListFailed"));
       }
 
       return response;
@@ -129,7 +129,7 @@ export const useCreateTag = () => {
       const response = await createTag(tagData).catch(nullOnApiError);
 
       if (!response) {
-        throw new Error(t("pages.tag.messages.createFailed"));
+        throw new Error(t("tags.messages.createFailed"));
       }
 
       return response;
@@ -138,14 +138,14 @@ export const useCreateTag = () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
       toast({
         title: t("common.success"),
-        description: t("pages.tag.messages.createSuccess"),
+        description: t("tags.messages.createSuccess"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: error.message || t("pages.tag.messages.createFailed"),
+        description: error.message || t("tags.messages.createFailed"),
         variant: "destructive",
       });
     },
@@ -162,7 +162,7 @@ export const useUpdateTag = () => {
       const response = await updateTag(tagData).catch(nullOnApiError);
 
       if (!response) {
-        throw new Error(t("pages.tag.messages.updateFailed"));
+        throw new Error(t("tags.messages.updateFailed"));
       }
 
       return response;
@@ -171,14 +171,14 @@ export const useUpdateTag = () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
       toast({
         title: t("common.success"),
-        description: t("pages.tag.messages.updateSuccess"),
+        description: t("tags.messages.updateSuccess"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: error.message || t("pages.tag.messages.updateFailed"),
+        description: error.message || t("tags.messages.updateFailed"),
         variant: "destructive",
       });
     },
@@ -195,7 +195,7 @@ export const useDeleteTag = () => {
       const response = await deleteTag(tagData).catch(nullOnApiError);
 
       if (!response) {
-        throw new Error(t("pages.tag.messages.deleteFailed"));
+        throw new Error(t("tags.messages.deleteFailed"));
       }
 
       return response;
@@ -204,14 +204,14 @@ export const useDeleteTag = () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
       toast({
         title: t("common.success"),
-        description: t("pages.tag.messages.deleteSuccess"),
+        description: t("tags.messages.deleteSuccess"),
         variant: "success",
       });
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: error.message || t("pages.tag.messages.deleteFailed"),
+        description: error.message || t("tags.messages.deleteFailed"),
         variant: "destructive",
       });
     },

@@ -56,7 +56,7 @@ const UserList = () => {
     {
       accessorKey: "user_id",
       enableHiding: true,
-      header: () => <h4>{t("table.headers.user.userId")}</h4>,
+      header: () => <h4>{t("users.table.headers.userId")}</h4>,
       cell: ({ row }) => {
         return <p className="text-center">{row.getValue("user_id")}</p>;
       },
@@ -71,7 +71,7 @@ const UserList = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.user.role")}
+          {t("users.table.headers.role")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -82,7 +82,7 @@ const UserList = () => {
     {
       id: "name",
       enableHiding: false,
-      header: () => <h4>{t("table.headers.user.name")}</h4>,
+      header: () => <h4>{t("users.table.headers.name")}</h4>,
       cell: ({ row }) => {
         const firstName = row.original.first_name;
         const lastName = row.original.last_name;
@@ -92,7 +92,7 @@ const UserList = () => {
     {
       accessorKey: "phone_number",
       enableHiding: false,
-      header: () => <h4>{t("table.headers.user.phoneNumber")}</h4>,
+      header: () => <h4>{t("users.table.headers.phoneNumber")}</h4>,
       cell: ({ row }) => {
         return <p className="text-center">{row.getValue("phone_number")}</p>;
       },
@@ -100,7 +100,7 @@ const UserList = () => {
     {
       accessorKey: "email",
       enableHiding: false,
-      header: () => <h4>{t("table.headers.user.email")}</h4>,
+      header: () => <h4>{t("users.table.headers.email")}</h4>,
       cell: ({ row }) => {
         return <p className="text-center">{row.getValue("email")}</p>;
       },
@@ -163,7 +163,7 @@ const UserList = () => {
     },
     {
       id: "edit-role",
-      label: t("table.headers.user.role"),
+      label: t("users.table.headers.role"),
       icon: UserCog,
       permission: "users:update-role",
       onSelect: ({ user_id, role }) => onOpenEditRoleDialog(user_id, role),

@@ -106,8 +106,8 @@ const BannerList = () => {
   const handleEdit = (banner: TBanner) => {
     if (hasAnyOperation) {
       toast({
-        title: t("toast.banner.operationConflict.title"),
-        description: t("toast.banner.operationConflict.generalDescription"),
+        title: t("banners.toast.operationConflict.title"),
+        description: t("banners.toast.operationConflict.generalDescription"),
         variant: "destructive",
       });
       return;
@@ -122,8 +122,8 @@ const BannerList = () => {
   const handleDelete = (banner: TBanner) => {
     if (hasAnyOperation) {
       toast({
-        title: t("toast.banner.operationConflict.title"),
-        description: t("toast.banner.operationConflict.generalDescription"),
+        title: t("banners.toast.operationConflict.title"),
+        description: t("banners.toast.operationConflict.generalDescription"),
         variant: "destructive",
       });
       return;
@@ -143,8 +143,8 @@ const BannerList = () => {
   const handlePromoteToActive = (banner: TBanner) => {
     if (sortedActiveBanners.length >= DEFAULT_ACTIVE_BANNER_LIMIT) {
       return toast({
-        title: t("toast.banner.promoteToActive.error"),
-        description: t("toast.banner.promoteToActive.errorDescription", {
+        title: t("banners.toast.promoteToActive.error"),
+        description: t("banners.toast.promoteToActive.errorDescription", {
           limit: DEFAULT_ACTIVE_BANNER_LIMIT,
         }),
         variant: "destructive",
@@ -188,7 +188,7 @@ const BannerList = () => {
             }}
           >
             <Plus className="mr-1 size-4" />
-            {t("pages.banner.addBanner")}
+            {t("banners.addBanner")}
           </Button>
         </Guarded>
       </Navbar>
@@ -196,7 +196,7 @@ const BannerList = () => {
       <div className="flex size-full flex-col gap-4 p-4">
         <Paper className="flex h-fit w-full flex-col gap-4 border">
           <h2 className="text-2xl font-bold">
-            {t("pages.banner.activeTitle")} ({sortedActiveBanners.length}/
+            {t("banners.activeTitle")} ({sortedActiveBanners.length}/
             {DEFAULT_ACTIVE_BANNER_LIMIT})
           </h2>
 
@@ -204,10 +204,10 @@ const BannerList = () => {
             <div className="flex h-[300px] items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 bg-muted/10">
               <div className="text-center text-muted-foreground">
                 <p className="text-lg font-medium">
-                  {t("pages.banner.emptyState.noActiveBanner")}
+                  {t("banners.emptyState.noActiveBanner")}
                 </p>
                 <p className="text-sm">
-                  {t("pages.banner.emptyState.promoteBannerHint")}
+                  {t("banners.emptyState.promoteBannerHint")}
                 </p>
               </div>
             </div>
@@ -264,9 +264,7 @@ const BannerList = () => {
 
         <Paper className="flex h-fit w-full flex-col gap-4 border">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">
-              {t("pages.banner.inactiveTitle")}
-            </h2>
+            <h2 className="text-2xl font-bold">{t("banners.inactiveTitle")}</h2>
 
             <div className="flex items-center gap-4">
               <Button
@@ -317,7 +315,7 @@ const BannerList = () => {
             ) : (
               <div className="col-span-full flex h-[300px] items-center justify-center rounded-lg">
                 <p className="text-center text-lg font-medium text-muted-foreground">
-                  {t("pages.banner.emptyState.noActiveBanner")}
+                  {t("banners.emptyState.noActiveBanner")}
                 </p>
               </div>
             )}
@@ -331,9 +329,9 @@ const BannerList = () => {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("pages.banner.deleteConfirm")}</DialogTitle>
+            <DialogTitle>{t("banners.deleteConfirm")}</DialogTitle>
             <DialogDescription>
-              {t("pages.banner.deleteDescription", {
+              {t("banners.deleteDescription", {
                 name: bannerToDelete?.title,
               })}
             </DialogDescription>
@@ -354,7 +352,7 @@ const BannerList = () => {
               {deleteBannerMutation.isPending && (
                 <Spinner className="mr-2 size-4" />
               )}
-              {t("pages.banner.confirmDelete")}
+              {t("banners.confirmDelete")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -37,6 +37,7 @@ import { useGetStaffList, useDeleteStaff } from "../model/use-staff";
 import StaffFormDialog from "./components/StaffFormDialog";
 
 import type { TStaffUser } from "../model/schema";
+import type { TLeafKey } from "@/shared/i18n/types";
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 
 const TeamMemberList = () => {
@@ -121,9 +122,9 @@ const TeamMemberList = () => {
       accessorKey: "staff_id",
       enableHiding: true,
       meta: {
-        displayName: t("staff.staffId"),
+        displayName: t("team-members.staffId"),
       },
-      header: () => <h4>{t("staff.staffId")}</h4>,
+      header: () => <h4>{t("team-members.staffId")}</h4>,
       cell: ({ row }) => {
         const staffId = row.getValue<string>("staff_id");
         const isLongId = staffId.length > 15;
@@ -154,9 +155,9 @@ const TeamMemberList = () => {
       accessorKey: "account",
       enableHiding: true,
       meta: {
-        displayName: t("staff.account"),
+        displayName: t("team-members.account"),
       },
-      header: () => <h4>{t("staff.account")}</h4>,
+      header: () => <h4>{t("team-members.account")}</h4>,
       cell: ({ row }) => {
         return (
           <p className="text-center font-medium">{row.getValue("account")}</p>
@@ -167,9 +168,9 @@ const TeamMemberList = () => {
       accessorKey: "email",
       enableHiding: true,
       meta: {
-        displayName: t("staff.email"),
+        displayName: t("team-members.email"),
       },
-      header: () => <h4>{t("staff.email")}</h4>,
+      header: () => <h4>{t("team-members.email")}</h4>,
       cell: ({ row }) => {
         return <p className="text-center">{row.getValue("email")}</p>;
       },
@@ -178,9 +179,9 @@ const TeamMemberList = () => {
       id: "name",
       enableHiding: true,
       meta: {
-        displayName: t("staff.name"),
+        displayName: t("team-members.name"),
       },
-      header: () => <h4>{t("staff.name")}</h4>,
+      header: () => <h4>{t("team-members.name")}</h4>,
       cell: ({ row }) => {
         const firstName = row.original.first_name;
         const lastName = row.original.last_name;
@@ -191,9 +192,9 @@ const TeamMemberList = () => {
       accessorKey: "role",
       enableHiding: true,
       meta: {
-        displayName: t("staff.role"),
+        displayName: t("team-members.role"),
       },
-      header: () => <h4>{t("staff.role")}</h4>,
+      header: () => <h4>{t("team-members.role")}</h4>,
       cell: ({ row }) => {
         const role = row.getValue<string>("role").toLowerCase();
         return (
@@ -213,7 +214,7 @@ const TeamMemberList = () => {
                 }
               )}
             >
-              {t(`staff.roles.${role}`)}
+              {t(`team-members.roles.${role}` as TLeafKey)}
             </span>
           </div>
         );
@@ -224,7 +225,7 @@ const TeamMemberList = () => {
       enableSorting: true,
       enableHiding: true,
       meta: {
-        displayName: t("staff.createdAt"),
+        displayName: t("team-members.createdAt"),
       },
       header: ({ column }) => (
         <Button
@@ -232,7 +233,7 @@ const TeamMemberList = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("staff.createdAt")}
+          {t("team-members.createdAt")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -247,7 +248,7 @@ const TeamMemberList = () => {
       enableSorting: true,
       enableHiding: true,
       meta: {
-        displayName: t("staff.updatedAt"),
+        displayName: t("team-members.updatedAt"),
       },
       header: ({ column }) => (
         <Button
@@ -255,7 +256,7 @@ const TeamMemberList = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("staff.updatedAt")}
+          {t("team-members.updatedAt")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -269,9 +270,11 @@ const TeamMemberList = () => {
       id: "actions",
       enableHiding: true,
       meta: {
-        displayName: t("staff.actions"),
+        displayName: t("team-members.actions"),
       },
-      header: () => <h4 className="text-center">{t("staff.actions")}</h4>,
+      header: () => (
+        <h4 className="text-center">{t("team-members.actions")}</h4>
+      ),
       cell: ({ row }) => {
         const staff = row.original;
         return (
@@ -295,7 +298,7 @@ const TeamMemberList = () => {
       <div className="flex size-full items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <Spinner className="size-8" />
-          <p className="text-gray-500">{t("staff.loadingStaffList")}</p>
+          <p className="text-gray-500">{t("team-members.loadingStaffList")}</p>
         </div>
       </div>
     );
@@ -309,13 +312,13 @@ const TeamMemberList = () => {
           <div className="flex items-center space-x-2">
             <Users className="size-6" />
             <h2 className="text-2xl font-bold tracking-tight">
-              {t("staff.staffManagement")}
+              {t("team-members.staffManagement")}
             </h2>
           </div>
           <Guarded permission="team-members:create">
             <Button onClick={handleCreateMember}>
               <Plus className="mr-2 size-4" />
-              {t("staff.createStaff")}
+              {t("team-members.createStaff")}
             </Button>
           </Guarded>
         </div>
@@ -323,7 +326,7 @@ const TeamMemberList = () => {
         <div className="flex items-center space-x-2">
           <Search className="size-4 text-gray-400" />
           <Input
-            placeholder={t("staff.searchPlaceholder")}
+            placeholder={t("team-members.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
@@ -358,9 +361,9 @@ const TeamMemberList = () => {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("staff.confirmDelete")}</DialogTitle>
+            <DialogTitle>{t("team-members.confirmDelete")}</DialogTitle>
             <DialogDescription>
-              {t("staff.deleteConfirmMessage", {
+              {t("team-members.deleteConfirmMessage", {
                 name: memberToDelete
                   ? `${memberToDelete.first_name} ${memberToDelete.last_name}`
                   : "",
@@ -383,7 +386,7 @@ const TeamMemberList = () => {
               {deleteStaffMutation.isPending && (
                 <Spinner className="mr-2 size-4" />
               )}
-              {t("staff.confirmDelete")}
+              {t("team-members.confirmDelete")}
             </Button>
           </DialogFooter>
         </DialogContent>

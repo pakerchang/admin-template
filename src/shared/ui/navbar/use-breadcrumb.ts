@@ -2,6 +2,8 @@ import { useLocation } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useRouteTitleResolver } from "@/shared/module";
+
 export interface BreadcrumbItem {
   label: string;
   path: string;
@@ -11,6 +13,8 @@ export interface BreadcrumbItem {
 const useBreadcrumb = (): BreadcrumbItem[] => {
   const location = useLocation();
   const { t } = useTranslation();
+  // 頂層呼叫一次（rules-of-hooks）；之後對每個累積路徑呼叫回傳的一般函式
+  const title = useRouteTitleResolver();
 
   const breadcrumbs = useMemo(() => {
     const pathname = location.pathname;
@@ -30,46 +34,14 @@ const useBreadcrumb = (): BreadcrumbItem[] => {
       currentPath += `/${segment}`;
       const isActive = index === segments.length - 1;
 
-      let label = segment;
-
-      // 根據路徑段使用對應的翻譯 key
-      switch (segment) {
-        case "orders":
-          label = t("dashboard.menu.orders.title");
-          break;
-        case "products":
-          label = t("dashboard.menu.products.title");
-          break;
-        case "users":
-          label = t("dashboard.menu.users.title");
-          break;
-        case "banners":
-          label = t("dashboard.menu.banners.title");
-          break;
-        case "articles":
-          label = t("dashboard.menu.articles.title");
-          break;
-        case "create":
-          label = t("breadcrumb.create");
-          break;
-        case "edit":
-          label = t("breadcrumb.edit");
-          break;
-        case "order-list":
-          label = t("dashboard.menu.orders.sub.orderList");
-          break;
-        case "batch-orders":
-          label = t("dashboard.menu.orders.sub.batchOrders");
-          break;
-        default:
-          // 如果是 UUID 或 ID 格式，直接顯示 ID
-          if (segment.match(/^[a-f0-9-]{8,}$/i) || segment.match(/^\d+$/)) {
-            label = segment;
-          } else {
-            // 保持原始值
-            label = segment;
-          }
-      }
+      // nav / routeTitles 的標題由 registry 注入（已翻譯）；create / edit 讀 core 字典；其餘顯示原字串
+      const label =
+        title(currentPath) ??
+        (segment === "create"
+          ? t("breadcrumb.create")
+          : segment === "edit"
+            ? t("breadcrumb.edit")
+            : segment);
 
       items.push({
         label,
@@ -79,7 +51,7 @@ const useBreadcrumb = (): BreadcrumbItem[] => {
     });
 
     return items;
-  }, [location.pathname, t]);
+  }, [location.pathname, t, title]);
 
   return breadcrumbs;
 };

@@ -1,0 +1,84 @@
+{
+  "messages": {
+    "copySuccess": "複製成功",
+    "copyFailed": "複製失敗"
+  },
+  "contactInfo": "聯絡資訊",
+  "createdAt": "建立時間",
+  "updatedAt": "更新時間",
+  "order": {
+    "orderDetails": "訂單明細"
+  },
+  "item": "品項",
+  "price": "價格",
+  "discountRemark": "折扣備註",
+  "nav": {
+    "title": "訂單管理",
+    "orderList": "訂單列表"
+  },
+  "title": "訂單管理",
+  "search": {
+    "placeholder": "搜尋訂單編號 (例如: ORD20241221001)",
+    "searching": "搜尋中...",
+    "results": "搜尋 \"{{searchTerm}}\" 找到 {{count}} 筆結果",
+    "noResults": "找不到相關訂單",
+    "noResultsHint": "請嘗試其他關鍵字或",
+    "clearSearch": "清除搜尋"
+  },
+  "filter": {
+    "allStatus": "全部狀態"
+  },
+  "orderDetails": {
+    "notFound": "找不到訂單",
+    "orderStatus": {
+      "title": "訂單狀態",
+      "orderCreateAt": "訂單建立時間",
+      "lastUpdatedAt": "最後更新時間"
+    },
+    "shipping": {
+      "title": "運送資訊",
+      "shippingFee": "運費",
+      "shippingAddress": "配送地址",
+      "shippingTime": "配送時間",
+      "shippingRemark": "配送備註"
+    },
+    "orderItem": {
+      "title": "訂單明細",
+      "image": "商品圖片",
+      "productId": "商品編號",
+      "price": "單價",
+      "size": "數量",
+      "discountRemark": "折扣備註",
+      "totalAmount": "小計"
+    },
+    "customer": {
+      "title": "客戶資訊",
+      "phone": "電話",
+      "email": "電子郵件"
+    }
+  },
+  "table": {
+    "headers": {
+      "agentId": "代理商編號",
+      "orderId": "訂單編號",
+      "remark": "備註",
+      "status": "狀態"
+    }
+  },
+  "dialog": {
+    "title": "更新訂單狀態",
+    "description": "請選擇訂單狀態",
+    "status": {
+      "submit": "確認"
+    }
+  },
+  "toast": {
+    "get": {
+      "error": "訂單資訊取得失敗"
+    },
+    "update": {
+      "success": "訂單更新成功",
+      "error": "訂單更新失敗"
+    }
+  }
+}

@@ -40,8 +40,6 @@ import {
   SidebarMenuButton,
 } from "@/shared/ui/sidebar";
 
-import type { TransKey } from "@/shared/i18n/types";
-
 export const AppSidebar = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -91,9 +89,7 @@ export const AppSidebar = () => {
                               {item.icon && (
                                 <item.icon className="text-white" />
                               )}
-                              <span className="text-white">
-                                {t(item.label as TransKey).toString()}
-                              </span>
+                              <span className="text-white">{item.label}</span>
                             </div>
                             <ChevronDown className="size-4 shrink-0 text-white transition-transform duration-200 group-data-[state=open]:rotate-180" />
                           </div>
@@ -107,9 +103,7 @@ export const AppSidebar = () => {
                             className="w-full pl-8"
                           >
                             <span className="text-white">-</span>
-                            <span className="text-white">
-                              {t(subItem.label as TransKey).toString()}
-                            </span>
+                            <span className="text-white">{subItem.label}</span>
                           </SidebarMenuButton>
                         ))}
                       </CollapsibleContent>
@@ -118,9 +112,7 @@ export const AppSidebar = () => {
                     <SidebarMenuButton onClick={() => handleNavigate(item.to)}>
                       <div className="flex items-center gap-2">
                         {item.icon && <item.icon className="text-white" />}
-                        <span className="text-white">
-                          {t(item.label as TransKey).toString()}
-                        </span>
+                        <span className="text-white">{item.label}</span>
                       </div>
                     </SidebarMenuButton>
                   )}

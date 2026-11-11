@@ -4,6 +4,8 @@ import { z } from "zod";
 import { defineModule } from "@/shared/module";
 import { definePermissions } from "@/shared/permission";
 
+import en from "./locales/en.json";
+import zh from "./locales/zh.json";
 import { ordersMockHandlers } from "./mocks/handlers";
 import { ordersRoutes } from "./model/routes";
 import OrderDetailsPage from "./ui/order-details";
@@ -21,16 +23,23 @@ declare module "@/shared/permission" {
   > {}
 }
 
+declare module "@/shared/i18n/types" {
+  interface TranslationResources {
+    orders: typeof zh;
+  }
+}
+
 export default defineModule({
   id: "orders",
   kind: "domain",
+  i18n: { en, zh },
   mockHandlers: ordersMockHandlers,
   routes: (ctx) =>
     ordersRoutes(ctx, { list: OrderListPage, details: OrderDetailsPage }),
   nav: [
     {
       id: "orders",
-      label: "dashboard.menu.orders.title",
+      label: "title",
       to: "/orders",
       icon: Receipt,
       permission: "orders:read",
@@ -38,7 +47,7 @@ export default defineModule({
       children: [
         {
           id: "orders.order-list",
-          label: "dashboard.menu.orders.sub.orderList",
+          label: "orderList",
           to: "/orders/order-list",
           permission: "orders:read",
         },

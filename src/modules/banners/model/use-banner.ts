@@ -50,7 +50,7 @@ export const useGetBannerList = (pagination: Partial<TPagination>) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.banner.get.error"),
+          description: t("banners.toast.get.error"),
           variant: "destructive",
         });
         return undefined;
@@ -92,7 +92,7 @@ export const useGetBanner = (id: string) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.banner.get.error"),
+          description: t("banners.toast.get.error"),
           variant: "destructive",
         });
         return undefined;
@@ -119,7 +119,7 @@ export const useCreateBanner = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.banner.create.error"),
+          description: t("banners.toast.create.error"),
           variant: "destructive",
         });
         return undefined;
@@ -132,7 +132,7 @@ export const useCreateBanner = () => {
 
       toast({
         title: t("common.success"),
-        description: t("toast.banner.create.success"),
+        description: t("banners.toast.create.success"),
         variant: "success",
       });
       navigate({
@@ -161,7 +161,7 @@ export const useUpdateBanner = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.banner.update.error"),
+          description: t("banners.toast.update.error"),
           variant: "destructive",
         });
         return undefined;
@@ -196,7 +196,7 @@ export const useDeleteBanner = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.banner.delete.error"),
+          description: t("banners.toast.delete.error"),
           variant: "destructive",
         });
         return undefined;
@@ -210,7 +210,7 @@ export const useDeleteBanner = () => {
       queryClient.invalidateQueries({ queryKey: ["bannerList"] });
       toast({
         title: t("common.success"),
-        description: t("toast.banner.delete.success"),
+        description: t("banners.toast.delete.success"),
         variant: "success",
       });
     },
@@ -229,31 +229,29 @@ export const useCreateBannerSchema = () => {
     })
     .extend({
       title: z.string().min(1, {
-        message: getMessage.getRequiredMessage(
-          "pages.banner.bannerCreate.title"
-        ),
+        message: getMessage.getRequiredMessage("banners.bannerCreate.title"),
       }),
       redirect_url: z
         .string()
         .min(1, {
           message: getMessage.getRequiredMessage(
-            "pages.banner.bannerCreate.redirectUrl"
+            "banners.bannerCreate.redirectUrl"
           ),
         })
         .url({
           message: t("validation.url.invalid"),
         })
         .refine((url) => url.startsWith("https://"), {
-          message: t("validation.url.https"),
+          message: t("banners.validation.url.https"),
         }),
       desktop_image_url: z.string().min(1, {
         message: getMessage.getRequiredMessage(
-          "pages.banner.bannerCreate.desktopImage"
+          "banners.bannerCreate.desktopImage"
         ),
       }),
       mobile_image_url: z.string().min(1, {
         message: getMessage.getRequiredMessage(
-          "pages.banner.bannerCreate.mobileImage"
+          "banners.bannerCreate.mobileImage"
         ),
       }),
     });

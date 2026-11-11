@@ -22,7 +22,9 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { TextInput } from "@/shared/ui/text-inputs";
 
+import type { TLeafKey } from "@/shared/i18n/types";
 import type { IValidationManager } from "@/shared/lib/image-validation";
+import type { TFunction } from "i18next";
 
 interface IImageUploadProps {
   onUpload: (fileName: string, base64: string) => void;
@@ -45,7 +47,7 @@ const ImageUpload = ({
     extensions: [".jpg", ".jpeg", ".png", ".webp"],
   };
 
-  const createImageUploadSchema = (t: (key: string) => string) =>
+  const createImageUploadSchema = (t: TFunction) =>
     z.object({
       fileName: z
         .string()
@@ -98,7 +100,7 @@ const ImageUpload = ({
             selectedFile,
             {
               t: (key: string, options?: Record<string, unknown>) =>
-                t(key, options),
+                t(key as TLeafKey, options),
             }
           );
 
@@ -195,7 +197,7 @@ const ImageUpload = ({
           tempFile,
           {
             t: (key: string, options?: Record<string, unknown>) =>
-              t(key, options),
+              t(key as TLeafKey, options),
           }
         );
 

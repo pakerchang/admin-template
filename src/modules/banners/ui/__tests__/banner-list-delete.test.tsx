@@ -78,7 +78,7 @@ describe("BannerList 刪除（P2）", () => {
 
     fireEvent.click(
       await screen.findByRole("button", {
-        name: /pages\.banner\.confirmDelete/,
+        name: /banners\.confirmDelete/,
       })
     );
 
@@ -108,20 +108,20 @@ describe("BannerList 刪除（P2）", () => {
     );
     fireEvent.click(
       await screen.findByRole("button", {
-        name: /pages\.banner\.confirmDelete/,
+        name: /banners\.confirmDelete/,
       })
     );
 
     await waitFor(() =>
       expect(toastSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ description: "toast.banner.delete.error" })
+        expect.objectContaining({ description: "banners.toast.delete.error" })
       )
     );
     expect(toastSpy).not.toHaveBeenCalledWith(
-      expect.objectContaining({ description: "toast.banner.delete.success" })
+      expect.objectContaining({ description: "banners.toast.delete.success" })
     );
     expect(
-      screen.getByRole("button", { name: /pages\.banner\.confirmDelete/ })
+      screen.getByRole("button", { name: /banners\.confirmDelete/ })
     ).toBeInTheDocument();
     expect(screen.getByAltText(target.title)).toBeInTheDocument();
   });

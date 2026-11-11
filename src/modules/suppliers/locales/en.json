@@ -1,0 +1,37 @@
+{
+  "nav": {
+    "title": "Supplier Management"
+  },
+  "addSupplier": "Add Supplier",
+  "editSupplier": "Edit Supplier",
+  "deleteConfirm": "Confirm Delete",
+  "deleteDescription": "Are you sure you want to delete supplier \"{{name}}\"? This action cannot be undone.",
+  "confirmDelete": "Confirm Delete",
+  "loading": "Loading supplier list...",
+  "supplierName": "Supplier Name",
+  "phone": "Contact Phone",
+  "email": "Email",
+  "address": "Address",
+  "remark": "Remark",
+  "search": {
+    "placeholder": "Search supplier ID or supplier name..."
+  },
+  "messages": {
+    "fetchListFailed": "Failed to fetch supplier list",
+    "createSuccess": "Supplier created successfully",
+    "createFailed": "Failed to create supplier",
+    "updateSuccess": "Supplier updated successfully",
+    "updateFailed": "Failed to update supplier",
+    "deleteSuccess": "Supplier deleted successfully",
+    "deleteFailed": "Failed to delete supplier"
+  },
+  "table": {
+    "headers": {
+      "supplierId": "Supplier ID",
+      "supplierName": "Supplier Name",
+      "contact": "Contact Info",
+      "address": "Address",
+      "remark": "Remark"
+    }
+  }
+}

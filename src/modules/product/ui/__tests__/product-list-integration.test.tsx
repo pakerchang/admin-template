@@ -24,15 +24,15 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
-        "table.headers.product.thumbnail": "Thumbnail",
-        "table.headers.product.productType": "Product Type",
-        "table.headers.product.productName": "Product Name",
-        "table.headers.product.productCode": "Product Code",
-        "table.headers.product.productStock": "Stock",
-        "table.headers.product.price": "Price",
-        "table.headers.product.productStatus": "Product Status",
-        "table.headers.product.actions": "Actions",
-        "pages.product.productCreate.addProduct": "Add Product",
+        "product.table.headers.thumbnail": "Thumbnail",
+        "product.table.headers.productType": "Product Type",
+        "product.table.headers.productName": "Product Name",
+        "product.table.headers.productCode": "Product Code",
+        "product.table.headers.productStock": "Stock",
+        "product.table.headers.price": "Price",
+        "product.table.headers.productStatus": "Product Status",
+        "product.table.headers.actions": "Actions",
+        "product.productCreate.addProduct": "Add Product",
       };
       return translations[key] || key;
     },

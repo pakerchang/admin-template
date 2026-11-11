@@ -26,7 +26,7 @@ import Card from "./components/Card";
 import StatusColumnFilter from "./components/StatusColumnFilter";
 
 import type { TProduct } from "../model/schema";
-import type { TransKey, TransTypes } from "@/shared/i18n/types";
+import type { TLeafKey, TransTypes } from "@/shared/i18n/types";
 import type {
   ColumnDef,
   PaginationState,
@@ -118,10 +118,10 @@ const ProductPage = () => {
       id: "thumbnail",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.product.thumbnail"),
+        displayName: t("product.table.headers.thumbnail"),
       },
       header: () => (
-        <h4 className="text-center ">{t("table.headers.product.thumbnail")}</h4>
+        <h4 className="text-center ">{t("product.table.headers.thumbnail")}</h4>
       ),
       cell: ({ row }) => {
         const images = row.original.product_images;
@@ -142,19 +142,17 @@ const ProductPage = () => {
       id: "product_type",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.product.productType"),
+        displayName: t("product.table.headers.productType"),
       },
       header: () => (
         <h4 className="text-center ">
-          {t("table.headers.product.productType")}
+          {t("product.table.headers.productType")}
         </h4>
       ),
       cell: ({ row }) => {
         const productType = row.getValue("product_type") as string;
         const displayText = productType
-          ? t(
-              `pages.product.productTypes.${productType}` as TransKey
-            ).toString()
+          ? t(`product.productTypes.${productType}` as TLeafKey).toString()
           : "-";
 
         return <p className="text-center">{displayText}</p>;
@@ -165,11 +163,11 @@ const ProductPage = () => {
       id: "product_name",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.product.productName"),
+        displayName: t("product.table.headers.productName"),
       },
       header: () => (
         <h4 className="text-center ">
-          {t("table.headers.product.productName")}
+          {t("product.table.headers.productName")}
         </h4>
       ),
       cell: ({ row }) => {
@@ -183,7 +181,7 @@ const ProductPage = () => {
       enableHiding: true,
       enableSorting: true,
       meta: {
-        displayName: t("table.headers.product.productCode"),
+        displayName: t("product.table.headers.productCode"),
       },
       header: ({ column }) => (
         <Button
@@ -191,7 +189,7 @@ const ProductPage = () => {
           className="text-center "
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.product.productCode")}
+          {t("product.table.headers.productCode")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -205,7 +203,7 @@ const ProductPage = () => {
       enableHiding: true,
       enableSorting: true,
       meta: {
-        displayName: t("table.headers.product.productStock"),
+        displayName: t("product.table.headers.productStock"),
       },
       header: ({ column }) => (
         <Button
@@ -213,7 +211,7 @@ const ProductPage = () => {
           className="text-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.product.productStock")}
+          {t("product.table.headers.productStock")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -226,7 +224,7 @@ const ProductPage = () => {
       enableHiding: true,
       enableSorting: true,
       meta: {
-        displayName: t("table.headers.product.price"),
+        displayName: t("product.table.headers.price"),
       },
       header: ({ column }) => (
         <Button
@@ -234,7 +232,7 @@ const ProductPage = () => {
           className="text-center "
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {t("table.headers.product.price")}
+          {t("product.table.headers.price")}
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       ),
@@ -255,7 +253,7 @@ const ProductPage = () => {
       enableSorting: false,
       enableColumnFilter: true,
       meta: {
-        displayName: t("table.headers.product.productStatus"),
+        displayName: t("product.table.headers.productStatus"),
       },
       header: ({ column }) => (
         <StatusColumnFilter column={column} statusCounts={statusCounts} />
@@ -263,7 +261,7 @@ const ProductPage = () => {
       cell: ({ row }) => {
         const status = row.getValue<string>("product_status");
         const displayText = status
-          ? t(`pages.product.status.${status}` as TransKey).toString()
+          ? t(`product.status.${status}` as TLeafKey).toString()
           : "-";
         return <p className="text-center">{displayText}</p>;
       },
@@ -272,10 +270,10 @@ const ProductPage = () => {
       id: "actions",
       enableHiding: true,
       meta: {
-        displayName: t("table.headers.product.actions"),
+        displayName: t("product.table.headers.actions"),
       },
       header: () => (
-        <h4 className="text-center ">{t("table.headers.product.actions")}</h4>
+        <h4 className="text-center ">{t("product.table.headers.actions")}</h4>
       ),
       cell: ({ row }) => {
         const id = row.original.product_id;
@@ -297,8 +295,8 @@ const ProductPage = () => {
             <Guarded permission="product:create">
               <Button
                 variant="outline"
-                title={t("pages.product.productDraft.copyToCreate")}
-                aria-label={t("pages.product.productDraft.copyToCreate")}
+                title={t("product.productDraft.copyToCreate")}
+                aria-label={t("product.productDraft.copyToCreate")}
                 onClick={() =>
                   navigate({
                     to: "/products/draft/$id",
@@ -334,7 +332,7 @@ const ProductPage = () => {
               }}
             >
               <Plus className="size-4" />
-              {t("pages.product.productCreate.addProduct")}
+              {t("product.productCreate.addProduct")}
             </Button>
           </Guarded>
         </div>
@@ -382,10 +380,8 @@ const ProductPage = () => {
                       <Guarded permission="product:create">
                         <Button
                           variant="outline"
-                          title={t("pages.product.productDraft.copyToCreate")}
-                          aria-label={t(
-                            "pages.product.productDraft.copyToCreate"
-                          )}
+                          title={t("product.productDraft.copyToCreate")}
+                          aria-label={t("product.productDraft.copyToCreate")}
                           onClick={() =>
                             navigate({
                               to: "/products/draft/$id",

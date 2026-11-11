@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "title": "Tag Management"
+  },
+  "addTag": "Add Tag",
+  "editTag": "Edit Tag",
+  "deleteConfirm": "Confirm Delete",
+  "deleteDescription": "Are you sure you want to delete tag \"{{name}}\"? This action cannot be undone.",
+  "confirmDelete": "Confirm Delete",
+  "loading": "Loading tag list...",
+  "tagName": "Tag Name",
+  "tagNamePlaceholder": "Please enter tag name",
+  "search": {
+    "placeholder": "Search tag ID or tag name..."
+  },
+  "messages": {
+    "fetchListFailed": "Failed to fetch tag list",
+    "createSuccess": "Tag created successfully",
+    "createFailed": "Failed to create tag",
+    "updateSuccess": "Tag updated successfully",
+    "updateFailed": "Failed to update tag",
+    "deleteSuccess": "Tag deleted successfully",
+    "deleteFailed": "Failed to delete tag"
+  },
+  "table": {
+    "headers": {
+      "tagId": "Tag ID",
+      "tagName": "Tag Name"
+    }
+  }
+}

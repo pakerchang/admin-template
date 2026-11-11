@@ -24,7 +24,7 @@ React admin dashboard（純 UI showcase，無真後端）。回覆一律繁體�
 - M4 升級後，舊 session（localStorage 內沒有 `grants`）需要登出再重新登入一次；不做遷移
 - mock 已簽發 session 表（token → user_id）存 localStorage `mock-sessions`，重新整理後同一 token 仍有效；mock 的登出只清 client session，不撤銷已簽發 token（同一 mock runtime 內可重播；表已持久化，重新整理後亦同）；M7 換真 API 前不處理
 - UI：Tailwind + Radix，shadcn 元件與共用元件（DataTable、EditActions…）在 `src/shared/ui/`
-- i18n：react-i18next，`src/shared/i18n/locales/` 的語系字典為 `en.json`、`zh.json`，另有 `src/shared/i18n/{i18n.ts,types.ts}`（i18next 初始化、`TransKey`）；module 可帶裸字典 `modules/<id>/locales/*.json`（`defineModule({ i18n })`，kernel 在 mount 時 scope 成 `<id>.*` 寫入）。M6 只搬了全域 key 已在 `<id>.` 之下的部分（en `users.*`），其餘 domain key 仍在 core 字典（搬要改 key 名，另案）
+- i18n：react-i18next。core 字典 `src/shared/i18n/locales/{en,zh}.json` 只放 core 引用或 ≥2 個 module 共用的 key；module 文案住 `modules/<id>/locales/{en,zh}.json`（裸字典，kernel 在 `build()` scope 成 `<id>.*`），型別以 `index.ts` 的 `declare module "@/shared/i18n/types" { interface TranslationResources { <id>: typeof zh } }` 併入 `TransKey`（擴充介面不得帶 index signature）。nav / `routeTitles` 的 `label` 只寫字典 `nav` 段的局部 key（`defineModule` 由 `i18n` 推導收窄；`build()` 組 `${id}.nav.${key}` 並驗 zh / en 皆存在），shell 經 `useVisibleNav()` 拿已翻譯 label、breadcrumb 經 `useRouteTitleResolver()`，不自己 `t(key)`。歸屬與 en / zh 對齊由 `src/shared/i18n/__tests__/key-ownership.test.ts` 機械檢查（無引用 key 會失敗）。測試要真字典時用 `src/test/i18n.tsx` 的 `createTestI18n`
 - 測試：Vitest + Testing Library，jsdom，setup 在 `src/test/setup.ts`
 
 ```

@@ -4,6 +4,8 @@ import { z } from "zod";
 import { defineModule } from "@/shared/module";
 import { definePermissions } from "@/shared/permission";
 
+import en from "./locales/en.json";
+import zh from "./locales/zh.json";
 import { bannersMockHandlers } from "./mocks/handlers";
 import { bannersRoutes } from "./model/routes";
 import BannerFormPage from "./ui/BannerForm";
@@ -21,16 +23,23 @@ declare module "@/shared/permission" {
   > {}
 }
 
+declare module "@/shared/i18n/types" {
+  interface TranslationResources {
+    banners: typeof zh;
+  }
+}
+
 export default defineModule({
   id: "banners",
   kind: "domain",
+  i18n: { en, zh },
   mockHandlers: bannersMockHandlers,
   routes: (ctx) =>
     bannersRoutes(ctx, { list: BannerListPage, form: BannerFormPage }),
   nav: [
     {
       id: "banners",
-      label: "dashboard.menu.banners.title",
+      label: "title",
       to: "/banners",
       icon: Images,
       permission: "banners:read",

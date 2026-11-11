@@ -66,7 +66,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
         </div>
         {order.vendor_id && (
           <div className="text-white">
-            {t("order.agent")}: {order?.vendor_id}
+            {t("consumers.order.agent")}: {order?.vendor_id}
           </div>
         )}
       </div>
@@ -116,11 +116,11 @@ const OrderCard = ({ order }: OrderCardProps) => {
       {order.contact_info && (
         <div className="rounded-lg border p-3 hover:bg-gray-700">
           <h5 className="mb-2 font-medium text-white">
-            {t("order.contactInfoTitle")}
+            {t("consumers.order.contactInfoTitle")}
           </h5>
           <div className="space-y-1 text-sm text-white">
             <div>
-              {t("order.email")}: {order.contact_info.email}
+              {t("consumers.order.email")}: {order.contact_info.email}
             </div>
             <div>
               {t("order.phone")}: {order.contact_info.phone}

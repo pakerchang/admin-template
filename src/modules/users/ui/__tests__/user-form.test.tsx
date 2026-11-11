@@ -114,7 +114,7 @@ describe("UserForm 編輯（user-form spec）", () => {
       expect(toastSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           variant: "destructive",
-          description: "toast.user.get.error",
+          description: "users.toast.get.error",
         })
       )
     );

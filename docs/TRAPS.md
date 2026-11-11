@@ -58,6 +58,20 @@
 - **禁令**：錯誤案例寫成一行放得下的形狀（抽出型別別名或短變數），或把指令放在報錯的那一行正上方；改完一律重跑 `pnpm exec tsc -b tsconfig.app.json`。
 - **來源**：`src/modules/tags/__tests__/permission-types.test.ts`。
 
+### `defineModule` 的 nav label 推導變成 `never`（i18n-scope-migration I1 起）
+
+- **症狀**：module 的 `nav` / `routeTitles` 用字典裡確實存在的局部 key，`tsc` 仍報 `Type 'string' is not assignable to type 'never'`；不含 `routes` 的最小 PoC 卻通過。
+- **真因**：`routes: (ctx) => …` 是 context-sensitive 函式，TS 會先固定 `M` 再推導，靠 `M` 本身推出的 `TNavLocalKey<M>` 退化成 `never`、label 也被寬化成 `string`。
+- **禁令**：label 約束一律從獨立型別參數推導（`defineModule<const M, const I, const L extends TNavLocalKey<I>>`，見 `src/shared/module/types.ts`）；禁止改回只用 `M` 推導，也禁止以 cast 讓正例通過。型別 PoC 必含 `routes: (ctx) => …`。
+- **來源**：i18n-scope-migration I1 實作（scratchpad PoC 重現）；`src/shared/module/__tests__/nav-label-types.test.ts`。
+
+### `// prettier-ignore -- 說明` 沒有效果
+
+- **症狀**：加了 `// prettier-ignore -- 理由` 的程式碼仍被 prettier 折行（接著 `@ts-expect-error` 失效，見上一條）。
+- **真因**：prettier 只認內容恰為 `prettier-ignore` 的註解，後面帶說明文字就不算。
+- **禁令**：說明寫在上一行，`// prettier-ignore` 單獨一行；型別測試優先把反例寫成單行放得下的形狀，不依賴 prettier-ignore。
+- **來源**：i18n-scope-migration I1 實作，`src/shared/module/__tests__/nav-label-types.test.ts`。
+
 ## B. spec / PoC 預警，待對應 milestone 驗證
 
 ### orval 產的 MSW handler 回不了 404 / 422（M7 起）

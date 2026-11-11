@@ -242,7 +242,7 @@ const BannerForm = () => {
             onSuccess: () => {
               toast({
                 title: t("common.success"),
-                description: t("toast.banner.update.success"),
+                description: t("banners.toast.update.success"),
                 variant: "success",
               });
               navigate({
@@ -252,7 +252,7 @@ const BannerForm = () => {
             onError: (error) => {
               toast({
                 title: t("common.error"),
-                description: error.message || t("toast.banner.update.error"),
+                description: error.message || t("banners.toast.update.error"),
                 variant: "destructive",
               });
             },
@@ -328,7 +328,7 @@ const BannerForm = () => {
           disabled={isSubmitDisabled}
         >
           {isCreateUploading || isEditUpdating
-            ? t("pages.banner.bannerCreate.submitting")
+            ? t("banners.bannerCreate.submitting")
             : t("common.submit")}
         </FormSubmit>
       </Navbar>
@@ -339,19 +339,19 @@ const BannerForm = () => {
       >
         <Paper className="flex w-full flex-col gap-4">
           <h3 className="text-3xl font-bold">
-            {t("pages.banner.bannerCreate.title")}
+            {t("banners.bannerCreate.title")}
           </h3>
 
           <TextInput
             className="flex-1"
-            label={t("pages.banner.bannerCreate.title")}
+            label={t("banners.bannerCreate.title")}
             error={form.formState.errors.title}
             {...form.register("title")}
           />
 
           <TextInput
             className="flex-1"
-            label={t("pages.banner.bannerCreate.redirectUrl")}
+            label={t("banners.bannerCreate.redirectUrl")}
             error={form.formState.errors.redirect_url}
             type="url"
             {...form.register("redirect_url")}
@@ -360,13 +360,13 @@ const BannerForm = () => {
 
         <Paper className="flex w-full flex-col gap-4">
           <h3 className="text-3xl font-bold">
-            {t("pages.banner.bannerCreate.images")}
+            {t("banners.bannerCreate.images")}
           </h3>
 
           <div className="flex grow items-center gap-4">
             <div className="flex flex-col gap-3">
               <Label className="text-sm font-medium">
-                {t("pages.banner.bannerCreate.desktopImage")}
+                {t("banners.bannerCreate.desktopImage")}
               </Label>
               {form.formState.errors.desktop_image_url?.message && (
                 <p className="text-sm text-destructive">
@@ -406,7 +406,7 @@ const BannerForm = () => {
 
             <div className="flex flex-col gap-3">
               <Label className="text-sm font-medium">
-                {t("pages.banner.bannerCreate.mobileImage")}
+                {t("banners.bannerCreate.mobileImage")}
               </Label>
               {form.formState.errors.mobile_image_url?.message && (
                 <p className="text-sm text-destructive">

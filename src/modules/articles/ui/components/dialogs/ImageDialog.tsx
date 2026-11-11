@@ -31,7 +31,7 @@ const ImageDialog = ({ isOpen, onClose, onSave }: ImageDialogProps) => {
   const urlSchema = z.object({
     url: z
       .string()
-      .min(1, { message: t("validation.editor.image.url") })
+      .min(1, { message: t("articles.validation.editor.image.url") })
       .url({ message: t("validation.url.invalid") }),
     alt: z.string().optional(),
   });
@@ -83,7 +83,9 @@ const ImageDialog = ({ isOpen, onClose, onSave }: ImageDialogProps) => {
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{t("validation.editor.toolbar.image")}</DialogTitle>
+          <DialogTitle>
+            {t("articles.validation.editor.toolbar.image")}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="w-full">
@@ -95,7 +97,7 @@ const ImageDialog = ({ isOpen, onClose, onSave }: ImageDialogProps) => {
               className="flex-1"
               onClick={() => setActiveTab("upload")}
             >
-              {t("validation.editor.image.upload")}
+              {t("articles.validation.editor.image.upload")}
             </Button>
             <Button
               type="button"
@@ -104,7 +106,7 @@ const ImageDialog = ({ isOpen, onClose, onSave }: ImageDialogProps) => {
               className="flex-1"
               onClick={() => setActiveTab("url")}
             >
-              {t("validation.editor.image.url")}
+              {t("articles.validation.editor.image.url")}
             </Button>
           </div>
 
@@ -119,10 +121,10 @@ const ImageDialog = ({ isOpen, onClose, onSave }: ImageDialogProps) => {
                     <div className="flex flex-col items-center justify-center pb-6 pt-5">
                       <Upload className="mb-2 size-8 text-gray-500" />
                       <p className="mb-2 text-sm text-gray-500">
-                        {t("validation.editor.image.uploadText")}
+                        {t("articles.validation.editor.image.uploadText")}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {t("validation.editor.image.uploadHint")}
+                        {t("articles.validation.editor.image.uploadHint")}
                       </p>
                     </div>
                     <input
@@ -146,7 +148,9 @@ const ImageDialog = ({ isOpen, onClose, onSave }: ImageDialogProps) => {
 
                 {uploadedImages.length > 0 && (
                   <div className="space-y-2">
-                    <Label>{t("validation.editor.image.uploaded")}</Label>
+                    <Label>
+                      {t("articles.validation.editor.image.uploaded")}
+                    </Label>
                     <div className="grid grid-cols-2 gap-2">
                       {uploadedImages.map((image, index) => (
                         <div key={image.file_name} className="group relative">
@@ -161,7 +165,7 @@ const ImageDialog = ({ isOpen, onClose, onSave }: ImageDialogProps) => {
                               variant="secondary"
                               onClick={() => handleUploadedImageSave(index)}
                             >
-                              {t("validation.editor.image.use")}
+                              {t("articles.validation.editor.image.use")}
                             </Button>
                             <Button
                               size="sm"
@@ -187,11 +191,13 @@ const ImageDialog = ({ isOpen, onClose, onSave }: ImageDialogProps) => {
             >
               <div className="space-y-2">
                 <Label htmlFor="image-url">
-                  {t("validation.editor.image.url")}
+                  {t("articles.validation.editor.image.url")}
                 </Label>
                 <Input
                   id="image-url"
-                  placeholder={t("validation.editor.image.urlPlaceholder")}
+                  placeholder={t(
+                    "articles.validation.editor.image.urlPlaceholder"
+                  )}
                   {...form.register("url")}
                   className={
                     form.formState.errors.url ? "border-destructive" : ""
@@ -206,11 +212,13 @@ const ImageDialog = ({ isOpen, onClose, onSave }: ImageDialogProps) => {
 
               <div className="space-y-2">
                 <Label htmlFor="image-alt">
-                  {t("validation.editor.image.alt")}
+                  {t("articles.validation.editor.image.alt")}
                 </Label>
                 <Input
                   id="image-alt"
-                  placeholder={t("validation.editor.image.altPlaceholder")}
+                  placeholder={t(
+                    "articles.validation.editor.image.altPlaceholder"
+                  )}
                   {...form.register("alt")}
                 />
               </div>
@@ -219,7 +227,7 @@ const ImageDialog = ({ isOpen, onClose, onSave }: ImageDialogProps) => {
                 <Button type="button" variant="outline" onClick={handleClose}>
                   {t("common.cancel")}
                 </Button>
-                <Button type="submit">{t("common.insert")}</Button>
+                <Button type="submit">{t("articles.common.insert")}</Button>
               </DialogFooter>
             </form>
           )}

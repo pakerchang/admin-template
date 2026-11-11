@@ -1,16 +1,13 @@
 import "i18next";
-import type { TransKey } from "@/shared/i18n/types";
+import type { TranslationResources } from "@/shared/i18n/types";
+import type zh from "@/shared/i18n/locales/zh.json";
 
 declare module "i18next" {
   interface CustomTypeOptions {
     defaultNS: "translation";
     keySeparator: ".";
     returnNull: false;
-    returnType: string;
-  }
-
-  interface TFunction {
-    (key: TransKey): string;
-    (key: TransKey, options?: any): string;
+    /** core 字典 + module 擴充（TranslationResources）：t() 的 key 由此推導，typo 在 tsc 失敗（i18n-scope-migration AC-4） */
+    resources: { translation: typeof zh & TranslationResources };
   }
 }

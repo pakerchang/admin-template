@@ -43,7 +43,7 @@ export const bannerDesktopResolutionRule: ImageValidationRule = {
 
     if (width < MIN_WIDTH || height < MIN_HEIGHT) {
       const message = t
-        ? t("validation.image.resolution.desktop.tooSmall", {})
+        ? t("banners.validation.image.resolution.desktop.tooSmall", {})
         : `桌面版圖片解析度過小，最小支援 ${MIN_WIDTH}×${MIN_HEIGHT}`;
 
       return {
@@ -55,7 +55,7 @@ export const bannerDesktopResolutionRule: ImageValidationRule = {
 
     if (width > MAX_WIDTH || height > MAX_HEIGHT) {
       const message = t
-        ? t("validation.image.resolution.desktop.tooLarge", {})
+        ? t("banners.validation.image.resolution.desktop.tooLarge", {})
         : `桌面版圖片解析度過大，最大支援 ${MAX_WIDTH}×${MAX_HEIGHT}`;
 
       return {
@@ -71,7 +71,7 @@ export const bannerDesktopResolutionRule: ImageValidationRule = {
 
     if (!isAspectRatioInRange(aspectRatio, targetRatio, tolerance)) {
       const message = t
-        ? t("validation.image.resolution.desktop.aspectRatio", {})
+        ? t("banners.validation.image.resolution.desktop.aspectRatio", {})
         : `桌面版圖片寬高比不符合 16:9 規範，目前為 ${width}×${height}`;
 
       return {
@@ -119,7 +119,9 @@ export const bannerMobileResolutionRule: ImageValidationRule = {
     if (width < MIN_WIDTH || height < MIN_HEIGHT) {
       const minResolution = `${MIN_WIDTH}x${MIN_HEIGHT}`;
       const message = t
-        ? t("validation.image.resolution.mobile.tooSmall", { minResolution })
+        ? t("banners.validation.image.resolution.mobile.tooSmall", {
+            minResolution,
+          })
         : `手機版圖片解析度過小，最小支援 ${MIN_WIDTH}×${MIN_HEIGHT}`;
 
       return {
@@ -132,7 +134,9 @@ export const bannerMobileResolutionRule: ImageValidationRule = {
     if (width > MAX_WIDTH || height > MAX_HEIGHT) {
       const maxResolution = `${MAX_WIDTH}x${MAX_HEIGHT}`;
       const message = t
-        ? t("validation.image.resolution.mobile.tooLarge", { maxResolution })
+        ? t("banners.validation.image.resolution.mobile.tooLarge", {
+            maxResolution,
+          })
         : `手機版圖片解析度過大，最大支援 ${MAX_WIDTH}×${MAX_HEIGHT}`;
 
       return {
@@ -148,7 +152,7 @@ export const bannerMobileResolutionRule: ImageValidationRule = {
 
     if (!isAspectRatioInRange(aspectRatio, targetRatio, tolerance)) {
       const message = t
-        ? t("validation.image.resolution.mobile.aspectRatio", {})
+        ? t("banners.validation.image.resolution.mobile.aspectRatio", {})
         : `手機版圖片寬高比不符合 16:9 規範，目前為 ${width}×${height}`;
 
       return {

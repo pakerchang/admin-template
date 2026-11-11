@@ -63,7 +63,7 @@ export const useGetOrderList = (
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.order.get.error"),
+          description: t("orders.toast.get.error"),
           variant: "destructive",
         });
         return null;
@@ -94,7 +94,7 @@ export const useGetOrder = (order_id: string) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.order.get.error"),
+          description: t("orders.toast.get.error"),
           variant: "destructive",
         });
         return null;
@@ -121,7 +121,7 @@ export const useGetOrderDetail = (order_id: string) => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.order.get.error"),
+          description: t("orders.toast.get.error"),
           variant: "destructive",
         });
         return null;
@@ -176,7 +176,7 @@ export const useUpdateOrderStatus = () => {
       if (!response) {
         toast({
           title: t("common.error"),
-          description: t("toast.order.update.error"),
+          description: t("orders.toast.update.error"),
           variant: "destructive",
         });
         return null;
@@ -186,7 +186,7 @@ export const useUpdateOrderStatus = () => {
       queryClient.invalidateQueries({ queryKey: ["orderList"] });
       toast({
         title: t("common.success"),
-        description: t("toast.order.update.success"),
+        description: t("orders.toast.update.success"),
         variant: "success",
       });
     },

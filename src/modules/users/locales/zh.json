@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "title": "使用者管理"
+  },
+  "userForm": {
+    "title": "編輯使用者資訊",
+    "firstName": "使用者名字",
+    "lastName": "使用者姓氏",
+    "email": "電子郵件信箱",
+    "phoneNumber": "聯絡電話",
+    "address": "聯絡地址",
+    "remark": "備註說明"
+  },
+  "table": {
+    "headers": {
+      "userId": "使用者編號",
+      "email": "電子郵件",
+      "name": "姓名",
+      "phoneNumber": "電話號碼",
+      "role": "權限群組"
+    }
+  },
+  "toast": {
+    "get": {
+      "error": "取得使用者資料失敗"
+    },
+    "update": {
+      "success": "更新使用者資料成功",
+      "error": "更新使用者資料失敗"
+    }
+  }
+}

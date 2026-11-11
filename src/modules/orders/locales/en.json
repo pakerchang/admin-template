@@ -1,0 +1,84 @@
+{
+  "messages": {
+    "copySuccess": "Copy successful",
+    "copyFailed": "Copy failed"
+  },
+  "contactInfo": "Contact Information",
+  "createdAt": "Created At",
+  "updatedAt": "Updated At",
+  "order": {
+    "orderDetails": "Order Details"
+  },
+  "item": "Item",
+  "price": "Price",
+  "discountRemark": "Discount Remark",
+  "nav": {
+    "title": "Orders Management",
+    "orderList": "Order List"
+  },
+  "title": "Order Management",
+  "search": {
+    "placeholder": "Search order ID (e.g. ORD20241221001)",
+    "searching": "Searching...",
+    "results": "Search \"{{searchTerm}}\" found {{count}} results",
+    "noResults": "No related orders found",
+    "noResultsHint": "Try other keywords or",
+    "clearSearch": "clear search"
+  },
+  "filter": {
+    "allStatus": "All Status"
+  },
+  "orderDetails": {
+    "notFound": "Order not found",
+    "orderStatus": {
+      "title": "Order Status",
+      "orderCreateAt": "Order Created At",
+      "lastUpdatedAt": "Last Updated At"
+    },
+    "shipping": {
+      "title": "Shipping Info",
+      "shippingFee": "Shipping Fee",
+      "shippingAddress": "Shipping Address",
+      "shippingTime": "Shipping Time",
+      "shippingRemark": "Shipping Remark"
+    },
+    "orderItem": {
+      "title": "Order Details",
+      "image": "Product Image",
+      "productId": "Product ID",
+      "price": "Unit Price",
+      "size": "Quantity",
+      "discountRemark": "Discount Remark",
+      "totalAmount": "Total Amount"
+    },
+    "customer": {
+      "title": "Customer Info",
+      "phone": "Phone",
+      "email": "Email"
+    }
+  },
+  "table": {
+    "headers": {
+      "agentId": "Agent ID",
+      "orderId": "Order ID",
+      "remark": "Remark",
+      "status": "Status"
+    }
+  },
+  "dialog": {
+    "title": "Update Order Status",
+    "description": "Please select the order status",
+    "status": {
+      "submit": "Submit"
+    }
+  },
+  "toast": {
+    "get": {
+      "error": "Order info retrieval failed"
+    },
+    "update": {
+      "success": "Order updated successfully",
+      "error": "Order update failed"
+    }
+  }
+}

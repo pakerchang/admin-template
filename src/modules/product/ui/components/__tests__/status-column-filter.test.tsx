@@ -16,10 +16,10 @@ vi.mock("react-i18next", () => ({
 
 const mockT = vi.fn((key: string) => {
   const translations: Record<string, string> = {
-    "table.headers.product.productStatus": "Product Status",
-    "pages.product.filter.allStatus": "All",
-    "pages.product.status.active": "Active",
-    "pages.product.status.inactive": "Inactive",
+    "product.table.headers.productStatus": "Product Status",
+    "product.filter.allStatus": "All",
+    "product.status.active": "Active",
+    "product.status.inactive": "Inactive",
   };
   return translations[key] || key;
 });
@@ -234,8 +234,8 @@ describe("StatusColumnFilter", () => {
       );
 
       // 驗證翻譯函數被正確調用
-      expect(mockT).toHaveBeenCalledWith("table.headers.product.productStatus");
-      expect(mockT).toHaveBeenCalledWith("pages.product.filter.allStatus");
+      expect(mockT).toHaveBeenCalledWith("product.table.headers.productStatus");
+      expect(mockT).toHaveBeenCalledWith("product.filter.allStatus");
     });
 
     it("應該在選擇特定狀態時使用對應的翻譯", () => {
@@ -249,7 +249,7 @@ describe("StatusColumnFilter", () => {
       );
 
       // 驗證狀態翻譯函數被調用
-      expect(mockT).toHaveBeenCalledWith("pages.product.status.active");
+      expect(mockT).toHaveBeenCalledWith("product.status.active");
     });
 
     it("語言切換時應該正確更新顯示", () => {
@@ -263,10 +263,10 @@ describe("StatusColumnFilter", () => {
       // 模擬語言切換 - 更新翻譯函數返回值
       const mockTChinese = vi.fn((key: string) => {
         const translations: Record<string, string> = {
-          "table.headers.product.productStatus": "商品狀態",
-          "pages.product.filter.allStatus": "全部",
-          "pages.product.status.active": "上架中",
-          "pages.product.status.inactive": "下架中",
+          "product.table.headers.productStatus": "商品狀態",
+          "product.filter.allStatus": "全部",
+          "product.status.active": "上架中",
+          "product.status.inactive": "下架中",
         };
         return translations[key] || key;
       });
@@ -285,11 +285,9 @@ describe("StatusColumnFilter", () => {
 
       // 驗證中文翻譯被使用
       expect(mockTChinese).toHaveBeenCalledWith(
-        "table.headers.product.productStatus"
+        "product.table.headers.productStatus"
       );
-      expect(mockTChinese).toHaveBeenCalledWith(
-        "pages.product.filter.allStatus"
-      );
+      expect(mockTChinese).toHaveBeenCalledWith("product.filter.allStatus");
     });
   });
 

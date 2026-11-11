@@ -1,0 +1,88 @@
+{
+  "validation": {
+    "image": {
+      "prefix": {
+        "desktop": "Desktop image file name must start with d_",
+        "mobile": "Mobile image file name must start with m_"
+      },
+      "resolution": {
+        "desktop": {
+          "tooSmall": "Desktop image resolution is too small, minimum recommended 1280x720 pixels",
+          "tooLarge": "Desktop image resolution is too large, maximum supported 3840x2160 pixels",
+          "aspectRatio": "Recommended to use 16:9 aspect ratio for optimal display"
+        },
+        "mobile": {
+          "tooSmall": "Mobile image resolution is too small, minimum recommended {{minResolution}} pixels",
+          "tooLarge": "Mobile image resolution is too large, maximum supported {{maxResolution}} pixels",
+          "aspectRatio": "For mobile, recommended to use 16:9 aspect ratio"
+        }
+      }
+    },
+    "url": {
+      "https": "URL must start with https://"
+    }
+  },
+  "nav": {
+    "title": "Banners Management"
+  },
+  "addBanner": "Add Banner",
+  "deleteConfirm": "Are you sure you want to delete this banner?",
+  "deleteDescription": "This action cannot be undone. The banner will be permanently deleted.",
+  "confirmDelete": "Confirm Delete",
+  "activeTitle": "Active Banner List",
+  "inactiveTitle": "Banner List",
+  "emptyState": {
+    "noActiveBanner": "No Enabled Banner",
+    "promoteBannerHint": "Promote from the banner list below"
+  },
+  "actions": {
+    "promoteToActive": "Enable",
+    "demoteToInactive": "Disable",
+    "processing": "Processing..."
+  },
+  "bannerCreate": {
+    "title": "Banner Info",
+    "redirectUrl": "Redirect URL",
+    "images": "Image Upload",
+    "desktopImage": "Desktop Image",
+    "mobileImage": "Mobile Image",
+    "submitting": "Submitting"
+  },
+  "toast": {
+    "get": {
+      "error": "Banner info retrieval failed"
+    },
+    "create": {
+      "success": "Banner created successfully",
+      "error": "Banner creation failed"
+    },
+    "update": {
+      "success": "Banner updated successfully",
+      "error": "Banner update failed"
+    },
+    "delete": {
+      "success": "Banner deleted successfully",
+      "error": "Banner deletion failed"
+    },
+    "promoteToActive": {
+      "success": "Banner enabled successfully",
+      "error": "Banner enable failed",
+      "errorDescription": "You can only enable up to {{limit}} banners"
+    },
+    "reorder": {
+      "success": "Banner order updated successfully",
+      "error": "Banner reorder failed",
+      "errorDescription": "Please retry or refresh the page"
+    },
+    "operationConflict": {
+      "title": "Operation Conflict",
+      "promoteDescription": "Please wait for current operation to complete before promoting",
+      "demoteDescription": "Please wait for current operation to complete before demoting",
+      "generalDescription": "Please wait for current operation to complete"
+    },
+    "removeFromActive": {
+      "success": "Banner disabled successfully",
+      "error": "Banner disable failed"
+    }
+  }
+}

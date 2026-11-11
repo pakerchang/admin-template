@@ -1,0 +1,103 @@
+{
+  "nav": {
+    "title": "Product Management"
+  },
+  "filter": {
+    "allStatus": "All"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "productCreate": {
+    "addProduct": "Add Product",
+    "title": "Product Info",
+    "productName": "Product Name",
+    "productType": "Product Type",
+    "productTypePlaceholder": "Please select product type",
+    "productTag": "Product Tag",
+    "productTagInput": "Product Tag {{index}}",
+    "productDescription": "Product Description",
+    "shortTitle": "Short Title",
+    "price": "Price",
+    "productSize": "Stock",
+    "productImages": "Product Images",
+    "ingredients": "Ingredients",
+    "introduction": "Introduction",
+    "precautions": "Precautions",
+    "shelfLife": "Shelf Life",
+    "origin": "Origin",
+    "aromaLevel": "Aroma Level",
+    "flavor": "Flavor",
+    "appearance": "Appearance",
+    "bestOccasion": "Best Occasion",
+    "sceneMatching": "Scene Matching",
+    "foodPairing": "Food Pairing",
+    "submitting": "Submitting",
+    "active": "Active",
+    "inactive": "Inactive",
+    "productStatus": "Product Status",
+    "productStatusPlaceholder": "Please select product status",
+    "supplier": "Supplier",
+    "supplierPlaceholder": "Please select supplier",
+    "tags": "Product Tags",
+    "addTag": "Add Tag",
+    "selectTag": "Select Tag",
+    "selectedTags": "Selected Tags"
+  },
+  "productDraft": {
+    "title": "Copy Product - {{productName}}",
+    "description": "Create a copy based on existing product, modify and create as new product",
+    "copyToCreate": "Copy to Create"
+  },
+  "productEditConfirm": {
+    "title": "Confirm Edit Content",
+    "description": "Please review the changes below and confirm to submit",
+    "noChanges": "No changes detected",
+    "changesList": "Changes List",
+    "original": "Original Data",
+    "new": "Changed Data",
+    "emptyValue": "(Empty)",
+    "confirmSubmit": "Confirm Submit"
+  },
+  "productTypes": {
+    "ELECTRONICS": "Electronics",
+    "ACCESSORIES": "Accessories",
+    "CONSUMABLES": "Consumables",
+    "DEVICES": "Devices",
+    "MATERIALS": "Materials",
+    "FOOD": "Food",
+    "CLOTHING": "Clothing",
+    "OTHER": "Other",
+    "NO_TYPE": "Uncategorized"
+  },
+  "table": {
+    "headers": {
+      "thumbnail": "Product Image",
+      "productName": "Product Name",
+      "productType": "Product Type",
+      "productStock": "Product Stock",
+      "productStatus": "Product Status",
+      "productCode": "Product ID",
+      "price": "Price",
+      "actions": "Actions"
+    }
+  },
+  "toast": {
+    "get": {
+      "error": "Product info retrieval failed"
+    },
+    "create": {
+      "success": "Product created successfully",
+      "error": "Product creation failed"
+    },
+    "update": {
+      "success": "Product updated successfully",
+      "error": "Product update failed"
+    },
+    "delete": {
+      "success": "Product deleted successfully",
+      "error": "Product deletion failed"
+    }
+  }
+}

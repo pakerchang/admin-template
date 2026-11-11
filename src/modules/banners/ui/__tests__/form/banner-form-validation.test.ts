@@ -22,7 +22,7 @@ vi.mock("react-i18next", () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
         "validation.url.invalid": "請輸入有效的網址",
-        "validation.url.https": "網址必須以 https:// 開頭",
+        "banners.validation.url.https": "網址必須以 https:// 開頭",
       };
       return translations[key] || key;
     },
@@ -58,7 +58,7 @@ describe("Banner Form Validation", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].message).toBe(
-          "pages.banner.bannerCreate.title為必填欄位"
+          "banners.bannerCreate.title為必填欄位"
         );
       }
     });
@@ -97,7 +97,7 @@ describe("Banner Form Validation", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].message).toBe(
-          "pages.banner.bannerCreate.redirectUrl為必填欄位"
+          "banners.bannerCreate.redirectUrl為必填欄位"
         );
       }
     });
@@ -168,7 +168,7 @@ describe("Banner Form Validation", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].message).toBe(
-          "pages.banner.bannerCreate.desktopImage為必填欄位"
+          "banners.bannerCreate.desktopImage為必填欄位"
         );
       }
     });
@@ -186,7 +186,7 @@ describe("Banner Form Validation", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues[0].message).toBe(
-          "pages.banner.bannerCreate.mobileImage為必填欄位"
+          "banners.bannerCreate.mobileImage為必填欄位"
         );
       }
     });

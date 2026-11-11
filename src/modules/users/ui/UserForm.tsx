@@ -82,44 +82,42 @@ const UserFormPage = () => {
         onSubmit={onSubmit}
       >
         <Paper className="flex w-full flex-col gap-4">
-          <h3 className="text-2xl font-bold">
-            {t("pages.users.userForm.title")}
-          </h3>
+          <h3 className="text-2xl font-bold">{t("users.userForm.title")}</h3>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <TextInput
-              label={t("pages.users.userForm.firstName")}
+              label={t("users.userForm.firstName")}
               error={form.formState.errors.first_name}
               {...form.register("first_name")}
             />
 
             <TextInput
-              label={t("pages.users.userForm.lastName")}
+              label={t("users.userForm.lastName")}
               error={form.formState.errors.last_name}
               {...form.register("last_name")}
             />
 
             <TextInput
-              label={t("pages.users.userForm.email")}
+              label={t("users.userForm.email")}
               error={form.formState.errors.email}
               type="email"
               {...form.register("email")}
             />
 
             <TextInput
-              label={t("pages.users.userForm.phoneNumber")}
+              label={t("users.userForm.phoneNumber")}
               error={form.formState.errors.phone_number}
               {...form.register("phone_number")}
             />
 
             <TextInput
-              label={t("pages.users.userForm.address")}
+              label={t("users.userForm.address")}
               error={form.formState.errors.address}
               {...form.register("address")}
             />
 
             <TextInput
-              label={t("pages.users.userForm.remark")}
+              label={t("users.userForm.remark")}
               error={form.formState.errors.remark}
               {...form.register("remark")}
             />

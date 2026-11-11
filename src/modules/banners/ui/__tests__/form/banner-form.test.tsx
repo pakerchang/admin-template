@@ -138,7 +138,7 @@ describe("BannerForm", () => {
   it("應該正確渲染表單標題", () => {
     render(<BannerForm />);
     expect(
-      screen.getByRole("heading", { name: "pages.banner.bannerCreate.title" })
+      screen.getByRole("heading", { name: "banners.bannerCreate.title" })
     ).toBeInTheDocument();
   });
 
@@ -156,20 +156,20 @@ describe("BannerForm", () => {
 
     // 檢查標題欄位
     expect(
-      screen.getByLabelText("pages.banner.bannerCreate.title")
+      screen.getByLabelText("banners.bannerCreate.title")
     ).toBeInTheDocument();
 
     // 檢查重定向 URL 欄位
     expect(
-      screen.getByLabelText("pages.banner.bannerCreate.redirectUrl")
+      screen.getByLabelText("banners.bannerCreate.redirectUrl")
     ).toBeInTheDocument();
 
     // 檢查圖片上傳區域
     expect(
-      screen.getByText("pages.banner.bannerCreate.desktopImage")
+      screen.getByText("banners.bannerCreate.desktopImage")
     ).toBeInTheDocument();
     expect(
-      screen.getByText("pages.banner.bannerCreate.mobileImage")
+      screen.getByText("banners.bannerCreate.mobileImage")
     ).toBeInTheDocument();
   });
 

@@ -19,10 +19,8 @@ declare module "@tanstack/react-router" {
   }
 }
 
-export type TNavItem = {
+type TNavBase = {
   id: string;
-  /** i18n key，必須以 `${moduleId}.` 開頭 */
-  label: string;
   /** 絕對路徑（跨 module 導航只經 nav 字串） */
   to: string;
   icon?: ComponentType<{ className?: string }>;
@@ -30,8 +28,24 @@ export type TNavItem = {
   permission: TPermission;
   /** 排序，預設 100 */
   order?: number;
-  children?: Omit<TNavItem, "icon" | "children">[];
 };
+type TNavNode<TLabel> = Omit<TNavBase, "icon"> & TLabel;
+type TNavTree<TLabel> = TNavBase & TLabel & { children?: TNavNode<TLabel>[] };
+
+/**
+ * module 宣告的 nav 項目。`label` 是 module 字典 `nav` 段的**局部 key**（例 `"title"`）；
+ * kernel 組 `${id}.nav.${label}`（i18n-scope-migration 補裁 2）。`defineModule` 會把 L 收窄成字典實際有的 key
+ */
+export type TNavItem<L extends string = string> = TNavTree<{ label: L }>;
+
+/** 沒有 nav 的 route 標題（只供 breadcrumb，不進 sidebar；補裁 4）。label 同 nav 局部 key */
+export type TRouteTitle<L extends string = string> = { to: string; label: L };
+
+/** registry 內部的 nav 項目：kernel 以組好的全域 key 取代局部 label（不外流到 shell） */
+export type TRegistryNavItem = TNavTree<{ labelKey: string }>;
+
+/** shell 拿到的 nav 項目：label 是已翻譯文字、不含任何 key 欄位（補裁 3） */
+export type TResolvedNavItem = TNavTree<{ label: string }>;
 
 /** F5：layout route 與 page route 用兩個 typed helper 區分 */
 type TGuard = { permission: TPermission | "authenticated" };
@@ -80,16 +94,42 @@ export type TModule = {
   routes?: (ctx: TRouteContext) => AnyRoute[];
   publicRoutes?: (ctx: TPublicRouteContext) => AnyRoute[];
   nav?: TNavItem[];
+  /** 沒有 nav 的 route 宣告 breadcrumb 標題（補裁 4） */
+  routeTitles?: readonly TRouteTitle[];
   /** 裸字典（不含 module id 頂層）；kernel 以 { [id]: dict } scope（§4.3、§5.4） */
-  i18n?: Record<TLocale, Record<string, unknown>>;
+  i18n?: TModuleI18n;
   /** R11：MSW handler */
   mockHandlers?: HttpHandler[];
   /** R21：權限目錄 resources + 角色預設 grant mockGrants */
   permissions?: TModulePermissions;
 };
 
-/** 純型別輔助 */
-export const defineModule = <const M extends TModule>(m: M): M => m;
+type TModuleI18n = Record<TLocale, Record<string, unknown>>;
+type TStringKeys<T> = {
+  [K in keyof T & string]: T[K] extends string ? K : never;
+}[keyof T & string];
+type TNavKeysOf<D> = D extends { nav: infer N } ? TStringKeys<N> : never;
+/** en 與 zh 字典 `nav` 段共同的 string leaf key；無 i18n / 無 nav 段 → never */
+export type TNavLocalKey<I> = I extends { en: infer E; zh: infer Z }
+  ? TNavKeysOf<E> & TNavKeysOf<Z>
+  : never;
+
+/**
+ * 純型別輔助：nav / routeTitles 的 label 收窄成 module 自己字典 `nav` 段的局部 key（AC-4 (2)）。
+ * i18n（I）與 label（L）拆成獨立型別參數：module 的 `routes: (ctx) => …` 是 context-sensitive 函式，
+ * 只靠 M 推導時 TS 會先固定 M、label 推導退化成 never（實測）
+ */
+export const defineModule = <
+  const M extends TModule,
+  const I extends TModuleI18n = never,
+  const L extends TNavLocalKey<I> = never,
+>(
+  m: M & {
+    i18n?: I;
+    nav?: TNavItem<L>[];
+    routeTitles?: readonly TRouteTitle<L>[];
+  }
+): M => m;
 
 /** 型別住 shared，讓 shells 不必 import app（§4.2） */
 export type TShell = {

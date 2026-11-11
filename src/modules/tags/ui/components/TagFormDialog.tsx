@@ -97,13 +97,13 @@ const TagFormDialog = ({
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader className="mb-6">
           <DialogTitle>
-            {isEditing ? t("pages.tag.editTag") : t("pages.tag.addTag")}
+            {isEditing ? t("tags.editTag") : t("tags.addTag")}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <TextInput
-            label={t("pages.tag.tagName")}
-            placeholder={t("pages.tag.tagNamePlaceholder")}
+            label={t("tags.tagName")}
+            placeholder={t("tags.tagNamePlaceholder")}
             {...register("tag_name")}
             error={errors.tag_name}
           />

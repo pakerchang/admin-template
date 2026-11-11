@@ -11,6 +11,7 @@ import {
 
 import type { TProduct } from "../../model/schema";
 import type { Column } from "@tanstack/react-table";
+import type { TFunction } from "i18next";
 
 type StatusCounts = {
   total: number;
@@ -25,14 +26,14 @@ const ALL_STATUS_VALUE = "all" as const;
 
 type FilterValue = EActiveStatus | typeof ALL_STATUS_VALUE;
 
-const createStatusOptions = (t: (key: string) => string) => [
+const createStatusOptions = (t: TFunction) => [
   {
     value: ALL_STATUS_VALUE,
-    label: t("pages.product.filter.allStatus"),
+    label: t("product.filter.allStatus"),
   },
   ...activeStatusEnums.options.map((status) => ({
     value: status,
-    label: t(`pages.product.status.${status}`),
+    label: t(`product.status.${status}`),
   })),
 ];
 
@@ -61,9 +62,9 @@ const StatusColumnFilter = ({
 
   const getDisplayValue = (): string => {
     if (!filterValue) {
-      return t("pages.product.filter.allStatus");
+      return t("product.filter.allStatus");
     }
-    return t(`pages.product.status.${filterValue}`);
+    return t(`product.status.${filterValue}`);
   };
 
   const currentValue: FilterValue = filterValue ?? ALL_STATUS_VALUE;
@@ -82,7 +83,7 @@ const StatusColumnFilter = ({
           <SelectValue>
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium">
-                {t("table.headers.product.productStatus")}:
+                {t("product.table.headers.productStatus")}:
               </span>
               <span className="text-xs text-muted-foreground">
                 {getDisplayValue()}

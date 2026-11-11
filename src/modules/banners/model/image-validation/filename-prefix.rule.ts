@@ -21,7 +21,7 @@ export const desktopFilenamePrefixRule: ImageValidationRule = {
 
     if (!fileName.startsWith("d_")) {
       const message = t
-        ? t("validation.image.prefix.desktop", {})
+        ? t("banners.validation.image.prefix.desktop", {})
         : "桌面版圖片檔名請以 d_ 開頭";
 
       return {
@@ -51,7 +51,7 @@ export const mobileFilenamePrefixRule: ImageValidationRule = {
 
     if (!fileName.startsWith("m_")) {
       const message = t
-        ? t("validation.image.prefix.mobile", {})
+        ? t("banners.validation.image.prefix.mobile", {})
         : "手機版圖片檔名請以 m_ 開頭";
 
       return {

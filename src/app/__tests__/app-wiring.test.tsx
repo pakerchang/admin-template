@@ -81,16 +81,16 @@ describe("module wiring (M3)", () => {
   it("sidebar items and order are unchanged", () => {
     const { registry } = makeApp().build();
     expect(
-      registry.nav.map((n) => [n.label, n.to, n.children?.map((c) => c.to)])
+      registry.nav.map((n) => [n.labelKey, n.to, n.children?.map((c) => c.to)])
     ).toEqual([
-      ["dashboard.menu.customers.title", "/customers", undefined],
-      ["dashboard.menu.teamMembers.title", "/team-members", undefined],
-      ["dashboard.menu.suppliers.title", "/suppliers", undefined],
-      ["dashboard.menu.tags.title", "/tags", undefined],
-      ["dashboard.menu.products.title", "/products", undefined],
-      ["dashboard.menu.orders.title", "/orders", ["/orders/order-list"]],
-      ["dashboard.menu.banners.title", "/banners", undefined],
-      ["dashboard.menu.articles.title", "/articles", undefined],
+      ["consumers.nav.title", "/customers", undefined],
+      ["team-members.nav.title", "/team-members", undefined],
+      ["suppliers.nav.title", "/suppliers", undefined],
+      ["tags.nav.title", "/tags", undefined],
+      ["product.nav.title", "/products", undefined],
+      ["orders.nav.title", "/orders", ["/orders/order-list"]],
+      ["banners.nav.title", "/banners", undefined],
+      ["articles.nav.title", "/articles", undefined],
     ]);
   });
 
