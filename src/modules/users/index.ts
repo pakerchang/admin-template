@@ -11,7 +11,7 @@ import UserFormPage from "./ui/UserForm";
 import UserListPage from "./ui/UserList";
 
 const usersPermissions = definePermissions({
-  users: z.enum(["read", "update", "update-role"]),
+  users: z.enum(["read", "create", "update", "update-role"]),
 });
 
 declare module "@/shared/permission" {
@@ -32,7 +32,12 @@ export default defineModule({
   id: "users",
   kind: "generic",
   mockHandlers: usersMockHandlers,
-  routes: (ctx) => usersRoutes(ctx, { list: UserListPage, edit: UserFormPage }),
+  routes: (ctx) =>
+    usersRoutes(ctx, {
+      list: UserListPage,
+      create: UserFormPage,
+      edit: UserFormPage,
+    }),
   i18n: { en, zh },
   // sidebar 沒有 users 項目（不宣告 nav）；breadcrumb 標題經 routeTitles（i18n-scope-migration 補裁 4）
   routeTitles: [{ to: "/users", label: "title" }],

@@ -67,10 +67,11 @@ describe("operations.gen.ts permission values are typed (T1 AC-3)", () => {
     expectTypeOf(operations).toExtend<TOperationTable>();
     // users 是 generic module（core-only 仍在），故用 users 而非 domain 權限
     const ok: TOperationPermission = "users:read";
+    const create: TOperationPermission = "users:create";
     // @ts-expect-error resource:action not in the registry
     const typo: TOperationPermission = "users:raed";
     // @ts-expect-error resource not in the registry
     const resource: TOperationPermission = "user:read";
-    expect([ok, typo, resource]).toHaveLength(3);
+    expect([ok, create, typo, resource]).toHaveLength(4);
   });
 });

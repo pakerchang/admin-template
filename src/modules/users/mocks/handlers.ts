@@ -12,8 +12,11 @@ import {
   ok,
 } from "@/shared/api/mock-db";
 
+import { userSchema } from "../model/schema";
+
 import { users } from "./seed";
 import {
+  getCreateUserMockHandler,
   getGetMyProfileMockHandler,
   getGetUserMockHandler,
   getListUsersMockHandler,
@@ -23,6 +26,7 @@ import {
 } from "./users.msw";
 
 import type { User } from "../api/model";
+import type { TRecord } from "@/shared/api/mock-db";
 import type { HttpHandler } from "msw";
 
 const collection = createCollection(users, "user_id");
@@ -54,6 +58,29 @@ const PROFILE_FIELDS = [
 /** 管理者編輯他人可改的欄位（role 走 updateUserRole；user_id 取自 path） */
 const USER_FIELDS = ["email", ...PROFILE_FIELDS] as const;
 
+/** 新增與表單共用同一份規則（OD-UC-3 = A） */
+const createSchema = userSchema.omit({
+  user_id: true,
+  role: true,
+  created_at: true,
+  updated_at: true,
+});
+
+/** 不合法 body → 400；email 重複（不分大小寫，OD-UC-4 = A）→ 409；否則 fall through（K1：排在 orval handler 前） */
+const rejectInvalidCreate = async ({ request }: { request: Request }) => {
+  const parsed = createSchema.safeParse(await bodyOf(request));
+  if (!parsed.success) return errorResponse(400, "Invalid body");
+  const email = parsed.data.email.toLowerCase();
+  return collection
+    .all()
+    .some((user) => String(user.email).toLowerCase() === email)
+    ? errorResponse(409, "Email already exists")
+    : undefined;
+};
+
+// 同毫秒連建也不重複（collection.create 的 Date.now() id 會撞）
+let createSeq = 0;
+
 /** path id 不存在 → 404（K1：排在 orval handler 前） */
 const notFoundById = ({ params }: { params: Record<string, unknown> }) =>
   byId(String(params.id)) ? undefined : errorResponse(404, "Not found");
@@ -72,9 +99,23 @@ export const usersMockHandlers: HttpHandler[] = [
       ? undefined
       : errorResponse(404, "Not found")
   ),
+  http.post("*/users", rejectInvalidCreate),
   http.get("*/users/:id", notFoundById),
   http.put("*/users/:id", notFoundById),
   getListUsersMockHandler(collection.list),
+  // 只取白名單欄位；role 一律 user（OD-UC-2 = A），user_id / 時間戳由 mock 產生
+  getCreateUserMockHandler(async ({ request }) => {
+    const body = await bodyOf(request);
+    const user: TRecord = {
+      user_id: `user-${Date.now()}-${++createSeq}`,
+      role: "user",
+      created_at: now(),
+      updated_at: now(),
+    };
+    for (const key of USER_FIELDS) user[key] = body[key];
+    collection.all().unshift(user);
+    return ok(user);
+  }),
   getGetUserMockHandler(({ params }) => ok(byId(String(params.id))!)),
   getUpdateUserMockHandler(async ({ params, request }) => {
     const user = byId(String(params.id))!;
