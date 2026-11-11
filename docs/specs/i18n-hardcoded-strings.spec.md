@@ -23,7 +23,7 @@
 
 ### 1.2 逐處清單（不含 seed）
 
-欄位說明：**處理**＝`key`（新增 key）、`reuse`（改用既有 key）、`刪 fallback`（OD-HZ-1 A：刪掉沒傳 `t` 時的中文 fallback 分支，該分支在 app 內不會被執行）、`英文字面值`（不顯示在 UI 的開發者訊息）、`保留`（白名單）。**位置**依 OD-I18N-3 A 判定。**建議 key** 為 I1 落地後的名稱，與同 module 既有 key 的路徑形狀對齊（例：`toast.article.get.listError` 經 I1 → `articles.toast.get.listError`）；I1 實際落地的同類 key 形狀不同時，以 I1 為準調整。**en 來源**：`既有:<key>` 表示沿用該 key 的現有 en 值；`new` 表示本 spec 起草的新譯文。依 OD-HZ-4 A，en 以本表為準；`new` 的 22 個譯文為**最終版**（main 代裁 2026-11-11，owner 可於 PR #29 覆核）；之後改字依 OD-HZ-4 的改字規則，必須在同一個 PR 同步修改本表與相關 AC。
+欄位說明：**處理**＝`key`（新增 key）、`reuse`（改用既有 key）、`刪 fallback`（OD-HZ-1 A：刪掉沒傳 `t` 時的中文 fallback 分支，該分支在 app 內不會被執行）、`英文字面值`（不顯示在 UI 的開發者訊息）、`保留`（白名單）。**位置**依 OD-I18N-3 A 判定。**建議 key** 為 I1 落地後的名稱，與同 module 既有 key 的路徑形狀對齊（例：`toast.article.get.listError` 經 I1 → `articles.toast.get.listError`）；I1 實際落地的同類 key 形狀不同時，以 I1 為準調整。**en 來源**：`既有:<key>` 表示沿用該 key 的現有 en 值；`new` 表示本 spec 起草的新譯文。依 OD-HZ-4 A，en 以本表為準；`new` 的 24 個譯文為**最終版**（T3 PR #39 對齊 `userRoleEnum` 後由 22 改為 24）（main 代裁 2026-11-11，owner 可於 PR #29 覆核）；之後改字依 OD-HZ-4 的改字規則，必須在同一個 PR 同步修改本表與相關 AC。
 
 | 檔:行 | 字串 | 處理 | 位置 | 建議 key | en（來源） |
 |---|---|---|---|---|---|
@@ -75,7 +75,7 @@
 | 保留（白名單） | 1 處 | `app-sidebar.tsx:62` |
 | 合計 | 56 處（其中 manager.ts:142 一處計入「新增 key」） | |
 
-26 個新 key 中 en 譯文：沿用既有 en 值 4 個（`users.roles.agent` / `cservice` / `admin` / `superadmin`），新撰 22 個（最終版，main 代裁 2026-11-11，owner 可於 PR #29 覆核；見 OD-HZ-4）。
+26 個新 key 中 en 譯文：沿用既有 en 值 2 個（`users.roles.admin` / `superadmin`，沿用 `team-members.roles.*`），新撰 24 個（T3 PR #39 對齊 `userRoleEnum` 後，`agent` / `cservice` 改為 `partner` / `support` 並改為新撰；以 master `hardcoded-zh-keymap.json` 的 `enSource` 計數核對）（最終版，main 代裁 2026-11-11，owner 可於 PR #29 覆核；見 OD-HZ-4）。
 
 ### 1.4 現況機制（影響設計的事實）
 
