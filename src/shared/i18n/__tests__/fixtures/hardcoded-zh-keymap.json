@@ -117,9 +117,9 @@
     ]
   },
   {
-    "key": "users.roles.new",
-    "zh": "新使用者",
-    "en": "New User",
+    "key": "users.roles.guest",
+    "zh": "訪客",
+    "en": "Guest",
     "enSource": "new",
     "sites": [
       "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:48"
@@ -135,28 +135,28 @@
     ]
   },
   {
-    "key": "users.roles.vip",
-    "zh": "VIP會員",
-    "en": "VIP Member",
+    "key": "users.roles.premium",
+    "zh": "進階會員",
+    "en": "Premium Member",
     "enSource": "new",
     "sites": [
       "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:58"
     ]
   },
   {
-    "key": "users.roles.agent",
-    "zh": "代理商",
-    "en": "Agent",
-    "enSource": "existing:consumers.order.agent",
+    "key": "users.roles.partner",
+    "zh": "合作夥伴",
+    "en": "Partner",
+    "enSource": "new",
     "sites": [
       "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:63"
     ]
   },
   {
-    "key": "users.roles.cservice",
+    "key": "users.roles.support",
     "zh": "客服",
-    "en": "Customer Service",
-    "enSource": "existing:team-members.roles.cservice",
+    "en": "Customer Support",
+    "enSource": "new",
     "sites": [
       "src/modules/users/ui/components/EditUserRoleDialogContent.tsx:68"
     ]

@@ -40,11 +40,11 @@
     "description": "請選擇新的使用者角色"
   },
   "roles": {
-    "new": "新使用者",
+    "guest": "訪客",
     "user": "一般使用者",
-    "vip": "VIP會員",
-    "agent": "代理商",
-    "cservice": "客服",
+    "premium": "進階會員",
+    "partner": "合作夥伴",
+    "support": "客服",
     "admin": "管理員",
     "superadmin": "超級管理員"
   }

@@ -1,5 +1,6 @@
 import { iso, lang, placeholderImage } from "@/shared/api/mock-db";
 
+import type { Product } from "../api/model";
 import type { TProduct } from "../model/schema";
 
 const productTypes: NonNullable<TProduct["product_type"]>[] = [
@@ -17,7 +18,7 @@ const productTypes: NonNullable<TProduct["product_type"]>[] = [
 const SUPPLIER_COUNT = 5;
 const TAG_COUNT = 8;
 
-export const products: TProduct[] = [
+export const products = [
   ["Oolong Tea", "烏龍茶"],
   ["Green Tea", "綠茶"],
   ["Black Tea", "紅茶"],
@@ -57,4 +58,4 @@ export const products: TProduct[] = [
   },
   created_at: iso(120 - i * 5),
   updated_at: iso(10 - (i % 10)),
-}));
+})) satisfies Product[];

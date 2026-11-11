@@ -2,7 +2,8 @@ import { iso, placeholderImage } from "@/shared/api/mock-db";
 
 import { EOrderStatus } from "../model/schema";
 
-import type { TOrder, TOrderItem } from "../model/schema";
+import type { Order } from "../api/model";
+import type { TOrderItem } from "../model/schema";
 
 /**
  * R5：訂單自帶商品快照與買家聯絡資料（值與 product / users seed 一致，不讀它們的 collection）。
@@ -41,7 +42,7 @@ const orderItem = (p: number, order_id: string): TOrderItem => ({
 
 const orderStatuses = Object.values(EOrderStatus);
 
-export const orders: TOrder[] = Array.from({ length: 10 }, (_, i) => {
+export const orders = Array.from({ length: 10 }, (_, i) => {
   const order_id = `order-${1001 + i}`;
   const items = [i % 10, (i + 3) % 10];
   const total = items.reduce((sum, p) => sum + 150 + p * 50, 0);
@@ -65,4 +66,4 @@ export const orders: TOrder[] = Array.from({ length: 10 }, (_, i) => {
     created_at: iso(30 - i * 2),
     updated_at: iso(10 - i),
   };
-});
+}) satisfies Order[];

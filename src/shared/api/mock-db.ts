@@ -23,10 +23,13 @@ export const now = () => new Date().toISOString();
 export const queryOf = (request: Request): TQuery =>
   Object.fromEntries(new URL(request.url).searchParams);
 
-/** request 的 JSON body（clone，不消耗原 request，後面的 handler 仍可讀） */
-export const bodyOf = async (request: Request): Promise<TRecord> => {
+/**
+ * request 的 JSON body（clone，不消耗原 request，後面的 handler 仍可讀）。
+ * `T` 只是宣告形狀（通常是 orval 產物的 body 型別），不做執行期驗證（T3 OD-T3-5 A：mock 不驗 body）
+ */
+export const bodyOf = async <T = TRecord>(request: Request): Promise<T> => {
   const text = await request.clone().text();
-  return text ? JSON.parse(text) : {};
+  return text ? JSON.parse(text) : ({} as T);
 };
 
 export const errorResponse = (status: number, error: string) =>
@@ -80,19 +83,20 @@ type TInfo = { request: Request };
  * 一個資源的記憶體 collection：`all()` 讀目前資料；其餘方法直接當 orval mock handler 的 override（收 `{ request }`）。
  * ponytail: 純記憶體 mock，重新整理頁面即回到 seed；需要持久化再改存 localStorage
  */
-export const createCollection = (
-  seed: readonly object[],
-  idKey: string,
-  { searchField }: { searchField?: string } = {}
+export const createCollection = <T extends object>(
+  seed: readonly T[],
+  idKey: keyof T & string,
+  { searchField }: { searchField?: keyof T & string } = {}
 ) => {
-  let items = structuredClone(seed) as TRecord[];
+  let items = structuredClone(seed) as T[];
+  const idOf = (item: T | TRecord) => (item as TRecord)[idKey];
 
   return {
-    all: () => items,
-    list: <T>({ request }: TInfo) =>
-      listResponse<T>(items, queryOf(request), searchField),
-    /** `patch` 覆寫寫入的欄位（例：密碼不存進 mock 狀態） */
-    create: async <T>({ request }: TInfo, patch: TRecord = {}) => {
+    all: (): T[] => items,
+    list: <R>({ request }: TInfo) =>
+      listResponse<R>(items as TRecord[], queryOf(request), searchField),
+    /** `patch` 覆寫寫入的欄位（例：密碼不存進 mock 狀態）；body 不驗證形狀（OD-T3-5 A） */
+    create: async <R>({ request }: TInfo, patch: TRecord = {}) => {
       const body = { ...(await bodyOf(request)), ...patch };
       const id = `${idKey.replace(/_id$/, "")}-${Date.now()}`;
       items.unshift({
@@ -100,25 +104,25 @@ export const createCollection = (
         [idKey]: id,
         created_at: now(),
         updated_at: now(),
-      });
-      return message<T>("created");
+      } as T);
+      return message<R>("created");
     },
     /** 呼叫前由 `notFound` 擋掉不存在的 id */
-    update: async <T>({ request }: TInfo) => {
+    update: async <R>({ request }: TInfo) => {
       const body = await bodyOf(request);
-      const index = items.findIndex((item) => item[idKey] === body[idKey]);
+      const index = items.findIndex((item) => idOf(item) === body[idKey]);
       items[index] = { ...items[index], ...body, updated_at: now() };
-      return message<T>("updated");
+      return message<R>("updated");
     },
-    remove: async <T>({ request }: TInfo) => {
+    remove: async <R>({ request }: TInfo) => {
       const body = await bodyOf(request);
-      items = items.filter((item) => item[idKey] !== body[idKey]);
-      return message<T>("deleted");
+      items = items.filter((item) => idOf(item) !== body[idKey]);
+      return message<R>("deleted");
     },
     /** 手寫 resolver（排在 orval update handler 前）：body 的 id 不存在 → 404，存在 → fall through */
     notFound: async ({ request }: TInfo) => {
       const body = await bodyOf(request);
-      return items.some((item) => item[idKey] === body[idKey])
+      return items.some((item) => idOf(item) === body[idKey])
         ? undefined
         : errorResponse(404, "Not found");
     },

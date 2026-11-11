@@ -12,7 +12,6 @@ import type {
   TCustomerQuery,
   TTransactionHistoryQuery,
   TCustomer,
-  TTransactionHistoryResponse,
 } from "./schema";
 import type { TGetResponseContent } from "@/shared/api/types";
 
@@ -98,9 +97,9 @@ export const useGetTransactionHistory = (
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = (await listTransactionHistory(
+      const response = await listTransactionHistory(
         queryParams ?? { user_id: "", page: 1, limit: 5 }
-      ).catch(nullOnApiError)) as TTransactionHistoryResponse | null;
+      ).catch(nullOnApiError);
 
       if (!response) {
         toast({

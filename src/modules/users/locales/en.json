@@ -40,11 +40,11 @@
     "description": "Select a new role for the user"
   },
   "roles": {
-    "new": "New User",
+    "guest": "Guest",
     "user": "User",
-    "vip": "VIP Member",
-    "agent": "Agent",
-    "cservice": "Customer Service",
+    "premium": "Premium Member",
+    "partner": "Partner",
+    "support": "Customer Support",
     "admin": "Admin",
     "superadmin": "Super Admin"
   }

@@ -43,11 +43,11 @@
 | `product/ui/ProductDraftForm.tsx:77` | `${product_name}（複製）` | key | product | `product.productDraft.copyName`（zh `{{name}}（複製）`） | `{{name}} (Copy)`（new） |
 | `users/ui/components/EditUserRoleDialogContent.tsx:37` | 編輯使用者角色 | key | users | `users.editRole.title` | Edit User Role（new） |
 | `EditUserRoleDialogContent.tsx:38` | 請選擇新的使用者角色 | key | users | `users.editRole.description` | Select a new role for the user（new） |
-| `EditUserRoleDialogContent.tsx:48` | 新使用者 | key | users | `users.roles.new` | New User（new） |
+| `EditUserRoleDialogContent.tsx:48` | 新使用者（T3 對齊 `userRoleEnum` 後 zh 改為「訪客」） | key | users | `users.roles.guest` | Guest（new，T3 OD-T3-4） |
 | `EditUserRoleDialogContent.tsx:53` | 一般使用者 | key | users | `users.roles.user` | User（new） |
-| `EditUserRoleDialogContent.tsx:58` | VIP會員 | key | users | `users.roles.vip` | VIP Member（new） |
-| `EditUserRoleDialogContent.tsx:63` | 代理商 | key | users | `users.roles.agent` | Agent（既有:`order.agent`） |
-| `EditUserRoleDialogContent.tsx:68` | 客服 | key | users | `users.roles.cservice` | Customer Service（既有:`staff.roles.cservice`） |
+| `EditUserRoleDialogContent.tsx:58` | VIP會員（T3 對齊 `userRoleEnum` 後 zh 改為「進階會員」） | key | users | `users.roles.premium` | Premium Member（new，T3 OD-T3-4） |
+| `EditUserRoleDialogContent.tsx:63` | 代理商（T3 對齊 `userRoleEnum` 後 zh 改為「合作夥伴」） | key | users | `users.roles.partner` | Partner（new，T3 OD-T3-4） |
+| `EditUserRoleDialogContent.tsx:68` | 客服 | key | users | `users.roles.support` | Customer Support（new，T3 OD-T3-4） |
 | `EditUserRoleDialogContent.tsx:73` | 管理員 | key | users | `users.roles.admin` | Admin（既有:`staff.roles.admin`） |
 | `EditUserRoleDialogContent.tsx:78` | 超級管理員 | key | users | `users.roles.superadmin` | Super Admin（既有:`staff.roles.superadmin`） |
 | `banners/model/image-validation/file-type.rule.ts:29`、`:44` | Banner 圖片請使用 … 格式… | 刪 fallback | — | — | — |
@@ -126,7 +126,7 @@ H1 步驟：
 - [ ] AC-2 [cmd] 字典值對照：新增 fixture `src/shared/i18n/__tests__/fixtures/hardcoded-zh-keymap.json`，每列 `{ key, zh, en, enSource, sites }`（`enSource` 為 `"new"` 或 `"existing:<key>"`，`sites` 為 `檔:行` 陣列），內容等於 AC-0 重盤後的 §1.2「新增 key」列；新增測試 `src/shared/i18n/__tests__/hardcoded-zh-keymap.test.ts`，以 `makeApp().build().registry.i18n`（`src/app/__tests__/fixture.tsx`，與 I1 `scope-migration.test.ts` 同一取法）斷言每列 `zh[key] === zh`、`en[key] === en`、`en !== zh`，且 `enSource: "existing:<k>"` 的列 `en` 等於該既有 key 目前的 en 值；同一支測試也做 AC-0 (4) 的 `sites` ↔ `hardcoded-zh-inventory.json` 雙向比對。此測試讀 module 字典，列入 `scripts/verify-core-only.sh` 的 `FULL_INSTALL_TESTS`。`pnpm exec vitest run src/shared/i18n/__tests__/hardcoded-zh-keymap.test.ts` exit 0。
 - [ ] AC-3 [cmd] 歸屬：I1 的 `src/shared/i18n/__tests__/key-ownership.test.ts` 不改判準、不加白名單即通過（新 key 的位置符合 OD-I18N-3 A）。`pnpm exec vitest run src/shared/i18n/__tests__/key-ownership.test.ts` exit 0。
 - [ ] AC-4 [cmd] 圖片驗證（OD-HZ-1 A）：`validateImage(file, options)` 的 `options` 與 `options.t` 為必填（`schemas.ts` 的 `t` 去掉 `.optional()`）；`src/shared/lib/image-validation/**`、`src/modules/banners/model/image-validation/**` 不再有 `t ?` 三元 fallback；§1.4 列的 3 個測試改為傳入 `t`（`i18n-integration.test.ts` 的 fallback 案例改成斷言 `manager.ts` 規則失敗時回傳 `t("validation.image.ruleFailed", …)` 的結果）；另加一個型別案例斷言不傳 `t` 時 `tsc` 報錯（`// @ts-expect-error` 寫成一行放得下的形狀，見 `docs/TRAPS.md`「`@ts-expect-error` 被 prettier 換行後失效」）。`pnpm exec vitest run src/shared/lib/image-validation src/modules/banners/model/image-validation && pnpm exec tsc -b tsconfig.app.json` exit 0。
-- [ ] AC-5 [cmd] en 畫面行為：新增 `src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx`，切到 en 後渲染 `EditUserRoleDialogContent`，斷言標題 `Edit User Role` 與 7 個角色 label 都是 en 字典的值、容器文字不含中文；新增 `src/modules/team-members/model/__tests__/use-staff-i18n.test.tsx`，en 下以 MSW 讓建立員工回非 2xx，斷言 toast description 為 `Staff creation failed`（覆蓋 throw → `error.message` 路徑）。兩個測試在 zh 下各加一個案例，斷言文字與 §1.2 的 zh 原文逐字相同。`pnpm exec vitest run src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx src/modules/team-members/model/__tests__/use-staff-i18n.test.tsx` exit 0。
+- [ ] AC-5 [cmd] en 畫面行為：新增 `src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx`，切到 en 後渲染 `EditUserRoleDialogContent`，斷言標題 `Edit User Role` 與 7 個角色 label 都是 en 字典的值、容器文字不含中文；新增 `src/modules/team-members/model/__tests__/use-staff-i18n.test.tsx`，en 下以 MSW 讓建立員工回非 2xx，斷言 toast description 為 `Staff creation failed`（覆蓋 throw → `error.message` 路徑）。兩個測試在 zh 下各加一個案例，斷言文字與 §1.2 的 zh 原文逐字相同（users 角色 `guest` / `premium` / `partner` / `support` 四項依 typed-contracts-t3 OD-T3-4 對齊後，以 §1.2 對應列括號內的 T3 zh 值為準：訪客、進階會員、合作夥伴、客服）。`pnpm exec vitest run src/modules/users/ui/components/__tests__/edit-user-role-dialog.test.tsx src/modules/team-members/model/__tests__/use-staff-i18n.test.tsx` exit 0。
 - [ ] AC-6 [cmd] follow-up 收尾：`docs/specs/refactor/README.md` 的硬寫中文 follow-up 列引用本 spec。`grep -n 'i18n-hardcoded-strings' docs/specs/refactor/README.md` 有輸出。
 - [ ] AC-7 [cmd] 基線：見 Done Command。
 

@@ -12,7 +12,21 @@ import {
 import { Label } from "@/shared/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
 
+import { userRoleEnum } from "../../model/schema";
+
 import type { TUserRole } from "../../model/schema";
+import type { TLeafKey } from "@/shared/i18n/types";
+
+/** T3 OD-T3-4 A：角色清單取自 userRoleEnum，少任何一個角色 tsc 即報錯 */
+const ROLE_LABELS: Record<TUserRole, TLeafKey> = {
+  guest: "users.roles.guest",
+  user: "users.roles.user",
+  premium: "users.roles.premium",
+  partner: "users.roles.partner",
+  support: "users.roles.support",
+  admin: "users.roles.admin",
+  superadmin: "users.roles.superadmin",
+};
 
 interface EditUserRoleDialogContentProps {
   defaultRole: TUserRole;
@@ -40,43 +54,21 @@ const EditUserRoleDialogContent = ({
       <form onSubmit={handleSubmit}>
         <div className="flex flex-1 flex-col">
           <RadioGroup
-            onValueChange={(value) => setUserRole(value as TUserRole)}
+            onValueChange={(value) => {
+              const parsed = userRoleEnum.safeParse(value);
+              if (parsed.success) setUserRole(parsed.data);
+            }}
             defaultValue={defaultRole}
           >
-            <div className="flex items-center gap-x-2 rounded-sm border p-2">
-              <RadioGroupItem id="new" value="new" />
-              <Label htmlFor="new">{t("users.roles.new")}</Label>
-            </div>
-
-            <div className="flex items-center gap-x-2 rounded-sm border p-2">
-              <RadioGroupItem id="user" value="user" />
-              <Label htmlFor="user">{t("users.roles.user")}</Label>
-            </div>
-
-            <div className="flex items-center gap-x-2 rounded-sm border p-2">
-              <RadioGroupItem id="vip" value="vip" />
-              <Label htmlFor="vip">{t("users.roles.vip")}</Label>
-            </div>
-
-            <div className="flex items-center gap-x-2 rounded-sm border p-2">
-              <RadioGroupItem id="agent" value="agent" />
-              <Label htmlFor="agent">{t("users.roles.agent")}</Label>
-            </div>
-
-            <div className="flex items-center gap-x-2 rounded-sm border p-2">
-              <RadioGroupItem id="cservice" value="cservice" />
-              <Label htmlFor="cservice">{t("users.roles.cservice")}</Label>
-            </div>
-
-            <div className="flex items-center gap-x-2 rounded-sm border p-2">
-              <RadioGroupItem id="admin" value="admin" />
-              <Label htmlFor="admin">{t("users.roles.admin")}</Label>
-            </div>
-
-            <div className="flex items-center gap-x-2 rounded-sm border p-2">
-              <RadioGroupItem id="superadmin" value="superadmin" />
-              <Label htmlFor="superadmin">{t("users.roles.superadmin")}</Label>
-            </div>
+            {userRoleEnum.options.map((role) => (
+              <div
+                key={role}
+                className="flex items-center gap-x-2 rounded-sm border p-2"
+              >
+                <RadioGroupItem id={role} value={role} />
+                <Label htmlFor={role}>{t(ROLE_LABELS[role])}</Label>
+              </div>
+            ))}
           </RadioGroup>
         </div>
         <DialogFooter className="mt-4">
