@@ -61,12 +61,15 @@ spec 只定義「搬遷既有程式碼」的落點，沒有針對過渡期「新
    - 用 `defineRoutes<TPages>((ctx, pages) => …)`；頁面元件從參數 `pages` 拿。
    - 有畫面的 route 一律 `ctx.page({ …, routeId, component, permission })`；只做路徑分組的用 `ctx.layout({ …, permission })`，**不得**帶 `component` / `routeId`（§4.1、§4.3 驗證 1.8）。
    - route id 格式 `${moduleId}.${name}`（例 `orders.list`），前綴必須是本 module `id`（§0.6 R23、§4.3 驗證 1.7），並以 declaration merging 加進 `TRouteIdRegistry`（§4.4 範例）。
+   - factory 的 ctx 參數寫具體 id：`ctx: TRouteContext<"orders">`（public route 用 `TPublicRouteContext<"auth">`），`ctx.page` 的 `routeId` 只接受本 module 的 route id（typed-contracts T2，OD-T2-2 B）。
+   - 同一個 `declare module "@/shared/module"` 區塊再 augment `TRoutePathRegistry`，登錄本 module 建立的**靜態**完整路徑（無 `$param`、無結尾斜線；例 `"/orders": true; "/orders/order-list": true`）。nav／`routeTitles` 的 `to` 只能用已登錄路徑；`build()` 另驗它是實際 route 路徑（T2 §2.3）。
    - 每個 route 都要有 `permission`，不需權限時顯式寫 `"authenticated"`（§6.2）。
    - 禁直接呼叫 `createRoute`（§6.2、§7.2 lint）。
    - module 內導航用 route 物件（`xxxRoutes.get().details`），跨 module 導航只用 nav 字串（§4.6）。
 
 5. **index.ts：defineModule + route composition**（§3.2、§4.1、§4.4）
    - `export default defineModule({ id, kind, requires?, routes, publicRoutes?, nav?, i18n?, mockHandlers?, permissions? })`。
+   - 在 `index.ts` augment module id：`declare module "@/shared/module" { interface TModuleIdRegistry { <id>: true } }`（與 `TPermissionRegistry` augment 放一起）。沒登錄 → `id` 在 `tsc` 失敗；`requires` 只能填其他已登錄 id，填自己也會失敗（typed-contracts T2）。測試檔不得 augment 這兩個 registry（見 `docs/TRAPS.md`）。
    - `routes: (ctx) => xxxRoutes.build(ctx, { list: ListPage, … })`——ui 頁面只在這裡注入。
    - 具名 export 只放 headless 公開 API（hooks、型別由 `model` 轉出，不直接轉出 `api` 產物，§0.4 R18）。
    - `requires`：列出所有會 import 的其他 module id（§0.3 R8）；缺依賴或成環 → `build()` fail fast（§4.3 驗證 1.2）。

@@ -28,6 +28,12 @@ declare module "@/shared/i18n/types" {
   }
 }
 
+declare module "@/shared/module" {
+  interface TModuleIdRegistry {
+    suppliers: true;
+  }
+}
+
 export default defineModule({
   id: "suppliers",
   kind: "domain",

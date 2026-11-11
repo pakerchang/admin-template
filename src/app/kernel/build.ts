@@ -88,7 +88,7 @@ const assertUniqueIds = (modules: readonly TModule[]) => {
 };
 
 const assertRequires = (modules: readonly TModule[]) => {
-  const byId = new Map(modules.map((m) => [m.id, m]));
+  const byId = new Map<string, TModule>(modules.map((m) => [m.id, m]));
   for (const m of modules)
     for (const dep of m.requires ?? [])
       if (!byId.has(dep))
@@ -185,6 +185,45 @@ const assertOperations = (
 
 const navKey = (moduleId: string, label: string) => `${moduleId}.nav.${label}`;
 
+/** 帶標題的 `to`：nav（含 children）與 routeTitles（標題解析與路徑檢查共用同一個走訪） */
+const titledEntries = (m: TModule) => [
+  ...(m.nav ?? []).flatMap((n) => [n, ...(n.children ?? [])]),
+  ...(m.routeTitles ?? []),
+];
+
+/**
+ * typed-contracts T2 §2.3：route tree 的實際完整路徑。依 children 鏈串接 `options.path`，
+ * pathless（只有 id）的 route 不貢獻路徑段，結尾 `/` 正規化去掉（layout "x" + 子 route "/" → "/x"）；根為 "/"。
+ * 不用 `route.fullPath`：要等 router 建立時才算出來
+ */
+const routePaths = (root: AnyRoute) => {
+  const out = new Set<string>();
+  const walk = (r: AnyRoute, prefix: string) => {
+    const seg: string | undefined = (r.options as any)?.path;
+    const full =
+      seg === undefined
+        ? prefix
+        : `${prefix}/${seg}`.replace(/\/+/g, "/").replace(/(.)\/$/, "$1");
+    out.add(full || "/");
+    for (const c of (r.children as AnyRoute[] | undefined) ?? []) walk(c, full);
+  };
+  walk(root, "");
+  return out;
+};
+
+/** T2 第二道防線：手寫的 TRoutePathRegistry 可能與實際 route 漂移 → nav／routeTitles 的 to 必須是實際路徑 */
+const assertTitledPaths = (
+  modules: readonly TModule[],
+  paths: ReadonlySet<string>
+) => {
+  for (const m of modules)
+    for (const { to } of titledEntries(m))
+      if (!paths.has(to))
+        throw new Error(
+          `module "${m.id}": nav / routeTitles to "${to}" is not the path of any route`
+        );
+};
+
 /**
  * i18n-scope-migration AC-3（nav label 第二道防線）：nav（含 children）與 routeTitles 的局部 key 組成
  * `${id}.nav.${label}`，必須在合併後的 zh / en 字典都解析為字串；同一個 `to` 不得重複宣告標題。回傳 `to` → 全域 key
@@ -203,10 +242,7 @@ const resolveTitles = (modules: readonly TModule[], i18n: TI18n) => {
   const titles = new Map<string, string>();
   const owner = new Map<string, string>();
   for (const m of modules)
-    for (const { to, label } of [
-      ...(m.nav ?? []).flatMap((n) => [n, ...(n.children ?? [])]),
-      ...(m.routeTitles ?? []),
-    ]) {
+    for (const { to, label } of titledEntries(m)) {
       const key = navKey(m.id, label);
       if (label.includes(".") || !label)
         throw new Error(
@@ -424,6 +460,8 @@ export function build({
       ),
     ]),
   ]);
+
+  assertTitledPaths(modules, routePaths(routeTree));
 
   // §4.3 1.6：所有 module routes 建完後才檢查
   for (const id of overrides.keys())

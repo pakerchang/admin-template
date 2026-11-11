@@ -26,6 +26,12 @@ declare module "@/shared/i18n/types" {
   }
 }
 
+declare module "@/shared/module" {
+  interface TModuleIdRegistry {
+    consumers: true;
+  }
+}
+
 export default defineModule({
   id: "consumers",
   kind: "domain",

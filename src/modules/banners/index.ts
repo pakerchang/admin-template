@@ -29,6 +29,12 @@ declare module "@/shared/i18n/types" {
   }
 }
 
+declare module "@/shared/module" {
+  interface TModuleIdRegistry {
+    banners: true;
+  }
+}
+
 export default defineModule({
   id: "banners",
   kind: "domain",
