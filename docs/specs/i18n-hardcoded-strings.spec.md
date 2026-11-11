@@ -48,8 +48,8 @@
 | `EditUserRoleDialogContent.tsx:58` | VIP會員（T3 對齊 `userRoleEnum` 後 zh 改為「進階會員」） | key | users | `users.roles.premium` | Premium Member（new，T3 OD-T3-4） |
 | `EditUserRoleDialogContent.tsx:63` | 代理商（T3 對齊 `userRoleEnum` 後 zh 改為「合作夥伴」） | key | users | `users.roles.partner` | Partner（new，T3 OD-T3-4） |
 | `EditUserRoleDialogContent.tsx:68` | 客服 | key | users | `users.roles.support` | Customer Support（new，T3 OD-T3-4） |
-| `EditUserRoleDialogContent.tsx:73` | 管理員 | key | users | `users.roles.admin` | Admin（既有:`staff.roles.admin`） |
-| `EditUserRoleDialogContent.tsx:78` | 超級管理員 | key | users | `users.roles.superadmin` | Super Admin（既有:`staff.roles.superadmin`） |
+| `EditUserRoleDialogContent.tsx:73` | 管理員 | key | users | `users.roles.admin` | Admin（既有:`team-members.roles.admin`） |
+| `EditUserRoleDialogContent.tsx:78` | 超級管理員 | key | users | `users.roles.superadmin` | Super Admin（既有:`team-members.roles.superadmin`） |
 | `banners/model/image-validation/file-type.rule.ts:29`、`:44` | Banner 圖片請使用 … 格式… | 刪 fallback | — | — | — |
 | `banners/.../filename-prefix.rule.ts:25`、`:55` | 桌面版／手機版圖片檔名請以 d_／m_ 開頭 | 刪 fallback | — | — | — |
 | `banners/.../filesize.rule.ts:33`、`:46`、`:77`、`:90` | 檔案大小過小…／超過限制… | 刪 fallback | — | — | — |
@@ -198,13 +198,13 @@ expected: exit 0，最後輸出含 `core-only build: OK`
 
 #### OD-HZ-4 新 key 的 en 譯文來源
 
-22 個新撰譯文 + 4 個沿用既有 en 值，列在 §1.2。
+22 個新撰譯文 + 4 個沿用既有 en 值，列在 §1.2。（T3 PR #39 對齊 `userRoleEnum` 後為新撰 24 + 沿用 2，見 §1.3）
 
 | 選項 | 內容 | 後果 |
 |---|---|---|
 | A 以本 spec §1.2 的 en 為準 | 實作棒照表寫入，fixture `enSource` 標 `new` / `existing:<key>`；AC-0 重盤若有新增位置，實作棒依同類 key 句型撰寫並在交付報告列出 | 審 spec 時就審譯文，與 OD-I18N-6 的做法一致 |
 | B owner 另行提供 | 實作棒先放 placeholder | 多一輪往返；placeholder 會讓 AC-2 的 `en !== zh` 斷言難以定義 |
 
-**已裁決：A（main 代裁 2026-11-11，owner 可於 PR #29 覆核）**。實作棒照 §1.2 逐字寫入 en；22 個新撰譯文（`enSource: "new"`）為**最終版**，實作棒不得自行改字。
+**已裁決：A（main 代裁 2026-11-11，owner 可於 PR #29 覆核）**。實作棒照 §1.2 逐字寫入 en；22 個新撰譯文（`enSource: "new"`）為**最終版**，實作棒不得自行改字。（T3 PR #39 對齊 `userRoleEnum` 後為新撰 24 + 沿用 2，見 §1.3）
 
 **改字規則**：§1.2 任何 en / zh 值要改（含 owner 覆核後的改字），必須在**同一個 PR** 內一起修改：(1) 本 spec §1.2 對應列；(2) AC-2 fixture `hardcoded-zh-keymap.json` 對應列與字典值；(3) 若該字串被 AC 寫死（目前為 AC-5 的 `Edit User Role`、`Staff creation failed`，以及 AC-5 zh 案例比對的 §1.2 原文），同步修改該 AC 文字與對應測試斷言。AC-0 重盤若出現 §1.2 沒有的新位置，實作棒撰寫的譯文同樣要在同一個 PR 補進 §1.2 與 AC-2 fixture。只改字典或 fixture 而不改 spec 的 PR 視為不符本 spec。
